@@ -14,33 +14,44 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SkikoComposeUiTest
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runSkikoComposeUiTest
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.thepytales.llmhub.data.AppSettings
+import io.github.thepytales.llmhub.ssh.ServerAssistant
 import io.github.thepytales.llmhub.ssh.ServerFlows
-import io.github.thepytales.llmhub.ssh.ServerTerminal
+import io.github.thepytales.llmhub.ssh.ServerHelper
+import io.github.thepytales.llmhub.ssh.ServerStep
+import io.github.thepytales.llmhub.ssh.ServerWorkspace
 import io.github.thepytales.llmhub.ssh.SshAuth
 import io.github.thepytales.llmhub.ssh.SshProfile
 import io.github.thepytales.llmhub.ui.LlmHubTheme
 import io.github.thepytales.llmhub.ui.ServerTerminalScreen
 import kotlinx.coroutines.runBlocking
 import org.apache.sshd.common.config.keys.KeyUtils
+import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory
 import org.apache.sshd.common.keyprovider.KeyPairProvider
 import org.apache.sshd.server.SshServer
+import org.apache.sshd.sftp.server.SftpSubsystemFactory
 import java.io.File
 import javax.imageio.ImageIO
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Server-Terminal (AP-118) as pictures (build/screenshots/server-*.png): the saved sessions and, connected to an SSH
- * server in the test, the flow „Symfony aktualisieren“ with two steps done. The terminal itself is a Swing component
- * (JediTerm) and cannot be drawn without a window – here a stand-in shows where it sits.
+ * Server-Terminal (AP-118, AP-131) as pictures (build/screenshots/server-*.png): the saved sessions with the tabs; the
+ * flow „Symfony aktualisieren“ with two steps done; Lora asking to run a command after a wish; Lora's answer after the
+ * command ran; the files of the server beside the terminal with two sessions in tabs. The terminal itself is a Swing
+ * component (JediTerm) and cannot be drawn without a window – here a stand-in shows where it sits.
  */
 @OptIn(ExperimentalTestApi::class)
 class ServerTerminalLookTest {
@@ -49,11 +60,18 @@ class ServerTerminalLookTest {
     }
     private val c by lazy { AppContainer(android.content.Context(File(base, "files").apply { mkdirs() }, File(base, "cache").apply { mkdirs() })) }
     private val hostKey = KeyUtils.generateKeyPair(KeyPairProvider.ECDSA_SHA2_NISTP256, 256)
+    private val root = File(base, "server").apply {
+        File(this, "var/www/app/config").mkdirs(); File(this, "var/www/app/public").mkdirs(); File(this, "var/www/app/var/log").mkdirs()
+        File(this, "var/www/app/.env").writeText("APP_ENV=prod\n"); File(this, "var/www/app/composer.json").writeText("{}\n")
+        File(this, "var/www/app/composer.lock").writeText("{}\n".repeat(4000)); File(this, "var/www/app/config/services.yaml").writeText("services:\n")
+    }
     private val server: SshServer = SshServer.setUpDefaultServer().apply {
         host = "127.0.0.1"
         port = 0
         keyPairProvider = KeyPairProvider.wrap(hostKey)
         setPasswordAuthenticator { _, p, _ -> p == "test" }
+        subsystemFactories = listOf(SftpSubsystemFactory())
+        fileSystemFactory = VirtualFileSystemFactory(root.toPath())
         setCommandFactory { _, command ->
             object : org.apache.sshd.server.command.Command {
                 private lateinit var out: java.io.OutputStream
@@ -64,12 +82,26 @@ class ServerTerminalLookTest {
                 override fun setExitCallback(callback: org.apache.sshd.server.ExitCallback) { exit = callback }
                 override fun destroy(channel: org.apache.sshd.server.channel.ChannelSession) {}
                 override fun start(channel: org.apache.sshd.server.channel.ChannelSession, env: org.apache.sshd.server.Environment) {
-                    val text = if ("git pull" in command) "Updating 3f2a1c4..9b8e7d6\nFast-forward\n src/Controller/KursController.php | 12 ++++++------\n" else ""
+                    val text = when {
+                        "git pull" in command -> "Updating 3f2a1c4..9b8e7d6\nFast-forward\n src/Controller/KursController.php | 12 ++++++------\n"
+                        "df -h" in command -> "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1        50G   38G   12G  76% /\n"
+                        else -> ""
+                    }
                     Thread { out.write(text.toByteArray()); out.flush(); exit.onExit(0) }.start()
                 }
             }
         }
         start()
+    }
+
+    /** Lora as a stand-in with fixed answers – the pictures show the screen, not a model. */
+    private class FakeLora : ServerHelper {
+        override fun where() = ServerAssistant.Where("test", true, "Lora schlägt mit dem Sprachmodell auf diesem Gerät vor – nichts verlässt den PC.")
+        override suspend fun propose(wish: String, profile: SshProfile, recent: String, done: List<ServerStep>, secrets: Collection<String>, screen: String, followUp: Boolean) =
+            if (!followUp) ServerAssistant.Proposal(
+                ServerAssistant.parse("""{"steps":[{"command":"df -h /","what":"Zeigt, wie voll die Festplatte des Servers ist.","safety":"Liest nur, ändert nichts.","risk":"read"}],"note":"Ich sehe nach, wie viel Platz auf dem Server noch frei ist."}""").first,
+                "Ich sehe nach, wie viel Platz auf dem Server noch frei ist.", "test", "",
+            ) else ServerAssistant.Proposal(emptyList(), "Auf dem Server sind noch 12 GB von 50 GB frei (76 % belegt). Das reicht für eine Weile – ab etwa 90 % würde ich alte Logs aufräumen.", "test", "")
     }
 
     private val owner = object : androidx.lifecycle.LifecycleOwner {
@@ -83,8 +115,8 @@ class ServerTerminalLookTest {
         base.deleteRecursively()
     }
 
-    private fun SkikoComposeUiTest.shot(name: String, w: Int, h: Int) {
-        repeat(6) { Thread.sleep(150); mainClock.advanceTimeBy(300) }
+    private fun SkikoComposeUiTest.shot(name: String) {
+        repeat(8) { Thread.sleep(150); mainClock.advanceTimeBy(300) }
         waitForIdle()
         val img = onNodeWithTag("shot").captureToImage().toAwtImage()
         File("build/screenshots").mkdirs()
@@ -93,36 +125,139 @@ class ServerTerminalLookTest {
 
     private fun SkikoComposeUiTest.has(text: String) = onAllNodesWithText(text, substring = true).fetchSemanticsNodes().isNotEmpty()
 
+    private val profile get() = SshProfile(id = "demo", name = "Lehrstuhl-Webseite (Beispiel)", host = "127.0.0.1", port = server.port, user = "deploy", auth = SshAuth.PASSWORD, workDir = "/var/www/app", color = 4)
+
     @Test
     fun sessionsAndStepsAtTheWidthOfAWindowsWindow() {
-        val term = ServerTerminal(File(base, "ssh"))
-        val profile = SshProfile(id = "demo", name = "Lehrstuhl-Webseite (Beispiel)", host = "127.0.0.1", port = server.port, user = "deploy", auth = SshAuth.PASSWORD, workDir = "/var/www/app")
+        val ws = ServerWorkspace(File(base, "ssh"))
+        val term = ws.current
         term.sessions.save(profile)
-        term.sessions.save(SshProfile(id = "demo2", name = "Testsystem (Beispiel)", host = "test.example.org", user = "deploy", keyFile = "C:\\Users\\du\\.ssh\\id_ed25519"))
-        c.settings.update { it.copy(apiKey = "") }
+        term.sessions.save(SshProfile(id = "demo2", name = "Testsystem (Beispiel)", host = "test.example.org", user = "deploy", keyFile = "C:\\Users\\du\\.ssh\\id_ed25519", color = 1))
+        c.settings.update { it.copy(apiKey = "", serverTerminalModel = "") }
         runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
             mainClock.autoAdvance = false
             setContent {
                 androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
                     LlmHubTheme(AppSettings()) {
                         Box(Modifier.size(1280.dp, 820.dp).testTag("shot")) {
-                            ServerTerminalScreen(c, onBack = {}, term = term, terminalView = { m -> FakeTerminal(m) })
+                            ServerTerminalScreen(c, onBack = {}, workspace = ws, terminalView = { _, m -> FakeTerminal(m) })
                         }
                     }
                 }
             }
-            shot("server-sitzungen-windows.png", 1280, 820)
-            assertTrue(has("Gespeicherte Sitzungen") && has("Lehrstuhl-Webseite (Beispiel)") && has("Verbinden"))
+            shot("server-sitzungen-windows.png")
+            assertTrue(has("Gespeicherte Sitzungen") && has("Lehrstuhl-Webseite (Beispiel)") && has("Verbinden") && has("Neue Sitzung"))
 
             term.knownHosts.accept("127.0.0.1", server.port, hostKey.public)
             runBlocking { term.connect(profile, "test") }
             assertTrue(term.state.value.connected, term.state.value.error ?: "")
             term.load(ServerFlows.SYMFONY_DEPLOY)
             runBlocking { term.run(0); term.run(1) }
-            shot("server-ablauf-windows.png", 1280, 820)
+            shot("server-ablauf-windows.png")
             assertTrue(has("Symfony aktualisieren") && has("Ausführen") && has("composer install"))
             assertTrue(has("Für Vorschläge fehlt ein Sprachmodell"), "ohne Modell hier und ohne Schlüssel: ehrlicher Hinweis")
             term.disconnect()
+        }
+    }
+
+    @Test
+    fun loraAsksBeforeTheCommandAndSaysWhatCameOut() {
+        c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
+        val ws = ServerWorkspace(File(base, "ssh")) { FakeLora() }
+        val term = ws.current
+        term.sessions.save(profile)
+        term.knownHosts.accept("127.0.0.1", server.port, hostKey.public)
+        runBlocking { term.connect(profile, "test") }
+        assertTrue(term.state.value.connected, term.state.value.error ?: "")
+        runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
+            mainClock.autoAdvance = false
+            setContent {
+                androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
+                    LlmHubTheme(AppSettings()) {
+                        Box(Modifier.size(1280.dp, 820.dp).testTag("shot")) {
+                            ServerTerminalScreen(c, onBack = {}, workspace = ws, terminalView = { _, m -> FakeTerminal(m) }, where = FakeLora().where())
+                        }
+                    }
+                }
+            }
+            shot("server-lora-start-windows.png")
+            assertTrue(has("Was soll im Terminal passieren?") && has("Wie viel Speicherplatz ist noch frei?") && has("Feste Abläufe"))
+            runBlocking { term.propose("Wie viel Speicherplatz ist noch frei?") }
+            shot("server-lora-frage-windows.png")
+            assertTrue(has("Lora möchte:") && has("df -h /") && has("Ausführen") && has("Ich sehe nach"))
+            runBlocking { term.run(0); term.awaitLora() }
+            shot("server-lora-ergebnis-windows.png")
+            assertTrue(has("12 GB von 50 GB frei") && has("Fertig"))
+            term.disconnect()
+        }
+    }
+
+    @Test
+    fun filesOfTheServerAndTwoTabs() {
+        c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
+        val ws = ServerWorkspace(File(base, "ssh"))
+        val a = ws.current
+        a.sessions.save(profile)
+        a.knownHosts.accept("127.0.0.1", server.port, hostKey.public)
+        val b = ws.add()
+        runBlocking { b.connect(profile.copy(id = "demo2", name = "Testsystem (Beispiel)", color = 1), "test"); a.connect(profile, "test") }
+        ws.select(0)
+        runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
+            mainClock.autoAdvance = false
+            setContent {
+                androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
+                    LlmHubTheme(AppSettings()) {
+                        Box(Modifier.size(1280.dp, 820.dp).testTag("shot")) {
+                            ServerTerminalScreen(c, onBack = {}, workspace = ws, terminalView = { _, m -> FakeTerminal(m) }, where = FakeLora().where(), filesAtStart = true)
+                        }
+                    }
+                }
+            }
+            shot("server-dateien-windows.png")
+            assertTrue(has("Dateien auf dem Server") && has("composer.lock") && has("config") && has("Testsystem (Beispiel)") && has("An mehrere senden"))
+            a.disconnect(); b.disconnect()
+        }
+    }
+
+    @Test
+    fun onFirstUseTheTerminalAsksWhereLoraThinks() {
+        // With the key of the Uni-Server and no model on this PC: the TU-Server is recommended, the PC is not possible.
+        c.settings.update { it.copy(apiKey = "sk-test-nicht-echt", serverTerminalModel = "") }
+        val ws = ServerWorkspace(File(base, "ssh"))
+        ws.current.sessions.save(profile)
+        try {
+            runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
+                mainClock.autoAdvance = false
+                setContent {
+                    androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
+                        LlmHubTheme(AppSettings()) {
+                            Box(Modifier.size(1280.dp, 820.dp).testTag("shot")) {
+                                ServerTerminalScreen(c, onBack = {}, workspace = ws, terminalView = { _, m -> FakeTerminal(m) })
+                            }
+                        }
+                    }
+                }
+                repeat(4) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
+                waitForIdle()
+                // The whole scene with the dialog over the screen (the dialog is a root of its own).
+                val img = onAllNodes(isRoot())[0].captureToImage().toAwtImage()
+                File("build/screenshots").mkdirs()
+                ImageIO.write(img, "png", File("build/screenshots/server-modell-frage-windows.png"))
+                assertTrue(has("Wo soll Lora im Server-Terminal denken?") && has("Empfehlung für diesen PC: TU-Server"))
+                assertTrue(has("Namen von Personen in Logs") && has("keins installiert") && has("Cloud-Anbieter"))
+                onNodeWithText("Übernehmen").performClick()
+                repeat(3) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
+                waitForIdle()
+                assertEquals("TU_SERVER", c.settings.current.serverTerminalModel, "die Wahl ist gespeichert – das Pop-up kommt nicht wieder")
+                assertFalse(has("Wo soll Lora im Server-Terminal denken?"))
+            }
+            val w = io.github.thepytales.llmhub.ssh.ServerAssistant(c).where()
+            assertTrue(!w.onDevice && "TU-Server" in w.note, w.note)
+            c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
+            val local = io.github.thepytales.llmhub.ssh.ServerAssistant(c).where()
+            assertTrue(local.model == null && "keins installiert" in local.note, "lokal gewählt, aber kein Modell: ehrlich, kein Ausweichen auf den Server")
+        } finally {
+            c.settings.update { it.copy(apiKey = "", serverTerminalModel = "") }
         }
     }
 

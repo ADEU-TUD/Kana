@@ -123,70 +123,185 @@
 <title> ergänzen.	Add a <title>.
 @-Namen in sozialen Netzwerken	@ names on social networks
 A · B · T	A · B · T
+Abbrechen (Strg+C)	Stop (Ctrl+C)
 Abgebrochen – nichts verschoben.	Cancelled – nothing moved.
 Abgebrochen – {0} Mails sind schon eingeordnet.	Cancelled – {0} mails are already sorted.
 Ablauf: {0}	Workflow: {0}
 Alle Einstellungen der App.	All settings of the app.
 Alles lässt sich später unter Einstellungen › Lora, › Werkzeuge und › Modelle auf diesem Gerät ändern. Downloads laufen im Hintergrund weiter.	Everything can be changed later under Settings › Lora, › Tools and › Models on this device. Downloads continue in the background.
+An diese Sitzungen:	To these sessions:
+An mehrere senden	Send to several
+Anderen Schlüssel	Another key
+Auf den Server legen …	Put it on the server …
 Auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Bis dahin laufen freie Anfragen über den Server bzw. gar nicht („Nur lokal“).	No language model is installed on this device yet (Settings › Models on this device). Until then free requests run on the server, or not at all (“Local only”).
+Auf diesem PC ist kein Sprachmodell installiert, und mit {0} GB Arbeitsspeicher wäre ein brauchbares Modell für Shell-Befehle zu langsam. Der TU-Server ist hier die bessere Wahl.	No language model is installed on this PC, and with {0} GB of memory a usable model for shell commands would be too slow. The TU server is the better choice here.
+Auf diesem PC ist kein Sprachmodell installiert. Der TU-Server ist sofort bereit; ein Modell für den PC lässt sich später unter Einstellungen › Lokale Modelle laden.	No language model is installed on this PC. The TU server is ready right away; a model for the PC can be loaded later under Settings › Local models.
 Auftrag fürs Postfach	Task for the mailbox
 Auftrag fürs Postfach (auf diesem Gerät)	Task for the mailbox (on this device)
 Aus Korrekturen lernen	Learn from corrections
+Ausgabe ausblenden	Hide output
+Ausgabe zeigen	Show output
+Bedenke:	Keep in mind:
 Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).	Commands and short tasks on this device, everything demanding on the university server (chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).
 Bereich, Einstellung, Chat – oder sag, was du tun willst …	Area, setting, chat – or say what you want to do …
 Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Lora antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.	So far {0} % without a server: {1} × instantly on the device (avg {2}), {3} × with the language model on this device (avg {4}), {5} × on the server (avg {6}). Measured until Lora answers or hands over; only numbers are counted, no content.
+Dafür den Schlüssel des Uni-Servers eintragen (Einstellungen › Konto).	Enter the key of the university server for this (Settings › Account).
 Das beantwortet das Modell auf diesem Gerät – ich gebe es weiter.	The model on this device will answer that – I am handing it over.
 Das geht hier: {0}.	That is done here: {0}.
+Das Modell auf diesem PC ({0}) ist klein – bei Shell-Befehlen liegt es öfter daneben. Der TU-Server schlägt zuverlässiger vor.	The model on this PC ({0}) is small – it gets shell commands wrong more often. The TU server proposes more reliably.
+Das Modell auf diesem PC ist für das Terminal zu langsam. {0} Der TU-Server antwortet in wenigen Sekunden und schlägt Shell-Befehle zuverlässiger vor.	The model on this PC is too slow for the terminal. {0} The TU server answers within a few seconds and proposes shell commands more reliably.
+Das Terminal ist geschlossen – bitte neu verbinden.	The terminal is closed – please connect again.
+Das Terminal wartet auf deine Eingabe (z. B. Passwort oder Ja/Nein) – tippe sie dort ein. Lora sieht sie nicht.	The terminal is waiting for your input (e.g. a password or yes/no) – type it there. Lora does not see it.
+Dateien auf dem Server	Files on the server
+Dateien aus dem Explorer hierher ziehen, um sie hochzuladen.	Drag files from the Explorer here to upload them.
+Dateien ausblenden	Hide files
+Dateien des Servers nicht erreichbar: {0}	Files of the server not reachable: {0}
+Dateien ersetzen?	Replace files?
+Dateien zum Hochladen wählen	Choose files to upload
+Dein PC ist stark genug: {0} Dann verlässt nichts den PC, auch keine Logs.	Your PC is strong enough: {0} Then nothing leaves the PC, not even logs.
+Dein Schlüssel liegt jetzt auf dem Server.	Your key is now on the server.
+Der Ordner wird mit allem darin gelöscht ({0} Einträge) – auf dem Server gibt es keinen Papierkorb.	The folder is deleted with everything in it ({0} entries) – there is no recycle bin on the server.
+Der Schlüssel ist mit einer Passphrase geschützt – zum Lesen des öffentlichen Teils eingeben:	The key is protected with a passphrase – enter it to read the public part:
+Die Datei wird auf dem Server gelöscht – dort gibt es keinen Papierkorb.	The file is deleted on the server – there is no recycle bin there.
+Die Dateien des Servers sind nicht erreichbar (SFTP ist dort vielleicht aus).	The files of the server cannot be reached (SFTP may be switched off there).
+Die Daten bleiben an der TU Dresden – kein externer Anbieter.	The data stays at TU Dresden – no external provider.
 Die Fragen vom ersten Start erneut stellen	Ask the questions from the first start again
 Die Pseudonymisierung findet Namen, Schulen und Orte zuverlässiger, bevor etwas an einen Server geht.	Pseudonymization finds names, schools and places more reliably before anything goes to a server.
+Die Änderungen sind noch nicht auf dem Server gespeichert.	The changes are not saved on the server yet.
 Diese Vorlagen könnten passen:	These templates might fit:
+Diese Zeile wird in jede Sitzung eingetippt und sofort ausgeführt ({0}):	This line is typed into each session and run at once ({0}):
 Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell.	A small model on this device maps what you write to Lora or in Ctrl+K to an action of the app within milliseconds – offline, even with typos. When it is unsure it carries out nothing; Lora asks a language model as before.
+Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich.	A new key pair (Ed25519) is created on this device. The private key stays in the Lora folder and only your user account can read it; a passphrase protects it in addition.
 Ein paar kurze Fragen, dann geht es los.	A few short questions, then we can start.
+Eine Zeile an mehrere Sitzungen	One line to several sessions
 Einstellung: {0}	Setting: {0}
 Einstellung: {0} → {1}	Setting: {0} → {1}
+Empfehlung für diesen PC: {0}	Recommendation for this PC: {0}
+Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vorschläge.	Load a model first (Settings › Local models), otherwise there are no proposals.
 Etwas anderes	Something else
+Farbe im Tab	Colour of the tab
+Feste Abläufe	Fixed workflows
+folgt dem Terminal	follows the terminal
 Frist in den Kalender	Deadline into the calendar
 Frühere Chats suchen	Search earlier chats
 Für das Postfach, vertrauliche Daten, kurze Aufgaben und ohne Internet – passt zu diesem Gerät. {0}	For the mailbox, confidential data, short tasks and without internet – fits this device. {0}
+Geht ohne Internet und ohne Uni-Server.	Works without Internet and without the university server.
+Gelöscht: {0}	Deleted: {0}
 Gemischt	Mixed
 Gemischt (empfohlen)	Mixed (recommended)
+Gespeichert.	Saved.
+Gewählt ist das Modell auf diesem PC – es ist aber keins installiert (Einstellungen › Lokale Modelle). Die festen Abläufe gehen trotzdem. Ändern: Einstellungen › Lora.	The model on this PC is chosen – but none is installed (Settings › Local models). The fixed workflows still work. Change: Settings › Lora.
+Gewählt ist der TU-Server – dafür fehlt der Schlüssel des Uni-Servers (Einstellungen › Konto). Die festen Abläufe gehen trotzdem. Ändern: Einstellungen › Lora.	The TU server is chosen – but the key of the university server is missing (Settings › Account). The fixed workflows still work. Change: Settings › Lora.
+Herunterladen …	Download …
 Hier sind die TU Vorlagen: {0}.	Here are the TU templates: {0}.
 Hilfe zur App	Help on the app
+hilft in {0}	helping in {0}
+Hochladen	Upload
+Hostnamen, IP-Adressen, Benutzer, Mail-Adressen und Passwörter werden vorher ersetzt – aber nicht alles lässt sich sicher erkennen: Namen von Personen in Logs oder interne Projektnamen können mitgehen. Bei Logs mit personenbezogenen Daten lieber den PC wählen.	Host names, IP addresses, users, e-mail addresses and passwords are replaced first – but not everything can be recognized reliably: names of people in logs or internal project names may go along. For logs with personal data, better choose the PC.
+Im Ordner gibt es schon: {0}. Ersetzen?	The folder already has: {0}. Replace?
+Im Terminal eingetragen – Enter drückst du dort.	Typed into the terminal – you press Enter there.
+Im Terminal läuft gerade ein Programm mit ganzem Fenster (z. B. vim, less oder top). Beende es zuerst – dann trägt Lora den Befehl ein.	A full-window program is running in the terminal (e.g. vim, less or top). Quit it first – then Lora types the command.
 Immer gilt: Ins Postfach schaut nur ein Modell auf diesem Gerät, Projekte „Nur auf diesem Gerät“ und der Tresor behalten ihre Regeln, und vor jeder Server-Anfrage werden Namen ersetzt, wenn die Pseudonymisierung an ist.	Always: only a model on this device looks into the mailbox, projects “Only on this device” and the vault keep their rules, and names are replaced before every server request when pseudonymization is on.
+In beiden Fällen führt Lora nichts ohne deinen Klick aus. Externe Cloud-Anbieter (z. B. Gemini) sind fürs Terminal gesperrt.	In both cases Lora runs nothing without your click. External cloud providers (e.g. Gemini) are blocked for the terminal.
+In {0} Sitzungen ausführen	Run in {0} sessions
+In {0} Sitzungen ausgeführt.	Run in {0} sessions.
+Ist fertig	It is done
+Jeder Befehl läuft erst nach deinem Klick – im Terminal, wo du alles siehst.	Every command runs only after your click – in the terminal, where you see everything.
+Kleine Modelle schlagen öfter falsche oder unvollständige Befehle vor – lies jede Karte, bevor du klickst.	Small models propose wrong or incomplete commands more often – read every card before you click.
+Konnte nicht ins Terminal schreiben.	Could not write into the terminal.
 Korrekturen exportieren	Export corrections
 Korrekturen gespeichert.	Corrections saved.
+Lade herunter: {0}	Downloading: {0}
+Lade hoch: {0}	Uploading: {0}
+Legt deinen öffentlichen Schlüssel auf den Server (~/.ssh/authorized_keys), damit du dich künftig ohne Passwort anmeldest.	Puts your public key on the server (~/.ssh/authorized_keys) so that you log in without a password from now on.
+Lokal oder TU-Server ändern	Change local or TU server
 Lora arbeitet nur lokal	Lora works locally only
 Lora arbeitet nur über den Server	Lora works on the server only
 Lora arbeitet „Nur lokal“, aber auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Befehle verstehe ich trotzdem.	Lora is set to “Local only”, but no language model is installed on this device yet (Settings › Models on this device). I still understand commands.
 Lora entscheidet je Anfrage: Befehle erkennt sie sofort auf diesem Gerät. Kurze, einfache Aufgaben (umformulieren, kurz erklären, eine kurze Nachricht) beantwortet ein Sprachmodell auf diesem Gerät, wenn eines installiert ist und die Hardware reicht. Alles andere – lange Dokumente, Analysen, Bilder, Websuche, mehrere Schritte – läuft wie bisher über den Server.	Lora decides per request: she recognizes commands instantly on this device. Short, simple tasks (rephrasing, a brief explanation, a short message) are answered by a language model on this device if one is installed and the hardware is sufficient. Everything else – long documents, analyses, images, web search, several steps – runs on the server as before.
 Lora erkennt sofort und offline, was du meinst – Bereich öffnen, Einstellung umstellen, PDF zusammenfügen.	Lora recognizes instantly and offline what you mean – open an area, change a setting, merge PDFs.
+Lora hält hier an – sag ihr, wie es weitergehen soll.	Lora stops here – tell her how to go on.
 Lora kann jetzt mehr auf diesem Gerät erledigen – schneller, offline und ohne dass etwas hinausgeht. Such aus, was du möchtest; alles lässt sich später unter Einstellungen › Lora und › Modelle auf diesem Gerät ändern.	Lora can now do more on this device – faster, offline and without anything leaving it. Choose what you want; everything can be changed later under Settings › Lora and › Models on this device.
+Lora legt den öffentlichen Schlüssel nach deinem Klick in ~/.ssh/authorized_keys.	After your click Lora puts the public key into ~/.ssh/authorized_keys.
 Lora macht das: {0}	Lora does it: {0}
+Lora möchte:	Lora wants to:
+Lora schlägt im Terminal Befehle vor und liest dafür, was das Terminal zeigt. Das kann auf diesem PC passieren oder auf dem Uni-Server der TU Dresden.	Lora proposes commands in the terminal and reads what the terminal shows for that. This can happen on this PC or on the university server of TU Dresden.
+Lora sieht sich das Ergebnis an …	Lora is looking at the result …
 Lora versteht Befehle sofort	Lora understands commands instantly
 Lora › Wo Lora arbeitet	Lora › Where Lora works
+Lora:	Lora:
+Läuft Apache ohne Fehler?	Is Apache running without errors?
+Löschen …	Delete …
+Mehr zu {0}	More for {0}
 Meinst du „{0}“ oder „{1}“?	Did you mean “{0}” or “{1}”?
+Mit Schlüssel anmelden	Log in with key
+Modell auf diesem PC	Model on this PC
+Modell auf diesem PC: keins installiert	Model on this PC: none installed
+Modell auf diesem PC: {0}	Model on this PC: {0}
+Name des Schlüssels	Name of the key
 Neu: Modelle für dieses Gerät	New: models for this device
+Neuen Schlüssel erzeugen	Create a new key
+Nicht gespeichert: {0}	Not saved: {0}
 nicht ohne Rückfrage: {0}	not without asking: {0}
 Nichts geht an einen Server – dafür schlichtere, langsamere Antworten, kurze Texte, keine Websuche. Braucht ein Sprachmodell auf diesem Gerät.	Nothing goes to a server – in exchange plainer, slower answers, short texts, no web search. Needs a language model on this device.
+Nichts verlässt den PC – auch keine Ausgaben, Logs oder Ordnernamen.	Nothing leaves the PC – no output, logs or folder names either.
 Nichts zu exportieren.	Nothing to export.
+Noch nicht gewählt – das Terminal fragt beim ersten Öffnen.	Not chosen yet – the terminal asks when it is first opened.
 Noch nichts gelernt.	Nothing learned yet.
+Nur der öffentliche Schlüssel geht auf den Server, der private bleibt auf diesem Gerät. Steht er schon dort, ändert sich nichts.	Only the public key goes to the server, the private one stays on this device. If it is already there, nothing changes.
+Nur eintragen	Only type it in
 Nur Server	Server only
+Ohne Internet oder bei einer Störung des Uni-Servers gibt es keine Vorschläge (die festen Abläufe gehen weiter).	Without Internet or when the university server has a problem there are no proposals (the fixed workflows keep working).
+Ohne Schlüssel für den Uni-Server bleibt nur das Modell auf diesem PC.	Without a key for the university server only the model on this PC remains.
+Ohne Schlüssel für den Uni-Server bleibt nur das Modell auf diesem PC. Dein externer Anbieter ist fürs Terminal gesperrt.	Without a key for the university server only the model on this PC remains. Your external provider is blocked for the terminal.
+Ordner nicht lesbar: {0}	Folder not readable: {0}
+Passphrase	Passphrase
+Passphrase (empfohlen)	Passphrase (recommended)
+Passphrase wiederholen	Repeat passphrase
 Projekt „Nur auf diesem Gerät“	Project “Only on this device”
 Rückfrage mit zwei Knöpfen	Question with two buttons
+Schlüssel auf den Server legen	Put the key on the server
+Schlüssel erzeugen	Create key
+Schlüssel: {0}	Key: {0}
+Schneller und zuverlässiger bei Shell-Befehlen; der PC bleibt frei.	Faster and more reliable with shell commands; the PC stays free.
+Senden …	Send …
+Sitzungen: {0}	Sessions: {0}
 Sobald du Lora etwas gefragt hast, steht hier, wie oft und wie schnell sie auf diesem Gerät statt über den Server geantwortet hat.	Once you have asked Lora something, this shows how often and how fast she answered on this device instead of the server.
+Soll sich die Sitzung künftig mit dem Schlüssel „{0}“ statt mit dem Passwort anmelden? Ein gespeichertes Passwort wird dann vergessen.	Should the session log in with the key “{0}” instead of the password from now on? A saved password is then forgotten.
 Speichern …	Save …
 Sprachmodell {0} ({1} GB)	Language model {0} ({1} GB)
 Sprachmodelle für dieses Gerät findest du später unter Einstellungen › Modelle auf diesem Gerät.	You will find language models for this device later under Settings › Models on this device.
 Sprachmodelle nur über den Uni-Server – am genauesten, braucht immer Internet.	Language models only on the university server – most accurate, always needs internet.
+SSH-Schlüssel	SSH key
+Strg+S speichert auf dem Server. Besitzer und Rechte der Datei bleiben.	Ctrl+S saves on the server. Owner and permissions of the file stay.
 TU Vorlage suchen	Find a TU template
 TU Vorlage öffnen	Open a TU template
+TU-Server: Schlüssel des Uni-Servers fehlt	TU server: key of the university server missing
+TU-Server: {0} (ScaDS.AI, TU Dresden)	TU server: {0} (ScaDS.AI, TU Dresden)
+Ungültiger Name	Invalid name
 Verstanden – das merke ich mir für „{0}“.	Got it – I’ll remember that for “{0}”.
 Versteht Lora etwas falsch und du korrigierst sie – ein Knopf bei „Meinst du … oder …?“, „nein, ich meinte …“, ein Tipp auf die richtige Karte oder „Rückgängig“ direkt nach einer Aktion –, merkt sie sich das auf diesem Gerät und macht es beim nächsten Mal richtig. Im Tresor merkt sie sich nichts; nichts davon verlässt das Gerät von selbst.	If Lora gets something wrong and you correct her – a button under “Did you mean … or …?”, “no, I meant …”, a tap on the right card or “Undo” right after an action –, she remembers it on this device and gets it right next time. Nothing is remembered in the vault; none of it leaves the device by itself.
+Vor- und Nachteile zeigen	Show pros and cons
+Vorhandenen wählen …	Choose an existing one …
 Vorliebe merken	Remember a preference
+Vorschläge kommen vom TU-Server ({0}). Vorher werden Hosts, IP-Adressen, Benutzer, Mail-Adressen und alle Geheimnisse ersetzt.	Proposals come from the TU server ({0}). Hosts, IP addresses, users, e-mail addresses and all secrets are replaced first.
+Wann läuft das Zertifikat ab?	When does the certificate expire?
+Was das Terminal zeigt (Ausgaben, Logs, die letzten Zeilen), geht an den Uni-Server.	What the terminal shows (output, logs, the last lines) goes to the university server.
 Was Lora aus Korrekturen gelernt hat	What Lora learned from corrections
+Was soll im Terminal passieren?	What should happen in the terminal?
+Weder ein Sprachmodell auf diesem PC noch der Zugang zum Uni-Server ist eingerichtet. Die festen Abläufe gehen trotzdem; für Vorschläge ein Modell laden (Einstellungen › Lokale Modelle) oder den Schlüssel des Uni-Servers eintragen.	Neither a language model on this PC nor access to the university server is set up. The fixed workflows still work; for proposals, load a model (Settings › Local models) or enter the key of the university server.
+Weitere Sitzung in neuem Tab	Another session in a new tab
 Welche Modelle sollen auf dieses Gerät?	Which models should be on this device?
+Wie viel Speicherplatz ist noch frei?	How much disk space is left?
+Wirklich in {0} Sitzungen ausführen?	Really run in {0} sessions?
 Wo Lora arbeitet	Where Lora works
+Wo Lora denkt, wenn sie im Server-Terminal Befehle vorschlägt. Externe Cloud-Anbieter sind dort gesperrt.	Where Lora thinks when she proposes commands in the Server Terminal. External cloud providers are blocked there.
 Wo soll ich arbeiten?	Where should I work?
+Wo soll Lora im Server-Terminal denken?	Where should Lora think in the Server Terminal?
+Während Lora denkt, ist der PC ausgelastet (Lüfter, Akku).	While Lora thinks, the PC is busy (fan, battery).
+z. B. Wie viel Speicher ist frei? · Deploy wie immer	e.g. How much space is free? · Deploy as usual
+Zeig die letzten Fehler im Log der Anwendung	Show the latest errors in the application log
+Zum Beispiel	For example
 Zähler zurücksetzen	Reset counter
 [Schüler/in 2] statt [Name 2], wenn die Rolle erkennbar ist – das Modell antwortet passender	[Pupil 2] instead of [Name 2] when the role is recognizable – the model answers more fittingly
 \#RRGGBB	\#RRGGBB
@@ -5432,6 +5547,8 @@ zugeklappt	folded
 {0} Abschnitte ohne vollständig gemessene Wortzeiten werden nicht geteilt (nur verbunden). Erst ⋮ › Wortzeiten messen, dann neu segmentieren.	{0} sections without fully measured word times are not split (only joined). First ⋮ › Measure word times, then segment again.
 {0} Abschnitte · {1}k Zeichen · 	{0} sections · {1}k characters · 
 {0} Abschnitte, identisch codiert: {1} %	{0} sections, coded identically: {1} %
+{0} Datei(en) hochgeladen.	{0} file(s) uploaded.
+{0} ist ein großes Modell.	{0} is a large model.
 {0} Mail(s) als gelesen markiert	{0} mail(s) marked as read
 {0} Mail(s) als ungelesen markiert	{0} mail(s) marked as unread
 {0} Mail(s) nach „{1}“	{0} mail(s) to “{1}”
@@ -5441,6 +5558,7 @@ zugeklappt	folded
 {0} Mail(s) – auf einen Ordner ziehen	{0} mail(s) – drag onto a folder
 {0} Mails	{0} mails
 {0} Mails ausgewählt	{0} mails selected
+{0} schreibt auf diesem PC etwa {1} Wörter pro Sekunde – ein Vorschlag dauert rund {2} Sekunden.	{0} writes about {1} words per second on this PC – a proposal takes about {2} seconds.
 {0} ungelesen	{0} unread
 {0} bis {1}	{0} to {1}
 {0} Mails eingeordnet: {1}	{0} mails sorted: {1}
@@ -5632,6 +5750,7 @@ zugeklappt	folded
 Ändere das Design „{0}“ ({1} {2}): 	Change the design “{0}” ({1} {2}): 
 Ändere das Lernspiel „{0}“ ({1} {2}): 	Change the learning game “{0}” ({1} {2}): 
 Ändern	Change
+Ändern lässt es sich jederzeit unter Einstellungen › Lora › Server-Terminal.	You can change it any time under Settings › Lora › Server Terminal.
 Ändert Folie {0} …	Changing slide {0} …
 Ändert sich der Text, bleibt der Standardwert für Lora „{0}“ – zum Ändern löschen und neu wählen.	If the text changes, Lora's default stays “{0}” – to change it, delete it and choose again.
 Änderung abgelehnt	Change rejected
@@ -5644,6 +5763,7 @@ zugeklappt	folded
 Änderungen verwerfen …	Discard changes …
 Änderungen verwerfen?	Discard changes?
 Änderungen werden nachverfolgt	Changes are being tracked
+Öffentlicher Schlüssel – darf weitergegeben werden (z. B. an die Administration):	Public key – may be passed on (e.g. to the administrators):
 Öffnen: {0}	Open: {0}
 öffentlich · Namen bleiben	public · names stay
 Öffentliche Quellen nicht ersetzen	Don't replace public sources
@@ -5726,6 +5846,7 @@ zugeklappt	folded
 „{0}“ fehlt in „{1}“.	“{0}” is missing in “{1}”.
 „{0}“ gehört zu keinem Modell der Liste.	“{0}” does not belong to any model of the list.
 „{0}“ gelöscht	“{0}” deleted
+„{0}“ gibt es dort schon.	“{0}” already exists there.
 „{0}“ gibt es dort schon. Soll sie ersetzt werden?	“{0}” already exists there. Replace it?
 „{0}“ heißt wieder „{1}“	“{0}” is called “{1}” again
 „{0}“ im Papierkorb	“{0}” in the trash
@@ -5736,6 +5857,7 @@ zugeklappt	folded
 „{0}“ ist im PDF-Werkzeugkasten offen.	“{0}” is open in the PDF toolbox.
 „{0}“ ist kein gültiger Name (Buchstaben, Ziffern, _; nicht mit Ziffer beginnen).	“{0}” is not a valid name (letters, digits, _; must not start with a digit).
 „{0}“ ist kein lesbares Bild.	“{0}” is not a readable image.
+„{0}“ ist keine Textdatei (oder größer als 2 MB) – zum Ansehen herunterladen.	“{0}” is not a text file (or larger than 2 MB) – download it to look at it.
 „{0}“ ist sehr lang – nur die ersten {1}k Zeichen werden gesendet.	“{0}” is very long – only the first {1}k characters are sent.
 „{0}“ ist zu groß (max. 25 MB).	“{0}” is too large (max. 25 MB).
 „{0}“ ist zu {1} % fertig. Der bisherige Fortschritt geht verloren.	“{0}” is {1} % done. The progress so far is lost.

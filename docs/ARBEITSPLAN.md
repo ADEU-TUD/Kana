@@ -1,6 +1,6 @@
 # Arbeitsplan Lora (bis 1.0.43 „ADEU LLM“) – Runde 2
 
-Stand: 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
+Stand: 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
 Runde 1 (AP-01 bis AP-37) ist erledigt und steht ausführlich in [`ARBEITSPLAN-RUNDE-1.md`](ARBEITSPLAN-RUNDE-1.md).
 
 **Design steht im Design-Arbeitsplan** (seit 13.11.2026): Pakete zu Aussehen, Bedienbarkeit und Nutzerfreundlichkeit
@@ -76,7 +76,7 @@ Fairlight).
 | ~~Lora im Alltag~~ ☑ | AP-74 Fehlermeldungen in Klartext · AP-75 Lora-Verlauf mit „Nochmal“ · AP-76 Sprachmodell-Empfehlung nach Messung · AP-77 Probelauf und „Alles rückgängig“ · AP-78 Eigene Wörter und Wissenspakete · AP-79 Hausstil- und Barrierefreiheits-Check · AP-80 Rollenauswahl · AP-81 Videoexport-Warteschlange · AP-82 Vorschau für Video und Ton · AP-83 Lora-Pakete teilen · AP-84 Lora in mehreren Fenstern · AP-85 Große Anhänge vollständig nutzen (erledigt 10.11.2026, siehe *Erledigt*) |
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Lora offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Lora selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Lora Postfach · AP-113 Lora Namensschutz Runde 3 · AP-114 Lora Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
-| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck · AP-133 Geführte Prüfung am Gerät · AP-134 Nichts geht verloren · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
+| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck · AP-133 Geführte Prüfung am Gerät · AP-134 Nichts geht verloren · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
 | **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ◐** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☐** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☐** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☐** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☐** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
@@ -107,13 +107,13 @@ ebenfalls in einem eigenen Chat; auch dort kommt der Messkorpus vor jedem Traini
 **Reihenfolge ab 14.11.2026 (Hauptnutzer nach der Werkzeug-Analyse)**: Aus der Analyse „Wie die Werkzeuge in Lora besser
 werden“ ([`WERKZEUG-ANALYSE.md`](WERKZEUG-ANALYSE.md), 85 Vorschläge, 79 übernommen; Nummern wie *Q-01* stehen bei der jeweiligen Stufe) sind AP-131 bis AP-154 und
 APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfohlene Reihenfolge:
-**AP-131** (Terminal) → **AP-132** (Entwicklung) → **AP-125 (f)** (Reste Dokument) → **AP-133** (Prüfung am Gerät) →
+**AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) → **AP-125 (f)** (Reste Dokument) → **AP-133** (Prüfung am Gerät) →
 **AP-134** (nichts geht verloren) → wie bisher **AP-126** → **APD-16 + AP-127** → **APD-17b + AP-130** → **AP-128** →
 **AP-129** → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
 im Hörsaal (gestrichen).
 
-### AP-131 ☐ Server-Terminal ausbauen: Dateien, Verbindungen, Tabs · M–L (Analyse S-01 bis S-03, Hauptnutzer zuerst, D)
+### AP-131 ◐ Server-Terminal ausbauen: Lora im Terminal, Dateien, Verbindungen, Tabs · M–L (Analyse S-01 bis S-03, Hauptnutzer zuerst, D)
 **Ziel**: Das Server-Terminal (AP-118) ersetzt PuTTY **und** WinSCP für den Alltag an den eigenen Servern.
 - **(a) Gespeicherte Verbindungen und SSH-Schlüssel** (S-02): Verbindungen mit Namen, Host, Nutzer, Port, Schlüssel
   speichern und mit einem Klick öffnen; Schlüsselpaar erzeugen (Ed25519), öffentlichen Schlüssel kopieren bzw. auf den
@@ -124,9 +124,76 @@ im Hörsaal (gestrichen).
   Textdateien direkt öffnen und zurückspeichern; Fortschritt und Abbrechen bei großen Dateien.
 - **(c) Mehrere Sitzungen in Tabs** (S-03): mehrere Server nebeneinander, Tab-Namen und Farbe je Verbindung, Lora sieht,
   in welcher Sitzung sie hilft; eine Zeile an mehrere Sitzungen schicken nur nach ausdrücklicher Bestätigung.
+- **(d) Lora arbeitet im Terminal** (Wunsch des Kollegen, 14.11.2026: „Das Terminal soll Arbeit abnehmen“): Man sagt
+  Lora in ihrer Spalte, was im Terminal passieren soll („Wie viel Speicher ist frei?“, „Deploy wie immer“). Lora sagt in
+  einem Satz, was sie vorhat, und zeigt den nächsten Befehl mit Erklärung, Einstufung und Sicherheitsaspekten (*Lora
+  möchte: …*). **Erst nach Klick auf *Ausführen*** tippt sie ihn ins sichtbare Terminal und drückt Enter – `cd` gilt
+  weiter, `sudo` fragt dort nach dem Passwort, das man selbst tippt. Danach sieht sie sich das Ergebnis an: sie sagt,
+  was herauskam (z. B. „noch 12 GB frei“), oder schlägt den nächsten Befehl vor – wieder mit Klick. Die Regel aus
+  AP-118 bleibt: **jeder Befehl braucht einen Klick**, auch rein lesende (Entscheidung Hauptnutzer 14.11.2026).
+- **(e) Lokal oder TU-Server – einmal fragen** (Wunsch Hauptnutzer, 14.11.2026): Beim ersten Öffnen des Terminals (ab
+  dem nächsten Release für alle einmal) fragt ein Pop-up, wo Lora denkt: **Modell auf diesem PC** oder **TU-Server**
+  (ScaDS.AI). Es empfiehlt passend zum PC und begründet (z. B. „kein Modell installiert, mit 8 GB Arbeitsspeicher wäre
+  eins zu langsam – TU-Server“ oder „dein PC ist stark genug: … rund 10 Sekunden je Vorschlag – lokal“) und nennt die
+  Risiken beider Wege (lokal: kleine Modelle irren öfter, PC ausgelastet; TU-Server: Ausgaben und Logs gehen
+  pseudonymisiert hinaus, Namen in Logs können durchrutschen, ohne Internet keine Vorschläge). **Externe Cloud-Anbieter
+  sind fürs Terminal gesperrt** (wie beim Postfach). Ändern: *Einstellungen › Lora › Server-Terminal* (nur wenn das
+  Werkzeug an ist) oder *Lokal oder TU-Server ändern* in Loras Spalte.
 **Fertig, wenn**: ein Server mit Schlüssel eingerichtet, eine Konfigurationsdatei geholt, geändert und zurückgelegt und in
 zwei Tabs parallel gearbeitet werden kann, ohne die App zu verlassen; Tests mit einem SSH/SFTP-Testserver im Prozess
 (Muster `ServerTerminalTest`).
+◐ *Stand 14.11.2026*: (a) bis (e) in der App (Windows, macOS, Linux); am eigenen Server zu prüfen, siehe unten.
+- **(d) Code**: `ssh/TerminalTap` liest mit, was der Server ins Terminal schreibt (nie, was man tippt). Lora hängt an
+  ihren Befehl `; printf '\033]133;D;%s;%s\007' "$?" "$PWD"` an – das Ende-Zeichen OSC 133 (wie VS Code), das das
+  Terminal nicht anzeigt; so kennt die App Ende, Exit-Code, Ordner und Ausgabe (ohne Farben und ohne die Befehlszeile).
+  Vorher Strg+U, damit halb Getipptes nicht mitläuft. In Programme mit ganzem Fenster (vim, less, top: Wechsel auf den
+  zweiten Bildschirm) tippt Lora nicht. Wartet ein Befehl auf Eingabe (Passwort, `[Y/n]`), sagt die Karte das und der
+  Tastaturfokus springt ins Terminal; *Abbrechen (Strg+C)* und *Ist fertig* (wenn eine andere Shell das Ende nicht
+  meldet). `ServerTerminal.runInTerminal` – ein Schritt je Klick, nie zwei gleichzeitig; nach dem letzten Schritt oder
+  einem Fehler fragt `ServerAssistant` mit den Ausgaben der letzten drei Schritte nach (pseudonymisiert wie bisher), Lora
+  antwortet mit dem Ergebnis oder neuen Schritten, höchstens fünfmal von allein, dann „sag ihr, wie es weitergehen
+  soll“. Lora sieht auch die letzten Zeilen des Terminals (Eingabeaufforderung mit Ordner). Feste Abläufe gehen nicht
+  von allein weiter. *Ohne Terminal ausführen* entfällt in der Oberfläche (bleibt als Weg, wenn das Terminal fehlt);
+  *Nur eintragen* tippt ohne Enter.
+- **(a) Code**: `ssh/SshKeys` erzeugt Ed25519 im OpenSSH-Format (mit Passphrase AES-256-CTR) in `ssh/schluessel/` des
+  Datenordners, nur fürs eigene Konto lesbar (POSIX 600, unter Windows ACL nur für den Besitzer), dazu `.pub`. Dialog
+  *Schlüssel* (oben und im Sitzungsformular): erzeugen oder vorhandenen wählen, öffentlichen Schlüssel zeigen und
+  kopieren, *Auf den Server legen* als Schritt zum Zustimmen (`authorized_keys` nur einmal, Rechte 700/600); danach bietet
+  Lora *Mit Schlüssel anmelden* an (das gespeicherte Passwort wird vergessen). Gespeicherte Sitzungen öffnen mit einem
+  Klick (*Öffnen*). Der **Tresor** ist dafür nicht nötig: der private Schlüssel bleibt geschützt im Lora-Ordner.
+- **(b) Code**: `ssh/ServerFiles` über SFTP (`sshd-sftp` 2.20.1, dieselbe Verbindung). Seitenfenster *Dateien*: Ordner mit
+  Größe und Rechten, *folgt dem Terminal* (aus der Eingabeaufforderung oder dem Ende von Loras letztem Befehl), hochladen
+  per Ziehen aus dem Explorer/Finder oder *Hochladen*, gleiche Namen erst nach *Ersetzen*; je Eintrag *Herunterladen …*,
+  *Umbenennen*, *Löschen …* (Ordner mit Anzahl der Einträge, „kein Papierkorb“); Fortschritt und *Abbrechen* (halbe Datei
+  wird entfernt). Textdateien bis 2 MB öffnen im eigenen Fenster, Strg+S speichert zurück – an Ort und Stelle, Besitzer
+  und Rechte bleiben. Alles steht im Protokoll. Ziehen aus *Dateien* der App: noch nicht (die App zeigt immer nur einen
+  Bereich) – über den Explorer.
+- **(c) Code**: `ssh/ServerWorkspace` mit Tabs (je Tab eigene Verbindung, eigenes Terminal, eigene Dateien, eigene Lora),
+  Farbe je Sitzung (*Farbe im Tab*, z. B. Rot für den Live-Server), Loras Spalte nennt die Sitzung („hilft in …“). Das
+  Terminal bleibt beim Wechseln des Tabs und beim Verlassen des Bildschirms offen. *An mehrere senden* (ab zwei
+  Verbindungen): jede Sitzung einzeln ankreuzen, eine zweite Frage nennt Befehl, Einstufung und alle Sitzungen.
+- **(e) Code**: `ssh/ServerModelChoice` (Empfehlung aus bestem installiertem Modell, Stärke ≥ 7 Mrd. Parameter und
+  ≥ 6 Wörter/s laut Messung bzw. Schätzung, Arbeitsspeicher, Uni-Schlüssel; TU-Modell = Lora-Modell, wenn es an der TU
+  läuft, sonst GLM-5.3 Flash), Einstellung `serverTerminalModel` (leer = noch nicht gefragt), `ServerAssistant.where()`
+  folgt ihr (lokal gewählt ohne Modell: ehrlicher Hinweis, kein Ausweichen auf den Server; die Anfrage wird dann nicht
+  von *Wo Lora arbeitet* umgeleitet). Oberfläche `ui/ServerModelChoiceUi.kt` (Pop-up ohne „Später“, Abschnitt in den
+  Lora-Einstellungen über `PlatformLoraSettings`). Tests `ServerModelChoiceTest` (5) und ein Bild-Test des Pop-ups mit
+  Klick auf *Übernehmen*.
+- **Tests** `ServerTerminalLoraTest` (9) mit eingebettetem SSH/SFTP-Server und einer Shell, die sich wie bash verhält:
+  Lora tippt genau den zugestimmten Befehl mit Enter, Ausgabe ohne Marke und Befehlszeile, Ergebnis-Satz danach, nichts
+  ohne Klick; nach Fehler ein neuer Vorschlag, der wieder wartet; `sudo`-Passwort im Terminal getippt und nirgends zu
+  sehen; kein Tippen in vim/less, Strg+C; höchstens fünf Runden; `TerminalTap`; SFTP (Liste, hoch/runter, Ersetzen nur
+  ausdrücklich, Konfigurationsdatei holen/ändern/zurück, Binärdatei nicht im Editor, umbenennen, Ordner löschen,
+  Abbrechen eines großen Uploads); neuer Schlüssel: Passphrase, Rechte, `authorized_keys` zweimal = einmal, danach
+  Anmeldung mit dem Schlüssel; zwei Tabs, eine Zeile nur an die gewählten. `ServerTerminalLookTest` zeigt Sitzungen mit
+  Tabs, Loras Frage, ihr Ergebnis und die Dateien mit zwei Tabs.
+- **Offen – am eigenen Server zu prüfen (Hauptnutzer)**: (1) „Wie viel Speicher ist frei?“ und „Deploy wie immer“ mit
+  dem Modell auf dem PC: Befehl erscheint im Terminal, Ergebnis-Satz stimmt? (2) `sudo …`: Hinweis „wartet auf deine
+  Eingabe“, Passwort im Terminal tippen. (3) Eigene Eingabeaufforderung (nicht `user@host:/pfad$`): Endet der Schritt
+  trotzdem (ja, über OSC 133 – nur `fish`/`csh` melden es nicht, dann *Ist fertig*). (4) *Schlüssel* → erzeugen → *Auf
+  den Server legen* → *Mit Schlüssel anmelden* → neu verbinden. (5) *Dateien*: `.env.local` öffnen, ändern, Strg+S,
+  Rechte danach mit `ls -l` vergleichen; Datei aus dem Explorer hineinziehen. (6) Zwei Tabs (Live rot, Test grün),
+  *An mehrere senden* mit `uptime`.
 
 ### AP-132 ☐ Entwicklung: schnellere Tests und Vorher/Nachher auf Knopfdruck · M (Analyse E-01, E-02, Hauptnutzer zuerst)
 **Ziel**: Änderungen sind schneller geprüft, Design-Stufen schneller gezeigt.

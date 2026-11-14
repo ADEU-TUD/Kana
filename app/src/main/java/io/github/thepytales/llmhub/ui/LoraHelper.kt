@@ -1306,6 +1306,8 @@ fun LoraSettings(c: AppContainer) {
         }
         TextButton(onClick = { LoraHost.go("setup") }) { Text(tr("Lora Schritt für Schritt einrichten")) }
     }
+    // AP-131 e: where Lora thinks in the Server-Terminal (desktop only, when the tool is on).
+    PlatformLoraSettings(c)
     // AP-39, AP-41, AP-38: what Lora knows, tours, the protocol of her actions.
     LoraMemorySection(c)
 }

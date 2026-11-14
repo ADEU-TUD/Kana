@@ -579,6 +579,34 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Gespeicherte Sitzungen | Ablauf „Symfony aktualisieren“ |
   | --- | --- |
   | ![Server-Terminal, Sitzungen](docs/bilder/ap118-sitzungen.png) | ![Server-Terminal, Ablauf](docs/bilder/ap118-ablauf.png) |
+- **Server-Terminal: Lora arbeitet im Terminal, Dateien, Schlüssel, Tabs** (nach 1.0.72, AP-131, nur Windows/macOS/Linux):
+  - **Lora sagen, was passieren soll** (Wunsch des Kollegen): „Wie viel Speicher ist frei?“ – Lora sagt in einem Satz,
+    was sie vorhat, und zeigt den Befehl mit Erklärung und Einstufung (*Lora möchte: …*). Nach Klick auf *Ausführen*
+    tippt sie ihn ins Terminal und drückt Enter; man sieht alles, `cd` gilt weiter, ein `sudo`-Passwort tippt man selbst
+    im Terminal (Lora sieht es nicht). Danach sagt Lora, was herauskam, oder schlägt den nächsten Befehl vor – **jeder
+    Befehl braucht einen Klick**. Kein Tippen in vim/less/top, *Abbrechen (Strg+C)*, *Nur eintragen* (ohne Enter).
+    Beispiele zum Anklicken; die festen Abläufe bleiben.
+  - **Dateien per SFTP** (wie WinSCP): Seitenfenster *Dateien* mit Größe und Rechten, folgt auf Wunsch dem `cd` im
+    Terminal; hochladen per Ziehen aus dem Explorer, herunterladen, umbenennen, löschen (mit Rückfrage), Fortschritt und
+    *Abbrechen*; Textdateien (z. B. `.env.local`, Apache-Konfiguration) direkt bearbeiten, Strg+S speichert zurück –
+    Besitzer und Rechte bleiben.
+  - **SSH-Schlüssel**: *Schlüssel* erzeugt ein Ed25519-Paar (mit Passphrase, nur fürs eigene Konto lesbar), zeigt den
+    öffentlichen Schlüssel zum Kopieren und legt ihn nach Zustimmung in `~/.ssh/authorized_keys`; danach *Mit Schlüssel
+    anmelden*. Gespeicherte Sitzungen öffnen mit einem Klick.
+  - **Lokal oder TU-Server**: Beim ersten Öffnen fragt ein Pop-up, wo Lora denkt – Modell auf diesem PC oder TU-Server –,
+    mit Empfehlung für diesen PC, Begründung und den Risiken beider Wege; externe Cloud-Anbieter sind fürs Terminal
+    gesperrt. Änderbar unter *Einstellungen › Lora › Server-Terminal*.
+  - **Tabs**: mehrere Server nebeneinander, Farbe je Sitzung (z. B. Rot für den Live-Server); Lora hilft im offenen Tab
+    und sagt, in welchem. *An mehrere senden*: eine Zeile an ausdrücklich angekreuzte Sitzungen, mit zweiter Rückfrage.
+
+  Tests `ServerTerminalLoraTest` (eingebetteter SSH/SFTP-Server mit einer Shell wie bash), `ServerModelChoiceTest` und
+  `ServerTerminalLookTest`.
+
+  ![Server-Terminal: Lokal oder TU-Server](docs/bilder/ap131-lokal-oder-tu.png)
+
+  | Lora fragt vor dem Befehl | Lora sagt, was herauskam | Dateien und Tabs |
+  | --- | --- | --- |
+  | ![Lora fragt](docs/bilder/ap131-lora-frage.png) | ![Lora antwortet](docs/bilder/ap131-lora-ergebnis.png) | ![Dateien](docs/bilder/ap131-dateien.png) |
 - **Eigene Modelle aktualisieren** (nach 1.0.67, AP-117): Die App erkennt die Fassung von Lora Namensschutz und Lora
   Befehle am SHA-256 statt an der Größe – auch ein Nachtraining mit gleichem Dateinamen und gleicher Größe kommt als
   Update an. Bis zum Download arbeitet die bisherige Fassung mit ihrer eigenen Schwelle und ihren Etiketten weiter

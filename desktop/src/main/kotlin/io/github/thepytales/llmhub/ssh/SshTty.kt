@@ -7,12 +7,19 @@ import org.apache.sshd.client.channel.ClientChannelEvent
 import java.io.InputStreamReader
 import java.util.EnumSet
 
-/** Connects JediTerm to the SSH shell (AP-118): what the server prints goes to the terminal, keys go to the server. */
-class SshTty(private val channel: ChannelShell, private val title: String) : TtyConnector {
+/**
+ * Connects JediTerm to the SSH shell (AP-118): what the server prints goes to the terminal, keys go to the server.
+ * [tap] reads along what the server prints (AP-131 d: Lora notices when her command ended), never what is typed.
+ */
+class SshTty(private val channel: ChannelShell, private val title: String, val tap: TerminalTap = TerminalTap()) : TtyConnector {
     private val reader = InputStreamReader(channel.invertedOut, Charsets.UTF_8)
     private val out = channel.invertedIn
 
-    override fun read(buf: CharArray, offset: Int, length: Int): Int = reader.read(buf, offset, length)
+    override fun read(buf: CharArray, offset: Int, length: Int): Int {
+        val n = reader.read(buf, offset, length)
+        if (n > 0) runCatching { tap.feed(buf, offset, n) }
+        return n
+    }
 
     override fun write(bytes: ByteArray) {
         out.write(bytes)

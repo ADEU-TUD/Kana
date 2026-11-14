@@ -44,6 +44,10 @@ val DEVICE_VOICE_TITLE: String get() = tr("Windows-Stimme")
 val DEVICE_VOICE_DESCRIPTION: String get() = tr("Sprachausgabe von Windows – nichts verlässt den PC.")
 val NO_DEVICE_VOICES: String get() = tr("Keine Windows-Stimmen gefunden. Unter Windows-Einstellungen › Zeit und Sprache › Sprache lässt sich eine deutsche Stimme hinzufügen.")
 
+/** Einstellungen › Lora › Server-Terminal (AP-131 e): where Lora thinks in the terminal. */
+@Composable
+fun PlatformLoraSettings(c: AppContainer) = ServerTerminalLoraSettings(c)
+
 /** Windows-specific behavior: notification area, autostart and where the data lives. */
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable

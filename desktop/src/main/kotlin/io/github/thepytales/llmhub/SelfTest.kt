@@ -253,8 +253,12 @@ object SelfTest {
 
     private fun c() = LlmHubApp.container
 
-    /** Starts an SSH server on 127.0.0.1, trusts its key, logs in with a password and runs one command. */
+    /**
+     * Starts an SSH server on 127.0.0.1, trusts its key, logs in with a password and runs one command; then (AP-131) a
+     * new Ed25519 key with passphrase is created and read again, and the server's files are listed and written over SFTP.
+     */
     private fun sshSelfTest(folder: File): String {
+        val sftpRoot = File(folder, "sftp").apply { mkdirs() }
         val hostKey = org.apache.sshd.common.config.keys.KeyUtils.generateKeyPair(org.apache.sshd.common.keyprovider.KeyPairProvider.ECDSA_SHA2_NISTP256, 256)
         val server = org.apache.sshd.server.SshServer.setUpDefaultServer().apply {
             host = "127.0.0.1"
@@ -275,13 +279,23 @@ object SelfTest {
                     }
                 }
             }
+            subsystemFactories = listOf(org.apache.sshd.sftp.server.SftpSubsystemFactory())
+            fileSystemFactory = org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory(sftpRoot.toPath())
             start()
         }
         try {
+            val key = io.github.thepytales.llmhub.ssh.SshKeys.create(folder, "selbsttest", "selbsttest-phrase", "lora@selbsttest")
+            if (io.github.thepytales.llmhub.ssh.SshConnection.loadKeys(key.privateKey, "selbsttest-phrase").isEmpty() || !key.publicLine.startsWith("ssh-ed25519 ")) return "Schlüssel"
             val known = io.github.thepytales.llmhub.ssh.KnownHosts(File(folder, "known_hosts"))
             known.accept("127.0.0.1", server.port, hostKey.public)
             val profile = io.github.thepytales.llmhub.ssh.SshProfile(host = "127.0.0.1", port = server.port, user = "selbsttest", auth = io.github.thepytales.llmhub.ssh.SshAuth.PASSWORD)
-            return io.github.thepytales.llmhub.ssh.SshConnection.connect(profile, "selbsttest-geheim", known).use { it.exec("echo lora-ok").output.trim() }
+            return io.github.thepytales.llmhub.ssh.SshConnection.connect(profile, "selbsttest-geheim", known).use { conn ->
+                io.github.thepytales.llmhub.ssh.ServerFiles(conn).use { f ->
+                    f.writeText("/probe.txt", "lora")
+                    if (f.list("/").none { it.name == "probe.txt" } || f.readText("/probe.txt") != "lora") return "SFTP"
+                }
+                conn.exec("echo lora-ok").output.trim()
+            }
         } finally {
             server.stop(true)
         }
