@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.Dns
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material.icons.outlined.Warning
@@ -202,7 +203,7 @@ private fun SessionsPane(term: ServerTerminal, modifier: Modifier) {
     var edit by remember { mutableStateOf(state.profile ?: list.firstOrNull() ?: SshProfile()) }
     val scope = rememberCoroutineScope()
     Row(modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(Modifier.width(240.dp).fillMaxHeight().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(Modifier.width(280.dp).fillMaxHeight().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(tr("Gespeicherte Sitzungen"), style = MaterialTheme.typography.titleSmall)
             list.forEach { p ->
                 val chosen = p.id == edit.id
@@ -221,7 +222,9 @@ private fun SessionsPane(term: ServerTerminal, modifier: Modifier) {
                             Text("${p.user}@${p.host}:${p.port}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         // One click opens it (AP-131 a) – with a saved password or a key without passphrase right away.
-                        TextButton(enabled = p.problems().isEmpty() && state.busy == null, onClick = { edit = p; scope.launch { term.connect(p) } }) { Text(tr("Öffnen")) }
+                        IconButton(enabled = p.problems().isEmpty() && state.busy == null, onClick = { edit = p; scope.launch { term.connect(p) } }) {
+                            Icon(Icons.Outlined.PlayArrow, tr("Öffnen"), tint = MaterialTheme.colorScheme.primary)
+                        }
                     }
                 }
             }

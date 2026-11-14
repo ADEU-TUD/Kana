@@ -140,9 +140,10 @@ internal fun ServerFilesPane(term: ServerTerminal, modifier: Modifier) {
                 IconButton(onClick = { refresh() }) { Icon(Icons.Outlined.Refresh, tr("Neu laden")) }
                 IconButton(onClick = { newFolder = true }) { Icon(Icons.Outlined.CreateNewFolder, tr("Neuer Ordner")) }
                 IconButton(onClick = { pickFiles()?.let { dropped(it) } }) { Icon(Icons.Outlined.Upload, tr("Hochladen")) }
-                Spacer(Modifier.weight(1f))
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(follow, { follow = it })
-                Text(tr("folgt dem Terminal"), style = MaterialTheme.typography.labelSmall)
+                Text(tr("folgt dem Terminal"), style = MaterialTheme.typography.bodySmall)
             }
             transfer?.let { t ->
                 Text(if (t.upload) tr("Lade hoch: {0}", t.name) else tr("Lade herunter: {0}", t.name), style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)

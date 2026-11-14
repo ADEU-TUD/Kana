@@ -141,7 +141,7 @@ class ServerTerminalLookTest {
                 }
             }
             shot("server-sitzungen-windows.png")
-            assertTrue(has("Gespeicherte Sitzungen") && has("Lehrstuhl-Webseite (Beispiel)") && has("Verbinden") && has("Öffnen") && has("Neue Sitzung"))
+            assertTrue(has("Gespeicherte Sitzungen") && has("Lehrstuhl-Webseite (Beispiel)") && has("Verbinden") && has("Neue Sitzung"))
 
             term.knownHosts.accept("127.0.0.1", server.port, hostKey.public)
             runBlocking { term.connect(profile, "test") }
