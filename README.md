@@ -593,10 +593,16 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **SSH-Schlüssel**: *Schlüssel* erzeugt ein Ed25519-Paar (mit Passphrase, nur fürs eigene Konto lesbar), zeigt den
     öffentlichen Schlüssel zum Kopieren und legt ihn nach Zustimmung in `~/.ssh/authorized_keys`; danach *Mit Schlüssel
     anmelden*. Gespeicherte Sitzungen öffnen mit einem Klick.
+  - **Lokal oder TU-Server**: Beim ersten Öffnen fragt ein Pop-up, wo Lora denkt – Modell auf diesem PC oder TU-Server –,
+    mit Empfehlung für diesen PC, Begründung und den Risiken beider Wege; externe Cloud-Anbieter sind fürs Terminal
+    gesperrt. Änderbar unter *Einstellungen › Lora › Server-Terminal*.
   - **Tabs**: mehrere Server nebeneinander, Farbe je Sitzung (z. B. Rot für den Live-Server); Lora hilft im offenen Tab
     und sagt, in welchem. *An mehrere senden*: eine Zeile an ausdrücklich angekreuzte Sitzungen, mit zweiter Rückfrage.
 
-  Tests `ServerTerminalLoraTest` (eingebetteter SSH/SFTP-Server mit einer Shell wie bash) und `ServerTerminalLookTest`.
+  Tests `ServerTerminalLoraTest` (eingebetteter SSH/SFTP-Server mit einer Shell wie bash), `ServerModelChoiceTest` und
+  `ServerTerminalLookTest`.
+
+  ![Server-Terminal: Lokal oder TU-Server](docs/bilder/ap131-lokal-oder-tu.png)
 
   | Lora fragt vor dem Befehl | Lora sagt, was herauskam | Dateien und Tabs |
   | --- | --- | --- |

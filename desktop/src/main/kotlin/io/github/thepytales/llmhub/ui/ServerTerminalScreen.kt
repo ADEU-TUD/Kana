@@ -72,6 +72,7 @@ import io.github.thepytales.llmhub.ssh.Risk
 import io.github.thepytales.llmhub.ssh.Risks
 import io.github.thepytales.llmhub.ssh.ServerAssistant
 import io.github.thepytales.llmhub.ssh.ServerFlows
+import io.github.thepytales.llmhub.ssh.ServerModelChoice
 import io.github.thepytales.llmhub.ssh.ServerStep
 import io.github.thepytales.llmhub.ssh.ServerTerminal
 import io.github.thepytales.llmhub.ssh.ServerWorkspace
@@ -110,9 +111,14 @@ fun ServerTerminalScreen(
     onBack: () -> Unit,
     workspace: ServerWorkspace = ServerTerminals.of(c),
     terminalView: @Composable (ServerTerminal, Modifier) -> Unit = { t, m -> JediTerminal(t, m) },
-    where: ServerAssistant.Where = remember { ServerAssistant(c).where() },
+    where: ServerAssistant.Where? = null,
     filesAtStart: Boolean = false,
 ) {
+    val settings by c.settings.settings.collectAsStateWithLifecycle()
+    // Where Lora thinks (AP-131 e): asked once; afterwards Einstellungen › Lora or „Ändern“ in Lora's column.
+    val advice = remember(settings.serverTerminalModel, settings.apiKey, settings.loraModel) { ServerModelChoice.advise(c) }
+    val place = where ?: remember(settings.serverTerminalModel, settings.apiKey, settings.loraModel) { ServerAssistant(c).where() }
+    var changePlace by remember { mutableStateOf(false) }
     val tabs by workspace.tabs.collectAsStateWithLifecycle()
     val active by workspace.active.collectAsStateWithLifecycle()
     val term = tabs[active.coerceIn(0, tabs.lastIndex)]
@@ -151,12 +157,17 @@ fun ServerTerminalScreen(
             else Row(Modifier.fillMaxSize()) {
                 if (showFiles) ServerFilesPane(term, Modifier.width(300.dp).fillMaxHeight())
                 terminalView(term, Modifier.weight(1.5f).fillMaxHeight().padding(8.dp))
-                LoraServerPane(c, term, Modifier.weight(1f).widthIn(min = 340.dp).fillMaxHeight(), where)
+                LoraServerPane(c, term, Modifier.weight(1f).widthIn(min = 340.dp).fillMaxHeight(), place, onChangePlace = { changePlace = true })
             }
         }
     }
     state.hostKey?.let { p ->
         HostKeyDialog(p.result, p.host, p.port, onTrust = { replace -> scope.launch { term.acceptHostKey(replace) } }, onCancel = { term.rejectHostKey() })
+    }
+    if (settings.serverTerminalModel.isBlank() && advice.anyPossible) {
+        ServerModelDialog(advice, null, onChosen = { ch -> c.settings.update { it.copy(serverTerminalModel = ch.key) } })
+    } else if (changePlace) {
+        ServerModelDialog(advice, ServerModelChoice.of(settings.serverTerminalModel), onChosen = { ch -> c.settings.update { it.copy(serverTerminalModel = ch.key) }; changePlace = false }, onCancel = { changePlace = false })
     }
     if (keyDialog) KeyDialog(term, onDismiss = { keyDialog = false })
     if (broadcast) BroadcastDialog(workspace, onDismiss = { broadcast = false })
@@ -324,7 +335,7 @@ private val SERVER_WISHES = listOf(
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Modifier, where: ServerAssistant.Where = remember { ServerAssistant(c).where() }) {
+internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Modifier, where: ServerAssistant.Where = remember { ServerAssistant(c).where() }, onChangePlace: () -> Unit = {}) {
     val state by term.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val clipboard = LocalClipboardManager.current
@@ -351,7 +362,10 @@ internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Mod
             Row(verticalAlignment = Alignment.Top) {
                 Icon(Icons.Outlined.Lock, null, Modifier.size(16.dp).padding(top = 2.dp), tint = if (where.onDevice) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary)
                 Spacer(Modifier.width(6.dp))
-                Text(where.note, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Column(Modifier.weight(1f)) {
+                    Text(where.note, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    TextButton(onClick = onChangePlace) { Text(tr("Lokal oder TU-Server ändern")) }
+                }
             }
             OutlinedTextField(
                 wish, { wish = it }, label = { Text(tr("Was soll im Terminal passieren?")) },

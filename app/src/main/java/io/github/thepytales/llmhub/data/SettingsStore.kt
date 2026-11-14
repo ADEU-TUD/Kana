@@ -140,6 +140,11 @@ data class AppSettings(
     val loraCalm: Boolean = false,
     /** Lora may give a one-time hint per area (e.g. that a tool exists). */
     val loraHints: Boolean = true,
+    /**
+     * Where Lora thinks in the Server-Terminal (AP-131 e): "LOCAL" (model on this device) or "TU_SERVER" (Uni-Server of
+     * the TU Dresden, pseudonymized); empty = not chosen yet – the terminal asks once. External cloud providers never.
+     */
+    val serverTerminalModel: String = "",
     /** The two questions of the first start (Lora, visible tools) were answered or skipped. */
     val loraIntroDone: Boolean = false,
     /** AP-41: Lora offers a short tour on the first visit of a tool. */
@@ -397,6 +402,7 @@ class SettingsStore(context: Context) {
             .putString("loraModel", next.loraModel)
             .putBoolean("loraCalm", next.loraCalm)
             .putBoolean("loraHints", next.loraHints)
+            .putString("serverTerminalModel", next.serverTerminalModel)
             .putString("loraHandoffModel", next.loraHandoffModel)
             .putBoolean("loraHandoffReview", next.loraHandoffReview)
             .putBoolean("loraNextSteps", next.loraNextSteps)
@@ -519,6 +525,7 @@ class SettingsStore(context: Context) {
             loraModel = prefs.getString("loraModel", d.loraModel) ?: d.loraModel,
             loraCalm = prefs.getBoolean("loraCalm", d.loraCalm),
             loraHints = prefs.getBoolean("loraHints", d.loraHints),
+            serverTerminalModel = prefs.getString("serverTerminalModel", d.serverTerminalModel) ?: d.serverTerminalModel,
             loraTours = prefs.getBoolean("loraTours", d.loraTours),
             loraToursSeen = prefs.getString("loraToursSeen", d.loraToursSeen) ?: d.loraToursSeen,
             loraHandoffModel = prefs.getString("loraHandoffModel", d.loraHandoffModel) ?: d.loraHandoffModel,

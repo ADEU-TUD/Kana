@@ -14,7 +14,10 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SkikoComposeUiTest
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runSkikoComposeUiTest
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
@@ -40,6 +43,8 @@ import java.io.File
 import javax.imageio.ImageIO
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -128,7 +133,7 @@ class ServerTerminalLookTest {
         val term = ws.current
         term.sessions.save(profile)
         term.sessions.save(SshProfile(id = "demo2", name = "Testsystem (Beispiel)", host = "test.example.org", user = "deploy", keyFile = "C:\\Users\\du\\.ssh\\id_ed25519", color = 1))
-        c.settings.update { it.copy(apiKey = "") }
+        c.settings.update { it.copy(apiKey = "", serverTerminalModel = "") }
         runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
             mainClock.autoAdvance = false
             setContent {
@@ -157,6 +162,7 @@ class ServerTerminalLookTest {
 
     @Test
     fun loraAsksBeforeTheCommandAndSaysWhatCameOut() {
+        c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
         val ws = ServerWorkspace(File(base, "ssh")) { FakeLora() }
         val term = ws.current
         term.sessions.save(profile)
@@ -188,6 +194,7 @@ class ServerTerminalLookTest {
 
     @Test
     fun filesOfTheServerAndTwoTabs() {
+        c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
         val ws = ServerWorkspace(File(base, "ssh"))
         val a = ws.current
         a.sessions.save(profile)
@@ -209,6 +216,48 @@ class ServerTerminalLookTest {
             shot("server-dateien-windows.png")
             assertTrue(has("Dateien auf dem Server") && has("composer.lock") && has("config") && has("Testsystem (Beispiel)") && has("An mehrere senden"))
             a.disconnect(); b.disconnect()
+        }
+    }
+
+    @Test
+    fun onFirstUseTheTerminalAsksWhereLoraThinks() {
+        // With the key of the Uni-Server and no model on this PC: the TU-Server is recommended, the PC is not possible.
+        c.settings.update { it.copy(apiKey = "sk-test-nicht-echt", serverTerminalModel = "") }
+        val ws = ServerWorkspace(File(base, "ssh"))
+        ws.current.sessions.save(profile)
+        try {
+            runSkikoComposeUiTest(Size(1280f * 2, 820f * 2), Density(2f)) {
+                mainClock.autoAdvance = false
+                setContent {
+                    androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
+                        LlmHubTheme(AppSettings()) {
+                            Box(Modifier.size(1280.dp, 820.dp).testTag("shot")) {
+                                ServerTerminalScreen(c, onBack = {}, workspace = ws, terminalView = { _, m -> FakeTerminal(m) })
+                            }
+                        }
+                    }
+                }
+                repeat(4) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
+                waitForIdle()
+                // The whole scene with the dialog over the screen (the dialog is a root of its own).
+                val img = onAllNodes(isRoot())[0].captureToImage().toAwtImage()
+                File("build/screenshots").mkdirs()
+                ImageIO.write(img, "png", File("build/screenshots/server-modell-frage-windows.png"))
+                assertTrue(has("Wo soll Lora im Server-Terminal denken?") && has("Empfehlung für diesen PC: TU-Server"))
+                assertTrue(has("Namen von Personen in Logs") && has("keins installiert") && has("Cloud-Anbieter"))
+                onNodeWithText("Übernehmen").performClick()
+                repeat(3) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
+                waitForIdle()
+                assertEquals("TU_SERVER", c.settings.current.serverTerminalModel, "die Wahl ist gespeichert – das Pop-up kommt nicht wieder")
+                assertFalse(has("Wo soll Lora im Server-Terminal denken?"))
+            }
+            val w = io.github.thepytales.llmhub.ssh.ServerAssistant(c).where()
+            assertTrue(!w.onDevice && "TU-Server" in w.note, w.note)
+            c.settings.update { it.copy(serverTerminalModel = "LOCAL") }
+            val local = io.github.thepytales.llmhub.ssh.ServerAssistant(c).where()
+            assertTrue(local.model == null && "keins installiert" in local.note, "lokal gewählt, aber kein Modell: ehrlich, kein Ausweichen auf den Server")
+        } finally {
+            c.settings.update { it.copy(apiKey = "", serverTerminalModel = "") }
         }
     }
 

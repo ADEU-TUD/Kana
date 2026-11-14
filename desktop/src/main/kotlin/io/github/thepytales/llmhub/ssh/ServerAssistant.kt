@@ -4,9 +4,7 @@ import io.github.thepytales.llmhub.AppContainer
 import io.github.thepytales.llmhub.data.Area
 import io.github.thepytales.llmhub.data.ChatMessage
 import io.github.thepytales.llmhub.data.ModelCatalog
-import io.github.thepytales.llmhub.data.Place
 import io.github.thepytales.llmhub.data.PlaceScope
-import io.github.thepytales.llmhub.data.Places
 import io.github.thepytales.llmhub.net.ThinkingLevel
 import io.github.thepytales.llmhub.ui.tr
 import kotlinx.coroutines.withContext
@@ -19,9 +17,10 @@ import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Lora in the Server-Terminal (AP-118): turns a wish („Deploy wie immer“, „Zertifikat läuft ab“) and what the terminal
- * showed into steps with command, explanation and safety notes. Prefers the model on this device; a server model only
- * when none is here and Wo Lora arbeitet allows it – then everything goes through [ServerMask] first (no host, IP, user,
- * mail address or secret leaves the device) and the screen says so. Never runs anything itself.
+ * showed into steps with command, explanation and safety notes. Where it thinks is the user's choice (AP-131 e,
+ * [ServerModelChoice]): the model on this device or the Uni-Server of the TU – then everything goes through [ServerMask]
+ * first (no host, IP, user, mail address or secret leaves the device) and the screen says so. Never an external cloud
+ * provider. Never runs anything itself.
  */
 /** What the Server-Terminal needs from Lora (AP-118/AP-131): where she answers and her proposals. Tests use a stand-in. */
 interface ServerHelper {
@@ -43,15 +42,23 @@ class ServerAssistant(private val c: AppContainer) : ServerHelper {
 
     data class Proposal(val steps: List<ServerStep>, val note: String, val model: String, val sent: String)
 
+    /**
+     * The choice of Einstellungen › Lora › Server-Terminal (AP-131 e): the model on this PC or the Uni-Server, never an
+     * external provider. Not chosen yet: the model here when there is one, else the Uni-Server (the screen asks first).
+     */
     override fun where(): Where {
-        c.localLlm.preferredModel()?.let { m ->
-            return Where(m, true, tr("Lora schlägt mit {0} auf diesem Gerät vor – nichts verlässt den PC.", ModelCatalog.info(m).displayName))
+        val local = ServerModelChoice.localModel(c)
+        val tu = ServerModelChoice.tuModel(c)
+        fun onDevice(m: String) = Where(m, true, tr("Lora schlägt mit {0} auf diesem Gerät vor – nichts verlässt den PC.", ModelCatalog.info(m).displayName))
+        fun atTu(m: String) = Where(m, false, tr("Vorschläge kommen vom TU-Server ({0}). Vorher werden Hosts, IP-Adressen, Benutzer, Mail-Adressen und alle Geheimnisse ersetzt.", ModelCatalog.info(m).displayName))
+        return when (ServerModelChoice.of(c.settings.current.serverTerminalModel)) {
+            ServerModelChoice.Choice.LOCAL -> local?.let(::onDevice)
+                ?: Where(null, true, tr("Gewählt ist das Modell auf diesem PC – es ist aber keins installiert (Einstellungen › Lokale Modelle). Die festen Abläufe gehen trotzdem. Ändern: Einstellungen › Lora."))
+            ServerModelChoice.Choice.TU_SERVER -> tu?.let(::atTu)
+                ?: Where(null, false, tr("Gewählt ist der TU-Server – dafür fehlt der Schlüssel des Uni-Servers (Einstellungen › Konto). Die festen Abläufe gehen trotzdem. Ändern: Einstellungen › Lora."))
+            null -> local?.let(::onDevice) ?: tu?.let(::atTu)
+                ?: Where(null, false, tr("Für Vorschläge fehlt ein Sprachmodell auf diesem Gerät (Einstellungen › Wo Lora arbeitet). Die festen Abläufe gehen trotzdem."))
         }
-        val s = c.settings.current
-        val allowed = s.hasAnyApiKey && Places.effective(c, Area.LORA) != Place.LOCAL
-        if (!allowed) return Where(null, false, tr("Für Vorschläge fehlt ein Sprachmodell auf diesem Gerät (Einstellungen › Wo Lora arbeitet). Die festen Abläufe gehen trotzdem."))
-        val model = s.loraModel.ifBlank { ModelCatalog.FAST_CHAT }
-        return Where(model, false, tr("Kein Modell auf diesem Gerät: Vorschläge kommen vom Server ({0}). Vorher werden Hosts, IP-Adressen, Benutzer, Mail-Adressen und alle Geheimnisse ersetzt.", ModelCatalog.info(model).displayName))
     }
 
     override suspend fun propose(
@@ -64,7 +71,9 @@ class ServerAssistant(private val c: AppContainer) : ServerHelper {
         val mask = ServerMask(secrets, profile.takeUnless { where.onDevice })
         val sent = request(wish, profile, recent, done, mask, screen, followUp)
         val messages = listOf(ChatMessage(role = "system", content = SYSTEM), ChatMessage(role = "user", content = sent))
-        val result = withContext(PlaceScope(Area.LORA)) { c.llm.streamChat(model, messages, null, thinking = ThinkingLevel.OFF) {} }
+        // The terminal has its own choice (AP-131 e): no rerouting by „Wo Lora arbeitet“ – a local model stays local, the
+        // Uni-Server model goes to the Uni-Server (an area with no place of its own; never an external provider, see where()).
+        val result = withContext(PlaceScope(if (where.onDevice) Area.LORA else Area.WEB)) { c.llm.streamChat(model, messages, null, thinking = ThinkingLevel.OFF) {} }
         val (steps, note) = parse(mask.unmask(result.content))
         return Proposal(steps, note, model, sent)
     }

@@ -131,10 +131,18 @@ im Hörsaal (gestrichen).
   weiter, `sudo` fragt dort nach dem Passwort, das man selbst tippt. Danach sieht sie sich das Ergebnis an: sie sagt,
   was herauskam (z. B. „noch 12 GB frei“), oder schlägt den nächsten Befehl vor – wieder mit Klick. Die Regel aus
   AP-118 bleibt: **jeder Befehl braucht einen Klick**, auch rein lesende (Entscheidung Hauptnutzer 14.11.2026).
+- **(e) Lokal oder TU-Server – einmal fragen** (Wunsch Hauptnutzer, 14.11.2026): Beim ersten Öffnen des Terminals (ab
+  dem nächsten Release für alle einmal) fragt ein Pop-up, wo Lora denkt: **Modell auf diesem PC** oder **TU-Server**
+  (ScaDS.AI). Es empfiehlt passend zum PC und begründet (z. B. „kein Modell installiert, mit 8 GB Arbeitsspeicher wäre
+  eins zu langsam – TU-Server“ oder „dein PC ist stark genug: … rund 10 Sekunden je Vorschlag – lokal“) und nennt die
+  Risiken beider Wege (lokal: kleine Modelle irren öfter, PC ausgelastet; TU-Server: Ausgaben und Logs gehen
+  pseudonymisiert hinaus, Namen in Logs können durchrutschen, ohne Internet keine Vorschläge). **Externe Cloud-Anbieter
+  sind fürs Terminal gesperrt** (wie beim Postfach). Ändern: *Einstellungen › Lora › Server-Terminal* (nur wenn das
+  Werkzeug an ist) oder *Lokal oder TU-Server ändern* in Loras Spalte.
 **Fertig, wenn**: ein Server mit Schlüssel eingerichtet, eine Konfigurationsdatei geholt, geändert und zurückgelegt und in
 zwei Tabs parallel gearbeitet werden kann, ohne die App zu verlassen; Tests mit einem SSH/SFTP-Testserver im Prozess
 (Muster `ServerTerminalTest`).
-◐ *Stand 14.11.2026*: (a) bis (d) in der App (Windows, macOS, Linux); am eigenen Server zu prüfen, siehe unten.
+◐ *Stand 14.11.2026*: (a) bis (e) in der App (Windows, macOS, Linux); am eigenen Server zu prüfen, siehe unten.
 - **(d) Code**: `ssh/TerminalTap` liest mit, was der Server ins Terminal schreibt (nie, was man tippt). Lora hängt an
   ihren Befehl `; printf '\033]133;D;%s;%s\007' "$?" "$PWD"` an – das Ende-Zeichen OSC 133 (wie VS Code), das das
   Terminal nicht anzeigt; so kennt die App Ende, Exit-Code, Ordner und Ausgabe (ohne Farben und ohne die Befehlszeile).
@@ -164,6 +172,13 @@ zwei Tabs parallel gearbeitet werden kann, ohne die App zu verlassen; Tests mit 
   Farbe je Sitzung (*Farbe im Tab*, z. B. Rot für den Live-Server), Loras Spalte nennt die Sitzung („hilft in …“). Das
   Terminal bleibt beim Wechseln des Tabs und beim Verlassen des Bildschirms offen. *An mehrere senden* (ab zwei
   Verbindungen): jede Sitzung einzeln ankreuzen, eine zweite Frage nennt Befehl, Einstufung und alle Sitzungen.
+- **(e) Code**: `ssh/ServerModelChoice` (Empfehlung aus bestem installiertem Modell, Stärke ≥ 7 Mrd. Parameter und
+  ≥ 6 Wörter/s laut Messung bzw. Schätzung, Arbeitsspeicher, Uni-Schlüssel; TU-Modell = Lora-Modell, wenn es an der TU
+  läuft, sonst GLM-5.3 Flash), Einstellung `serverTerminalModel` (leer = noch nicht gefragt), `ServerAssistant.where()`
+  folgt ihr (lokal gewählt ohne Modell: ehrlicher Hinweis, kein Ausweichen auf den Server; die Anfrage wird dann nicht
+  von *Wo Lora arbeitet* umgeleitet). Oberfläche `ui/ServerModelChoiceUi.kt` (Pop-up ohne „Später“, Abschnitt in den
+  Lora-Einstellungen über `PlatformLoraSettings`). Tests `ServerModelChoiceTest` (5) und ein Bild-Test des Pop-ups mit
+  Klick auf *Übernehmen*.
 - **Tests** `ServerTerminalLoraTest` (9) mit eingebettetem SSH/SFTP-Server und einer Shell, die sich wie bash verhält:
   Lora tippt genau den zugestimmten Befehl mit Enter, Ausgabe ohne Marke und Befehlszeile, Ergebnis-Satz danach, nichts
   ohne Klick; nach Fehler ein neuer Vorschlag, der wieder wartet; `sudo`-Passwort im Terminal getippt und nirgends zu
