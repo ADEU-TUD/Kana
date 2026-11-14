@@ -32,6 +32,8 @@ data class SshProfile(
     val workDir: String = "",
     /** User of the web server (Debian/Ubuntu: www-data) for ACLs and the cache. */
     val webUser: String = "www-data",
+    /** Colour of the tab (AP-131 c), an index into the palette of the screen – e.g. red for the live server. */
+    val color: Int = 0,
 ) {
     val label: String get() = name.ifBlank { "$user@$host" + if (port != 22) ":$port" else "" }
 

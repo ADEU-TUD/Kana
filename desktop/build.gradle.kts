@@ -94,6 +94,8 @@ dependencies {
     // it has.
     implementation("org.apache.sshd:sshd-core:2.20.1")
     implementation("org.apache.sshd:sshd-putty:2.20.1")
+    // Files of the server over SFTP (AP-131 b): same project and licence; the tests embed its SFTP server too.
+    implementation("org.apache.sshd:sshd-sftp:2.20.1")
     implementation("org.jetbrains.jediterm:jediterm-core:3.76") { exclude(group = "org.jetbrains.kotlin") }
     implementation("org.jetbrains.jediterm:jediterm-ui:3.76") { exclude(group = "org.jetbrains.kotlin") }
 
