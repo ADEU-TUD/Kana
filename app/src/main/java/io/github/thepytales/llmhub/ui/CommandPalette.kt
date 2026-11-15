@@ -277,6 +277,7 @@ fun ShortcutsDialog(onDismiss: () -> Unit) {
     )
     // Tasten im Dokument wie in Word (AP-125 c).
     val document = listOf(
+        tr("Strg+P") to tr("Drucken"),
         tr("Strg+← / →, Strg+↑ / ↓") to tr("Wort- bzw. absatzweise (mit Umschalt: markieren)"),
         tr("Strg+Pos1 / Strg+Ende") to tr("Anfang bzw. Ende des Dokuments"),
         tr("Strg+Rück / Strg+Entf") to tr("Wort löschen"),

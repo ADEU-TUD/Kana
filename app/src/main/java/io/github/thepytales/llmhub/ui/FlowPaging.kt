@@ -404,7 +404,10 @@ internal fun clearPlan(state: FlowState) {
 }
 
 /** What the header and footer of page [page] (1-based) of [pages] show: left and right text. */
-internal data class PageMargins(val headerLeft: String, val headerRight: String, val footerLeft: String, val footerRight: String)
+internal data class PageMargins(
+    val headerLeft: String, val headerRight: String, val footerLeft: String, val footerRight: String,
+    val headerCenter: String = "", val footerCenter: String = "",
+)
 
 /**
  * Header and footer of the section page [page] (1-based) is in – null in the first section (the document's own). [starts]:
@@ -424,6 +427,17 @@ internal fun pageMargins(setup: DocMarkup.PageSetup, page: Int, pages: Int, toda
     val even = page % 2 == 0 && setup.hasEven
     val header = section?.first ?: if (even) setup.headerEven else setup.header
     val footer = section?.second ?: if (even) setup.footerEven else setup.footer
+    if (setup.pageNumbers && setup.numbersMoved) {
+        // Seitenzahlen an eigener Stelle (AP-126 b): next to a text at that place it follows it, as in the PDF.
+        val slots = Array(6) { mutableListOf<String>() }
+        if (header.isNotBlank()) slots[0] += DocMarkup.fields(header, page, pages)
+        if (setup.date) slots[2] += today
+        if (footer.isNotBlank()) slots[3] += DocMarkup.fields(footer, page, pages)
+        val number = if (setup.numbersFormat == "lang") tr("Seite {0} von {1}", page, pages) else DocMarkup.fields(setup.numbersText, page, pages)
+        slots[(if (setup.numbersTop) 0 else 3) + setup.numbersSlot] += number
+        val t = slots.map { it.joinToString(" · ") }
+        return PageMargins(t[0], t[2], t[3], t[5], headerCenter = t[1], footerCenter = t[4])
+    }
     return PageMargins(
         DocMarkup.fields(header, page, pages),
         if (setup.date) today else "",

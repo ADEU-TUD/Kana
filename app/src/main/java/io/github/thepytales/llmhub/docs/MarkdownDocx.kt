@@ -52,6 +52,8 @@ object MarkdownDocx {
         /** Abschnitte (AP-43/45): header and footer of each section break of the document, and the current one (0: none yet). */
         var breaks: List<Pair<String, String>> = emptyList()
         var section = 0
+        /** Sprache des Dokuments (AP-126 b): Word's spelling and hyphenation follow it. */
+        var language = "de-DE"
         val settings: Boolean get() = notes.isNotEmpty() || even
         val width: Int get() = if (landscape) TEXT_WIDTH_LANDSCAPE else TEXT_WIDTH
         val height: Int get() = if (landscape) TEXT_HEIGHT_LANDSCAPE else TEXT_HEIGHT
@@ -111,6 +113,7 @@ object MarkdownDocx {
      * structure shows in the navigation pane and screen readers can jump between headings.
      */
     private fun styles(themeFont: String) = buildString {
+        val lang = ctx.language
         // Formatvorlagen of the document (AP-46) as Word styles, so „Überschrift 1 ändern“ in Word works on them too.
         val sheet = ctx.sheet
         val body = sheet?.of(io.github.thepytales.llmhub.docs.text.ParaKind.NORMAL)
@@ -120,7 +123,7 @@ object MarkdownDocx {
         val after = body?.let { it.after * 20 } ?: 120
         append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<w:styles xmlns:w=\"$W_NS\">")
         append("<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii=\"$font\" w:hAnsi=\"$font\" w:cs=\"$font\"/>")
-        append("<w:sz w:val=\"$bodySize\"/><w:lang w:val=\"de-DE\" w:eastAsia=\"de-DE\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>")
+        append("<w:sz w:val=\"$bodySize\"/><w:lang w:val=\"${lang}\" w:eastAsia=\"${lang}\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>")
         append("<w:pPrDefault><w:pPr><w:spacing w:after=\"$after\" w:line=\"$line\" w:lineRule=\"auto\"/></w:pPr></w:pPrDefault></w:docDefaults>")
         append("<w:style w:type=\"paragraph\" w:default=\"1\" w:styleId=\"Standard\"><w:name w:val=\"Normal\"/><w:qFormat/></w:style>")
         fun rPr(kind: io.github.thepytales.llmhub.docs.text.ParaKind, fallback: String): String {
@@ -164,7 +167,7 @@ object MarkdownDocx {
             "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" " +
             "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
             "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:title>${esc(title)}</dc:title>" +
-            "<dc:language>de-DE</dc:language><dc:creator>Lora</dc:creator>" +
+            "<dc:language>${ctx.language}</dc:language><dc:creator>Lora</dc:creator>" +
             "<dcterms:created xsi:type=\"dcterms:W3CDTF\">$now</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">$now</dcterms:modified>" +
             "</cp:coreProperties>"
     }
@@ -210,7 +213,7 @@ object MarkdownDocx {
         val breaks = DocMarkup.sectionMargins(setup, DocMarkup.sections(markdown))
         val c = Ctx(
             notes,
-            header = setup.hasHeader || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() },
+            header = setup.hasHeader || setup.pageNumbers && setup.numbersMoved && setup.numbersTop || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() },
             footer = setup.pageNumbers || theme.footer.isNotBlank() || setup.footer.isNotBlank() || setup.footerEven.isNotBlank() || setup.titlePage && setup.footerFirst.isNotBlank() ||
                 breaks.any { it.second.isNotBlank() },
         )
@@ -219,6 +222,7 @@ object MarkdownDocx {
         c.first = setup.titlePage
         c.even = setup.hasEven
         c.headings = DocMarkup.tocEntries(markdown)
+        c.language = DocMarkup.language(markdown)
         c.sheet = io.github.thepytales.llmhub.docs.text.Styles.read(markdown).takeIf { it.explicit || it.changed.isNotEmpty() }
         current.set(c)
         try {
@@ -235,17 +239,17 @@ object MarkdownDocx {
                 entry("[Content_Types].xml", contentTypes(c))
                 entry("_rels/.rels", RELS)
                 entry("word/_rels/document.xml.rels", docRels(logo != null, c))
-                if (c.footer) entry("word/footer1.xml", footer(setup.footer, theme.footer, setup.pageNumbers))
-                if (c.header) entry("word/header1.xml", header(setup.header, setup.date))
+                if (c.footer) entry("word/footer1.xml", footer(setup.footer, theme.footer, setup.pageNumbers, setup))
+                if (c.header) entry("word/header1.xml", header(setup.header, setup.date, setup.pageNumbers, setup))
                 // Deckblatt: own header and footer of the first page (no page number); even pages: theirs.
                 if (c.first && c.footer) entry("word/footer2.xml", footer(setup.footerFirst, "", false))
                 if (c.first && c.header) entry("word/header2.xml", header(setup.headerFirst, false))
-                if (c.even && c.footer) entry("word/footer3.xml", footer(setup.footerEven, theme.footer, setup.pageNumbers))
-                if (c.even && c.header) entry("word/header3.xml", header(setup.headerEven, setup.date))
+                if (c.even && c.footer) entry("word/footer3.xml", footer(setup.footerEven, theme.footer, setup.pageNumbers, setup))
+                if (c.even && c.header) entry("word/header3.xml", header(setup.headerEven, setup.date, setup.pageNumbers, setup))
                 // Abschnitte: header and footer of each further section.
                 c.breaks.forEachIndexed { k, (h, f) ->
-                    if (c.footer) entry("word/footer${4 + k}.xml", footer(f, theme.footer, setup.pageNumbers))
-                    if (c.header) entry("word/header${4 + k}.xml", header(h, setup.date))
+                    if (c.footer) entry("word/footer${4 + k}.xml", footer(f, theme.footer, setup.pageNumbers, setup))
+                    if (c.header) entry("word/header${4 + k}.xml", header(h, setup.date, setup.pageNumbers, setup))
                 }
                 if (footnotes != null) entry("word/footnotes.xml", footnotes)
                 if (c.settings) entry("word/settings.xml", settings(c))
@@ -297,6 +301,43 @@ object MarkdownDocx {
     /** Text of a header or footer with its fields `{seite}`/`{seiten}` as PAGE / NUMPAGES fields. */
     private fun fieldRuns(text: String, rPr: String): String = DocMarkup.fieldPieces(text).joinToString("") { (isField, t) ->
         if (isField) field(if (t == "seite") "PAGE" else "NUMPAGES", "1", rPr) else "<w:r>$rPr<w:t xml:space=\"preserve\">${esc(t)}</w:t></w:r>"
+    }
+
+    /**
+     * Header or footer with the page number at its own place (AP-126 b): [left], [center] and [right] (texts with fields)
+     * at a centre and a right tab, like Word's own header and footer.
+     */
+    private fun threeParts(tag: String, left: String, center: String, right: String): String {
+        val rPr = "<w:rPr><w:color w:val=\"888888\"/><w:sz w:val=\"16\"/></w:rPr>"
+        val tab = "<w:r>$rPr<w:tab/></w:r>"
+        val content = buildString {
+            if (left.isNotBlank()) append(fieldRuns(left, rPr))
+            if (center.isNotBlank() || right.isNotBlank()) append(tab)
+            if (center.isNotBlank()) append(fieldRuns(center, rPr))
+            if (right.isNotBlank()) append(tab).append(fieldRuns(right, rPr))
+        }
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<w:$tag xmlns:w=\"$W_NS\" xmlns:r=\"$R_NS\"><w:p><w:pPr><w:tabs><w:tab w:val=\"center\" w:pos=\"${TEXT_WIDTH / 2}\"/>" +
+            "<w:tab w:val=\"right\" w:pos=\"$TEXT_WIDTH\"/></w:tabs></w:pPr>$content</w:p></w:$tag>"
+    }
+
+    /** The three parts of a header ([top]) or footer, with the page number at its place. */
+    private fun parts(texts: List<String>, numbers: Boolean, setup: DocMarkup.PageSetup, top: Boolean): List<String> {
+        val slots = texts.map { mutableListOf(it).filter { t -> t.isNotBlank() }.toMutableList() }
+        if (numbers && setup.numbersTop == top) slots[setup.numbersSlot] += setup.numbersText
+        return slots.map { it.joinToString("   ·   ") }
+    }
+
+    private fun footer(own: String, org: String, numbers: Boolean, setup: DocMarkup.PageSetup): String {
+        if (!setup.numbersMoved) return footer(own, org, numbers)
+        val p = parts(listOf(listOf(own, org).filter { it.isNotBlank() }.joinToString("   ·   "), "", ""), numbers, setup, top = false)
+        return threeParts("ftr", p[0], p[1], p[2])
+    }
+
+    private fun header(text: String, date: Boolean, numbers: Boolean, setup: DocMarkup.PageSetup): String {
+        if (!setup.numbersMoved) return header(text, date)
+        val p = parts(listOf(text, "", if (date) DocMarkup.today() else ""), numbers, setup, top = true)
+        return threeParts("hdr", p[0], p[1], p[2])
     }
 
     /** Footer line ([own] and the theme's [org] line) and "Seite X von Y" (PAGE / NUMPAGES fields, updated by Word). */

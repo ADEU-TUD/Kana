@@ -227,10 +227,24 @@ object DocumentWriter {
             val top = ";font:$font;color:$color;vertical-align:bottom;padding-bottom:4mm"
             val bottom = ";font:$font;color:$color$footerPad"
             val foot = listOf(footer, if (org) orgFooter else "").filter { it.isNotBlank() }.joinToString(" · ")
-            append("@top-left{content:${if (header.isBlank()) "none" else cssContent(header)}$top}")
-            append("@top-right{content:${if (date) cssString(DocMarkup.today()) else "none"}$top}")
-            append("@bottom-left{content:${if (foot.isBlank()) "none" else cssContent(foot)}$bottom}")
-            append("@bottom-right{content:${if (numbers) "\"Seite \" counter(page) \" von \" counter(pages)" else "none"}$bottom}")
+            if (!setup.numbersMoved) {
+                append("@top-left{content:${if (header.isBlank()) "none" else cssContent(header)}$top}")
+                append("@top-right{content:${if (date) cssString(DocMarkup.today()) else "none"}$top}")
+                append("@bottom-left{content:${if (foot.isBlank()) "none" else cssContent(foot)}$bottom}")
+                append("@bottom-right{content:${if (numbers) "\"Seite \" counter(page) \" von \" counter(pages)" else "none"}$bottom}")
+                return
+            }
+            // Seitenzahlen an eigener Stelle (AP-126 b): the six boxes; a page number next to a text there follows it.
+            val slots = Array(6) { mutableListOf<String>() }
+            if (header.isNotBlank()) slots[0] += header
+            if (date) slots[2] += DocMarkup.today()
+            if (foot.isNotBlank()) slots[3] += foot
+            if (numbers) slots[(if (setup.numbersTop) 0 else 3) + setup.numbersSlot] += setup.numbersText
+            listOf("top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right").forEachIndexed { k, box ->
+                val text = slots[k].joinToString(" · ")
+                if (text.isBlank() && k % 3 == 1) return@forEachIndexed
+                append("@$box{content:${if (text.isBlank()) "none" else cssContent(text)}${if (k < 3) top else bottom}}")
+            }
         }
         val margin = if (setup.margins == "normal") "" else "margin:${setup.marginMm}mm;"
         append("@page{$margin")
@@ -605,7 +619,7 @@ object DocumentWriter {
             docTitle = it.groupValues[1].trim()
             body = body.substringAfter('\n', "")
         }
-        append("<!DOCTYPE html>\n<html lang=\"de\">\n<head>\n<meta charset=\"utf-8\">\n")
+        append("<!DOCTYPE html>\n<html lang=\"${DocMarkup.language(markdown).let { if (it == "de-DE") "de" else it }}\">\n<head>\n<meta charset=\"utf-8\">\n")
         append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n")
         append("<title>${esc(docTitle.ifBlank { "Dokument" })}</title>\n<style>\n")
         append(css(theme, print, certificate, DocMarkup.pageSetup(markdown), DocMarkup.sections(markdown)))

@@ -61,7 +61,19 @@ object AutoCorrect {
      * The correction after [typed] was typed at [cursor] − 1 in [text] (the text after typing; [cursor] behind the
      * new character), or null. [code]: the character stands in code (no correction there).
      */
-    fun after(text: String, cursor: Int, typed: Char, off: Set<Rule> = emptySet(), code: Boolean = false, own: List<Pair<String, String>> = emptyList()): Fix? {
+    /**
+     * Quotation marks of a language (AP-126 b: Sprache des Dokuments): opening and closing – German and Czech „…“,
+     * Polish „…”, French « … », Swiss and Spanish «…», English and Italian “…”.
+     */
+    fun quotes(lang: String): Pair<String, String> = when (lang.lowercase().let { if (it == "de-ch") it else it.substringBefore('-') }) {
+        "de", "cs" -> "„" to "“"
+        "pl" -> "„" to "”"
+        "fr" -> "«\u00A0" to "\u00A0»"
+        "de-ch", "es" -> "«" to "»"
+        else -> "“" to "”"
+    }
+
+    fun after(text: String, cursor: Int, typed: Char, off: Set<Rule> = emptySet(), code: Boolean = false, own: List<Pair<String, String>> = emptyList(), lang: String = "de-DE"): Fix? {
         if (code || cursor < 1 || cursor > text.length) return null
         val before = text.substring(0, cursor - 1)
         // Eigene Ersetzungen first: a Kürzel may hold marks that other rules would change („(tud)“, „->x“).
@@ -70,7 +82,9 @@ object AutoCorrect {
         if (Rule.QUOTES !in off && typed == '"') {
             val prev = before.lastOrNull()
             val opening = prev == null || prev.isWhitespace() || prev in "([{–—/"
-            return Fix(cursor - 1 until cursor, if (opening) "„" else "“", cursor, Rule.QUOTES)
+            val (open, close) = quotes(lang)
+            val mark = if (opening) open else close
+            return Fix(cursor - 1 until cursor, mark, cursor - 1 + mark.length, Rule.QUOTES)
         }
         if (Rule.QUOTES !in off && typed == '\'') {
             val prev = before.lastOrNull()
