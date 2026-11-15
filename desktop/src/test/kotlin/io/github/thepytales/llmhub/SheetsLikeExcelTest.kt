@@ -319,5 +319,7 @@ class SheetsLikeExcelTest {
         file.delete()
         println("100 000 Zeilen: Markdown $compose ms, lesen $parse ms, erster Bildschirm $screen ms, SUMME(D:D) $sum ms, xlsx schreiben $write ms, xlsx lesen $read ms")
         assertTrue(parse < 5_000 && screen < 1_000, "zu langsam: lesen $parse ms, Bildschirm $screen ms")
+        // AP-132: reading the workbook took over eight minutes once (searches ran to the end of the sheet).
+        assertTrue(read < 30_000, "xlsx lesen zu langsam: $read ms")
     }
 }

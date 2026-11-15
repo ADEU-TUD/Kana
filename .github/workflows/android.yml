@@ -299,15 +299,49 @@ jobs:
           path: selftest/
           retention-days: 3
 
+  # AP-132: the full desktop test collection (the PR-Check only runs the areas a change touches) – no release with a
+  # failing test. Runs alongside the builds and needs no transfer files.
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: build/speech-downloads
+          key: speech-desktop-${{ hashFiles('speech/natives.gradle.kts') }}
+
+      - name: Alle Tests (Sprach-Engine, gemeinsamer Code, Windows-Version)
+        run: ./gradlew --no-daemon :speech:test && ./gradlew --no-daemon -p desktop test
+
+      - name: Testberichte
+        if: failure()
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: testberichte-${{ env.VERSION_NAME }}
+          path: |
+            desktop/build/reports/tests
+            speech/build/reports/tests
+          retention-days: 3
+
   # Builds of main and tags become normal releases; builds of other branches appear as pre-releases.
   # Normal releases also go to the public update repository, from where the apps update themselves.
   # macOS and Linux are skipped when started with macos_linux = false. A failed Linux build or start test stops the
   # release; macOS is optional: if its job does not run (no macOS runners for the account) or fails, the release
   # appears without the Mac files and says so.
   release:
-    needs: [smoke-test, windows, macos, linux]
+    needs: [smoke-test, windows, macos, linux, tests]
     if: >-
-      !cancelled() && needs.smoke-test.result == 'success' && needs.windows.result == 'success'
+      !cancelled() && needs.smoke-test.result == 'success' && needs.windows.result == 'success' && needs.tests.result == 'success'
       && (needs.linux.result == 'success' || needs.linux.result == 'skipped')
     runs-on: ubuntu-latest
     steps:

@@ -1,11 +1,18 @@
 name: PR-Check
 
-# Fast check for every pull request (about 6–8 minutes): the Android app compiles (without the local language
-# models, whose llama-server build takes long), the unit tests of the shared code and the speech engine pass, and the
-# Linux app folder can be packed. The full build with emulator and Windows/macOS/Linux start tests stays in
-# "Build & Release" (started by hand).
+# Check for every pull request. Since AP-132 only what a change concerns (desktop/testbereiche.txt):
+#   - only texts (README, docs/, tools/ …): nothing to build – the check is green in under a minute;
+#   - only Android files: the Android app compiles;
+#   - otherwise: the Android app compiles (without the local language models, whose llama-server build takes long), the
+#     speech engine's tests, the desktop tests of the areas the change touches plus the core tests, and the Linux app
+#     folder is packed. A change to the middle of the app (AppContainer, SettingsStore, build files …) runs all tests.
+# The full collection runs every Sunday night on main (that run also refills Gradle's cache for the pull requests), by
+# hand (Run workflow) and before every release (android.yml). The full build with emulator and the
+# Windows/macOS/Linux start tests stays in "Build & Release" (started by hand).
 on:
   pull_request:
+  schedule:
+    - cron: '23 2 * * 0'
   workflow_dispatch:
 
 permissions:
@@ -18,35 +25,67 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
+      # Two commits: the merge commit of the pull request and main before it (HEAD^1) – the difference is the change.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      # Gradle's cache is written only on main (the Sunday run); pull requests read it, so Maven Central is not asked
+      # for every library again.
       - uses: gradle/actions/setup-gradle@v4
+
+      - name: Was ist zu prüfen?
+        id: bedarf
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            bedarf=$(./gradlew --no-daemon -q -p desktop testBedarf -Pseit=HEAD^1 | tail -1)
+          else
+            bedarf=alle
+          fi
+          # Anything unexpected (empty output …) runs everything rather than nothing.
+          case "$bedarf" in keine|android|tests) ;; *) bedarf=alle ;; esac
+          echo "bedarf=$bedarf" >> "$GITHUB_OUTPUT"
+          case "$bedarf" in
+            keine) echo "Nur Texte geändert – keine Tests nötig." >> "$GITHUB_STEP_SUMMARY" ;;
+            android) echo "Nur die Android-App geändert – sie wird kompiliert." >> "$GITHUB_STEP_SUMMARY" ;;
+            alle) echo "Volle Testsammlung." >> "$GITHUB_STEP_SUMMARY" ;;
+          esac
+          echo "Bedarf: $bedarf"
 
       # "desktop" in the key since the Linux app is packed below (its speech libraries are part of the cache then).
       - uses: actions/cache@v4
+        if: steps.bedarf.outputs.bedarf != 'keine'
         with:
           path: build/speech-downloads
           key: speech-desktop-${{ hashFiles('speech/natives.gradle.kts') }}
 
       - name: Android-App kompilieren
+        if: steps.bedarf.outputs.bedarf != 'keine'
         run: ./gradlew --no-daemon :app:compileDebugKotlin -PskipLlama
 
       - name: Tests der Sprach-Engine
+        if: steps.bedarf.outputs.bedarf == 'tests' || steps.bedarf.outputs.bedarf == 'alle'
         run: ./gradlew --no-daemon :speech:test
 
-      - name: Tests (gemeinsamer Code, Windows-Version)
+      - name: Tests der betroffenen Bereiche (gemeinsamer Code, Windows-Version)
+        if: steps.bedarf.outputs.bedarf == 'tests'
+        run: ./gradlew --no-daemon -p desktop testAuswahl -Pseit=HEAD^1
+
+      - name: Alle Tests (gemeinsamer Code, Windows-Version)
+        if: steps.bedarf.outputs.bedarf == 'alle'
         run: ./gradlew --no-daemon -p desktop test
 
       # AP-31: the Linux app folder as in the release (under a minute on top of the tests, which compiled everything)
       # – finds mistakes in the packaging (desktop/build.gradle.kts: Java modules, icons, jpackage options) before a release.
       - name: Linux-App packen
+        if: steps.bedarf.outputs.bedarf == 'tests' || steps.bedarf.outputs.bedarf == 'alle'
         run: ./gradlew --no-daemon -p desktop createDistributable
 
       - name: Testberichte
@@ -56,4 +95,5 @@ jobs:
           name: testberichte
           path: |
             desktop/build/reports/tests
+            desktop/build/testauswahl.txt
             speech/build/reports/tests

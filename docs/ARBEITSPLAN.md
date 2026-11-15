@@ -1,6 +1,6 @@
 # Arbeitsplan Lora (bis 1.0.43 „ADEU LLM“) – Runde 2
 
-Stand: 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
+Stand: 15.11.2026 (**AP-132** Entwicklung: Desktop-Tests 27 → 5½ min – dabei ein Tempo-Fehler beim Öffnen großer Excel-Dateien behoben –, PR-Check prüft nur die betroffenen Bereiche, Vorher/Nachher-Seite mit einem Befehl) · 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
 Runde 1 (AP-01 bis AP-37) ist erledigt und steht ausführlich in [`ARBEITSPLAN-RUNDE-1.md`](ARBEITSPLAN-RUNDE-1.md).
 
 **Design steht im Design-Arbeitsplan** (seit 13.11.2026): Pakete zu Aussehen, Bedienbarkeit und Nutzerfreundlichkeit
@@ -76,7 +76,7 @@ Fairlight).
 | ~~Lora im Alltag~~ ☑ | AP-74 Fehlermeldungen in Klartext · AP-75 Lora-Verlauf mit „Nochmal“ · AP-76 Sprachmodell-Empfehlung nach Messung · AP-77 Probelauf und „Alles rückgängig“ · AP-78 Eigene Wörter und Wissenspakete · AP-79 Hausstil- und Barrierefreiheits-Check · AP-80 Rollenauswahl · AP-81 Videoexport-Warteschlange · AP-82 Vorschau für Video und Ton · AP-83 Lora-Pakete teilen · AP-84 Lora in mehreren Fenstern · AP-85 Große Anhänge vollständig nutzen (erledigt 10.11.2026, siehe *Erledigt*) |
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Lora offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Lora selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Lora Postfach · AP-113 Lora Namensschutz Runde 3 · AP-114 Lora Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
-| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck · AP-133 Geführte Prüfung am Gerät · AP-134 Nichts geht verloren · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
+| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · AP-133 Geführte Prüfung am Gerät · AP-134 Nichts geht verloren · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
 | **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ◐** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☐** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☐** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☐** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☐** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
@@ -107,7 +107,7 @@ ebenfalls in einem eigenen Chat; auch dort kommt der Messkorpus vor jedem Traini
 **Reihenfolge ab 14.11.2026 (Hauptnutzer nach der Werkzeug-Analyse)**: Aus der Analyse „Wie die Werkzeuge in Lora besser
 werden“ ([`WERKZEUG-ANALYSE.md`](WERKZEUG-ANALYSE.md), 85 Vorschläge, 79 übernommen; Nummern wie *Q-01* stehen bei der jeweiligen Stufe) sind AP-131 bis AP-154 und
 APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfohlene Reihenfolge:
-**AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) → **AP-125 (f)** (Reste Dokument) → **AP-133** (Prüfung am Gerät) →
+**AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) ◐ → **AP-125 (f)** (Reste Dokument) → **AP-133** (Prüfung am Gerät) →
 **AP-134** (nichts geht verloren) → wie bisher **AP-126** → **APD-16 + AP-127** → **APD-17b + AP-130** → **AP-128** →
 **AP-129** → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
@@ -195,7 +195,7 @@ zwei Tabs parallel gearbeitet werden kann, ohne die App zu verlassen; Tests mit 
   Rechte danach mit `ls -l` vergleichen; Datei aus dem Explorer hineinziehen. (6) Zwei Tabs (Live rot, Test grün),
   *An mehrere senden* mit `uptime`.
 
-### AP-132 ☐ Entwicklung: schnellere Tests und Vorher/Nachher auf Knopfdruck · M (Analyse E-01, E-02, Hauptnutzer zuerst)
+### AP-132 ◐ Entwicklung: schnellere Tests und Vorher/Nachher auf Knopfdruck · M (Analyse E-01, E-02, Hauptnutzer zuerst)
 **Ziel**: Änderungen sind schneller geprüft, Design-Stufen schneller gezeigt.
 - **(a) Schnellere Tests für PRs** (E-01): Heute braucht die ganze Desktop-Sammlung lokal etwa 27 Minuten (879+ Tests,
   zwei Worker). Tests nach Bereichen kennzeichnen (Kern, Dokumente, Tabellen, Folien, Video, PDF, Mail, Lora …); der
@@ -207,6 +207,38 @@ zwei Tabs parallel gearbeitet werden kann, ohne die App zu verlassen; Tests mit 
   Abweichung in Prozent und markierten Stellen – für jede Design-Stufe (Grundsatz des Design-Arbeitsplans).
 **Fertig, wenn**: ein typischer PR-Check unter 10 Minuten bleibt, ohne dass ein Fehler erst im Release auffällt, und eine
 Vergleichsseite mit einem Befehl entsteht.
+◐ *Stand 15.11.2026*: (a) und (b) im Zweig; ob der PR-Check auf GitHub unter 10 Minuten bleibt, zeigt der erste PR.
+- **Gemessen** (vorher): lokal 27 min für die Desktop-Sammlung, auf GitHub 15¾ min Testzeit (Lauf 107), davon 60 % in
+  drei Tests. **Ursachen und Abhilfe**: `XlsxReader` brauchte für 100 000 Zeilen über 6 min (lokal 8½) – Suchen nach
+  `<f`, `<r>`, `<rPr` und Attributen liefen bis ans Dateiende, wenn sie einer Zelle fehlten; jetzt auf die Zelle
+  begrenzt, **1,6 s** (ein echter Tempo-Fehler der App beim Öffnen großer Excel-Dateien; der Test prüft jetzt auch die
+  Zeit). `OfflineProfileTest` wartete die drei Wiederholungs-Pausen einer Serveranfrage ab (5 + 15 + 30 s, zweimal) –
+  im Test jetzt ohne Pause (`LlmClient.retryPauseMs`). `LoraFigureTest` zeichnet über 2 000 Bilder – jetzt auf allen
+  Kernen. In Cloud-Containern ohne Bildschirm hing das volle Chrome beim PDF-Druck 60 s je PDF – der Test-Lauf nimmt dort
+  Playwrights *headless shell* (nur für Tests, nur wo sie installiert ist). Ab vier Kernen laufen die Testklassen in zwei
+  JVMs. **Ergebnis lokal: 5½ min statt 27 min** (alles grün, 919 Tests), Summe der Testzeit 456 s statt 1 596 s.
+- **(a) Bereiche**: [`desktop/testbereiche.txt`](../desktop/testbereiche.txt) ordnet Dateimuster 16 Bereichen zu
+  (dokumente, tabellen, folien, gestalten, video, pdf, mail, lora, terminal, transkription, lokal, datenschutz, dateien,
+  literatur, chat, oberflaeche) plus *kern* (immer), *doku* (keine Tests), *android* (nur Android-Build) und *alles*.
+  `desktop/testbereiche.gradle.kts`: `testBedarf` (keine/android/tests, ohne Kompilieren) und `testAuswahl` (die Tests der
+  betroffenen Bereiche, dazu jede Testklasse, die eine geänderte Datei direkt benutzt – aus dem Konstantenpool der
+  kompilierten Klassen gelesen –, und immer *kern*; eine Datei, die 15 und mehr Testklassen direkt benutzen, eine aus
+  *alles* oder eine ohne Bereich lässt alles laufen; Testklassen ohne Bereich laufen als Kern immer mit). Eine rein
+  automatische Auswahl über alle Abhängigkeiten hilft nicht: fast jeder Oberflächen-Test erreicht über `AppContainer`
+  568 von 585 Quelldateien. **PR-Check** (`pr-check.yml`): nur Texte → nichts bauen; nur Android → kompilieren; sonst
+  Auswahl; Zusammenfassung „welche Tests und warum“ im Lauf. Volle Sammlung sonntags nachts auf `main` (füllt den
+  Gradle-Zwischenspeicher, aus dem die PRs lesen), von Hand und **vor jedem Release** (Job *tests* in `android.yml`, das
+  Release wartet darauf; `release-local.sh` mit `SKIP_TESTS=1` zum Überspringen). An den letzten 14 PRs ausprobiert
+  (`-Pseit=… -Pbis=… -Pzeigen`): 5 nur Texte (vorher je ~20 min, jetzt keine Tests), Logo-PR 64 von 171 Klassen,
+  Dokument-PR 100 von 171, die übrigen ändern `SettingsStore`/`AppMap`/`AppContainer` und laufen voll – das ist mit der
+  schnelleren Sammlung verkraftbar.
+- **(b) Vorher/Nachher**: `./gradlew -p desktop vergleich [-Ptests=…] [-Pbasis=origin/main]` (`desktop/vergleich.gradle.kts`)
+  – Bild-Tests im Zweig, Stand der Basis als `git worktree` in `build/vergleich-vorher` mit denselben Tests (zuerst den
+  Testdateien des Zweigs, sonst denen der Basis), Vergleich jedes PNG: Abweichung in Prozent, geänderte Stellen rot
+  umrandet, eine HTML-Datei mit eingebetteten Bildern (`desktop/build/vergleich/index.html`). README › *Vorher/Nachher-Bilder
+  auf Knopfdruck*.
+- **Offen**: der erste PR-Check auf GitHub (Zeit messen; GitHub-Rechner privater Repositorys haben evtl. nur zwei Kerne,
+  dann läuft eine JVM).
 
 ### AP-133 ☐ Geführte Prüfung am Gerät · M (Analyse Q-07)
 **Befund**: Viele Pakete stehen auf ◐, weil die Prüfung am Gerät (Windows, Android, macOS) offen ist.

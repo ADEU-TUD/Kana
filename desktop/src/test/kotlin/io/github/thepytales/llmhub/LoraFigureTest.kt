@@ -139,23 +139,30 @@ class LoraFigureTest {
 
     @Test
     fun drawsInsideTheCanvasAtEveryMoment() {
-        // Card size (110 × 77 dp at density 3) and the size in the voice mode.
+        // Card size (110 × 77 dp at density 3) and the size in the voice mode. Every frame is drawn on its own canvas,
+        // so they are checked on all cores at once (AP-132: one after the other this took a minute).
+        val frames = ArrayList<Triple<LoraFrame, Long, Pair<Int, Int>>>()
+        val labels = ArrayList<String>()
         for ((w, h) in listOf(330 to 231, 570 to 399)) {
             for (action in LoraAction.entries) {
                 var t = 0L
                 while (t <= action.periodMs) {
-                    val frame = LoraFrame(action, t / action.periodMs.toFloat(), t, null, 1f)
-                    check(render(frame, 7_000 + t, w, h, light), "$action bei $t ms ($w×$h)")
+                    frames += Triple(LoraFrame(action, t / action.periodMs.toFloat(), t, null, 1f), 7_000 + t, w to h)
+                    labels += "$action bei $t ms ($w×$h)"
                     t += 90
                 }
                 // Moving in from every other action (half blended), early and late in the round.
                 for (other in LoraAction.entries) {
                     for (phase in listOf(0.05f, 0.5f)) {
-                        val frame = LoraFrame(action, phase, (phase * action.periodMs).toLong(), other, 0.5f)
-                        check(render(frame, 3_300, w, h, light), "$other → $action ($w×$h)")
+                        frames += Triple(LoraFrame(action, phase, (phase * action.periodMs).toLong(), other, 0.5f), 3_300L, w to h)
+                        labels += "$other → $action ($w×$h)"
                     }
                 }
             }
+        }
+        frames.indices.toList().parallelStream().forEach { i ->
+            val (frame, time, size) = frames[i]
+            check(render(frame, time, size.first, size.second, light), labels[i])
         }
         sheet(light, "build/lora.png")
         sheet(dark, "build/lora-dark.png")
