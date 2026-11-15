@@ -656,7 +656,10 @@ internal fun FlowTableBlock(state: FlowState, seg: FlowSeg.Raw, paging: TablePag
                 drawLine(line, Offset(s / 2, 0f), Offset(s / 2, size.height), s)
                 if (r == 0 || readOnly) drawLine(line, Offset(0f, s / 2), Offset(size.width, s / 2), s)
             },
-        ) { (0 until cols).forEach { c -> cell(r, c, row, readOnly, colDp[c]) } }
+        ) {
+            // Verbundene Zellen (AP-126 d): one cell over the columns it spans.
+            DocBlocks.spans(row, cols).forEach { (c, _, n) -> cell(r, c, row, readOnly, (c until c + n).fold(0.dp) { acc, k -> acc + colDp[k] }) }
+        }
 
         /** Room before row [r] on a new page (Seitenansicht), with the header row repeated at its end when asked. */
         @Composable
@@ -759,6 +762,25 @@ private fun TableMenu(
         entry(tr("Zeile unterhalb einfügen")) { write(withRow(rows, r + 1), widths, (r + 1) to c) }
         entry(tr("Spalte links einfügen")) { val (nr, nw) = withColumn(rows, widths, c); write(nr, nw, r to c) }
         entry(tr("Spalte rechts einfügen")) { val (nr, nw) = withColumn(rows, widths, c + 1); write(nr, nw, r to (c + 1)) }
+        // Zellen verbinden (AP-126 d, like Word): with the cell on the right; the text of both stays.
+        val span = DocBlocks.spans(rows[r], cols).firstOrNull { it.first == c }?.third ?: 1
+        entry(tr("Mit Zelle rechts verbinden"), enabled = c + span < cols) {
+            val next = c + span
+            write(rows.mapIndexed { i, rr ->
+                if (i != r) rr
+                else (0 until cols).map { k ->
+                    val cell = rr.getOrElse(k) { "" }
+                    when {
+                        k == c -> listOf(cell, rr.getOrElse(next) { "" }).filter { it.isNotBlank() && !DocBlocks.isMerged(it) }.joinToString(" ")
+                        k == next -> DocBlocks.MERGED
+                        else -> cell
+                    }
+                }
+            }, widths, r to c)
+        }
+        entry(tr("Zellverbindung aufheben"), enabled = span > 1) {
+            write(rows.mapIndexed { i, rr -> if (i != r) rr else (0 until cols).map { k -> if (k in c + 1 until c + span) "" else rr.getOrElse(k) { "" } } }, widths, r to c)
+        }
         HorizontalDivider()
         entry(tr("Zeile löschen"), enabled = r > 0) { write(rows.filterIndexed { i, _ -> i != r }, widths, (r - 1).coerceAtLeast(0) to c) }
         entry(tr("Spalte löschen"), enabled = cols > 1) { val (nr, nw) = withoutColumn(rows, widths, c); write(nr, nw, r to (c - 1).coerceAtLeast(0)) }

@@ -7494,3 +7494,124 @@ Fußnoten als Endnoten (am Ende des Dokuments)	Footnotes as endnotes (at the end
 Mit Nummer beschriften	Caption with number
 Beschriftung hinzufügen (Tabelle mit Nummer)	Add caption (numbered table)
 Beschriftung entfernen	Remove caption
+Ab dem Cursor läuft der Text in so vielen Spalten – in der Seitenansicht als Markierung, im PDF und in Word als echte Spalten. „Eine“ beendet die Spalten wieder.	From the cursor on the text runs in this many columns – marked in the page view, real columns in the PDF and in Word. “One” ends the columns again.
+Absatz …	Paragraph …
+Abstand	Spacing
+Alle ignorieren	Ignore all
+Als Word mit Änderungen speichern …	Save as Word with tracked changes …
+Andere Fassung	Other version
+Anderes Dokument	Other document
+Aufeinanderfolgende Absätze mit gleichem Rahmen stehen in einem Kasten – wie in Word.	Consecutive paragraphs with the same border share one box – as in Word.
+Aufzählungszeichen	Bullets
+Balken	Bars
+Baustein	Building block
+Baustein speichern	Save building block
+Baustein „{0}“ gespeichert – Einfügen › Baustein oder @{0}.	Building block “{0}” saved – Insert › Building block or @{0}.
+Baustein …	Building block …
+Bausteine	Building blocks
+Beginnen	Start
+Bei 1	At 1
+Das Dokument hat noch keine Tabelle. Füge eine ein (erste Zeile: Namen der Reihen, erste Spalte: Kategorien).	The document has no table yet. Insert one (first row: names of the series, first column: categories).
+Datei wählen (Word, ODT, Markdown, Text) …	Choose a file (Word, ODT, Markdown, text) …
+Der Cursor steht in keiner Liste. Setze ihn in eine Aufzählung oder nummerierte Liste.	The cursor is not in a list. Put it into a bulleted or numbered list.
+Der Thesaurus ließ sich nicht laden: {0}	The thesaurus could not be loaded: {0}
+Diagramm aus Tabelle	Chart from table
+Diagramm aus Tabelle …	Chart from table …
+Die Form steht als Zeichnung im Dokument; ✎ öffnet sie im Diagramm-Editor.	The shape is a drawing in the document; ✎ opens it in the diagram editor.
+Drei	Three
+E-Mail (freiwillig)	E-mail (optional)
+ENTWURF	DRAFT
+VERTRAULICH	CONFIDENTIAL
+MUSTER	SAMPLE
+NICHT KOPIEREN	DO NOT COPY
+DRINGEND	URGENT
+Eigene Bausteine: Text markieren, dann Einfügen › Markierung als Baustein speichern. Im Text auch mit @ und dem Namen.	Own building blocks: select text, then Insert › Save selection as building block. In the text also with @ and the name.
+Eigener Text	Own text
+Eine	One
+Zwei	Two
+Einzug	Indentation
+Emoji einfügen	Insert emoji
+Emoji …	Emoji …
+Entfernt	Removed
+Erste Nummer	First number
+Erste Zeile eingerückt	First line indented
+Erste Zeile: ohne	First line: none
+Farbe {0}	Colour {0}
+Fassungen vergleichen	Compare versions
+Fassungen vergleichen …	Compare versions …
+Fokusmodus	Focus mode
+Form einfügen	Insert shape
+Form …	Shape …
+Frühere Fassung	Earlier version
+Für Synonyme lädt die App einmalig den deutschen Thesaurus von OpenThesaurus (etwa 1,6 MB) auf dieses Gerät. Danach bleibt beim Nachschlagen jedes Wort hier.	For synonyms the app loads the German thesaurus of OpenThesaurus (about 1.6 MB) onto this device once. After that every word you look up stays here.
+Gestern ({0})	Yesterday ({0})
+Heute ({0})	Today ({0})
+Morgen ({0})	Tomorrow ({0})
+Hier steht nichts zum Vorlesen.	There is nothing here to read aloud.
+Hochformat ab hier	Portrait from here
+Querformat ab hier	Landscape from here
+Hängend	Hanging
+In der Tabelle stehen keine Zahlen.	The table holds no numbers.
+Keine Synonyme gefunden.	No synonyms found.
+Keine Unterschiede im Text.	No differences in the text.
+Linien	Lines
+Links (cm)	Left (cm)
+Listen-Optionen	List options
+Listen-Optionen …	List options …
+Markiere zuerst den Text, der zum Baustein werden soll.	First select the text that is to become the building block.
+Markierung als Baustein speichern	Save selection as building block
+Markierung als Baustein speichern …	Save selection as building block …
+Mehrstufig zählt die Ebenen mit (1., 1.1., 1.1.1.); Tab und Umschalt+Tab wechseln die Ebene.	Multilevel counts the levels too (1., 1.1., 1.1.1.); Tab and Shift+Tab change the level.
+Mehrstufig: {0}	Multilevel: {0}
+Mit Zelle rechts verbinden	Merge with the cell on the right
+Zellverbindung aufheben	Unmerge cells
+Mit nächstem Absatz zusammenhalten	Keep with next paragraph
+Nach (pt)	After (pt)
+Vor (pt)	Before (pt)
+Name des Bausteins	Name of the building block
+Neu beginnen bei …	Restart at …
+Nummerierung	Numbering
+Nummerierung fortsetzen	Continue numbering
+Ohne	None
+Papierformat	Paper size
+Person	Person
+Person einfügen	Insert person
+Person …	Person …
+Pfeil (zwei Kästen)	Arrow (two boxes)
+Quelle: {0}	Source: {0}
+Rahmen um den Absatz	Border around the paragraph
+Rahmen und Schattierung	Borders and shading
+Rahmen und Schattierung …	Borders and shading …
+Rechtschreibung beim Tippen	Check spelling as you type
+Schattierung	Shading
+Seitenfarbe	Page colour
+Seitenlayout	Page layout
+Seitenlayout (Papier, Farbe, Wasserzeichen) …	Page layout (paper, colour, watermark) …
+Seitenumbruch oberhalb	Page break before
+Silbentrennung im Blocksatz	Hyphenation in justified text
+Spalten	Columns
+Spalten enden hier	Columns end here
+Spalten …	Columns …
+{0} Spalten ab hier	{0} columns from here
+Steuerzeichen anzeigen (¶)	Show formatting marks (¶)
+Synonyme …	Synonyms …
+Säulen	Columns
+Tabelle 3 × 3	Table 3 × 3
+Tabelle {0}: {1}	Table {0}: {1}
+Text im Textfeld	Text in the text box
+Text im zweiten Kasten	Text in the second box
+Text in der Form	Text in the shape
+Thesaurus	Thesaurus
+Thesaurus laden	Load thesaurus
+Thesaurus …	Thesaurus …
+Um (cm)	By (cm)
+Umschalt+F7	Shift+F7
+Verglichen mit: {0}	Compared with: {0}
+Vorlesen beenden	Stop reading aloud
+Wasserzeichen	Watermark
+Womit soll dieses Dokument verglichen werden?	What should this document be compared with?
+Wort	Word
+Zeilen- und Seitenumbruch	Line and page breaks
+{0} Stellen unterscheiden sich.	{0} places differ.
+mitgeliefert	built in
+Strg+Alt+Leertaste	Ctrl+Alt+Space

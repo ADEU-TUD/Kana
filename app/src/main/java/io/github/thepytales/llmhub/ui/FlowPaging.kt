@@ -24,7 +24,11 @@ import io.github.thepytales.llmhub.docs.text.RichText
  */
 
 /** A page break before [offset] of a text field, [height] px of room; [ins] is what [PageSpacers] shows there. */
-data class PageBreakAt(val offset: Int, val height: Float, val ins: String) {
+data class PageBreakAt(
+    val offset: Int, val height: Float, val ins: String,
+    /** Abstand vor/nach (AP-126 d): px of [height] that are the paragraph's own room (not the page plan's). */
+    val gap: Float = 0f,
+) {
     /** Characters of [ins] that stay with the line before (the hyphen of a split word). */
     val keep: Int get() = if (ins.startsWith("-")) 1 else 0
 
@@ -213,7 +217,7 @@ class PageSpacers(
 }
 
 /** A line of a text field as laid out without the page breaks: its start in the document text and its height. */
-internal data class NaturalLine(val offset: Int, val height: Float)
+internal data class NaturalLine(val offset: Int, val height: Float, val gap: Boolean = false)
 
 /**
  * The lines of [layout] without the invisible lines of page breaks, with their offsets in [rich] – or null when the
@@ -223,11 +227,19 @@ internal fun naturalLines(layout: TextLayoutResult, rich: RichText, breaks: List
     val sh = Shown(rich.text, breaks, deleted)
     if (layout.layoutInput.text.text != sh.text) return null
     val spacers = sh.spacers
+    // Abstand vor/nach (AP-126 d): the room of a paragraph's own space is a space of the page plan (its known height).
+    val gaps = sh.ins.indices.filter { sh.ins[it].brk != null }.map { sh.ins[it].brk!! }
+    val gapDone = BooleanArray(gaps.size)
     val out = ArrayList<NaturalLine>(layout.lineCount)
     for (l in 0 until layout.lineCount) {
         val start = layout.getLineStart(l)
         // The invisible lines of a break are no lines of the document.
-        if (spacers.any { start in it }) continue
+        val k = spacers.indexOfFirst { start in it }
+        if (k >= 0) {
+            val g = gaps[k]
+            if (g.gap > 0f && !gapDone[k]) { gapDone[k] = true; out += NaturalLine(g.offset, g.gap, gap = true) }
+            continue
+        }
         // From the top of this line to the top of the next one (lines overlap by a fraction of a pixel; their
         // heights would add up to more than the text is high).
         val next = if (l + 1 < layout.lineCount) layout.getLineTop(l + 1) else layout.getLineBottom(l)
@@ -257,9 +269,10 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 val layout = seg.layout ?: return null
                 val rich = seg.rich
                 // Once per layout of each field (große Dokumente: the other fields keep theirs).
-                val key = listOf(layout, rich, seg.breaks, seg.deleted)
+                val shownBreaks = seg.shownBreaks
+                val key = listOf(layout, rich, shownBreaks, seg.deleted)
                 val lines = (if (seg.linesFor == key) seg.linesCache else null)
-                    ?: naturalLines(layout, rich, seg.breaks, seg.deleted)?.also { seg.linesFor = key; seg.linesCache = it }
+                    ?: naturalLines(layout, rich, shownBreaks, seg.deleted)?.also { seg.linesFor = key; seg.linesCache = it }
                     ?: return null
                 // Beside a picture (AP-125 e/f): the picture and the lines next to it are one piece that is not split
                 // – Word keeps an anchored picture with its paragraph; the field is at least as high as the picture.
@@ -279,7 +292,7 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 val paraOf = lines.map { rich.paraAt(it.offset) }
                 // The empty line Compose adds after a paragraph (its line break) is the room between paragraphs: a
                 // space, not a line of the paragraph (Witwen/Waisen count only real lines).
-                val gap = BooleanArray(lines.size) { k -> k > 0 && paraOf[k - 1] == paraOf[k] && rich.text.getOrNull(lines[k].offset) == '\n' }
+                val gap = BooleanArray(lines.size) { k -> lines[k].gap || k > 0 && paraOf[k - 1] == paraOf[k] && rich.text.getOrNull(lines[k].offset) == '\n' }
                 val counts = HashMap<Int, Int>()
                 paraOf.forEachIndexed { k, p -> if (!gap[k] && k >= skip) counts[p] = (counts[p] ?: 0) + 1 }
                 val seen = HashMap<Int, Int>()
@@ -295,8 +308,11 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                     }
                     val idx = seen[p] ?: 0
                     seen[p] = idx + 1
-                    val kind = rich.paras[p].kind
-                    items += PageLayout.Line(line.height, paraBase + p, idx, counts[p] ?: 1, keepWithNext = kind.heading || kind == ParaKind.TITLE || kind == ParaKind.SUBTITLE)
+                    val para = rich.paras[p]
+                    val kind = para.kind
+                    // Seitenumbruch oberhalb (AP-126 d): the paragraph starts a new page (not the first piece of all).
+                    if (idx == 0 && para.pageBefore && items.any { it !is PageLayout.Space }) { items += PageLayout.Break(0f); owners += seg to -2 }
+                    items += PageLayout.Line(line.height, paraBase + p, idx, counts[p] ?: 1, keepWithNext = kind.heading || kind == ParaKind.TITLE || kind == ParaKind.SUBTITLE || para.keep)
                     owners += seg to line.offset
                     total += line.height
                 }

@@ -614,6 +614,24 @@ class DocsStore(dir: File) {
  * tables, code, quotes and callouts. Joining the blocks with an empty line gives the Markdown back.
  */
 object DocBlocks {
+    /** Zellen verbinden (AP-126 d): a cell holding only this belongs to the cell on its left (Word: gridSpan, HTML: colspan). */
+    const val MERGED = "<<"
+
+    fun isMerged(cell: String) = cell.trim() == MERGED
+
+    /** The cells of [row] with how many columns each one spans; merged cells are left out. */
+    fun spans(row: List<String>, cols: Int): List<Triple<Int, String, Int>> {
+        val out = mutableListOf<Triple<Int, String, Int>>()
+        var c = 0
+        while (c < cols) {
+            var n = 1
+            while (c + n < cols && isMerged(row.getOrElse(c + n) { "" })) n++
+            out += Triple(c, row.getOrElse(c) { "" }.let { if (c > 0 && isMerged(it)) "" else it }, n)
+            c += n
+        }
+        return out
+    }
+
     private val HEADING = Regex("^#{1,6}\\s")
     private val LIST = Regex("^\\s*([-*+]|\\d+[.)])\\s")
 

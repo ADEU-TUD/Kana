@@ -499,10 +499,29 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Word stehen echte Beschriftungsfelder, Textmarken und Verzeichnisfelder, im PDF klickbare Verweise und Verzeichnisse.
     Nebenbei: Das PDF druckte das Inhaltsverzeichnis als „[Inhaltsverzeichnis]“ – jetzt steht dort das Verzeichnis; ein
     mitten in einen Absatz eingefügter Block (z. B. eine Tabelle) machte den Rest des Absatzes manchmal zur Überschrift.
+  - **Absatz und Seite** (AP-126 d): *Format › Absatz …* wie in Word – Einzüge in cm (auch hängend), **Abstand vor und
+    nach** in pt, Zeilenabstand, *mit nächstem Absatz zusammenhalten*, *Seitenumbruch oberhalb*. **Listen-Optionen** (a.,
+    a), A., i., I., mehrstufig 1.1.1., andere Aufzählungszeichen, *neu beginnen bei …*, *Nummerierung fortsetzen*), **Rahmen
+    und Schattierung**, **Seitenlayout** mit Papierformat (A4, A5, Letter), Seitenfarbe, **Wasserzeichen** („ENTWURF“,
+    „VERTRAULICH“ oder eigener Text) und Silbentrennung, *Einfügen › Querformat ab hier* und *Spalten …*, **Zellen
+    verbinden** im Rechtsklick der Tabelle – auf dem Blatt, im PDF und in Word gleich. Nebenbei übernimmt das PDF jetzt
+    auch Zeilenabstand und Einzüge.
+  - **Überprüfen** (AP-126 e): **Rechtschreibung beim Tippen** mit roten Wellenlinien (Prüfer des Geräts, Vorschläge und
+    *Alle ignorieren* im Rechtsklick, abschaltbar unter *Extras*), **Thesaurus** (Umschalt+F7 oder Rechtsklick *Synonyme
+    …*; der Thesaurus von OpenThesaurus wird einmal aufs Gerät geladen, danach bleibt jedes Wort hier), **Vorlesen**
+    (Strg+Alt+Leertaste) und **Fassungen vergleichen** (*Extras*): mit einer früheren Version, einem anderen Dokument oder
+    einer Datei – die Unterschiede Wort für Wort, auf Wunsch als Word-Datei mit Änderungsverfolgung.
+  - **Wie Google Docs** (AP-126 f): **@ am Wortanfang** öffnet ein Menü – Datum, Bausteine, Tabelle, Überschrift,
+    Checkliste, Person, Textfeld, Emoji, Dokumente; Weitertippen filtert, Enter nimmt den ersten Eintrag. **Bausteine**
+    (Besprechungsnotiz, E-Mail-Entwurf, Briefschluss und eigene aus der Markierung), **Textfeld**, **Formen** (Rechteck,
+    Kreis, Raute, Notiz, Pfeil), **Diagramm aus einer Tabelle**, **Emoji**, *Ansicht › Steuerzeichen anzeigen (¶)* und
+    **Fokusmodus**. Dazu aus AP-126 c: Nummerierte Überschriften sind in Word jetzt eine echte Word-Nummerierung, und
+    Beschriftungen mit Nummer kommen beim Öffnen einer Word-Datei als solche zurück (samt Querverweisen).
   - Nebenbei: *Datei › Exportieren* nahm den Stand beim Öffnen – jetzt den aktuellen.
   Tests `DocEditorChromeTest`, `DocEditorLookTest` (Vorher/Nachher-Bilder), `AppShortcutsTest`, `AutoCorrectTest`,
   `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder),
-  `FlowWrapPdfTest`, `FlowOfficeBasicsTest`, `DocEditorBasicsTest`, `FlowScienceTest`, `DocEditorScienceTest`.
+  `FlowWrapPdfTest`, `FlowOfficeBasicsTest`, `DocEditorBasicsTest`, `FlowScienceTest`, `DocEditorScienceTest`,
+  `FlowParagraphPageTest`, `FlowReviewComfortTest`, `DocEditorOfficeTest`.
 
   | Vorher | Nachher | Datei-Menü | Rechtsklick |
   | --- | --- | --- | --- |

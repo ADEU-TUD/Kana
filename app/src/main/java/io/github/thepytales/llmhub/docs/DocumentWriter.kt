@@ -299,11 +299,36 @@ object DocumentWriter {
      * The paragraph's Ausrichtung from its marker (`<!--a:c-->` zentriert, `r` rechtsbündig, `j` Blocksatz) as a style
      * attribute, so PDFs look like the editor and the Word file; "" for left.
      */
-    private fun alignStyle(text: String): String = when (io.github.thepytales.llmhub.ui.ALIGN_MARK.find(text.trimStart())?.groupValues?.get(1)) {
-        "c" -> " style=\"text-align:center\""
-        "r" -> " style=\"text-align:right\""
-        "j" -> " style=\"text-align:justify;hyphens:auto\""
-        else -> ""
+    private fun alignStyle(text: String, hyphens: Boolean = true): String = paraCss(text, hyphens).let { if (it.isEmpty()) "" else " style=\"$it\"" }
+
+    /** The paragraph format of [text] (its marker `<!--a:…-->`), or null without one. */
+    private fun paraFormat(text: String): io.github.thepytales.llmhub.docs.text.ParaFormat? =
+        io.github.thepytales.llmhub.ui.ALIGN_MARK.find(text.trimStart())?.let { io.github.thepytales.llmhub.docs.text.ParaFormat.fromMarker(io.github.thepytales.llmhub.docs.text.ParaFormat(), it) }
+
+    /**
+     * The look of a paragraph of the editor as CSS (AP-44, AP-126 d): alignment, line spacing, indents, space before and
+     * after, page break before, kept with the next one, frame and background – so the PDF looks like the editor and the
+     * Word file. [hyphens]: Silbentrennung in justified text (off when the document says so).
+     */
+    private fun paraCss(text: String, hyphens: Boolean = true): String {
+        val p = paraFormat(text) ?: return ""
+        return buildList {
+            when (p.align) {
+                io.github.thepytales.llmhub.docs.text.Align.CENTER -> add("text-align:center")
+                io.github.thepytales.llmhub.docs.text.Align.RIGHT -> add("text-align:right")
+                io.github.thepytales.llmhub.docs.text.Align.JUSTIFY -> { add("text-align:justify"); if (hyphens) add("hyphens:auto") }
+                else -> {}
+            }
+            p.spacing?.let { add("line-height:" + "%.2f".format(Locale.ROOT, it * 1.35f)) }
+            if (p.left != 0) add("margin-left:${p.left}mm")
+            if (p.first != 0) add("text-indent:${p.first}mm")
+            p.before?.let { add("margin-top:${it}pt") }
+            p.after?.let { add("margin-bottom:${it}pt") }
+            if (p.pageBefore) add("break-before:page;page-break-before:always")
+            if (p.keep) add("break-after:avoid;page-break-after:avoid")
+            if (p.border) add("border:0.75pt solid #444;padding:3pt 5pt")
+            p.shade?.let { add("background:#$it"); if (!p.border) add("padding:2pt 5pt") }
+        }.joinToString(";")
     }
 
     /** Lesezeichen (AP-126 c): the id of a paragraph with the marker `b=…`. */
@@ -634,6 +659,21 @@ object DocumentWriter {
             "</div></div>\n"
     }
 
+    /**
+     * Seitenlayout (AP-126 d): paper, page colour, the watermark and own list numbers, columns and paragraph frames.
+     * Without a layout of its own nothing changes for the page (A4 white as always).
+     */
+    private fun layoutCss(layout: DocMarkup.Layout, print: Boolean): String = buildString {
+        append("li .lnum{display:inline-block;min-width:16pt;margin-left:-18pt;padding-right:2pt}")
+        append(".spalten{column-gap:8mm}.spalten>*{break-inside:avoid-column}")
+        if (print && layout.paper != "a4") append("@page{size:${layout.paperCss}}@page quer{size:${layout.paperCss} landscape}")
+        layout.color?.let { append("html{background:#$it}@page{background:#$it}") }
+        if (layout.watermark.isNotBlank()) {
+            append(".wz{position:fixed;top:42%;left:-10%;right:-10%;text-align:center;transform:rotate(-40deg);font-size:64pt;font-weight:700;")
+            append("letter-spacing:.06em;color:rgba(110,110,110,.16);z-index:-1;pointer-events:none;white-space:nowrap}")
+        }
+    }
+
     /** Converts Markdown into a styled HTML page (also the source for PDFs). */
     fun toHtml(
         title: String,
@@ -662,7 +702,10 @@ object DocumentWriter {
         append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n")
         append("<title>${esc(docTitle.ifBlank { "Dokument" })}</title>\n<style>\n")
         append(css(theme, print, certificate, DocMarkup.pageSetup(markdown), DocMarkup.sections(markdown)))
+        append(layoutCss(DocMarkup.layout(markdown), print))
         append("\n</style>\n</head>\n<body${if (letter != null) " class=\"letter\"" else ""}>\n")
+        // Wasserzeichen (AP-126 d): fixed in the middle of every printed page, behind the text.
+        DocMarkup.layout(markdown).watermark.takeIf { it.isNotBlank() && !certificate }?.let { append("<div class=\"wz\" aria-hidden=\"true\">${esc(it)}</div>\n") }
         if (certificate) {
             append(certificateHtml(docTitle, body, theme, print))
             append("</body>\n</html>\n")
@@ -676,6 +719,11 @@ object DocumentWriter {
         var section = 0
         val blocks = parseBlocks(footnotes.body)
         var openList: String? = null
+        // Listen-Optionen, Silbentrennung und Spalten (AP-126 d).
+        val lists = io.github.thepytales.llmhub.docs.text.ListStyles.Counter()
+        val layout = DocMarkup.layout(markdown)
+        val hyph = layout.hyphenation
+        var columns = 1
         fun closeList() {
             openList?.let { append("</$it>\n") }
             openList = null
@@ -686,7 +734,7 @@ object DocumentWriter {
         // (like the editor's Seitenansicht) – else the browser pushes the picture alone to the next page.
         var wrapOpen = false
         for ((i, b) in blocks.withIndex()) {
-            if (b !is Block.Item) closeList()
+            if (b !is Block.Item) { closeList(); lists.end() }
             val plain = b is Block.Heading || b is Block.Paragraph && DocMarkup.image(b.text) == null && DocMarkup.section(b.text) == null &&
                 DocMarkup.orientation(b.text) == null && !DocMarkup.isPageBreak(b.text) && !DocMarkup.isComment(b.text)
             if (wrapOpen && !plain) { append("</div>\n"); wrapOpen = false }
@@ -696,7 +744,7 @@ object DocumentWriter {
             when (b) {
                 is Block.Heading -> {
                     val id = headingIds.getOrNull(headingAt++)?.let { " id=\"$it\"" }.orEmpty()
-                    append("<h${b.level}$id${alignStyle(b.text)}>${inl(b.text)}</h${b.level}>\n")
+                    append("<h${b.level}$id${alignStyle(b.text, hyph)}>${inl(b.text)}</h${b.level}>\n")
                 }
                 is Block.Paragraph -> {
                     val lines = b.text.lines()
@@ -706,6 +754,7 @@ object DocumentWriter {
                     when {
                         // Abschnittsumbruch: the pages from here on are the named page of the section (header, footer).
                         sec != null -> {
+                            if (columns > 1) { append("</div>\n"); columns = 1 }
                             if (landscape) append("</section>\n")
                             if (section > 0) append("</div>\n")
                             section++
@@ -713,10 +762,17 @@ object DocumentWriter {
                             if (landscape) append("<section class=\"quer\">\n")
                         }
                         turn != null -> if (turn != landscape) {
+                            if (columns > 1) { append("</div>\n"); columns = 1 }
                             append(if (turn) "<section class=\"quer\">\n" else "</section>\n")
                             landscape = turn
                         }
                         DocMarkup.isPageBreak(b.text) -> append("<div class=\"pagebreak\"></div>\n")
+                        // Spalten (AP-126 d): the text from here on in columns, until the next marker.
+                        DocMarkup.columns(b.text) != null -> {
+                            if (columns > 1) append("</div>\n")
+                            columns = DocMarkup.columns(b.text)!!
+                            if (columns > 1) append("<div class=\"spalten\" style=\"column-count:$columns\">\n")
+                        }
                         // Beschriftung einer Tabelle (AP-126 c): above the table, kept with it.
                         DocFields.tableCaption(b.text) != null -> DocFields.tableCaption(b.text)!!.let { cap ->
                             val label = captionLabels[cap.id]
@@ -737,7 +793,7 @@ object DocumentWriter {
                                 ?.let { io.github.thepytales.llmhub.docs.text.ParaFormat.fromMarker(io.github.thepytales.llmhub.docs.text.ParaFormat(), it).tabs }.orEmpty()
                             append(lines.joinToString("") { "<p class=\"tabs\">${tabbed(it, stops, ::inl)}</p>\n" })
                         }
-                        else -> append("<p${bookmark(b.text)}${alignStyle(b.text)}>${lines.joinToString("<br>\n") { inl(it) }}</p>\n")
+                        else -> append("<p${bookmark(b.text)}${alignStyle(b.text, hyph)}>${lines.joinToString("<br>\n") { inl(it) }}</p>\n")
                     }
                 }
                 is Block.Item -> {
@@ -747,9 +803,18 @@ object DocumentWriter {
                         append("<$tag>\n")
                         openList = tag
                     }
-                    val style = if (b.indent > 0) " style=\"margin-left:${b.indent * 1.5}em\"" else ""
+                    // Listen-Optionen (AP-126 d): own numbers (a., i., 1.1.) or bullets, as in the editor.
                     val box = CHECKBOX.find(b.text)
-                    if (box == null) append("<li$style>${inl(b.text)}</li>\n")
+                    val fmt = paraFormat(b.text) ?: io.github.thepytales.llmhub.docs.text.ParaFormat()
+                    val label = if (box == null) lists.item(tag == "ol", b.indent, fmt, editor = false) else null
+                    val css = listOfNotNull(
+                        if (b.indent > 0) "margin-left:${b.indent * 1.5}em" else null,
+                        if (label != null) "list-style:none" else null,
+                        paraCss(b.text, hyph).takeIf { it.isNotEmpty() },
+                    ).joinToString(";")
+                    val style = if (css.isEmpty()) "" else " style=\"$css\""
+                    if (box == null && label != null) append("<li$style><span class=\"lnum\">${esc(label)}</span>${inl(b.text)}</li>\n")
+                    else if (box == null) append("<li$style>${inl(b.text)}</li>\n")
                     else {
                         val mark = if (box.groupValues[1].isBlank()) "" else "✓"
                         append("<li class=\"task\"$style><span class=\"cb\">$mark</span>${inl(b.text.substring(box.range.last + 1))}</li>\n")
@@ -793,7 +858,8 @@ object DocumentWriter {
                         val close = if (r == 0) "th" else "td"
                         if (r == 0) append("<thead>") else if (r == 1) append("<tbody>")
                         append("<tr>")
-                        row.forEach { append("<$cell>${inl(it)}</$close>") }
+                        // Verbundene Zellen (AP-126 d) span their columns.
+                        DocBlocks.spans(row, row.size).forEach { (_, text, n) -> append("<$cell${if (n > 1) " colspan=\"$n\"" else ""}>${inl(text)}</$close>") }
                         append("</tr>")
                         if (r == 0) append("</thead>")
                         append("\n")
@@ -807,6 +873,7 @@ object DocumentWriter {
         }
         if (wrapOpen) append("</div>\n")
         closeList()
+        if (columns > 1) append("</div>\n")
         if (closingAt >= 0) append("</div>\n")
         if (landscape) append("</section>\n")
         if (section > 0) append("</div>\n")

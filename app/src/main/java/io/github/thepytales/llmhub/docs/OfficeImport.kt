@@ -157,6 +157,8 @@ object OfficeImport {
         val sects = elements.filter { it.localName == "p" }.mapNotNull { it.child("pPr")?.child("sectPr") } +
             listOfNotNull(body.children().lastOrNull { it.localName == "sectPr" })
         val own = isOwn(files)
+        // Beschriftungen mit Nummer (AP-126 c): the ids given so far.
+        val seqIds = mutableSetOf<String>()
         var ended = 0
         var pending = false
         for (el in elements) {
@@ -186,6 +188,9 @@ object OfficeImport {
                         continue
                     }
                     if (text.isEmpty()) { blocks += boxes; continue }
+                    // Beschriftung mit SEQ-Feld (AP-126 c, „Abbildung 3: …“ of Word's *Beschriftung einfügen*): the picture
+                    // before it is numbered again, a table gets its caption line – their numbers count on in the editor.
+                    if (seqCaption(el, text, blocks, seqIds)) { blocks += boxes; continue }
                     // Bullets typed as characters ("• Punkt") are list items too.
                     val typed = Regex("^[•◦▪–·]\\s+").find(text)
                     if (typed != null && num == null) {
@@ -239,6 +244,32 @@ object OfficeImport {
         // Kopf-/Fußzeile and margins of the first section (AP-45; the only one in most files) as the page setup.
         val setup = sects.firstOrNull()?.let { pageSetup(it, files, docRels) } ?: return md
         return DocMarkup.withPageSetup(md, setup)
+    }
+
+    private val TABLE_WORDS = setOf("tabelle", "table", "tableau", "tabla", "tabella", "tabela", "tabulka")
+
+    /**
+     * A caption paragraph with a SEQ field (AP-126 c): „Abbildung 3: Der Hörsaal“ after a picture becomes its caption with
+     * number (`nr=abb-…`), „Tabelle 2: Kosten“ before or after a table its caption line. The id comes from the bookmark
+     * the app wrote („abb_hoersaal“), so Querverweise on it still point there; false when it is no such caption.
+     */
+    private fun seqCaption(p: Element, text: String, blocks: MutableList<String>, ids: MutableSet<String>): Boolean {
+        val instr = p.all("instrText").joinToString(" ") { it.textContent } + " " + p.all("fldSimple").joinToString(" ") { it.attr("instr") }
+        val seq = Regex("SEQ\\s+\"?([^\\s\"\\\\]+)", RegexOption.IGNORE_CASE).find(instr)?.groupValues?.get(1) ?: return false
+        val table = seq.lowercase() in TABLE_WORDS
+        val caption = text.replace("**", "").replace(Regex("^\\S+\\s+[\\d.]+\\s*[:.–—-]?\\s*"), "").trim()
+        val prefix = if (table) "tab" else "abb"
+        val mark = p.all("bookmarkStart").map { it.attr("name").replace('_', '-').lowercase() }.firstOrNull { it.startsWith("$prefix-") && DocFields.validId(it) }
+        val id = DocFields.unique(mark ?: (prefix + "-" + DocFields.slug(caption)), ids).also { ids += it }
+        if (table) {
+            val line = DocFields.tableCaptionLine(DocFields.TableCaption(caption, id))
+            // Below the table (some house styles): it goes above it, as the app keeps it.
+            if (blocks.lastOrNull()?.trim()?.startsWith("|") == true) blocks.add(blocks.lastIndex, line) else blocks += line
+            return true
+        }
+        val k = (blocks.lastIndex downTo maxOf(0, blocks.size - 2)).firstOrNull { DocMarkup.image(blocks[it]) != null } ?: return false
+        blocks[k] = DocMarkup.image(blocks[k])!!.copy(alt = caption, nr = id).markdown()
+        return true
     }
 
     /** The body's paragraphs and tables, with content controls (w:sdt, used a lot in templates) opened up. */
@@ -427,7 +458,17 @@ object OfficeImport {
         p.children().forEach { e ->
             when (e.localName) {
                 "r" -> run(e)
-                "hyperlink" -> e.children().filter { it.localName == "r" }.forEach { run(it, inLink = true) }
+                "hyperlink" -> {
+                    // Querverweise (AP-126 c): a link to a bookmark of the app („abb_…“, „tab_…“, „kap_…“, „lz_…“) stays one.
+                    val target = e.attr("anchor").replace('_', '-').lowercase().takeIf { Regex("^(abb|tab|kap|lz)-[a-z0-9-]+$").matches(it) }
+                    val start = length
+                    e.children().filter { it.localName == "r" }.forEach { run(it, inLink = true) }
+                    if (target != null && length > start) {
+                        val inner = substring(start).replace("[", "(").replace("]", ")")
+                        setLength(start)
+                        append("[").append(inner.trim()).append("](#").append(target).append(")")
+                    }
+                }
                 "ins", "smartTag", "fldSimple" -> e.children().filter { it.localName == "r" }.forEach { run(it) }
                 // Content controls inside the paragraph (fields of templates: name, date …).
                 "sdt" -> e.child("sdtContent")?.children()?.forEach { c -> if (c.localName == "r") run(c) else if (c.localName == "hyperlink") c.children().filter { it.localName == "r" }.forEach { run(it, inLink = true) } }
