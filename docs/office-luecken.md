@@ -83,7 +83,7 @@ von AP-126, sonst das Paket).
 | Bausteine (Schnellbausteine, eigene Textbausteine) | ✗ | **hoch** (Verwaltung: Briefe, Bescheide) | f |
 | @-Menü (Datum, Datei, Person, Baustein, Tabelle, Überschrift) | ✗ | mittel | f |
 | Emoji | ◐ über Sonderzeichen nicht, Tastatur des Systems | gering | f |
-| Lesezeichen | ✗ | mittel | c |
+| Lesezeichen | ✓ *Einfügen › Lesezeichen …* (AP-126 c), in Word eine Textmarke | mittel | – |
 | Signaturzeile, Unterschrift als Bild | ◐ Bild einfügen | gering | später |
 | Onlinebilder, Screenshot | — Datenschutz (Onlinebilder); Screenshot über das System | gering | – |
 
@@ -106,12 +106,12 @@ von AP-126, sonst das Paket).
 | --- | --- | --- | --- |
 | Inhaltsverzeichnis | ✓ | hoch | – |
 | Fußnoten | ✓ (Word: echte Fußnoten; PDF: am Ende) | hoch | – |
-| Endnoten (getrennt von Fußnoten) | ✗ | gering | c |
+| Endnoten | ✓ *Format › Fußnoten als Endnoten* für das ganze Dokument (AP-126 c); beide gemischt nicht | gering | – |
 | Zitat und Literaturverzeichnis aus der Literaturverwaltung | ✓ (*Einfügen › Zitat aus der Literatur*) | hoch | – |
-| **Beschriftungen mit Nummer** (Abbildung 1, Tabelle 1) | ◐ Bildunterschrift ohne Nummer | **hoch** | c |
-| **Querverweise** („siehe Abbildung 3“, aktualisiert sich) | ✗ | **hoch** | c |
-| **Abbildungs- und Tabellenverzeichnis** | ✗ | **hoch** | c |
-| **Nummerierte Überschriften** (1, 1.1, 1.1.1) | ✗ | **hoch** | c |
+| **Beschriftungen mit Nummer** (Abbildung 1, Tabelle 1) | ✓ *Einfügen › Beschriftung …*, Rechtsklick auf Bild bzw. Tabelle; Word: SEQ-Felder (AP-126 c) | **hoch** | – |
+| **Querverweise** („siehe Abbildung 3“, aktualisiert sich) | ✓ *Einfügen › Querverweis …* auf Abbildungen, Tabellen, Überschriften, Lesezeichen (AP-126 c) | **hoch** | – |
+| **Abbildungs- und Tabellenverzeichnis** | ✓ (AP-126 c); Seitenzahlen im PDF nur mit dem eingebauten Renderer, in Word nach F9 | **hoch** | – |
+| **Nummerierte Überschriften** (1, 1.1, 1.1.1) | ✓ *Format › Überschriften nummerieren* (AP-126 c); in Word als Text vor der Überschrift, keine Word-Listennummerierung | **hoch** | – |
 | Stichwortverzeichnis (Index) | ✗ | mittel | später (AP-153) |
 | Rechtsgrundlagenverzeichnis | — selten | – | – |
 
@@ -175,7 +175,7 @@ Rechtschreibung beim Tippen · dazu aus *mittel* die, die in derselben Stufe ohn
 1. **(b) Grundausstattung** ☑ (15.11.2026) – alles, was man jeden Tag sucht und ohne das man zu Word wechselt: Drucken (Strg+P), *Datei*
    mit Neu, *Herunterladen als*, Details, Sprache des Dokuments; *Bearbeiten* mit Ausschneiden/Kopieren/Einfügen/Nur Text
    einfügen/Löschen; *Einfügen › Seitenzahlen …*; Kopf- und Fußzeile per Doppelklick auf dem Blatt.
-2. **(c) Wissenschaft** – Beschriftungen mit Nummer, Querverweise, Verzeichnisse, nummerierte Überschriften, Lesezeichen,
+2. **(c) Wissenschaft** ☑ (15.11.2026) – Beschriftungen mit Nummer, Querverweise, Verzeichnisse, nummerierte Überschriften, Lesezeichen,
    Endnoten: der Hauptgrund, für Hausarbeiten und Dissertationen bei Word zu bleiben.
 3. **(d) Absatz und Seite** – Abstand vor/nach, Absatz-Dialog, Listen-Optionen und mehrstufige Listen, Spalten, Rahmen
    und Schattierung, Querformat im Editor, Wasserzeichen, Seitenfarbe, Zellen verbinden.

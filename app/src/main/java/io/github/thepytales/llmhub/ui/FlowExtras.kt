@@ -470,5 +470,5 @@ internal fun PageBreakFill(heightPx: Float) {
 internal fun isHiddenSetting(markdown: String): Boolean =
     markdown.lines().filter { it.isNotBlank() }.let { ls ->
         // Formatvorlagen (AP-46) and, since AP-126 b, page setup and language: they show on the sheet, not as text.
-        ls.isNotEmpty() && ls.all { io.github.thepytales.llmhub.docs.text.Styles.isSetting(it) || io.github.thepytales.llmhub.docs.DocMarkup.isPageSetting(it) }
+        ls.isNotEmpty() && ls.all { io.github.thepytales.llmhub.docs.text.Styles.isSetting(it) || io.github.thepytales.llmhub.docs.DocMarkup.isPageSetting(it) || io.github.thepytales.llmhub.docs.DocFields.isSetting(it) }
     }

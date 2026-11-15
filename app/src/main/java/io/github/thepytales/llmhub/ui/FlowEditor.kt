@@ -332,6 +332,9 @@ class FlowState(markdown: String) {
     /** Sprache des Dokuments (AP-126 b, `<!-- sprache: … -->`): Autokorrektur and spelling follow it. */
     var language = "de-DE"
 
+    /** Nummerierte Überschriften (AP-126 c): text field id and paragraph → „1.2“, drawn before the heading. */
+    var headingNos by mutableStateOf<Map<Pair<Long, Int>, String>>(emptyMap())
+
     /** Bilder anfassen (AP-125 d): the picture that is selected (its id), with handles and its bar; null: none. */
     var picked by mutableStateOf<Long?>(null)
 
@@ -383,7 +386,10 @@ class FlowState(markdown: String) {
         for (b in blocks) {
             if (RichText.isFlowBlock(b)) pending += b
             else {
-                if (pending.isNotEmpty() || segs.lastOrNull() !is FlowSeg.Text) flushText()
+                // A table's caption (AP-126 c) stands right before it, without a text field in between.
+                val captioned = pending.isEmpty() && b.trimStart().startsWith("|") &&
+                    (segs.lastOrNull() as? FlowSeg.Raw)?.let { io.github.thepytales.llmhub.docs.DocFields.tableCaption(it.markdown) } != null
+                if (!captioned && (pending.isNotEmpty() || segs.lastOrNull() !is FlowSeg.Text)) flushText()
                 segs += FlowSeg.Raw(nextId++, b)
             }
         }
@@ -797,7 +803,11 @@ class FlowState(markdown: String) {
         checkpoint()
         val at = t.selection.max.coerceIn(0, t.rich.text.length)
         val before = t.rich.cut(at, t.rich.text.length).let { r -> if (r.text.endsWith("\n")) r.cut(r.text.length - 1, r.text.length) else r }
-        val after = t.rich.cut(0, at).let { r -> if (r.text.startsWith("\n")) r.cut(0, 1) else r }
+        // The text after the cursor keeps the format of its own paragraph (before AP-126 c it took the first one of the
+        // field – a block inserted into a paragraph after a heading made the rest a heading).
+        val after = if (t.rich.text.getOrNull(at) == '\n') t.rich.slice(at + 1, t.rich.text.length)
+        // The rest of a split paragraph is no second Lesezeichen (AP-126 c).
+        else t.rich.slice(at, t.rich.text.length).let { r -> r.withParas(r.paras.mapIndexed { k, p -> if (k == 0) p.copy(bookmark = null) else p }) }
         val i = segs.indexOf(t)
         t.rich = before
         val raw = FlowSeg.Raw(nextId++, markdown.trim())
@@ -1125,6 +1135,11 @@ fun FlowEditor(
     LaunchedEffect(trackBase, markdown, state.version) { state.track(trackBase) }
     val onChangeLatest by rememberUpdatedState(onChange)
     fun save() {
+        // Querverweise (AP-126 c) follow the numbers before the text is stored.
+        if (state.writing == null) runCatching {
+            val md0 = state.markdown()
+            if ("](#" in md0) state.refreshCrossRefs(io.github.thepytales.llmhub.docs.DocFields.entries(md0, state.language).associate { it.id to it.label })
+        }
         // While Lora writes or suggestions are open, only the stored form (without them) counts.
         val md = state.markdown()
         if (md != state.lastMarkdown) {
@@ -1572,6 +1587,10 @@ private fun FlowMenus(
     var special by remember { mutableStateOf(false) }
     var autoCorrect by remember { mutableStateOf(false) }
     var pageNumbers by remember { mutableStateOf(false) }
+    // Wissenschaft (AP-126 c).
+    var captionAsk by remember { mutableStateOf(false) }
+    var crossRef by remember { mutableStateOf(false) }
+    var bookmarkAsk by remember { mutableStateOf(false) }
     // Diagramme und Whiteboard (AP-61).
     var newDiagram by remember { mutableStateOf<String?>(null) }
     @Composable
@@ -1650,6 +1669,14 @@ private fun FlowMenus(
             item("Abschnittsumbruch …", onClick = { sectionFor = DocMarkup.Section() }, close = close)
             item("Inhaltsverzeichnis", onClick = { state.insertBlock(DocMarkup.TOC) }, close = close)
             item("Fußnote", onClick = { insertFootnote(state) }, close = close)
+            HorizontalDivider()
+            // Wissenschaft (AP-126 c), like Word's *Referenzen*.
+            item("Beschriftung …", onClick = { captionAsk = true }, close = close)
+            item("Querverweis …", onClick = { crossRef = true }, close = close)
+            item("Lesezeichen …", onClick = { bookmarkAsk = true }, close = close)
+            item("Abbildungsverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.FIGURES) }, close = close)
+            item("Tabellenverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.TABLES) }, close = close)
+            HorizontalDivider()
             item("Formel", onClick = { state.insertBlock("$$\nE = mc^2\n$$") }, close = close)
             item("Diagramm …", onClick = { newDiagram = "flow" }, close = close)
             item("Whiteboard …", onClick = { newDiagram = "board" }, close = close)
@@ -1674,9 +1701,17 @@ private fun FlowMenus(
             item("Schrift kleiner", "Strg+Umschalt+<", onClick = { state.active?.let { state.stepFontSize(it, up = false) } }, close = close)
             item("Groß-/Kleinschreibung", "Umschalt+F3", onClick = { state.active?.let { state.cycleCase(it) } }, close = close)
             HorizontalDivider()
+            // Wissenschaft (AP-126 c): 1, 1.1, 1.1.1 before the headings; the notes at the end of the document.
+            val rawsNow = state.rawMarkdown()
+            val numbered = io.github.thepytales.llmhub.docs.DocFields.numberedHeadings(rawsNow)
+            item((if (numbered) "✓ " else "") + tr("Überschriften nummerieren (1, 1.1, 1.1.1)"), onClick = { state.applyMarkdown(io.github.thepytales.llmhub.docs.DocFields.withNumberedHeadings(state.markdown(), !numbered)) }, close = close)
+            val endnotes = io.github.thepytales.llmhub.docs.DocFields.endnotes(rawsNow)
+            item((if (endnotes) "✓ " else "") + tr("Fußnoten als Endnoten (am Ende des Dokuments)"), onClick = { state.applyMarkdown(io.github.thepytales.llmhub.docs.DocFields.withEndnotes(state.markdown(), !endnotes)) }, close = close)
+            HorizontalDivider()
             ParaKind.entries.forEach { k ->
                 item(k.label, when (k.level) { 0 -> if (k == ParaKind.NORMAL) "Strg+Alt+0" else ""; else -> "Strg+Alt+${k.level}" }, onClick = { state.kind(k) }, close = close)
             }
+            HorizontalDivider()
             HorizontalDivider()
             // Zeilenabstand (AP-44).
             val p = state.paraHere()
@@ -1722,6 +1757,9 @@ private fun FlowMenus(
     }
     if (special) SpecialCharsDialog(onDismiss = { special = false }) { ch -> special = false; state.insertText(ch) }
     if (autoCorrect) AutoCorrectDialog(c, onDismiss = { autoCorrect = false })
+    if (captionAsk) CaptionDialog(state, onDismiss = { captionAsk = false })
+    if (crossRef) CrossRefDialog(state, onDismiss = { crossRef = false })
+    if (bookmarkAsk) BookmarkDialog(state, onDismiss = { bookmarkAsk = false })
     if (pageNumbers) {
         val md = state.markdown()
         PageNumbersDialog(DocMarkup.pageSetup(md), onDismiss = { pageNumbers = false }) { setup ->
@@ -2319,6 +2357,9 @@ private fun FlowPages(
     val raws = remember(state.version) { state.rawMarkdown() }
     val setup = remember(raws) { DocMarkup.pageSetup(raws) }
     state.language = remember(raws) { DocMarkup.language(raws) }
+    val numberedHeadings = remember(raws) { io.github.thepytales.llmhub.docs.DocFields.numberedHeadings(raws) }
+    val nos = remember(state.version, numberedHeadings) { if (numberedHeadings) state.headingNumbers() else emptyMap() }
+    if (state.headingNos != nos) state.headingNos = nos
     val margin = if (narrow) 20.dp else (setup.marginMm * 3.7795f).dp * zoom
     val pages = view == FlowView.PAGES && !narrow
     val pageWidth = if (pages) 794.dp * zoom else androidx.compose.ui.unit.Dp.Unspecified
@@ -2500,6 +2541,11 @@ private fun RawBlock(doc: LiveDoc, tabId: String?, state: FlowState, seg: FlowSe
             IconButton(onClick = { state.setRaw(seg, "") }, modifier = Modifier.size(28.dp)) { Icon(Icons.Outlined.Delete, contentDescription = tr("Löschen"), modifier = Modifier.size(16.dp)) }
         }
         if (edit) SectionDialog(section, onDismiss = { edit = false }) { s2 -> edit = false; state.setRaw(seg, DocMarkup.sectionMarker(s2)) }
+        return
+    }
+    // Beschriftung einer Tabelle (AP-126 c): „Tabelle 2: …“ above it.
+    if (io.github.thepytales.llmhub.docs.DocFields.tableCaption(seg.markdown) != null) {
+        Box(outer.then(measure)) { TableCaptionLine(state, seg) }
         return
     }
     // Seitenumbruch (AP-43): in the Seitenansicht the text goes on on the next page.
@@ -2990,6 +3036,23 @@ private fun FlowField(
                         val indent = (28f * (rich.paras[pi].indent + 1)).sp.toPx() * zoom
                         val m = measurer.measure(mark, base.copy(fontWeight = FontWeight.Normal))
                         drawText(m, topLeft = Offset(indent - m.size.width - 6.dp.toPx(), layout.getLineBaseline(line) - m.firstBaseline))
+                    }
+                    // Nummerierte Überschriften and Lesezeichen (AP-126 c): the number and a flag in the margin before
+                    // the paragraph – shown, not typed (the exports write the number before the heading).
+                    rich.paras.forEachIndexed { pi, para ->
+                        val no = state.headingNos[seg.id to pi]
+                        if (no == null && para.bookmark == null) return@forEachIndexed
+                        val off = seg.shown(rich.starts[pi]).coerceAtMost(layout.layoutInput.text.length)
+                        val line = layout.getLineForOffset(off)
+                        if (no != null) {
+                            val st = base.copy(fontSize = ptSp(state.sheet.of(para.kind).size, zoom), fontWeight = FontWeight.SemiBold, color = muted)
+                            val m = measurer.measure(no, st)
+                            drawText(m, topLeft = Offset(-m.size.width - 10.dp.toPx(), layout.getLineBaseline(line) - m.firstBaseline))
+                        }
+                        if (para.bookmark != null) {
+                            val m = measurer.measure("⚑", base.copy(fontSize = (11f * zoom).sp, color = look.brand))
+                            drawText(m, topLeft = Offset(-m.size.width - (if (no != null) 46 else 8).dp.toPx(), layout.getLineTop(line)))
+                        }
                     }
                 }
                 .onPreviewKeyEvent { e ->

@@ -490,10 +490,19 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     nicht auf den markierten Text), und Seitenränder per Lineal, Formatvorlagen oder in der Gliederung verschobene
     Abschnitte werden sofort gespeichert (vorher erst mit der nächsten Eingabe); die Zeilen der Seiteneinrichtung stehen
     nicht mehr als Marke „Seiteneinrichtung: …“ im Text.
+  - **Für Hausarbeit und Dissertation** (AP-126 c): **Beschriftungen mit Nummer** – Rechtsklick auf ein Bild › *Mit
+    Nummer beschriften* („Abbildung 3: …“), Rechtsklick in eine Tabelle › *Beschriftung hinzufügen* („Tabelle 2: …“ über der
+    Tabelle) oder *Einfügen › Beschriftung …*. **Querverweise** (*Einfügen › Querverweis …*) auf Abbildungen, Tabellen,
+    Überschriften und Lesezeichen – der Text („siehe Abbildung 3“) folgt den Nummern, wenn sich etwas verschiebt.
+    **Abbildungs- und Tabellenverzeichnis** (*Einfügen*), **nummerierte Überschriften** 1, 1.1, 1.1.1 (*Format ›
+    Überschriften nummerieren*), **Lesezeichen** (*Einfügen › Lesezeichen …*) und **Endnoten** statt Fußnoten (*Format*). In
+    Word stehen echte Beschriftungsfelder, Textmarken und Verzeichnisfelder, im PDF klickbare Verweise und Verzeichnisse.
+    Nebenbei: Das PDF druckte das Inhaltsverzeichnis als „[Inhaltsverzeichnis]“ – jetzt steht dort das Verzeichnis; ein
+    mitten in einen Absatz eingefügter Block (z. B. eine Tabelle) machte den Rest des Absatzes manchmal zur Überschrift.
   - Nebenbei: *Datei › Exportieren* nahm den Stand beim Öffnen – jetzt den aktuellen.
   Tests `DocEditorChromeTest`, `DocEditorLookTest` (Vorher/Nachher-Bilder), `AppShortcutsTest`, `AutoCorrectTest`,
   `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder),
-  `FlowWrapPdfTest`, `FlowOfficeBasicsTest`, `DocEditorBasicsTest`.
+  `FlowWrapPdfTest`, `FlowOfficeBasicsTest`, `DocEditorBasicsTest`, `FlowScienceTest`, `DocEditorScienceTest`.
 
   | Vorher | Nachher | Datei-Menü | Rechtsklick |
   | --- | --- | --- | --- |

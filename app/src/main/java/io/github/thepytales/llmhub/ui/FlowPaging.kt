@@ -318,7 +318,9 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
             } else {
                 val h = seg.height.takeIf { it >= 0f } ?: return null
                 wrapItem = if (DocMarkup.image(seg.markdown)?.wrap != null) items.size else -1
-                items += if (DocMarkup.isPageBreak(seg.markdown) || DocMarkup.section(seg.markdown) != null) PageLayout.Break(h) else PageLayout.Block(h)
+                items += if (DocMarkup.isPageBreak(seg.markdown) || DocMarkup.section(seg.markdown) != null) PageLayout.Break(h)
+                // A table's caption (AP-126 c) stays on the page of the table.
+                else PageLayout.Block(h, keepWithNext = io.github.thepytales.llmhub.docs.DocFields.tableCaption(seg.markdown) != null)
                 owners += seg to -1
             }
         }

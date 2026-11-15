@@ -403,6 +403,8 @@ object DocMarkup {
          * after it runs on beside it; null: the picture has a line of its own ([align]).
          */
         val wrap: String? = null,
+        /** Beschriftung mit Nummer (AP-126 c): the id („abb-hoersaal“) – „Abbildung 3: …“; null: the caption as written. */
+        val nr: String? = null,
     ) {
         fun markdown(): String {
             val attrs = listOfNotNull(
@@ -410,6 +412,7 @@ object DocMarkup {
                 align?.takeIf { (it == "left" || it == "right") && wrap == null }?.let { "align=$it" },
                 wrap?.takeIf { it == "left" || it == "right" }?.let { "wrap=$it" },
                 description?.takeIf { it.isNotBlank() }?.let { "alt=\"" + it.replace("\"", "'").replace("}", ")").replace("\n", " ") + "\"" },
+                nr?.takeIf { DocFields.validId(it) }?.let { "nr=$it" },
             )
             return "![${alt.replace("]", ")").replace("\n", " ")}]($src)" + if (attrs.isEmpty()) "" else attrs.joinToString(" ", "{", "}")
         }
@@ -422,6 +425,7 @@ object DocMarkup {
     private val WIDTH = Regex("width\\s*=\\s*\"?(\\d{1,3})\\s*%?", RegexOption.IGNORE_CASE)
     private val ALIGN = Regex("align\\s*=\\s*\"?(left|center|right)", RegexOption.IGNORE_CASE)
     private val DESCRIPTION = Regex("alt\\s*=\\s*\"([^\"]*)\"", RegexOption.IGNORE_CASE)
+    private val NR = Regex("(?:^|[\\s{])nr\\s*=\\s*\"?([a-z][a-z0-9-]*)", RegexOption.IGNORE_CASE)
     private val WRAP = Regex("wrap\\s*=\\s*\"?(left|right)", RegexOption.IGNORE_CASE)
 
     /** The image if [text] (a line or block) is exactly one image. */
@@ -434,7 +438,8 @@ object DocMarkup {
         val width = rest.takeIf { it.isNotEmpty() }?.let { WIDTH.find(it)?.groupValues?.get(1)?.toIntOrNull()?.coerceIn(5, 100) }
         val align = ALIGN.find(rest)?.groupValues?.get(1)?.lowercase()?.takeIf { it != "center" }
         val wrap = WRAP.find(rest)?.groupValues?.get(1)?.lowercase()
-        return Image(m.groupValues[1].trim(), m.groupValues[2], width, align.takeIf { wrap == null }, description?.takeIf { it.isNotBlank() }, wrap)
+        val nr = NR.find(rest)?.groupValues?.get(1)?.takeIf { DocFields.validId(it) }
+        return Image(m.groupValues[1].trim(), m.groupValues[2], width, align.takeIf { wrap == null }, description?.takeIf { it.isNotBlank() }, wrap, nr)
     }
 
     private const val MAX_IMAGE = 30L * 1024 * 1024

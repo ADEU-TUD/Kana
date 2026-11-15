@@ -13,6 +13,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -112,6 +114,18 @@ import kotlin.math.roundToInt
  * there when no text is between them).
  */
 fun FlowState.moveBlock(seg: FlowSeg.Raw, up: Boolean): Boolean {
+    // A table moves with its caption (AP-126 c): one step, the caption stays right above it.
+    val cap = if (seg.isTable) captionOf(seg) else null
+    if (cap == null) return moveBlockAlone(seg, up, step = true)
+    checkpoint()
+    segs.remove(cap)
+    val done = moveBlockAlone(seg, up, step = false)
+    segs.add(segs.indexOfFirst { it.id == seg.id }.coerceAtLeast(0), cap)
+    changed()
+    return done
+}
+
+private fun FlowState.moveBlockAlone(seg: FlowSeg.Raw, up: Boolean, step: Boolean): Boolean {
     val i = segs.indexOfFirst { it.id == seg.id }
     if (i < 0) return false
     val before = segs.getOrNull(i - 1) as? FlowSeg.Text
@@ -123,12 +137,12 @@ fun FlowState.moveBlock(seg: FlowSeg.Raw, up: Boolean): Boolean {
         // Only an empty line between this block and the next one: they change places.
         val j = if (up) i - 2 else i + 2
         val other = segs.getOrNull(j) as? FlowSeg.Raw ?: return true
-        checkpoint()
+        if (step) checkpoint()
         segs[j] = segs[i].also { segs[i] = other }
         changed()
         return true
     }
-    checkpoint()
+    if (step) checkpoint()
     val parts = paragraphsOf(from.rich)
     val moved = if (up) parts.last() else parts.first()
     from.rich = joined(if (up) parts.dropLast(1) else parts.drop(1))
@@ -146,7 +160,19 @@ fun FlowState.moveBlock(seg: FlowSeg.Raw, up: Boolean): Boolean {
 /** Removes the block [seg] (Entf on a selected picture, *Tabelle löschen*). */
 fun FlowState.removeBlock(seg: FlowSeg.Raw) {
     if (picked == seg.id) picked = null
+    // A table goes with its caption (AP-126 c).
+    val cap = if (seg.isTable) captionOf(seg) else null
     setRaw(seg, "")
+    cap?.let { c ->
+        val i = segs.indexOf(c)
+        segs.remove(c)
+        // The texts that meet are one again (as setRaw does it).
+        val a = segs.getOrNull(i - 1) as? FlowSeg.Text
+        val b = segs.getOrNull(i) as? FlowSeg.Text
+        if (a != null && b != null && b.rich.text.isEmpty()) { segs.remove(b); if (active === b) active = a }
+        else if (a != null && b != null && a.rich.text.isEmpty()) { segs.remove(a); if (active === a) active = b }
+        changed()
+    }
 }
 
 // ── Bilder ──────────────────────────────────────────────────────────────────────────────────────────
@@ -285,7 +311,7 @@ internal fun FlowImageBlock(state: FlowState, seg: FlowSeg.Raw, img: DocMarkup.I
                     }
                 }
             }
-            ImageCaption(img, picked || captionFocus, w, captionRequester, onFocus = { captionFocus = it; if (it) state.picked = seg.id }) { text -> write(img.copy(alt = text)) }
+            ImageCaption(img, picked || captionFocus, w, captionRequester, state.figureLabel(seg), onFocus = { captionFocus = it; if (it) state.picked = seg.id }) { text -> write(img.copy(alt = text)) }
         }
     }
     if (describe) TextPrompt(tr("Alternativtext"), img.description ?: "", onDismiss = { describe = false }) { text ->
@@ -359,19 +385,25 @@ private fun ImageBar(img: DocMarkup.Image, onAlign: (String?) -> Unit, onWrap: (
 
 /** The caption under the picture, edited in place (like Word's Beschriftung); empty and selected: an invitation. */
 @Composable
-private fun ImageCaption(img: DocMarkup.Image, show: Boolean, width: Dp, requester: FocusRequester, onFocus: (Boolean) -> Unit, onDone: (String) -> Unit) {
+private fun ImageCaption(img: DocMarkup.Image, show: Boolean, width: Dp, requester: FocusRequester, label: String?, onFocus: (Boolean) -> Unit, onDone: (String) -> Unit) {
     var value by remember(img.alt) { mutableStateOf(TextFieldValue(img.alt, TextRange(img.alt.length))) }
     var focused by remember { mutableStateOf(false) }
-    if (!show && img.alt.isBlank() && !focused) return
+    if (!show && img.alt.isBlank() && !focused && label == null) return
     val style = MaterialTheme.typography.bodySmall.copy(
         fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = when (img.align) { "left" -> TextAlign.Start; "right" -> TextAlign.End; else -> TextAlign.Center },
     )
-    Box(Modifier.width(width.coerceAtLeast(160.dp)).padding(top = 4.dp)) {
+    // „Abbildung 3:“ before the caption (AP-126 c), not part of what is typed; both together where the caption stands.
+    Row(
+        Modifier.width(width.coerceAtLeast(160.dp)).padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = when (img.align) { "left" -> Arrangement.Start; "right" -> Arrangement.End; else -> Arrangement.Center },
+    ) {
+    if (label != null) { Text("$label:", style = style); Spacer(Modifier.width(4.dp)) }
+    Box(if (label != null) Modifier.width(IntrinsicSize.Max).widthIn(min = 24.dp) else Modifier.weight(1f)) {
         BasicTextField(
             value, { value = it.copy(text = it.text.replace("\n", " ")) },
             textStyle = style, singleLine = true, cursorBrush = SolidColor(LocalChatLook.current.brand),
-            modifier = Modifier.fillMaxWidth().focusRequester(requester)
+            modifier = (if (label != null) Modifier.width(IntrinsicSize.Max) else Modifier.fillMaxWidth()).focusRequester(requester)
                 .semantics { contentDescription = tr("Bildunterschrift") }
                 // Enter takes the caption, Esc goes back to what it was.
                 .onPreviewKeyEvent { e ->
@@ -390,6 +422,7 @@ private fun ImageCaption(img: DocMarkup.Image, show: Boolean, width: Dp, request
         )
         if (value.text.isEmpty()) Text(tr("Bildunterschrift hinzufügen"), style = style.copy(color = MaterialTheme.colorScheme.outline), modifier = Modifier.fillMaxWidth())
     }
+    }
 }
 
 /** Rechtsklick on a picture (like Word): Bild ersetzen, Bildunterschrift, Alternativtext, Größe, Ausrichtung, Löschen. */
@@ -404,6 +437,8 @@ private fun ImageMenu(
         entry(tr("Bild ersetzen …")) { replaceImage(state, seg, img, host) }
         entry(tr("Bildunterschrift bearbeiten")) { onCaption() }
         entry(tr("Alternativtext …")) { onDescribe() }
+        // Beschriftung mit Nummer (AP-126 c): „Abbildung n:“ before the caption, in the Abbildungsverzeichnis.
+        entry((if (img.nr != null) "✓ " else "") + tr("Mit Nummer beschriften")) { state.toggleFigureNumber(seg) }
         HorizontalDivider()
         listOf(25, 50, 75, 100).forEach { p ->
             entry((if ((img.width ?: 100) == p) "✓ " else "") + tr("Breite {0} %", p)) { onWrite(img.copy(width = p.takeIf { it < 100 })) }
@@ -731,6 +766,9 @@ private fun TableMenu(
         HorizontalDivider()
         entry(tr("Zeile nach oben"), tr("Alt+Umschalt+↑"), enabled = r > 1) { write(rows.toMutableList().apply { add(r - 1, removeAt(r)) }, widths, (r - 1) to c) }
         entry(tr("Zeile nach unten"), tr("Alt+Umschalt+↓"), enabled = r in 1 until rows.size - 1) { write(rows.toMutableList().apply { add(r + 1, removeAt(r)) }, widths, (r + 1) to c) }
+        // Beschriftung mit Nummer (AP-126 c): a line „Tabelle n: …“ above the table.
+        if (state.captionOf(seg) == null) entry(tr("Beschriftung hinzufügen (Tabelle mit Nummer)")) { state.setTableCaption(seg, "") }
+        else entry(tr("Beschriftung entfernen")) { state.setTableCaption(seg, null) }
         entry(tr("Tabelle nach oben verschieben")) { state.moveBlock(seg, up = true) }
         entry(tr("Tabelle nach unten verschieben")) { state.moveBlock(seg, up = false) }
         HorizontalDivider()

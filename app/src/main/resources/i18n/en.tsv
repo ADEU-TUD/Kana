@@ -7463,3 +7463,34 @@ Deutsch (Schweiz)	German (Switzerland)
 Englisch (GB)	English (UK)
 Englisch (USA)	English (US)
 Drucken	Print
+# Wissenschaft im Dokument (AP-126 c)
+Beschriftung …	Caption …
+Querverweis …	Cross-reference …
+Lesezeichen …	Bookmark …
+Lesezeichen	Bookmark
+Abbildungsverzeichnis	List of figures
+Tabellenverzeichnis	List of tables
+Beschriftung bearbeiten	Edit caption
+Beschriftung löschen	Delete caption
+Beschriftung der Tabelle	Table caption
+Beschriftung einfügen	Insert caption
+Beschriftung	Caption
+Nach dem Cursor steht keine Tabelle.	There is no table after the cursor.
+Nach dem Cursor steht kein Bild.	There is no picture after the cursor.
+Steht über der nächsten Tabelle, nummeriert; das Tabellenverzeichnis und Querverweise führen sie auf.	Goes above the next table, numbered; the list of tables and cross-references include it.
+Steht unter dem gewählten bzw. nächsten Bild, nummeriert; das Abbildungsverzeichnis und Querverweise führen es auf.	Goes below the selected or next picture, numbered; the list of figures and cross-references include it.
+Kein passendes Bild bzw. keine Tabelle gefunden.	No matching picture or table found.
+Querverweis einfügen	Insert cross-reference
+Noch keine Abbildung mit Nummer – Rechtsklick auf ein Bild › Mit Nummer beschriften.	No numbered figure yet – right-click a picture › Caption with number.
+Noch keine Tabelle mit Beschriftung – Einfügen › Beschriftung …	No captioned table yet – Insert › Caption …
+Noch keine Überschriften.	No headings yet.
+Noch keine Lesezeichen – Einfügen › Lesezeichen …	No bookmarks yet – Insert › Bookmark …
+Der Text des Verweises („Abbildung 3“) folgt den Nummern, auch in Word und PDF.	The text of the reference (“Figure 3”) follows the numbers, in Word and PDF as well.
+Der Absatz am Cursor wird zum Ziel für Querverweise und Links (in Word eine Textmarke).	The paragraph at the cursor becomes a target for cross-references and links (a bookmark in Word).
+Erscheint, sobald ein Bild eine Beschriftung mit Nummer hat (Rechtsklick › Mit Nummer beschriften).	Appears as soon as a picture has a numbered caption (right-click › Caption with number).
+Erscheint, sobald eine Tabelle eine Beschriftung hat (Rechtsklick in die Tabelle › Beschriftung hinzufügen).	Appears as soon as a table has a caption (right-click in the table › Add caption).
+Überschriften nummerieren (1, 1.1, 1.1.1)	Number headings (1, 1.1, 1.1.1)
+Fußnoten als Endnoten (am Ende des Dokuments)	Footnotes as endnotes (at the end of the document)
+Mit Nummer beschriften	Caption with number
+Beschriftung hinzufügen (Tabelle mit Nummer)	Add caption (numbered table)
+Beschriftung entfernen	Remove caption
