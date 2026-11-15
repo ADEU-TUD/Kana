@@ -186,6 +186,9 @@ class MailLocalOnlyTest {
 
     @Test
     fun noRequestWithMailDataLeavesForAServer() {
+        // With a key an API model is reachable at all – the mail guard has to stop it, not the missing key (before, the
+        // test passed only when another test in the same process had left a key behind).
+        c.settings.update { it.copy(apiKey = "platzhalter-nur-fuer-den-test") }
         val conv = touched()
         val messages = conv.messages
         // The last line in the LLM client: mail tool results and mail tools never go to a server.

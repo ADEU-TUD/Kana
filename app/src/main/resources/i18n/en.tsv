@@ -7362,6 +7362,12 @@ Beim Tippen in Dokumenten. Strg+Z direkt danach nimmt eine Korrektur zurück.	Wh
 Satzanfang groß	Capitalise first letter of sentences
 ZWei GRoßbuchstaben am Wortanfang	TWo INitial CApitals
 Häufige Tippfehler (udn → und)	Common typos (teh → the)
+Eigene Ersetzungen (mfg → Mit freundlichen Grüßen)	Own replacements (brb → be right back)
+Eigene Ersetzungen	Own replacements
+Das Kürzel wird ersetzt, sobald danach ein Leerzeichen oder Satzzeichen folgt – wie in Word.	The shortcut is replaced as soon as a space or punctuation mark follows – as in Word.
+Kürzel	Shortcut
+Noch keine – zum Beispiel „mfg“ → „Mit freundlichen Grüßen“.	None yet – for example “brb” → “be right back”.
+Ersetzung löschen: {0}	Delete replacement: {0}
 Strg+← / →, Strg+↑ / ↓	Ctrl+← / →, Ctrl+↑ / ↓
 Wort- bzw. absatzweise (mit Umschalt: markieren)	By word or paragraph (with Shift: select)
 Strg+Pos1 / Strg+Ende	Ctrl+Home / Ctrl+End
@@ -7419,3 +7425,72 @@ Mit Text in Zeile: zentriert	In line with text: centred
 Mit Text in Zeile: rechts	In line with text: right
 Links, Text rechts daneben	Left, text beside it
 Rechts, Text links daneben	Right, text beside it
+# Grundausstattung der Dokumente (AP-126 b)
+Seitenzahlen …	Page numbers …
+Seitenzahlen anzeigen	Show page numbers
+Position	Position
+Fußzeile	Footer
+Seite 1 von 9	Page 1 of 9
+Nicht auf der ersten Seite (Deckblatt)	Not on the first page (title page)
+Kopfzeile der ersten Seite	Header of the first page
+Fußzeile der ersten Seite	Footer of the first page
+Kopfzeile des Abschnitts	Header of the section
+Fußzeile des Abschnitts	Footer of the section
+Kopfzeile gerader Seiten	Header of even pages
+Fußzeile gerader Seiten	Footer of even pages
+Enter übernimmt, Esc bricht ab, {seite} und {seiten} werden zur Seitenzahl	Enter applies, Esc cancels, {seite} and {seiten} become the page number
+In Lora (Dokumente)	In Lora (Documents)
+Zeichen (mit Leerzeichen)	Characters (with spaces)
+Zeichen (ohne Leerzeichen)	Characters (without spaces)
+Bilder, Tabellen, Fußnoten	Pictures, tables, footnotes
+Angelegt	Created
+Zuletzt geändert	Last modified
+Sprache des Dokuments	Language of the document
+Gilt für Rechtschreibung, Anführungszeichen und Silbentrennung – auch in Word und PDF.	Applies to spelling, quotation marks and hyphenation – in Word and PDF as well.
+Unbenanntes Dokument	Untitled document
+Wird für den Druck vorbereitet …	Preparing for printing …
+Drucken nicht möglich: {0}	Printing not possible: {0}
+Nicht gedruckt.	Not printed.
+Wird als {0} erstellt …	Creating as {0} …
+Sprache des Dokuments: {0}	Language of the document: {0}
+Herunterladen als	Download as
+Drucken …	Print …
+Strg+P	Ctrl+P
+Sprache: {0} …	Language: {0} …
+Details …	Details …
+Deutsch (Österreich)	German (Austria)
+Deutsch (Schweiz)	German (Switzerland)
+Englisch (GB)	English (UK)
+Englisch (USA)	English (US)
+Drucken	Print
+# Wissenschaft im Dokument (AP-126 c)
+Beschriftung …	Caption …
+Querverweis …	Cross-reference …
+Lesezeichen …	Bookmark …
+Lesezeichen	Bookmark
+Abbildungsverzeichnis	List of figures
+Tabellenverzeichnis	List of tables
+Beschriftung bearbeiten	Edit caption
+Beschriftung löschen	Delete caption
+Beschriftung der Tabelle	Table caption
+Beschriftung einfügen	Insert caption
+Beschriftung	Caption
+Nach dem Cursor steht keine Tabelle.	There is no table after the cursor.
+Nach dem Cursor steht kein Bild.	There is no picture after the cursor.
+Steht über der nächsten Tabelle, nummeriert; das Tabellenverzeichnis und Querverweise führen sie auf.	Goes above the next table, numbered; the list of tables and cross-references include it.
+Steht unter dem gewählten bzw. nächsten Bild, nummeriert; das Abbildungsverzeichnis und Querverweise führen es auf.	Goes below the selected or next picture, numbered; the list of figures and cross-references include it.
+Kein passendes Bild bzw. keine Tabelle gefunden.	No matching picture or table found.
+Querverweis einfügen	Insert cross-reference
+Noch keine Abbildung mit Nummer – Rechtsklick auf ein Bild › Mit Nummer beschriften.	No numbered figure yet – right-click a picture › Caption with number.
+Noch keine Tabelle mit Beschriftung – Einfügen › Beschriftung …	No captioned table yet – Insert › Caption …
+Noch keine Überschriften.	No headings yet.
+Noch keine Lesezeichen – Einfügen › Lesezeichen …	No bookmarks yet – Insert › Bookmark …
+Der Text des Verweises („Abbildung 3“) folgt den Nummern, auch in Word und PDF.	The text of the reference (“Figure 3”) follows the numbers, in Word and PDF as well.
+Der Absatz am Cursor wird zum Ziel für Querverweise und Links (in Word eine Textmarke).	The paragraph at the cursor becomes a target for cross-references and links (a bookmark in Word).
+Erscheint, sobald ein Bild eine Beschriftung mit Nummer hat (Rechtsklick › Mit Nummer beschriften).	Appears as soon as a picture has a numbered caption (right-click › Caption with number).
+Erscheint, sobald eine Tabelle eine Beschriftung hat (Rechtsklick in die Tabelle › Beschriftung hinzufügen).	Appears as soon as a table has a caption (right-click in the table › Add caption).
+Überschriften nummerieren (1, 1.1, 1.1.1)	Number headings (1, 1.1, 1.1.1)
+Fußnoten als Endnoten (am Ende des Dokuments)	Footnotes as endnotes (at the end of the document)
+Mit Nummer beschriften	Caption with number
+Beschriftung hinzufügen (Tabelle mit Nummer)	Add caption (numbered table)
+Beschriftung entfernen	Remove caption

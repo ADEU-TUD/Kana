@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -82,6 +83,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -195,6 +197,11 @@ sealed class FlowSeg {
         var typing by mutableStateOf<CharFormat?>(null)
         var layout by mutableStateOf<TextLayoutResult?>(null)
         val focus = FocusRequester()
+        /**
+         * A selection Compose just dropped and when (AP-126 b): when the focus goes right after it – a click on a menu
+         * or the Formatleiste –, the selection comes back, like in Word, and the menu works on it.
+         */
+        internal var dropped: Pair<TextRange, Long>? = null
         /** Page breaks inside this text (Seitenansicht, AP-43) and room above it when it starts a page. */
         var breaks by mutableStateOf<List<PageBreakAt>>(emptyList())
         var push by mutableFloatStateOf(0f)
@@ -322,6 +329,12 @@ class FlowState(markdown: String) {
     /** Textumbruch (AP-125 e): text field id → the picture before it that the text runs beside. */
     val wraps = mutableStateMapOf<Long, ImageWrap>()
 
+    /** Sprache des Dokuments (AP-126 b, `<!-- sprache: … -->`): Autokorrektur and spelling follow it. */
+    var language = "de-DE"
+
+    /** Nummerierte Überschriften (AP-126 c): text field id and paragraph → „1.2“, drawn before the heading. */
+    var headingNos by mutableStateOf<Map<Pair<Long, Int>, String>>(emptyMap())
+
     /** Bilder anfassen (AP-125 d): the picture that is selected (its id), with handles and its bar; null: none. */
     var picked by mutableStateOf<Long?>(null)
 
@@ -373,7 +386,10 @@ class FlowState(markdown: String) {
         for (b in blocks) {
             if (RichText.isFlowBlock(b)) pending += b
             else {
-                if (pending.isNotEmpty() || segs.lastOrNull() !is FlowSeg.Text) flushText()
+                // A table's caption (AP-126 c) stands right before it, without a text field in between.
+                val captioned = pending.isEmpty() && b.trimStart().startsWith("|") &&
+                    (segs.lastOrNull() as? FlowSeg.Raw)?.let { io.github.thepytales.llmhub.docs.DocFields.tableCaption(it.markdown) } != null
+                if (!captioned && (pending.isNotEmpty() || segs.lastOrNull() !is FlowSeg.Text)) flushText()
                 segs += FlowSeg.Raw(nextId++, b)
             }
         }
@@ -475,7 +491,11 @@ class FlowState(markdown: String) {
     fun applyMarkdown(md: String) {
         if (md == markdown()) return
         checkpoint()
+        // load() takes [md] as the stored state; it is not stored yet – the editor saves it like any change (before
+        // AP-126 b a change of margins, Formatvorlagen or the outline waited for the next keystroke to be saved).
+        val stored = lastMarkdown
         load(md)
+        lastMarkdown = stored
         changed()
     }
 
@@ -783,7 +803,11 @@ class FlowState(markdown: String) {
         checkpoint()
         val at = t.selection.max.coerceIn(0, t.rich.text.length)
         val before = t.rich.cut(at, t.rich.text.length).let { r -> if (r.text.endsWith("\n")) r.cut(r.text.length - 1, r.text.length) else r }
-        val after = t.rich.cut(0, at).let { r -> if (r.text.startsWith("\n")) r.cut(0, 1) else r }
+        // The text after the cursor keeps the format of its own paragraph (before AP-126 c it took the first one of the
+        // field – a block inserted into a paragraph after a heading made the rest a heading).
+        val after = if (t.rich.text.getOrNull(at) == '\n') t.rich.slice(at + 1, t.rich.text.length)
+        // The rest of a split paragraph is no second Lesezeichen (AP-126 c).
+        else t.rich.slice(at, t.rich.text.length).let { r -> r.withParas(r.paras.mapIndexed { k, p -> if (k == 0) p.copy(bookmark = null) else p }) }
         val i = segs.indexOf(t)
         t.rich = before
         val raw = FlowSeg.Raw(nextId++, markdown.trim())
@@ -1111,6 +1135,11 @@ fun FlowEditor(
     LaunchedEffect(trackBase, markdown, state.version) { state.track(trackBase) }
     val onChangeLatest by rememberUpdatedState(onChange)
     fun save() {
+        // Querverweise (AP-126 c) follow the numbers before the text is stored.
+        if (state.writing == null) runCatching {
+            val md0 = state.markdown()
+            if ("](#" in md0) state.refreshCrossRefs(io.github.thepytales.llmhub.docs.DocFields.entries(md0, state.language).associate { it.id to it.label })
+        }
         // While Lora writes or suggestions are open, only the stored form (without them) counts.
         val md = state.markdown()
         if (md != state.lastMarkdown) {
@@ -1557,6 +1586,11 @@ private fun FlowMenus(
     var sectionFor by remember { mutableStateOf<DocMarkup.Section?>(null) }
     var special by remember { mutableStateOf(false) }
     var autoCorrect by remember { mutableStateOf(false) }
+    var pageNumbers by remember { mutableStateOf(false) }
+    // Wissenschaft (AP-126 c).
+    var captionAsk by remember { mutableStateOf(false) }
+    var crossRef by remember { mutableStateOf(false) }
+    var bookmarkAsk by remember { mutableStateOf(false) }
     // Diagramme und Whiteboard (AP-61).
     var newDiagram by remember { mutableStateOf<String?>(null) }
     @Composable
@@ -1583,7 +1617,10 @@ private fun FlowMenus(
     }
     @Composable
     fun item(label: String, shortcut: String = "", enabled: Boolean = true, onClick: () -> Unit, close: () -> Unit) =
-        MenuRow(tr(label), if (shortcut.isNotEmpty()) tr(shortcut) else "", enabled) { close(); onClick() }
+        MenuRow(tr(label), if (shortcut.isNotEmpty()) tr(shortcut) else "", enabled) {
+            close()
+            onClick()
+        }
     Row(Modifier.then(if (compact) Modifier else Modifier.fillMaxWidth()).horizontalScroll(rememberScrollState()).padding(horizontal = if (compact) 0.dp else 6.dp), verticalAlignment = Alignment.CenterVertically) {
         menu("Datei") { close ->
             val file = host.fileMenu
@@ -1596,6 +1633,16 @@ private fun FlowMenus(
         menu("Bearbeiten") { close ->
             item("Rückgängig", "Strg+Z", state.canUndo, { state.undo() }, close)
             item("Wiederholen", "Strg+Y", state.canRedo, { state.redo() }, close)
+            HorizontalDivider()
+            // Zwischenablage im Menü (AP-126 b), wie im Rechtsklick-Menü.
+            val seg = state.active
+            val hasMark = seg != null && !seg.selection.collapsed || state.spanParts() != null
+            item("Ausschneiden", "Strg+X", hasMark, { seg?.let { cutSelection(c, state, it) } }, close)
+            item("Kopieren", "Strg+C", hasMark, { if (state.spanParts() != null) state.copySpan(c) else seg?.let { copySelection(c, it) } }, close)
+            item("Einfügen", "Strg+V", seg != null, { if (seg != null && !pasteClipboard(c, state, seg, plain = false)) Notices.info(tr("Die Zwischenablage ist leer.")) }, close)
+            item("Nur Text einfügen", "Strg+Umschalt+V", seg != null, { if (seg != null && !pasteClipboard(c, state, seg, plain = true)) Notices.info(tr("Die Zwischenablage ist leer.")) }, close)
+            item("Löschen", "Entf", hasMark, { deleteMarked(state) }, close)
+            HorizontalDivider()
             item("Alles auswählen", "Strg+A", onClick = { state.active?.let { it.selection = TextRange(0, it.rich.text.length) } }, close = close)
             item("Suchen und ersetzen", "Strg+F", onClick = onFind, close = close)
         }
@@ -1618,9 +1665,18 @@ private fun FlowMenus(
             item("Zitat aus der Literatur …", onClick = host.onCitation, close = close)
             HorizontalDivider()
             item("Seitenumbruch", "Strg+Enter", onClick = { state.insertBlock("\\newpage") }, close = close)
+            item("Seitenzahlen …", onClick = { pageNumbers = true }, close = close)
             item("Abschnittsumbruch …", onClick = { sectionFor = DocMarkup.Section() }, close = close)
             item("Inhaltsverzeichnis", onClick = { state.insertBlock(DocMarkup.TOC) }, close = close)
             item("Fußnote", onClick = { insertFootnote(state) }, close = close)
+            HorizontalDivider()
+            // Wissenschaft (AP-126 c), like Word's *Referenzen*.
+            item("Beschriftung …", onClick = { captionAsk = true }, close = close)
+            item("Querverweis …", onClick = { crossRef = true }, close = close)
+            item("Lesezeichen …", onClick = { bookmarkAsk = true }, close = close)
+            item("Abbildungsverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.FIGURES) }, close = close)
+            item("Tabellenverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.TABLES) }, close = close)
+            HorizontalDivider()
             item("Formel", onClick = { state.insertBlock("$$\nE = mc^2\n$$") }, close = close)
             item("Diagramm …", onClick = { newDiagram = "flow" }, close = close)
             item("Whiteboard …", onClick = { newDiagram = "board" }, close = close)
@@ -1645,9 +1701,17 @@ private fun FlowMenus(
             item("Schrift kleiner", "Strg+Umschalt+<", onClick = { state.active?.let { state.stepFontSize(it, up = false) } }, close = close)
             item("Groß-/Kleinschreibung", "Umschalt+F3", onClick = { state.active?.let { state.cycleCase(it) } }, close = close)
             HorizontalDivider()
+            // Wissenschaft (AP-126 c): 1, 1.1, 1.1.1 before the headings; the notes at the end of the document.
+            val rawsNow = state.rawMarkdown()
+            val numbered = io.github.thepytales.llmhub.docs.DocFields.numberedHeadings(rawsNow)
+            item((if (numbered) "✓ " else "") + tr("Überschriften nummerieren (1, 1.1, 1.1.1)"), onClick = { state.applyMarkdown(io.github.thepytales.llmhub.docs.DocFields.withNumberedHeadings(state.markdown(), !numbered)) }, close = close)
+            val endnotes = io.github.thepytales.llmhub.docs.DocFields.endnotes(rawsNow)
+            item((if (endnotes) "✓ " else "") + tr("Fußnoten als Endnoten (am Ende des Dokuments)"), onClick = { state.applyMarkdown(io.github.thepytales.llmhub.docs.DocFields.withEndnotes(state.markdown(), !endnotes)) }, close = close)
+            HorizontalDivider()
             ParaKind.entries.forEach { k ->
                 item(k.label, when (k.level) { 0 -> if (k == ParaKind.NORMAL) "Strg+Alt+0" else ""; else -> "Strg+Alt+${k.level}" }, onClick = { state.kind(k) }, close = close)
             }
+            HorizontalDivider()
             HorizontalDivider()
             // Zeilenabstand (AP-44).
             val p = state.paraHere()
@@ -1693,6 +1757,16 @@ private fun FlowMenus(
     }
     if (special) SpecialCharsDialog(onDismiss = { special = false }) { ch -> special = false; state.insertText(ch) }
     if (autoCorrect) AutoCorrectDialog(c, onDismiss = { autoCorrect = false })
+    if (captionAsk) CaptionDialog(state, onDismiss = { captionAsk = false })
+    if (crossRef) CrossRefDialog(state, onDismiss = { crossRef = false })
+    if (bookmarkAsk) BookmarkDialog(state, onDismiss = { bookmarkAsk = false })
+    if (pageNumbers) {
+        val md = state.markdown()
+        PageNumbersDialog(DocMarkup.pageSetup(md), onDismiss = { pageNumbers = false }) { setup ->
+            pageNumbers = false
+            state.applyMarkdown(DocMarkup.withPageSetup(state.markdown(), setup))
+        }
+    }
     newDiagram?.let { kind ->
         DiagramEditorDialog(if (kind == "board") io.github.thepytales.llmhub.docs.Diagram(kind = "board", manual = true) else starterDiagram(kind), onDismiss = { newDiagram = null }) { d ->
             newDiagram = null
@@ -1732,16 +1806,157 @@ private fun insertFootnote(state: FlowState) {
     state.changed()
 }
 
-/** Raster to choose the size of a new table (Einfügen › Tabelle). */
-/** Extras › Autokorrektur (AP-125): each rule on or off, for all documents. */
+/** *Bearbeiten › Löschen* (AP-126 b): the marked text (also over several fields) goes, like Entf. */
+private fun deleteMarked(state: FlowState) {
+    if (state.spanParts() != null) { state.deleteSpan(); return }
+    val seg = state.active ?: return
+    val sel = seg.selection
+    if (sel.collapsed) return
+    state.checkpoint()
+    seg.rich = seg.rich.cut(sel.min, sel.max)
+    seg.selection = TextRange(sel.min)
+    state.changed()
+}
+
+/**
+ * Kopf- oder Fußzeile direkt auf dem Blatt (AP-126 b, Doppelklick wie in Word): the text that page [page] shows there –
+ * of the Deckblatt, of even pages, of its section or of the document –, edited in place; Enter takes it, Esc leaves it.
+ */
+@Composable
+private fun MarginEditor(state: FlowState, setup: DocMarkup.PageSetup, page: Int, footer: Boolean, modifier: Modifier, onDone: () -> Unit) {
+    val sectionIndex = state.sectionPages.indexOfLast { it.first <= page }
+    val sectionSeg = if (sectionIndex >= 0) state.segs.filterIsInstance<FlowSeg.Raw>().filter { DocMarkup.section(it.markdown) != null }.getOrNull(sectionIndex) else null
+    val section = sectionSeg?.let { DocMarkup.section(it.markdown) }
+    val first = page == 1 && setup.titlePage
+    val even = !first && section == null && page % 2 == 0 && setup.hasEven
+    val (label, initial) = when {
+        first -> (if (footer) tr("Fußzeile der ersten Seite") else tr("Kopfzeile der ersten Seite")) to (if (footer) setup.footerFirst else setup.headerFirst)
+        section != null -> (if (footer) tr("Fußzeile des Abschnitts") else tr("Kopfzeile des Abschnitts")) to
+            ((if (footer) section.footer else section.header) ?: DocMarkup.sectionMargins(setup, state.sectionPages.map { it.second })[sectionIndex].let { if (footer) it.second else it.first })
+        even -> (if (footer) tr("Fußzeile gerader Seiten") else tr("Kopfzeile gerader Seiten")) to (if (footer) setup.footerEven else setup.headerEven)
+        else -> (if (footer) tr("Fußzeile") else tr("Kopfzeile")) to (if (footer) setup.footer else setup.header)
+    }
+    var text by remember(page, footer) { mutableStateOf(TextFieldValue(initial, TextRange(initial.length))) }
+    val focus = remember { FocusRequester() }
+    var hadFocus by remember { mutableStateOf(false) }
+    var saved by remember(page, footer) { mutableStateOf(false) }
+    LaunchedEffect(page, footer) { runCatching { focus.requestFocus() } }
+    fun save() {
+        if (saved) return
+        saved = true
+        val v = text.text.replace("\n", " ").trim()
+        if (v != initial) {
+            if (section != null && sectionSeg != null) {
+                state.setRaw(sectionSeg, DocMarkup.sectionMarker(if (footer) section.copy(footer = v) else section.copy(header = v)))
+            } else {
+                val md = state.markdown()
+                val s0 = DocMarkup.pageSetup(md)
+                val s1 = when {
+                    first -> if (footer) s0.copy(footerFirst = v) else s0.copy(headerFirst = v)
+                    even -> if (footer) s0.copy(footerEven = v) else s0.copy(headerEven = v)
+                    else -> if (footer) s0.copy(footer = v) else s0.copy(header = v)
+                }
+                state.applyMarkdown(DocMarkup.withPageSetup(md, s1))
+            }
+        }
+        onDone()
+    }
+    Surface(modifier, shape = RoundedCornerShape(6.dp), tonalElevation = 4.dp, shadowElevation = 4.dp, border = androidx.compose.foundation.BorderStroke(1.dp, LocalChatLook.current.brand)) {
+        Column(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+            Text(label + " · " + tr("Enter übernimmt, Esc bricht ab, {seite} und {seiten} werden zur Seitenzahl"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            androidx.compose.foundation.text.BasicTextField(
+                text, { text = it }, singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                cursorBrush = SolidColor(LocalChatLook.current.brand),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).focusRequester(focus)
+                    .semantics { contentDescription = label }
+                    .onPreviewKeyEvent { e ->
+                        if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+                        when (e.key) {
+                            Key.Enter, Key.NumPadEnter -> { save(); true }
+                            Key.Escape -> { saved = true; onDone(); true }
+                            else -> false
+                        }
+                    }
+                    // A click elsewhere takes the text as well (like leaving the header in Word).
+                    .onFocusChanged { if (it.isFocused) hadFocus = true else if (hadFocus) { hadFocus = false; save() } },
+            )
+        }
+    }
+}
+
+/**
+ * *Einfügen › Seitenzahlen …* (AP-126 b, like Word): where the page number stands (header or footer, left, centre or
+ * right), how it reads, and whether the first page has none; or no page numbers at all.
+ */
+@Composable
+internal fun PageNumbersDialog(initial: DocMarkup.PageSetup, onDismiss: () -> Unit, onDone: (DocMarkup.PageSetup) -> Unit) {
+    var on by remember { mutableStateOf(initial.pageNumbers) }
+    var at by remember { mutableStateOf(initial.numbersAt) }
+    var form by remember { mutableStateOf(initial.numbersFormat) }
+    var notFirst by remember { mutableStateOf(initial.titlePage) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(tr("Seitenzahlen")) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(Modifier.fillMaxWidth().clickable { on = !on }, verticalAlignment = Alignment.CenterVertically) {
+                    Text(tr("Seitenzahlen anzeigen"), Modifier.weight(1f))
+                    Switch(checked = on, onCheckedChange = { on = it })
+                }
+                if (on) {
+                    Text(tr("Position"), style = MaterialTheme.typography.labelLarge)
+                    listOf("oben" to tr("Kopfzeile"), "unten" to tr("Fußzeile")).forEach { (v, label) ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(label, Modifier.width(90.dp), style = MaterialTheme.typography.bodyMedium)
+                            listOf("links" to tr("Links"), "mitte" to tr("Mitte"), "rechts" to tr("Rechts")).forEach { (h, hl) ->
+                                val place = "$v $h"
+                                FilterChip(selected = at == place, onClick = { at = place }, label = { Text(hl) }, modifier = Modifier.padding(end = 6.dp))
+                            }
+                        }
+                    }
+                    Text(tr("Format"), style = MaterialTheme.typography.labelLarge)
+                    Row {
+                        DocMarkup.NUMBER_FORMATS.forEach { (id, example) ->
+                            FilterChip(selected = form == id, onClick = { form = id }, label = { Text(if (id == "lang") tr("Seite 1 von 9") else example) }, modifier = Modifier.padding(end = 6.dp))
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth().clickable { notFirst = !notFirst }, verticalAlignment = Alignment.CenterVertically) {
+                        Text(tr("Nicht auf der ersten Seite (Deckblatt)"), Modifier.weight(1f))
+                        Switch(checked = notFirst, onCheckedChange = { notFirst = it })
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onDone(initial.copy(pageNumbers = on, numbersAt = at, numbersFormat = form, titlePage = if (on) notFirst else initial.titlePage))
+            }) { Text(tr("Übernehmen")) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
+    )
+}
+
+/** Extras › Autokorrektur (AP-125): each rule on or off, and the own Ersetzungen (AP-125 f), for all documents. */
 @Composable
 private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
     var off by remember { mutableStateOf(AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff)) }
+    val own = remember { AutoCorrect.ownEntries(c.settings.current.docAutocorrectOwn).toMutableStateList() }
+    var from by remember { mutableStateOf("") }
+    var to by remember { mutableStateOf("") }
+    fun add() {
+        val a = from.filterNot { it.isWhitespace() }
+        val b = to.trim()
+        if (a.isEmpty() || b.isEmpty()) return
+        own.removeAll { it.first.equals(a, ignoreCase = true) }
+        own.add(0, a to b)
+        from = ""; to = ""
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(tr("Autokorrektur")) },
         text = {
-            Column {
+            Column(Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState())) {
                 HintText(tr("Beim Tippen in Dokumenten. Strg+Z direkt danach nimmt eine Korrektur zurück."))
                 Spacer(Modifier.height(8.dp))
                 AutoCorrect.Rule.entries.forEach { rule ->
@@ -1753,11 +1968,38 @@ private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
                         Switch(checked = rule !in off, onCheckedChange = { on -> off = if (on) off - rule else off + rule })
                     }
                 }
+                Spacer(Modifier.height(12.dp))
+                Text(tr("Eigene Ersetzungen"), style = MaterialTheme.typography.titleSmall)
+                HintText(tr("Das Kürzel wird ersetzt, sobald danach ein Leerzeichen oder Satzzeichen folgt – wie in Word."))
+                Spacer(Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(from, { from = it.filterNot { ch -> ch.isWhitespace() } }, singleLine = true, label = { Text(tr("Kürzel")) }, modifier = Modifier.width(120.dp))
+                    Spacer(Modifier.width(8.dp))
+                    OutlinedTextField(
+                        to, { to = it.replace("\n", " ").replace("\t", " ") }, singleLine = true, label = { Text(tr("Ersetzen durch")) },
+                        modifier = Modifier.weight(1f),
+                        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onDone = { add() }),
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    TextButton(onClick = ::add, enabled = from.isNotBlank() && to.isNotBlank()) { Text(tr("Hinzufügen")) }
+                }
+                if (own.isEmpty()) HintText(tr("Noch keine – zum Beispiel „mfg“ → „Mit freundlichen Grüßen“."))
+                own.toList().forEach { entry ->
+                    Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(entry.first, Modifier.width(120.dp), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text("→ " + entry.second, Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        IconButton(onClick = { own.remove(entry) }, modifier = Modifier.size(32.dp)) {
+                            Icon(Icons.Outlined.Delete, contentDescription = tr("Ersetzung löschen: {0}", entry.first), modifier = Modifier.size(16.dp))
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                c.settings.update { it.copy(docAutocorrectOff = AutoCorrect.setting(off)) }
+                // A pair typed but not added yet counts as well.
+                add()
+                c.settings.update { it.copy(docAutocorrectOff = AutoCorrect.setting(off), docAutocorrectOwn = AutoCorrect.ownSetting(own)) }
                 onDismiss()
             }) { Text(tr("Übernehmen")) }
         },
@@ -1765,6 +2007,7 @@ private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
     )
 }
 
+/** Raster to choose the size of a new table (Einfügen › Tabelle). */
 @Composable
 private fun TablePickDialog(onDismiss: () -> Unit, onPick: (Int, Int) -> Unit) {
     var hover by remember { mutableStateOf(3 to 3) }
@@ -2113,6 +2356,10 @@ private fun FlowPages(
     val density = LocalDensity.current
     val raws = remember(state.version) { state.rawMarkdown() }
     val setup = remember(raws) { DocMarkup.pageSetup(raws) }
+    state.language = remember(raws) { DocMarkup.language(raws) }
+    val numberedHeadings = remember(raws) { io.github.thepytales.llmhub.docs.DocFields.numberedHeadings(raws) }
+    val nos = remember(state.version, numberedHeadings) { if (numberedHeadings) state.headingNumbers() else emptyMap() }
+    if (state.headingNos != nos) state.headingNos = nos
     val margin = if (narrow) 20.dp else (setup.marginMm * 3.7795f).dp * zoom
     val pages = view == FlowView.PAGES && !narrow
     val pageWidth = if (pages) 794.dp * zoom else androidx.compose.ui.unit.Dp.Unspecified
@@ -2171,6 +2418,9 @@ private fun FlowPages(
                     Spacer(Modifier.height(8.dp))
                     FlowRuler(state, pageWidth, setup.marginMm, zoom)
                 }
+                // Kopf- und Fußzeile auf dem Blatt bearbeiten (AP-126 b): the page and which of the two, while editing.
+                var marginEdit by remember { mutableStateOf<Pair<Int, Boolean>?>(null) }
+                Box {
                 Column(
                     Modifier
                         .padding(vertical = if (ruler && pages) 8.dp else topPad)
@@ -2199,18 +2449,35 @@ private fun FlowPages(
                                         val pm = pageMargins(setup, p + 1, count, today, sectionOf(state.sectionPages, setup, p + 1))
                                         // Measured first and drawn as a layout: drawText(measurer, text, topLeft) only allows the
                                         // width left of topLeft inside this box (a negative width crashed the app before).
-                                        fun put(text: String, right: Boolean, footer: Boolean) {
+                                        fun put(text: String, right: Boolean, footer: Boolean, center: Boolean = false) {
                                             if (text.isBlank()) return
-                                            val l = marginText.measure(text, style, maxLines = 1, constraints = androidx.compose.ui.unit.Constraints(maxWidth = half))
+                                            val l = marginText.measure(text, style, maxLines = 1, constraints = androidx.compose.ui.unit.Constraints(maxWidth = if (center) half * 2 / 3 else half))
                                             val yy = if (footer) top + full - m / 2f - l.size.height / 2f else top + m / 2f - l.size.height / 2f
-                                            drawText(l, topLeft = Offset(if (right) size.width - m - l.size.width else m, yy))
+                                            val x = when { center -> (size.width - l.size.width) / 2f; right -> size.width - m - l.size.width; else -> m }
+                                            drawText(l, topLeft = Offset(x, yy))
                                         }
                                         put(pm.headerLeft, right = false, footer = false)
+                                        put(pm.headerCenter, right = false, footer = false, center = true)
                                         put(pm.headerRight, right = true, footer = false)
                                         put(pm.footerLeft, right = false, footer = true)
+                                        put(pm.footerCenter, right = false, footer = true, center = true)
                                         put(pm.footerRight, right = true, footer = true)
                                     }
                                 }
+                            },
+                        )
+                        // A double click into the header or footer of a sheet edits it there (like Word).
+                        .then(
+                            if (!pages) Modifier else Modifier.pointerInput(pageFull, pageGap, margin) {
+                                detectTapGestures(onDoubleTap = { at ->
+                                    val full = pageFull.toPx()
+                                    val pitch = full + pageGap.toPx()
+                                    val m = margin.toPx()
+                                    val p = (at.y / pitch).toInt()
+                                    val y = at.y - p * pitch
+                                    if (y in 0f..m) marginEdit = (p + 1) to false
+                                    else if (y in (full - m)..full) marginEdit = (p + 1) to true
+                                })
                             },
                         )
                         .padding(horizontal = margin, vertical = if (narrow) 20.dp else margin)
@@ -2229,6 +2496,16 @@ private fun FlowPages(
                         }
                     }
                     if (!pages && setup.footer.isNotBlank()) Text(setup.footer, style = MaterialTheme.typography.labelSmall, color = outline)
+                }
+                marginEdit?.takeIf { pages }?.let { (page, footer) ->
+                    val pitch = pageFull + pageGap
+                    val y = (if (ruler && pages) 8.dp else topPad) + pitch * (page - 1) + if (footer) pageFull - margin else 0.dp
+                    MarginEditor(
+                        state, setup, page, footer,
+                        modifier = Modifier.offset(x = margin - 8.dp, y = y + (margin - 56.dp).coerceAtLeast(0.dp) / 2).width(pageWidth - margin * 2 + 16.dp),
+                        onDone = { marginEdit = null },
+                    )
+                }
                 }
             }
             if (showComments) {
@@ -2264,6 +2541,11 @@ private fun RawBlock(doc: LiveDoc, tabId: String?, state: FlowState, seg: FlowSe
             IconButton(onClick = { state.setRaw(seg, "") }, modifier = Modifier.size(28.dp)) { Icon(Icons.Outlined.Delete, contentDescription = tr("Löschen"), modifier = Modifier.size(16.dp)) }
         }
         if (edit) SectionDialog(section, onDismiss = { edit = false }) { s2 -> edit = false; state.setRaw(seg, DocMarkup.sectionMarker(s2)) }
+        return
+    }
+    // Beschriftung einer Tabelle (AP-126 c): „Tabelle 2: …“ above it.
+    if (io.github.thepytales.llmhub.docs.DocFields.tableCaption(seg.markdown) != null) {
+        Box(outer.then(measure)) { TableCaptionLine(state, seg) }
         return
     }
     // Seitenumbruch (AP-43): in the Seitenansicht the text goes on on the next page.
@@ -2389,7 +2671,7 @@ private fun FlowTextMenu(
     var suggestions by remember(word) { mutableStateOf<List<String>?>(null) }
     LaunchedEffect(word) {
         val w = word ?: return@LaunchedEffect
-        val found = runCatching { io.github.thepytales.llmhub.docs.LocalSpelling.check(text.substring(w.first, w.last + 1)) }.getOrDefault(emptyList())
+        val found = runCatching { io.github.thepytales.llmhub.docs.LocalSpelling.check(text.substring(w.first, w.last + 1), state.language) }.getOrDefault(emptyList())
         suggestions = found.firstOrNull()?.suggestions?.take(5)
     }
     val link = seg.rich.chars.getOrNull(sel.start.coerceAtMost(text.length - 1).coerceAtLeast(0))?.link?.takeIf { text.isNotEmpty() }
@@ -2413,7 +2695,7 @@ private fun FlowTextMenu(
                 }
                 entry(tr("Zum Wörterbuch hinzufügen")) {
                     val word0 = text.substring(w.first, w.last + 1)
-                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch { runCatching { io.github.thepytales.llmhub.docs.LocalSpelling.learn(word0) } }
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch { runCatching { io.github.thepytales.llmhub.docs.LocalSpelling.learn(word0, state.language) } }
                 }
                 HorizontalDivider()
             }
@@ -2621,7 +2903,7 @@ private fun FlowField(
             val typedAt = sel.start - 1
             val fix = if (v.text.length == old.text.length + 1 && sel.collapsed && typedAt >= 0 && r.text == v.text && v.composition == null) {
                 val code = r.chars.getOrNull(typedAt)?.code == true || r.paras[r.paraAt(typedAt)].kind == ParaKind.CODE
-                AutoCorrect.after(r.text, sel.start, r.text[typedAt], AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff), code)
+                AutoCorrect.after(r.text, sel.start, r.text[typedAt], AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff), code, AutoCorrect.ownEntries(c.settings.current.docAutocorrectOwn), state.language)
             } else null
             state.checkpoint(group = true)
             seg.rich = r
@@ -2638,6 +2920,7 @@ private fun FlowField(
                 state.changed()
             }
         } else {
+            seg.dropped = if (v.selection.collapsed && !seg.selection.collapsed) seg.selection to System.nanoTime() else null
             if (v.selection != seg.selection) seg.typing = null
             var sel = v.selection
             val anchor = state.spanAnchor
@@ -2727,6 +3010,10 @@ private fun FlowField(
                 .heightIn(min = maxOf(28.dp, with(density) { (wrap?.height ?: 0f).toDp() }))
                 .focusRequester(seg.focus)
                 .onFocusChanged {
+                    if (!it.isFocused) seg.dropped?.let { (sel, at) ->
+                        if (System.nanoTime() - at < 150_000_000L && seg.selection.collapsed && sel.max <= seg.rich.text.length) seg.selection = sel
+                    }
+                    seg.dropped = null
                     if (it.isFocused) state.picked = null
                     if (!it.isFocused || state.active === seg) return@onFocusChanged
                     val before = state.active
@@ -2749,6 +3036,23 @@ private fun FlowField(
                         val indent = (28f * (rich.paras[pi].indent + 1)).sp.toPx() * zoom
                         val m = measurer.measure(mark, base.copy(fontWeight = FontWeight.Normal))
                         drawText(m, topLeft = Offset(indent - m.size.width - 6.dp.toPx(), layout.getLineBaseline(line) - m.firstBaseline))
+                    }
+                    // Nummerierte Überschriften and Lesezeichen (AP-126 c): the number and a flag in the margin before
+                    // the paragraph – shown, not typed (the exports write the number before the heading).
+                    rich.paras.forEachIndexed { pi, para ->
+                        val no = state.headingNos[seg.id to pi]
+                        if (no == null && para.bookmark == null) return@forEachIndexed
+                        val off = seg.shown(rich.starts[pi]).coerceAtMost(layout.layoutInput.text.length)
+                        val line = layout.getLineForOffset(off)
+                        if (no != null) {
+                            val st = base.copy(fontSize = ptSp(state.sheet.of(para.kind).size, zoom), fontWeight = FontWeight.SemiBold, color = muted)
+                            val m = measurer.measure(no, st)
+                            drawText(m, topLeft = Offset(-m.size.width - 10.dp.toPx(), layout.getLineBaseline(line) - m.firstBaseline))
+                        }
+                        if (para.bookmark != null) {
+                            val m = measurer.measure("⚑", base.copy(fontSize = (11f * zoom).sp, color = look.brand))
+                            drawText(m, topLeft = Offset(-m.size.width - (if (no != null) 46 else 8).dp.toPx(), layout.getLineTop(line)))
+                        }
                     }
                 }
                 .onPreviewKeyEvent { e ->

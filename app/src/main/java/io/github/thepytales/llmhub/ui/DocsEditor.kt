@@ -51,6 +51,9 @@ import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Print
+import androidx.compose.material.icons.outlined.Translate
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Slideshow
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarBorder
@@ -249,6 +252,13 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     var citing by remember { mutableStateOf(false) }
     var spellFor by remember { mutableStateOf<String?>(null) }
     var deckFromDoc by remember { mutableStateOf(false) }
+    /** Datei › Details und Sprache (AP-126 b). */
+    var details by remember { mutableStateOf(false) }
+    var chooseLanguage by remember { mutableStateOf(false) }
+    /** While a PDF for printing or a download is made. */
+    var preparing by remember { mutableStateOf<String?>(null) }
+    // Herunterladen als (AP-126 b): straight to „Speichern unter“, one per format (the save dialog knows its type).
+    val savers = DOWNLOAD_FORMATS.associateWith { rememberSaveAs(it.mime) }
     /** Menüs ausblenden (APD-15, Strg+Umschalt+F like Google Docs): only the Formatleiste stays above the page. */
     var menusHidden by rememberSaveable { mutableStateOf(false) }
     /** Changes of the model the user has accepted (block texts), per version of the model. */
@@ -466,6 +476,51 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
             pageSetup = { pageSetup = true },
             design = { chooseStyle = true },
             history = { showHistory = true },
+            newDoc = {
+                liveDoc?.let { d ->
+                    val fresh = LiveDoc.create(tr("Unbenanntes Dokument"), "", "Sie", kind = d.docKind).copy(vault = d.vault)
+                    c.docs.save(fresh)
+                    DocsHandoff.show(fresh.id)
+                }
+            },
+            print = {
+                liveDoc?.let { d ->
+                    if (preparing == null) {
+                        preparing = tr("Wird für den Druck vorbereitet …")
+                        scope.launch {
+                            val r = runCatching {
+                                val pdf = DocumentWriter.create(
+                                    context, java.io.File(context.cacheDir, "print"), d.title, DocMarkup.resolveImages(exportMarkdown(d, null), docBase),
+                                    DocFormat.PDF, theme = c.documentTools.settingsTheme(DocStyle.parse(d.style)), overwrite = true,
+                                ).file
+                                io.github.thepytales.llmhub.docs.DocPrint.print(context, pdf, d.title)
+                            }
+                            preparing = null
+                            r.onFailure { Notices.error(tr("Drucken nicht möglich: {0}", it.message ?: it.javaClass.simpleName)) }
+                                .onSuccess { if (!it) Notices.info(tr("Nicht gedruckt.")) }
+                        }
+                    }
+                }
+            },
+            download = { format ->
+                liveDoc?.let { d ->
+                    if (preparing == null) {
+                        preparing = tr("Wird als {0} erstellt …", format.label)
+                        scope.launch {
+                            val r = runCatching {
+                                DocumentWriter.create(
+                                    context, java.io.File(context.cacheDir, "exports"), d.title, DocMarkup.resolveImages(exportMarkdown(d, null), docBase),
+                                    format, theme = c.documentTools.settingsTheme(DocStyle.parse(d.style)), overwrite = true,
+                                ).file
+                            }
+                            preparing = null
+                            r.onSuccess { f -> savers[format]?.invoke(f) }.onFailure { Notices.error(tr("Export fehlgeschlagen: {0}", it.message)) }
+                        }
+                    }
+                }
+            },
+            details = { details = true },
+            language = { chooseLanguage = true },
             delete = {
                 liveDoc?.let { d ->
                     c.docs.delete(d.id)
@@ -529,6 +584,8 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
                     Key.Y -> { if (flow) flowHost.redo?.invoke() else redoOnce(); true }
                     Key.F, Key.H -> { if (flow && e.isShiftPressed && e.key == Key.F) menusHidden = !menusHidden else if (flow) flowHost.find?.invoke() else findOpen = true; true }
                     Key.E -> if (flow && e.isShiftPressed) false else { togglePanel(DocPanel.AI); true }
+                    // Drucken (AP-126 b), like Word and Docs.
+                    Key.P -> if (flow && !e.isShiftPressed) { fileActions.print(); true } else false
                     else -> false
                 }
             },
@@ -900,6 +957,23 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
             }) { Text(tr("Alle ablehnen")) }
         },
     )
+    if (details && doc != null) DocDetailsDialog(c, doc, tab?.markdown.orEmpty(), onDismiss = { details = false })
+    if (chooseLanguage && tab != null) LanguageDialog(DocMarkup.language(tab.markdown), onDismiss = { chooseLanguage = false }) { tag ->
+        chooseLanguage = false
+        setMarkdown(DocMarkup.withLanguage(tab.markdown, tag))
+        Notices.info(tr("Sprache des Dokuments: {0}", tr(DocMarkup.languageName(tag))))
+    }
+    preparing?.let { msg ->
+        androidx.compose.ui.window.Popup(alignment = Alignment.BottomCenter) {
+            Surface(shape = RoundedCornerShape(8.dp), tonalElevation = 6.dp, shadowElevation = 6.dp, modifier = Modifier.padding(bottom = 48.dp)) {
+                Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                    Spacer(Modifier.width(10.dp))
+                    Text(msg)
+                }
+            }
+        }
+    }
     if (pageSetup && tab != null) PageSetupDialog(DocMarkup.pageSetup(tab.markdown), onDismiss = { pageSetup = false }) { setup ->
         pageSetup = false
         editing.index = null
@@ -992,7 +1066,13 @@ internal class DocFileActions(
     val rename: () -> Unit, val duplicate: () -> Unit, val star: () -> Unit, val vault: () -> Unit, val export: (tabOnly: Boolean) -> Unit,
     val sendToChat: () -> Unit, val shareText: () -> Unit, val deck: () -> Unit, val pageSetup: () -> Unit, val design: () -> Unit,
     val history: () -> Unit, val delete: () -> Unit,
+    /** AP-126 b: Neu, Drucken, Herunterladen als, Details, Sprache. */
+    val newDoc: () -> Unit = {}, val print: () -> Unit = {}, val download: (DocFormat) -> Unit = {}, val details: () -> Unit = {},
+    val language: () -> Unit = {},
 )
+
+/** *Datei › Herunterladen als* (AP-126 b): the formats people send on. */
+internal val DOWNLOAD_FORMATS = listOf(DocFormat.DOCX, DocFormat.PDF, DocFormat.HTML, DocFormat.MD, DocFormat.TXT)
 
 /**
  * Header of a text document in the Fließtext-Editor (APD-15, like Google Docs): back, the document symbol, the title
@@ -1057,12 +1137,28 @@ private fun FlowFileMenu(c: AppContainer, d: LiveDoc, liveTab: String?, close: (
         if (danger) DropdownMenuItem(colors = dangerMenuColors(), text = { Text(label) }, leadingIcon = lead, onClick = { close(); onClick() })
         else DropdownMenuItem(text = { Text(label) }, leadingIcon = lead, onClick = { close(); onClick() })
     }
+    var downloads by remember { mutableStateOf(false) }
+    entry(tr("Neues Dokument"), Icons.Outlined.Add, onClick = actions.newDoc)
     entry(tr("Umbenennen …"), Icons.Outlined.Edit, onClick = actions.rename)
     entry(tr("Kopie anlegen"), Icons.Outlined.ContentCopy, onClick = actions.duplicate)
     entry(if (d.starred) tr("Nicht mehr anheften") else tr("Anheften"), if (d.starred) Icons.Outlined.Star else Icons.Outlined.StarBorder, onClick = actions.star)
     if (FolderAccess.SUPPORTED || d.vault != null) entry(tr("Ablageort …"), Icons.Outlined.Folder, onClick = actions.vault)
     HorizontalDivider()
     entry(tr("Exportieren …"), Icons.Outlined.FileDownload) { actions.export(false) }
+    // Herunterladen als (AP-126 b, like Google Docs): one click to „Speichern unter“ in that format.
+    DropdownMenuItem(
+        text = { Text(tr("Herunterladen als") + if (downloads) " ▾" else " ▸") },
+        leadingIcon = { Spacer(Modifier.size(24.dp)) },
+        onClick = { downloads = !downloads },
+    )
+    if (downloads) DOWNLOAD_FORMATS.forEach { f ->
+        DropdownMenuItem(text = { Text(f.label) }, leadingIcon = { Spacer(Modifier.size(24.dp)) }, contentPadding = PaddingValues(start = 32.dp, end = 12.dp), onClick = { close(); actions.download(f) })
+    }
+    DropdownMenuItem(
+        text = { Text(tr("Drucken …")) }, leadingIcon = { Icon(Icons.Outlined.Print, contentDescription = null) },
+        trailingIcon = { Text(tr("Strg+P"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        onClick = { close(); actions.print() },
+    )
     val tab = d.tab(liveTab)
     if (d.tabs.size > 1 && tab != null) entry(tr("Nur „{0}“ exportieren", tab.title), null) { actions.export(true) }
     // In Word öffnen und zurück (AP-59, Windows): the real file in its program.
@@ -1076,6 +1172,8 @@ private fun FlowFileMenu(c: AppContainer, d: LiveDoc, liveTab: String?, close: (
     entry(tr("Präsentation aus Dokument …"), Icons.Outlined.Slideshow, onClick = actions.deck)
     HorizontalDivider()
     entry(tr("Seite einrichten …"), null, onClick = actions.pageSetup)
+    entry(tr("Sprache: {0} …", tr(DocMarkup.languageName(DocMarkup.language(d.tab(liveTab)?.markdown.orEmpty())))), Icons.Outlined.Translate, onClick = actions.language)
+    entry(tr("Details …"), Icons.Outlined.Info, onClick = actions.details)
     entry(tr("Design: ") + (DocStyle.parse(d.style)?.label ?: tr("wie in den Einstellungen")), Icons.Outlined.Palette, onClick = actions.design)
     entry(tr("Versionsverlauf"), Icons.Outlined.History, onClick = actions.history)
     HorizontalDivider()

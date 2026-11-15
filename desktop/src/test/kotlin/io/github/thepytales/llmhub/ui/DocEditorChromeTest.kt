@@ -3,6 +3,7 @@ package io.github.thepytales.llmhub.ui
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.SkikoComposeUiTest
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -195,6 +196,33 @@ class DocEditorChromeTest {
         settle(10)
         md = c.docs.get(id)!!.tabs.first().markdown
         assertTrue("Und „gut\"Erster" in md, md)
+    }
+
+    /** Eigene Ersetzungen (AP-125 f): added under *Extras › Autokorrektur …*, a Kürzel typed in the text becomes its Ersetzung. */
+    @Test
+    fun ownReplacementFromTheDialog() = runSkikoComposeUiTest(Size(1300f, 900f), Density(1f)) {
+        val id = open("# Brief\n\nBis bald.\n")
+        onAllNodesWithText("Extras").onFirst().performClick()
+        settle(4)
+        onAllNodesWithText("Autokorrektur …").onFirst().performClick()
+        settle(6)
+        assertTrue(has("Eigene Ersetzungen", substring = false), "Abschnitt im Dialog")
+        onAllNodes(hasSetTextAction() and hasText("Kürzel")).onFirst().performTextInput("mfg")
+        onAllNodes(hasSetTextAction() and hasText("Ersetzen durch")).onFirst().performTextInput("Mit freundlichen Grüßen")
+        onAllNodesWithText("Hinzufügen").onFirst().performClick()
+        settle(4)
+        assertTrue(has("→ Mit freundlichen Grüßen", substring = false), "Eintrag in der Liste")
+        onAllNodesWithText("Übernehmen").onFirst().performClick()
+        settle(6)
+        assertEquals("mfg\tMit freundlichen Grüßen", c.settings.current.docAutocorrectOwn)
+        val field = onAllNodesWithContentDescription("Dokumenttext").onFirst()
+        field.performClick()
+        field.performKeyInput { withKeyDown(Key.CtrlLeft) { pressKey(Key.MoveEnd) } }
+        settle(2)
+        " mfg\n".forEach { ch -> if (ch == '\n') field.performKeyInput { pressKey(Key.Enter) } else field.performTextInput(ch.toString()); settle(1) }
+        settle(10)
+        val md = c.docs.get(id)!!.tabs.first().markdown
+        assertTrue("Bis bald. Mit freundlichen Grüßen" in md, md)
     }
 
     private fun SkikoComposeUiTest.has(text: String, substring: Boolean) =

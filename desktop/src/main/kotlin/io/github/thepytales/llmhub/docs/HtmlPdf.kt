@@ -102,7 +102,9 @@ object HtmlPdf {
 
     /** openhtmltopdf: CSS 2.1 with paged media (page numbers in @page), no flexbox. */
     fun renderBuiltIn(html: String, out: File) {
-        val doc = W3CDom().fromJsoup(Jsoup.parse(html))
+        // Textumbruch (AP-125 f): openhtmltopdf moves a block whole only when the floating picture lies inside it – the
+        // piece of picture and first paragraph holds it here (the paragraphs after it start below the picture).
+        val doc = W3CDom().fromJsoup(Jsoup.parse(html.replace(".umfluss{", ".umfluss{overflow:hidden;")))
         out.outputStream().use { stream ->
             PdfRendererBuilder().apply {
                 useFastMode()

@@ -166,6 +166,66 @@ class DocEditorBlocksTest {
         assertTrue(box.left.value + l2.getLineLeft(0) >= pic2.right.value - 1f, "erste Zeile beginnt nach dem Bild")
     }
 
+    /**
+     * Seitenplan mit umflossenen Bildern (AP-125 f, D-02): a picture the text runs beside never crosses the end of a
+     * page – with the lines next to it it moves to the next page as one piece, also when it is higher than the text
+     * beside it – and no line of the text crosses a page end. Pictures at many places of a long document.
+     */
+    @Test
+    fun wrappedPicturesAreNotCutByThePageEnd() = runSkikoComposeUiTest(Size(1300f, 2600f), Density(1f)) {
+        val tall = File(base, "hoch.png").also { f ->
+            val bi = java.awt.image.BufferedImage(200, 500, java.awt.image.BufferedImage.TYPE_INT_RGB)
+            val g = bi.createGraphics(); g.color = java.awt.Color(0, 48, 93); g.fillRect(0, 0, 200, 500); g.dispose()
+            javax.imageio.ImageIO.write(bi, "png", f)
+        }.absolutePath
+        val sentence = "Ein Satz, der die Seite füllt und umbricht. "
+        val md = (1..9).joinToString("\n\n") { k ->
+            val before = (1..(k % 4 + 1)).joinToString("\n\n") { "Absatz $k.$it: " + sentence.repeat(3 + it) }
+            // Every other picture has only one short line beside it (the picture is higher than its text).
+            val beside = if (k % 2 == 0) "Kurz daneben $k.\n\n| A | B |\n| --- | --- |\n| 1 | 2 |" else "Daneben $k: " + sentence.repeat(8)
+            "$before\n\n![Bild $k](${tall}){width=30% wrap=${if (k % 3 == 0) "left" else "right"}}\n\n$beside"
+        }
+        open("# Bilder im Text\n\n$md\n")
+        settle(16)
+        val state = FlowState.shown?.get()!!
+        assertTrue(state.pageCount >= 4, "Seiten: ${state.pageCount}")
+        val stride = state.pageText + state.pageBetween
+        val segs = state.segs.toList()
+        var pictures = 0
+        var pushed = 0
+        segs.forEachIndexed { i, seg ->
+            if (seg !is FlowSeg.Raw || DocMarkup.image(seg.markdown)?.wrap == null) return@forEachIndexed
+            val text = segs.getOrNull(i + 1) as? FlowSeg.Text ?: return@forEachIndexed
+            val wrap = state.wraps[text.id] ?: error("kein Umbruch neben ${seg.markdown}")
+            // The picture lies over the start of the text field after it (the field starts below the picture's item).
+            val bottom = state.segTop[text.id]!! + wrap.height - 8f
+            val top = bottom - wrap.height + 8f - seg.height - 6f
+            val page = ((top + 2f) / stride).toInt()
+            val inPage = top - page * stride
+            assertTrue(inPage >= -2f, "${seg.markdown.take(14)} beginnt vor dem Textbereich: $inPage")
+            assertTrue(bottom - page * stride <= state.pageText + 2f, "${seg.markdown.take(14)} über dem Seitenende: ${bottom - page * stride} > ${state.pageText}")
+            pictures++
+            if (seg.push > 0f) pushed++
+        }
+        assertEquals(9, pictures)
+        assertTrue(pushed >= 1, "mindestens ein Bild auf die nächste Seite: $pushed")
+        // No line of the running text crosses the end of a page's text area.
+        for (seg in segs.filterIsInstance<FlowSeg.Text>()) {
+            val layout = seg.layout!!
+            val top = state.segTop[seg.id]!!
+            val shown = layout.layoutInput.text.text
+            for (l in 0 until layout.lineCount) {
+                val start = layout.getLineStart(l)
+                if (shown.getOrNull(start) == '\u2060' || shown.getOrNull(start) == '\n' || layout.getLineEnd(l) - start <= 1) continue
+                val a = top + layout.getLineTop(l)
+                val b = top + layout.getLineBottom(l)
+                val page = (a / stride).toInt()
+                val inPage = a - page * stride
+                assertTrue(inPage >= -1f && inPage + (b - a) <= state.pageText + 1f, "Zeile ${shown.substring(start, minOf(start + 20, shown.length))} über dem Seitenende: y=$inPage")
+            }
+        }
+    }
+
     /** Blocksatz beside a wrapped picture: the lines there reach the edge before the picture (but the last one). */
     @Test
     fun justifiedTextBesideAPictureReachesItsEdge() = runSkikoComposeUiTest(Size(1300f, 900f), Density(1f)) {

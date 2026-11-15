@@ -246,6 +246,8 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
     var first = true
     var paraBase = 0
     var tables = 0
+    // Textumbruch (AP-125 f): the item of a picture the next text field runs beside (index in items), else -1.
+    var wrapItem = -1
     for (seg in state.segs) {
         if (seg is FlowSeg.Raw && isHiddenSetting(seg.markdown)) continue
         if (!first) { items += PageLayout.Space(gap); owners += seg to -2 }
@@ -259,15 +261,31 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 val lines = (if (seg.linesFor == key) seg.linesCache else null)
                     ?: naturalLines(layout, rich, seg.breaks, seg.deleted)?.also { seg.linesFor = key; seg.linesCache = it }
                     ?: return null
+                // Beside a picture (AP-125 e/f): the picture and the lines next to it are one piece that is not split
+                // – Word keeps an anchored picture with its paragraph; the field is at least as high as the picture.
+                // The piece is the picture's item (its room goes above the picture, which moves the text with it);
+                // the lines below it go on as usual, a paragraph cut by the picture's lower edge counts on from there.
+                val wrap = state.wraps[seg.id]
+                var skip = 0
+                if (wrap != null && wrapItem >= 0 && wrapItem == items.size - 2 && items.last() is PageLayout.Space) {
+                    val space = items.removeAt(items.size - 1).height
+                    owners.removeAt(owners.size - 1)
+                    var top = 0f
+                    while (skip < lines.size && top < wrap.height - 0.5f) { top += lines[skip].height; skip++ }
+                    val beside = maxOf(top, wrap.height, if (skip == lines.size) minField else 0f)
+                    items[wrapItem] = PageLayout.Block(items[wrapItem].height + space + beside)
+                }
+                wrapItem = -1
                 val paraOf = lines.map { rich.paraAt(it.offset) }
                 // The empty line Compose adds after a paragraph (its line break) is the room between paragraphs: a
                 // space, not a line of the paragraph (Witwen/Waisen count only real lines).
                 val gap = BooleanArray(lines.size) { k -> k > 0 && paraOf[k - 1] == paraOf[k] && rich.text.getOrNull(lines[k].offset) == '\n' }
                 val counts = HashMap<Int, Int>()
-                paraOf.forEachIndexed { k, p -> if (!gap[k]) counts[p] = (counts[p] ?: 0) + 1 }
+                paraOf.forEachIndexed { k, p -> if (!gap[k] && k >= skip) counts[p] = (counts[p] ?: 0) + 1 }
                 val seen = HashMap<Int, Int>()
                 var total = 0f
                 lines.forEachIndexed { k, line ->
+                    if (k < skip) { total += line.height; return@forEachIndexed }
                     val p = paraOf[k]
                     if (gap[k]) {
                         items += PageLayout.Space(line.height)
@@ -282,7 +300,7 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                     owners += seg to line.offset
                     total += line.height
                 }
-                if (total < minField) { items += PageLayout.Space(minField - total); owners += seg to -2 }
+                if ((skip == 0 || skip < lines.size) && total < maxOf(minField, wrap?.height ?: 0f)) { items += PageLayout.Space(maxOf(minField, wrap?.height ?: 0f) - total); owners += seg to -2 }
                 paraBase += rich.paras.size
             }
             is FlowSeg.Raw -> if (seg.isTable) {
@@ -299,7 +317,10 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 owners += seg to hs.size
             } else {
                 val h = seg.height.takeIf { it >= 0f } ?: return null
-                items += if (DocMarkup.isPageBreak(seg.markdown) || DocMarkup.section(seg.markdown) != null) PageLayout.Break(h) else PageLayout.Block(h)
+                wrapItem = if (DocMarkup.image(seg.markdown)?.wrap != null) items.size else -1
+                items += if (DocMarkup.isPageBreak(seg.markdown) || DocMarkup.section(seg.markdown) != null) PageLayout.Break(h)
+                // A table's caption (AP-126 c) stays on the page of the table.
+                else PageLayout.Block(h, keepWithNext = io.github.thepytales.llmhub.docs.DocFields.tableCaption(seg.markdown) != null)
                 owners += seg to -1
             }
         }
@@ -325,7 +346,8 @@ internal fun applyPlan(plan: PageLayout.Plan, owners: List<Pair<FlowSeg, Int>>, 
                 if (plan.repeat[k]) repeat.getOrPut(seg.id) { mutableSetOf() } += off
             }
             is FlowSeg.Text -> if (off >= 0) {
-                if (firstLine[seg.id] == k) tops[seg.id] = push
+                // The first line of the field (offset 0) – not the first one below a picture beside the text (AP-125 f).
+                if (firstLine[seg.id] == k && off == 0) tops[seg.id] = push
                 else breaks.getOrPut(seg.id) { mutableListOf() } += PageBreakAt.at(seg.rich.text, off, push)
             }
         }
@@ -384,7 +406,10 @@ internal fun clearPlan(state: FlowState) {
 }
 
 /** What the header and footer of page [page] (1-based) of [pages] show: left and right text. */
-internal data class PageMargins(val headerLeft: String, val headerRight: String, val footerLeft: String, val footerRight: String)
+internal data class PageMargins(
+    val headerLeft: String, val headerRight: String, val footerLeft: String, val footerRight: String,
+    val headerCenter: String = "", val footerCenter: String = "",
+)
 
 /**
  * Header and footer of the section page [page] (1-based) is in – null in the first section (the document's own). [starts]:
@@ -404,6 +429,17 @@ internal fun pageMargins(setup: DocMarkup.PageSetup, page: Int, pages: Int, toda
     val even = page % 2 == 0 && setup.hasEven
     val header = section?.first ?: if (even) setup.headerEven else setup.header
     val footer = section?.second ?: if (even) setup.footerEven else setup.footer
+    if (setup.pageNumbers && setup.numbersMoved) {
+        // Seitenzahlen an eigener Stelle (AP-126 b): next to a text at that place it follows it, as in the PDF.
+        val slots = Array(6) { mutableListOf<String>() }
+        if (header.isNotBlank()) slots[0] += DocMarkup.fields(header, page, pages)
+        if (setup.date) slots[2] += today
+        if (footer.isNotBlank()) slots[3] += DocMarkup.fields(footer, page, pages)
+        val number = if (setup.numbersFormat == "lang") tr("Seite {0} von {1}", page, pages) else DocMarkup.fields(setup.numbersText, page, pages)
+        slots[(if (setup.numbersTop) 0 else 3) + setup.numbersSlot] += number
+        val t = slots.map { it.joinToString(" · ") }
+        return PageMargins(t[0], t[2], t[3], t[5], headerCenter = t[1], footerCenter = t[4])
+    }
     return PageMargins(
         DocMarkup.fields(header, page, pages),
         if (setup.date) today else "",

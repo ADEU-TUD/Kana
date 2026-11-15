@@ -1,5 +1,6 @@
 package io.github.thepytales.llmhub.docs.text
 
+import io.github.thepytales.llmhub.docs.DocFields
 import io.github.thepytales.llmhub.docs.DocMarkup
 import io.github.thepytales.llmhub.ui.ALIGN_MARK
 import io.github.thepytales.llmhub.ui.Segment
@@ -105,6 +106,8 @@ data class ParaFormat(
     val first: Int = 0,
     /** Tabstopps of the paragraph (AP-44), sorted; empty: every 12,5 mm. */
     val tabs: List<TabStop> = emptyList(),
+    /** Lesezeichen (AP-126 c): the paragraph is the target „#lz-name“ of Querverweise. */
+    val bookmark: String? = null,
 ) {
     /** The paragraph marker (`<!--a:c;s=title-->`) or "" when it has nothing to say. */
     fun marker(): String {
@@ -114,6 +117,7 @@ data class ParaFormat(
             if (left != 0) add("l=$left")
             if (first != 0) add("f=$first")
             if (tabs.isNotEmpty()) add("t=" + TabStop.write(tabs))
+            bookmark?.let { add("b=$it") }
         }
         if (align == Align.LEFT && parts.isEmpty()) return ""
         return "<!--a:" + (align.mark ?: "") + parts.joinToString("") { ";$it" } + "-->"
@@ -132,6 +136,7 @@ data class ParaFormat(
                     "l" -> v.toIntOrNull()?.let { p = p.copy(left = it.coerceIn(0, 150)) }
                     "f" -> v.toIntOrNull()?.let { p = p.copy(first = it.coerceIn(-80, 80)) }
                     "t" -> p = p.copy(tabs = TabStop.parse(v))
+                    "b" -> v.takeIf { Regex("[0-9a-z]+(-[0-9a-z]+)*").matches(it) }?.let { p = p.copy(bookmark = it) }
                 }
             }
             return p
@@ -214,7 +219,7 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
         val last = paraAt(removedEnd)
         val newLines = inserted.count { it == '\n' }
         val head = paras[first]
-        val next = if (head.kind.endsAtEnter) ParaFormat(align = head.align) else head.copy(checked = false, soft = false)
+        val next = if (head.kind.endsAtEnter) ParaFormat(align = head.align) else head.copy(checked = false, soft = false, bookmark = null)
         val newParas = ArrayList<ParaFormat>(paras.size - (last - first) + newLines)
         newParas.addAll(paras.subList(0, first))
         newParas += head
@@ -396,6 +401,7 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
             if (t.isEmpty()) return false
             if (t.startsWith("```") || t.startsWith("|") || t.startsWith("$$") || t.startsWith("<!--") && !ALIGN_MARK.containsMatchIn(t)) return false
             if (DocMarkup.isPageBreak(t) || DocMarkup.isToc(t) || DocMarkup.isComment(t) || DocMarkup.image(t) != null) return false
+            if (DocFields.isFigureList(t) || DocFields.isTableList(t)) return false
             if (t.matches(Regex("^([-*_])\\1{2,}$"))) return false
             if (t.lines().any { it.trimStart().startsWith("[^") && it.contains("]:") }) return false
             // Raw HTML blocks other than the editor's own tags stay as they are.

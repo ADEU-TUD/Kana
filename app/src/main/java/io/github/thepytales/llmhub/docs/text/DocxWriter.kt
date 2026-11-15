@@ -59,7 +59,7 @@ object DocxWriter {
             }
             if (found == null) {
                 // A text block that cannot be found again: merging is not safe.
-                if (want.isNotEmpty() && !image && !pageBreak && !DocMarkup.isToc(b) && !b.startsWith("[^")) return null
+                if (want.isNotEmpty() && !image && !pageBreak && !DocMarkup.isToc(b) && !io.github.thepytales.llmhub.docs.DocFields.isFigureList(b) && !io.github.thepytales.llmhub.docs.DocFields.isTableList(b) && !b.startsWith("[^")) return null
                 continue
             }
             ranges[bi] = found

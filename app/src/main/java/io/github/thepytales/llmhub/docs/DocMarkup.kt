@@ -31,7 +31,25 @@ object DocMarkup {
         val titlePage: Boolean = false, val headerFirst: String = "", val footerFirst: String = "",
         /** Gerade Seiten anders: pages 2, 4 … show these when one of them is set. */
         val headerEven: String = "", val footerEven: String = "",
+        /**
+         * Seitenzahlen einfügen (AP-126 b): where the page number stands – „oben“/„unten“ and „links“/„mitte“/„rechts“ –
+         * and how it reads ([NUMBER_FORMATS]: „lang“ Seite 1 von 9, „zahl“ 1, „bruch“ 1 / 9). The default is the place
+         * and text the page number always had.
+         */
+        val numbersAt: String = NUMBERS_AT, val numbersFormat: String = "lang",
     ) {
+        /** The page number at its own place or in its own words (not as always). */
+        val numbersMoved: Boolean get() = numbersAt != NUMBERS_AT || numbersFormat != "lang"
+
+        /** The page number in the header (else in the footer). */
+        val numbersTop: Boolean get() = numbersAt.startsWith("oben")
+
+        /** 0 left, 1 centre, 2 right. */
+        val numbersSlot: Int get() = when { numbersAt.endsWith("links") -> 0; numbersAt.endsWith("mitte") -> 1; else -> 2 }
+
+        /** The page number as text with the fields {seite}/{seiten} (German, like the exports always wrote it). */
+        val numbersText: String get() = when (numbersFormat) { "zahl" -> "{seite}"; "bruch" -> "{seite} / {seiten}"; else -> "Seite {seite} von {seiten}" }
+
         val hasHeader: Boolean get() = date || header.isNotBlank()
 
         /** Even pages have their own header or footer. */
@@ -43,6 +61,15 @@ object DocMarkup {
         /** Margins in millimetres (PDF, page view). */
         val marginMm: Int get() = when (margins) { "schmal" -> 13; "breit" -> 25; "normal" -> 20; else -> customMm(margins) ?: 20 }
     }
+
+    /** Where page numbers stood before AP-126 (the default). */
+    const val NUMBERS_AT = "unten rechts"
+
+    /** Places for the page number: header or footer, left, centre or right. */
+    val NUMBER_PLACES = listOf("oben links", "oben mitte", "oben rechts", "unten links", "unten mitte", "unten rechts")
+
+    /** Forms of the page number (id to example). */
+    val NUMBER_FORMATS = listOf("lang" to "Seite 1 von 9", "zahl" to "1", "bruch" to "1 / 9")
 
     private val MM = Regex("^(\\d{1,2})\\s*mm$")
 
@@ -85,7 +112,13 @@ object DocMarkup {
             val m = SETTING.find(line) ?: continue
             val v = m.groupValues[2]
             s = when (m.groupValues[1].lowercase().replace("ß", "ss")) {
-                "seitenzahlen" -> s.copy(pageNumbers = on(v))
+                "seitenzahlen" -> {
+                    // „aus“, „an“, or the place and form: „oben mitte, zahl“ (AP-126 b).
+                    val words = v.lowercase().split(',').map { it.trim() }
+                    val at = NUMBER_PLACES.firstOrNull { it in words } ?: s.numbersAt
+                    val form = NUMBER_FORMATS.map { it.first }.firstOrNull { it in words } ?: s.numbersFormat
+                    s.copy(pageNumbers = on(v), numbersAt = at, numbersFormat = form)
+                }
                 "datum" -> s.copy(date = on(v))
                 "erste seite anders" -> s.copy(titlePage = on(v))
                 "kopfzeile erste seite" -> s.copy(headerFirst = v.trim())
@@ -105,6 +138,7 @@ object DocMarkup {
         val body = markdown.lines().filterNot { SETTING.matches(it) }.joinToString("\n").trimEnd()
         val lines = buildList {
             if (!setup.pageNumbers) add("<!-- seitenzahlen: aus -->")
+            else if (setup.numbersMoved) add("<!-- seitenzahlen: ${setup.numbersAt}, ${setup.numbersFormat} -->")
             if (setup.date) add("<!-- datum: an -->")
             if (setup.header.isNotBlank()) add("<!-- kopfzeile: ${setup.header.replace("-->", "").replace("\n", " ").trim()} -->")
             if (setup.footer.isNotBlank()) add("<!-- fusszeile: ${setup.footer.replace("-->", "").replace("\n", " ").trim()} -->")
@@ -118,6 +152,35 @@ object DocMarkup {
         }
         return if (lines.isEmpty()) "$body\n" else body + "\n\n" + lines.joinToString("\n\n") + "\n"
     }
+
+    // ── Sprache des Dokuments (AP-126 b) ──────────────────────────────────────────────────────────────────
+
+    /** Languages a document can have (BCP 47 tag to name): spelling, quotation marks, hyphenation, Word and PDF. */
+    val LANGUAGES = listOf(
+        "de-DE" to "Deutsch", "de-AT" to "Deutsch (Österreich)", "de-CH" to "Deutsch (Schweiz)", "en-GB" to "Englisch (GB)",
+        "en-US" to "Englisch (USA)", "fr-FR" to "Französisch", "es-ES" to "Spanisch", "it-IT" to "Italienisch",
+        "pl-PL" to "Polnisch", "cs-CZ" to "Tschechisch",
+    )
+
+    private val LANGUAGE = Regex("^\\s*<!--\\s*sprache\\s*:\\s*([A-Za-z]{2,3}(?:-[A-Za-z]{2})?)\\s*-->\\s*$", RegexOption.IGNORE_CASE)
+
+    /** The language of [markdown] (`<!-- sprache: en-GB -->`), German without one. */
+    fun language(markdown: String): String =
+        markdown.lineSequence().firstNotNullOfOrNull { LANGUAGE.find(it)?.groupValues?.get(1) }
+            ?.let { tag -> LANGUAGES.firstOrNull { it.first.equals(tag, true) }?.first ?: LANGUAGES.firstOrNull { it.first.substringBefore('-').equals(tag.substringBefore('-'), true) }?.first }
+            ?: "de-DE"
+
+    /** [markdown] with the language [tag] (German: no line, as before). */
+    fun withLanguage(markdown: String, tag: String): String {
+        val body = markdown.lines().filterNot { LANGUAGE.matches(it) }.joinToString("\n").trimEnd()
+        return if (tag == "de-DE") "$body\n" else "$body\n\n<!-- sprache: $tag -->\n"
+    }
+
+    /** A setting line of the page or the language (`<!-- kopfzeile: … -->`, `<!-- sprache: en-GB -->`): not part of the text. */
+    fun isPageSetting(line: String): Boolean = SETTING.matches(line) || LANGUAGE.matches(line)
+
+    /** Name of the language [tag] („Englisch (GB)“). */
+    fun languageName(tag: String): String = LANGUAGES.firstOrNull { it.first == tag }?.second ?: tag
 
     /** Today in German ("26.10.2026"), for header and footer. */
     fun today(): String = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.GERMANY).format(Date())
@@ -340,6 +403,8 @@ object DocMarkup {
          * after it runs on beside it; null: the picture has a line of its own ([align]).
          */
         val wrap: String? = null,
+        /** Beschriftung mit Nummer (AP-126 c): the id („abb-hoersaal“) – „Abbildung 3: …“; null: the caption as written. */
+        val nr: String? = null,
     ) {
         fun markdown(): String {
             val attrs = listOfNotNull(
@@ -347,6 +412,7 @@ object DocMarkup {
                 align?.takeIf { (it == "left" || it == "right") && wrap == null }?.let { "align=$it" },
                 wrap?.takeIf { it == "left" || it == "right" }?.let { "wrap=$it" },
                 description?.takeIf { it.isNotBlank() }?.let { "alt=\"" + it.replace("\"", "'").replace("}", ")").replace("\n", " ") + "\"" },
+                nr?.takeIf { DocFields.validId(it) }?.let { "nr=$it" },
             )
             return "![${alt.replace("]", ")").replace("\n", " ")}]($src)" + if (attrs.isEmpty()) "" else attrs.joinToString(" ", "{", "}")
         }
@@ -359,6 +425,7 @@ object DocMarkup {
     private val WIDTH = Regex("width\\s*=\\s*\"?(\\d{1,3})\\s*%?", RegexOption.IGNORE_CASE)
     private val ALIGN = Regex("align\\s*=\\s*\"?(left|center|right)", RegexOption.IGNORE_CASE)
     private val DESCRIPTION = Regex("alt\\s*=\\s*\"([^\"]*)\"", RegexOption.IGNORE_CASE)
+    private val NR = Regex("(?:^|[\\s{])nr\\s*=\\s*\"?([a-z][a-z0-9-]*)", RegexOption.IGNORE_CASE)
     private val WRAP = Regex("wrap\\s*=\\s*\"?(left|right)", RegexOption.IGNORE_CASE)
 
     /** The image if [text] (a line or block) is exactly one image. */
@@ -371,7 +438,8 @@ object DocMarkup {
         val width = rest.takeIf { it.isNotEmpty() }?.let { WIDTH.find(it)?.groupValues?.get(1)?.toIntOrNull()?.coerceIn(5, 100) }
         val align = ALIGN.find(rest)?.groupValues?.get(1)?.lowercase()?.takeIf { it != "center" }
         val wrap = WRAP.find(rest)?.groupValues?.get(1)?.lowercase()
-        return Image(m.groupValues[1].trim(), m.groupValues[2], width, align.takeIf { wrap == null }, description?.takeIf { it.isNotBlank() }, wrap)
+        val nr = NR.find(rest)?.groupValues?.get(1)?.takeIf { DocFields.validId(it) }
+        return Image(m.groupValues[1].trim(), m.groupValues[2], width, align.takeIf { wrap == null }, description?.takeIf { it.isNotBlank() }, wrap, nr)
     }
 
     private const val MAX_IMAGE = 30L * 1024 * 1024

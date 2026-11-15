@@ -469,9 +469,40 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Bildunterschrift und Umbruch „Quadrat“, im PDF genauso. Auch im Blocksatz reichen die Zeilen neben dem Bild bis an
     das Bild. Nebenbei: Das PDF übernimmt jetzt die Ausrichtung von Absätzen (zentriert, rechtsbündig, Blocksatz) – vorher
     stand dort alles linksbündig.
+  - **Eigene Ersetzungen und Bilder am Seitenende** (AP-125 f): Unter *Extras › Autokorrektur …* legst du eigene
+    Kürzel an („mfg“ → „Mit freundlichen Grüßen“, „tud“ → „TU Dresden“) – sie werden beim Tippen ersetzt, sobald ein
+    Leerzeichen, Enter oder Satzzeichen folgt; Strg+Z direkt danach nimmt die Ersetzung zurück. Ein Bild mit Text daneben
+    wird nicht mehr vom Seitenende abgeschnitten: Passt es nicht mehr auf die Seite, wandert es mit den Zeilen daneben auf
+    die nächste – in der Seitenansicht wie im PDF (dort blieb vorher der Text zurück und das Bild stand allein auf der
+    nächsten Seite).
+  - **Was man jeden Tag sucht** (AP-126 b, nach einer Lückenliste gegen Word und Google Docs,
+    [`docs/office-luecken.md`](docs/office-luecken.md)): **Drucken** mit Strg+P oder *Datei › Drucken …* – das Dokument
+    sieht auf Papier aus wie im PDF, der Druckdialog von Windows bzw. Android wählt Drucker, Seiten und Kopien.
+    *Datei › Herunterladen als* speichert mit einem Klick als Word, PDF, HTML, Markdown oder Text, *Neues Dokument* legt
+    ein leeres an, *Details …* zeigt Wörter, Zeichen, Seiten, Absätze, wann angelegt und geändert und wo gespeichert.
+    **Sprache des Dokuments** (*Datei › Sprache …*, z. B. Englisch für ein Paper): Rechtschreibvorschläge, “englische”
+    bzw. « französische » Anführungszeichen beim Tippen, Silbentrennung im PDF und die Sprache in Word folgen ihr.
+    *Bearbeiten* hat jetzt Ausschneiden, Kopieren, Einfügen, Nur Text einfügen und Löschen. **Seitenzahlen einfügen**
+    (*Einfügen › Seitenzahlen …*): oben oder unten, links, in der Mitte oder rechts, als „Seite 1 von 9“, „1“ oder „1 / 9“,
+    auf Wunsch nicht auf dem Deckblatt – auf dem Bildschirm, im PDF und in Word gleich. **Kopf- und Fußzeile per
+    Doppelklick** direkt auf dem Blatt bearbeiten (Enter übernimmt, Esc bricht ab; `{seite}` wird zur Seitenzahl).
+    Nebenbei: Eine Markierung bleibt beim Öffnen eines Menüs erhalten (vorher wirkte z. B. *Format › Fett* aus dem Menü
+    nicht auf den markierten Text), und Seitenränder per Lineal, Formatvorlagen oder in der Gliederung verschobene
+    Abschnitte werden sofort gespeichert (vorher erst mit der nächsten Eingabe); die Zeilen der Seiteneinrichtung stehen
+    nicht mehr als Marke „Seiteneinrichtung: …“ im Text.
+  - **Für Hausarbeit und Dissertation** (AP-126 c): **Beschriftungen mit Nummer** – Rechtsklick auf ein Bild › *Mit
+    Nummer beschriften* („Abbildung 3: …“), Rechtsklick in eine Tabelle › *Beschriftung hinzufügen* („Tabelle 2: …“ über der
+    Tabelle) oder *Einfügen › Beschriftung …*. **Querverweise** (*Einfügen › Querverweis …*) auf Abbildungen, Tabellen,
+    Überschriften und Lesezeichen – der Text („siehe Abbildung 3“) folgt den Nummern, wenn sich etwas verschiebt.
+    **Abbildungs- und Tabellenverzeichnis** (*Einfügen*), **nummerierte Überschriften** 1, 1.1, 1.1.1 (*Format ›
+    Überschriften nummerieren*), **Lesezeichen** (*Einfügen › Lesezeichen …*) und **Endnoten** statt Fußnoten (*Format*). In
+    Word stehen echte Beschriftungsfelder, Textmarken und Verzeichnisfelder, im PDF klickbare Verweise und Verzeichnisse.
+    Nebenbei: Das PDF druckte das Inhaltsverzeichnis als „[Inhaltsverzeichnis]“ – jetzt steht dort das Verzeichnis; ein
+    mitten in einen Absatz eingefügter Block (z. B. eine Tabelle) machte den Rest des Absatzes manchmal zur Überschrift.
   - Nebenbei: *Datei › Exportieren* nahm den Stand beim Öffnen – jetzt den aktuellen.
   Tests `DocEditorChromeTest`, `DocEditorLookTest` (Vorher/Nachher-Bilder), `AppShortcutsTest`, `AutoCorrectTest`,
-  `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder).
+  `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder),
+  `FlowWrapPdfTest`, `FlowOfficeBasicsTest`, `DocEditorBasicsTest`, `FlowScienceTest`, `DocEditorScienceTest`.
 
   | Vorher | Nachher | Datei-Menü | Rechtsklick |
   | --- | --- | --- | --- |

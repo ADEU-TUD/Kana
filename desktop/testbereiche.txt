@@ -50,7 +50,7 @@ quellen: docs/OpenDocumentWriter.kt docs/OdfImport.kt docs/OfficeImport.kt docs/
 quellen: docs/LiveDoc.kt docs/DocFiles.kt docs/DocTheme.kt docs/StyleCheck.kt docs/AccessibilityCheck.kt docs/Contrast.kt
 quellen: docs/LocalSpelling.kt docs/MathText.kt docs/LatexOmml.kt docs/LatexWriter.kt docs/EpubWriter.kt docs/MoreFormats.kt
 quellen: docs/QtiWriter.kt docs/SemesterPlan.kt docs/HtmlPdf.kt docs/MarkdownPdf.kt docs/PrintModel.kt docs/PrintPilot.kt
-quellen: docs/FontRescue.kt docs/DocumentSources.kt docs/OfficeFiles.kt docs/FormatConvert.kt
+quellen: docs/FontRescue.kt docs/DocumentSources.kt docs/OfficeFiles.kt docs/FormatConvert.kt docs/DocPrint.kt docs/DocCounts.kt docs/DocFields.kt
 quellen: data/TemplateLibrary.kt data/HouseStyle.kt data/BuiltInTemplates.kt data/DesignTemplates.kt agent/DocumentTools.kt
 quellen: agent/StyleActions.kt agent/OfficeActions.kt docs/TudBrand.kt /app/src/main/resources/tud/** /desktop/src/main/resources/tud/**
 quellen: /desktop/src/main/resources/fonts/**

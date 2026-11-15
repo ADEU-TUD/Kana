@@ -227,10 +227,24 @@ object DocumentWriter {
             val top = ";font:$font;color:$color;vertical-align:bottom;padding-bottom:4mm"
             val bottom = ";font:$font;color:$color$footerPad"
             val foot = listOf(footer, if (org) orgFooter else "").filter { it.isNotBlank() }.joinToString(" · ")
-            append("@top-left{content:${if (header.isBlank()) "none" else cssContent(header)}$top}")
-            append("@top-right{content:${if (date) cssString(DocMarkup.today()) else "none"}$top}")
-            append("@bottom-left{content:${if (foot.isBlank()) "none" else cssContent(foot)}$bottom}")
-            append("@bottom-right{content:${if (numbers) "\"Seite \" counter(page) \" von \" counter(pages)" else "none"}$bottom}")
+            if (!setup.numbersMoved) {
+                append("@top-left{content:${if (header.isBlank()) "none" else cssContent(header)}$top}")
+                append("@top-right{content:${if (date) cssString(DocMarkup.today()) else "none"}$top}")
+                append("@bottom-left{content:${if (foot.isBlank()) "none" else cssContent(foot)}$bottom}")
+                append("@bottom-right{content:${if (numbers) "\"Seite \" counter(page) \" von \" counter(pages)" else "none"}$bottom}")
+                return
+            }
+            // Seitenzahlen an eigener Stelle (AP-126 b): the six boxes; a page number next to a text there follows it.
+            val slots = Array(6) { mutableListOf<String>() }
+            if (header.isNotBlank()) slots[0] += header
+            if (date) slots[2] += DocMarkup.today()
+            if (foot.isNotBlank()) slots[3] += foot
+            if (numbers) slots[(if (setup.numbersTop) 0 else 3) + setup.numbersSlot] += setup.numbersText
+            listOf("top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right").forEachIndexed { k, box ->
+                val text = slots[k].joinToString(" · ")
+                if (text.isBlank() && k % 3 == 1) return@forEachIndexed
+                append("@$box{content:${if (text.isBlank()) "none" else cssContent(text)}${if (k < 3) top else bottom}}")
+            }
         }
         val margin = if (setup.margins == "normal") "" else "margin:${setup.marginMm}mm;"
         append("@page{$margin")
@@ -292,8 +306,34 @@ object DocumentWriter {
         else -> ""
     }
 
-    /** A picture of the document: embedded as data URL (local files) or linked (web addresses). */
-    private fun figure(img: DocMarkup.Image): String {
+    /** Lesezeichen (AP-126 c): the id of a paragraph with the marker `b=…`. */
+    private fun bookmark(text: String): String =
+        io.github.thepytales.llmhub.ui.ALIGN_MARK.find(text.trimStart())?.groupValues?.get(2)
+            ?.let { Regex(";b=([0-9a-z-]+)").find(it)?.groupValues?.get(1) }?.let { " id=\"lz-$it\"" }.orEmpty()
+
+    /**
+     * Inhaltsverzeichnis, Abbildungs- oder Tabellenverzeichnis (AP-126 c): the entries linked to their place; the page
+     * number follows where the renderer can print it (`target-counter`).
+     */
+    private fun listHtml(kind: DocFields.Kind, targets: List<DocFields.Entry>, lang: String, skipTitle: Boolean = false): String = buildString {
+        var list = targets.filter { it.kind == kind }
+        if (kind == DocFields.Kind.HEADING) list = (if (skipTitle) list.drop(1) else list).filter { it.level <= 3 }
+        append("<nav class=\"verzeichnis\"><p class=\"vz-titel\">${esc(DocFields.listTitle(kind, lang))}</p>\n")
+        if (list.isEmpty()) append("<p class=\"meta\">–</p>\n")
+        val top = list.minOfOrNull { it.level } ?: 1
+        for (e in list) {
+            val text = when (kind) {
+                DocFields.Kind.HEADING -> (if (e.number.isNotEmpty()) e.number + " " else "") + e.text
+                else -> e.label + (if (e.text.isNotBlank()) ": " + e.text else "")
+            }
+            val indent = if (kind == DocFields.Kind.HEADING) " style=\"margin-left:${(e.level - top) * 14}pt\"" else ""
+            append("<p class=\"vz\"$indent><a href=\"#${e.id}\">${esc(text)}</a></p>\n")
+        }
+        append("</nav>\n")
+    }
+
+    /** A picture of the document: embedded as data URL (local files) or linked (web addresses); [label]: „Abbildung 3“. */
+    private fun figure(img: DocMarkup.Image, label: String? = null): String {
         val bytes = DocMarkup.imageBytes(img.src)
         val src = bytes?.let { DocMarkup.dataUrl(it) } ?: img.src.takeIf { it.startsWith("https://", true) || it.startsWith("http://", true) }
             ?: return "<p class=\"meta\">[Bild: ${esc(img.alt.ifBlank { img.src.substringAfterLast('/') })}]</p>\n"
@@ -304,8 +344,10 @@ object DocumentWriter {
             img.wrap != null -> " style=\"float:${img.wrap};width:${img.width ?: 40}%;margin:2pt ${if (img.wrap == "left") "12pt 6pt 0" else "0 6pt 12pt"};text-align:center\""
             else -> img.align?.let { " style=\"text-align:$it\"" }.orEmpty()
         }
-        return "<figure class=\"img\"$align><img src=\"$src\" alt=\"${esc(img.altText)}\"$width>" +
-            (if (img.alt.isBlank()) "" else "<figcaption>${htmlInline(img.alt)}</figcaption>") + "</figure>\n"
+        val id = img.nr?.let { " id=\"${esc(it)}\"" }.orEmpty()
+        val caption = if (label != null) esc(label) + (if (img.alt.isNotBlank()) ": " + htmlInline(img.alt) else "") else htmlInline(img.alt)
+        return "<figure class=\"img\"$id$align><img src=\"$src\" alt=\"${esc(img.altText)}\"$width>" +
+            (if (caption.isBlank()) "" else "<figcaption>$caption</figcaption>") + "</figure>\n"
     }
 
     /** Footnote marks of the text as superscript links to the notes at the end. */
@@ -383,6 +425,12 @@ object DocumentWriter {
             append("table{border-collapse:collapse;width:100%;margin:8pt 0 12pt;font-size:9.5pt;break-inside:auto}")
             // Textumbruch (AP-125 e): only running text goes on beside a floating picture; blocks start below it.
             append("table,pre,hr,figure{clear:both}")
+            // AP-125 f: the picture and the first paragraph beside it are not split by a page end.
+            append(".umfluss{break-inside:avoid;page-break-inside:avoid}")
+            // AP-126 c: table captions above the table, the lists of headings, pictures and tables.
+            append(".tabcap{font-size:9pt;color:#555;font-style:italic;margin:10pt 0 3pt;break-after:avoid;page-break-after:avoid}")
+            append(".verzeichnis{margin:6pt 0 14pt}.vz-titel{font-weight:700;font-size:12pt;margin:0 0 6pt}.vz{margin:0 0 3pt}")
+            append(".vz a{color:inherit}.vz a::after{content:leader('.') target-counter(attr(href), page)}")
             append("thead{display:table-header-group}")
             append("tr{break-inside:avoid}th,td{padding:5pt 7pt;text-align:left;vertical-align:top}")
             append("hr{border:none;border-top:1px solid #d9dde3;margin:14pt 0}")
@@ -597,13 +645,20 @@ object DocumentWriter {
     ): String = buildString {
         @Suppress("NAME_SHADOWING") val theme = TudBrand.apply(theme)
         // A leading "# Heading" becomes the title of the document.
-        var body = markdown.trimStart()
+        // Wissenschaft (AP-126 c): numbers of headings, captions and cross references; the targets with their ids.
+        val lang = DocMarkup.language(markdown)
+        val targets = DocFields.entries(markdown, lang)
+        var body = DocFields.forExport(markdown).trimStart()
         var docTitle = title
+        var headingIds = targets.filter { it.kind == DocFields.Kind.HEADING }.map { it.id }
         if (letter == null) Regex("^#\\s+(.+)").find(body.lineSequence().firstOrNull().orEmpty())?.let {
             docTitle = it.groupValues[1].trim()
             body = body.substringAfter('\n', "")
+            headingIds = headingIds.drop(1)
         }
-        append("<!DOCTYPE html>\n<html lang=\"de\">\n<head>\n<meta charset=\"utf-8\">\n")
+        val captionLabels = targets.filter { it.kind == DocFields.Kind.FIGURE || it.kind == DocFields.Kind.TABLE }.associate { it.id to it.label }
+        var headingAt = 0
+        append("<!DOCTYPE html>\n<html lang=\"${DocMarkup.language(markdown).let { if (it == "de-DE") "de" else it }}\">\n<head>\n<meta charset=\"utf-8\">\n")
         append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n")
         append("<title>${esc(docTitle.ifBlank { "Dokument" })}</title>\n<style>\n")
         append(css(theme, print, certificate, DocMarkup.pageSetup(markdown), DocMarkup.sections(markdown)))
@@ -627,11 +682,22 @@ object DocumentWriter {
         }
         // Letters: closing formula and signature stay together on one page.
         val closingAt = if (letter == null) -1 else blocks.indexOfLast { it is Block.Paragraph && LetterBuilder.isClosing(it.text) }
+        // Textumbruch (AP-125 f): a picture the text runs beside stays on one page with the first paragraph after it
+        // (like the editor's Seitenansicht) – else the browser pushes the picture alone to the next page.
+        var wrapOpen = false
         for ((i, b) in blocks.withIndex()) {
             if (b !is Block.Item) closeList()
+            val plain = b is Block.Heading || b is Block.Paragraph && DocMarkup.image(b.text) == null && DocMarkup.section(b.text) == null &&
+                DocMarkup.orientation(b.text) == null && !DocMarkup.isPageBreak(b.text) && !DocMarkup.isComment(b.text)
+            if (wrapOpen && !plain) { append("</div>\n"); wrapOpen = false }
+            if (b is Block.Paragraph && DocMarkup.image(b.text)?.wrap != null) { append("<div class=\"umfluss\">\n"); wrapOpen = true }
+            val closeWrap = wrapOpen && plain
             if (i == closingAt) append("<div class=\"closing\">\n")
             when (b) {
-                is Block.Heading -> append("<h${b.level}${alignStyle(b.text)}>${inl(b.text)}</h${b.level}>\n")
+                is Block.Heading -> {
+                    val id = headingIds.getOrNull(headingAt++)?.let { " id=\"$it\"" }.orEmpty()
+                    append("<h${b.level}$id${alignStyle(b.text)}>${inl(b.text)}</h${b.level}>\n")
+                }
                 is Block.Paragraph -> {
                     val lines = b.text.lines()
                     val turn = DocMarkup.orientation(b.text)
@@ -651,8 +717,17 @@ object DocumentWriter {
                             landscape = turn
                         }
                         DocMarkup.isPageBreak(b.text) -> append("<div class=\"pagebreak\"></div>\n")
+                        // Beschriftung einer Tabelle (AP-126 c): above the table, kept with it.
+                        DocFields.tableCaption(b.text) != null -> DocFields.tableCaption(b.text)!!.let { cap ->
+                            val label = captionLabels[cap.id]
+                            append("<p class=\"tabcap\" id=\"${esc(cap.id)}\">${if (label != null) esc(label) + (if (cap.text.isNotBlank()) ": " else "") else ""}${inl(cap.text)}</p>\n")
+                        }
+                        // Verzeichnisse (AP-16, AP-126 c): the headings, pictures or tables, linked to their place.
+                        DocMarkup.isToc(b.text) -> append(listHtml(DocFields.Kind.HEADING, targets, lang, skipTitle = headingIds.size < targets.count { it.kind == DocFields.Kind.HEADING }))
+                        DocFields.isFigureList(b.text) -> append(listHtml(DocFields.Kind.FIGURE, targets, lang))
+                        DocFields.isTableList(b.text) -> append(listHtml(DocFields.Kind.TABLE, targets, lang))
                         DocMarkup.isComment(b.text) -> {}
-                        img != null -> append(figure(img))
+                        img != null -> append(figure(img, img.nr?.let { captionLabels[it] }))
                         // "Mit freundlichen Grüßen" directly followed by the name: keep room for the signature in between.
                         i == closingAt && lines.size > 1 ->
                             append("<p>${inl(lines.first())}</p>\n<p>${lines.drop(1).joinToString("<br>\n") { inl(it) }}</p>\n")
@@ -662,7 +737,7 @@ object DocumentWriter {
                                 ?.let { io.github.thepytales.llmhub.docs.text.ParaFormat.fromMarker(io.github.thepytales.llmhub.docs.text.ParaFormat(), it).tabs }.orEmpty()
                             append(lines.joinToString("") { "<p class=\"tabs\">${tabbed(it, stops, ::inl)}</p>\n" })
                         }
-                        else -> append("<p${alignStyle(b.text)}>${lines.joinToString("<br>\n") { inl(it) }}</p>\n")
+                        else -> append("<p${bookmark(b.text)}${alignStyle(b.text)}>${lines.joinToString("<br>\n") { inl(it) }}</p>\n")
                     }
                 }
                 is Block.Item -> {
@@ -728,7 +803,9 @@ object DocumentWriter {
                 }
                 Block.Rule -> append("<hr>\n")
             }
+            if (closeWrap) { append("</div>\n"); wrapOpen = false }
         }
+        if (wrapOpen) append("</div>\n")
         closeList()
         if (closingAt >= 0) append("</div>\n")
         if (landscape) append("</section>\n")

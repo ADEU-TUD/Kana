@@ -606,10 +606,24 @@ internal fun BlockView(
                 // Inhaltsverzeichnis (AP-16): the headings of the document, always up to date.
                 DocMarkup.isToc(block) -> Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f), RoundedCornerShape(6.dp)).padding(10.dp)) {
                     Text(tr("Inhaltsverzeichnis"), style = MaterialTheme.typography.titleSmall)
-                    val entries = DocMarkup.tocEntries(doc?.markdown(tabId).orEmpty())
+                    val md = doc?.markdown(tabId).orEmpty()
+                    val entries = DocMarkup.tocEntries(md)
+                    // Nummerierte Überschriften (AP-126 c): with their numbers.
+                    val numbers = io.github.thepytales.llmhub.docs.DocFields.entries(md).filter { it.kind == io.github.thepytales.llmhub.docs.DocFields.Kind.HEADING && it.level <= 3 }
+                        .drop(if (md.lineSequence().any { Regex("^#\\s").containsMatchIn(it.trim()) }) 1 else 0).map { it.number }
                     if (entries.isEmpty()) HintText(tr("Erscheint, sobald das Dokument Überschriften hat."))
-                    entries.forEach { (level, text) -> Text(text, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(start = ((level - 2).coerceAtLeast(0) * 16).dp, top = 2.dp)) }
+                    entries.forEachIndexed { i, (level, text) -> Text((numbers.getOrNull(i)?.takeIf { it.isNotEmpty() }?.let { "$it  " } ?: "") + text, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(start = ((level - 2).coerceAtLeast(0) * 16).dp, top = 2.dp)) }
                 }
+                // Abbildungs- und Tabellenverzeichnis (AP-126 c): the numbered captions, always up to date.
+                io.github.thepytales.llmhub.docs.DocFields.isFigureList(block) || io.github.thepytales.llmhub.docs.DocFields.isTableList(block) ->
+                    Column(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f), RoundedCornerShape(6.dp)).padding(10.dp)) {
+                        val figures = io.github.thepytales.llmhub.docs.DocFields.isFigureList(block)
+                        Text(tr(if (figures) "Abbildungsverzeichnis" else "Tabellenverzeichnis"), style = MaterialTheme.typography.titleSmall)
+                        val kind = if (figures) io.github.thepytales.llmhub.docs.DocFields.Kind.FIGURE else io.github.thepytales.llmhub.docs.DocFields.Kind.TABLE
+                        val entries = io.github.thepytales.llmhub.docs.DocFields.entries(doc?.markdown(tabId).orEmpty()).filter { it.kind == kind }
+                        if (entries.isEmpty()) HintText(tr(if (figures) "Erscheint, sobald ein Bild eine Beschriftung mit Nummer hat (Rechtsklick › Mit Nummer beschriften)." else "Erscheint, sobald eine Tabelle eine Beschriftung hat (Rechtsklick in die Tabelle › Beschriftung hinzufügen)."))
+                        entries.forEach { e -> Text(e.label + (if (e.text.isNotBlank()) ": " + e.text else ""), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 2.dp)) }
+                    }
                 // Display formula (AP-16): readable in the editor, a real formula in Word.
                 io.github.thepytales.llmhub.docs.LatexOmml.display(block) != null -> Box(Modifier.fillMaxWidth().padding(vertical = 6.dp), contentAlignment = Alignment.Center) {
                     Text(io.github.thepytales.llmhub.docs.MathText.inText(block.trim()), style = MaterialTheme.typography.titleMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic))

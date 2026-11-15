@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -392,5 +394,69 @@ fun SpellCheckDialog(blocks: List<String>, onReplace: (Int, String) -> Unit, onD
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(tr("Fertig")) } },
         dismissButton = { TextButton(onClick = { onDismiss(); onAskAi() }) { Text(tr("Mit KI prüfen")) } },
+    )
+}
+
+/**
+ * *Datei › Details* (AP-126 b, like Word's Eigenschaften and Docs' Details): counts of the document and where it lives.
+ * [markdown]: the open tab (pages from the Seitenansicht when it is shown).
+ */
+@Composable
+internal fun DocDetailsDialog(c: AppContainer, doc: io.github.thepytales.llmhub.docs.LiveDoc, markdown: String, onDismiss: () -> Unit) {
+    val stats = remember(markdown) { io.github.thepytales.llmhub.docs.DocCounts.of(markdown) }
+    val pages = FlowState.shown?.get()?.pageCount?.takeIf { it > 0 }
+    val fmt = remember { java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT, java.util.Locale.GERMANY) }
+    val place = remember(doc.id, doc.vault, doc.file) { c.docs.realFile(doc)?.absolutePath ?: doc.file ?: tr("In Lora (Dokumente)") }
+    val rows = listOfNotNull(
+        tr("Titel") to doc.title,
+        pages?.let { tr("Seiten") to it.toString() },
+        tr("Wörter") to stats.words.toString(),
+        tr("Zeichen (mit Leerzeichen)") to stats.chars.toString(),
+        tr("Zeichen (ohne Leerzeichen)") to stats.charsNoSpaces.toString(),
+        tr("Absätze") to stats.paragraphs.toString(),
+        tr("Bilder, Tabellen, Fußnoten") to "${stats.images} · ${stats.tables} · ${stats.notes}",
+        tr("Sprache") to tr(io.github.thepytales.llmhub.docs.DocMarkup.languageName(io.github.thepytales.llmhub.docs.DocMarkup.language(markdown))),
+        tr("Angelegt") to fmt.format(java.util.Date(doc.createdAt)),
+        tr("Zuletzt geändert") to fmt.format(java.util.Date(doc.updatedAt)) + " · " + doc.lastAuthor,
+        tr("Gespeichert") to place,
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(tr("Details")) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                rows.forEach { (k, v) ->
+                    Row {
+                        Text(k, Modifier.width(190.dp), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        androidx.compose.foundation.text.selection.SelectionContainer(Modifier.weight(1f)) { Text(v, style = MaterialTheme.typography.bodyMedium) }
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(tr("Schließen")) } },
+    )
+}
+
+/** *Datei › Sprache* (AP-126 b): the language of the document – spelling, quotation marks, hyphenation, Word and PDF. */
+@Composable
+internal fun LanguageDialog(current: String, onDismiss: () -> Unit, onPick: (String) -> Unit) {
+    var pick by remember { mutableStateOf(current) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(tr("Sprache des Dokuments")) },
+        text = {
+            Column {
+                HintText(tr("Gilt für Rechtschreibung, Anführungszeichen und Silbentrennung – auch in Word und PDF."))
+                Spacer(Modifier.height(6.dp))
+                io.github.thepytales.llmhub.docs.DocMarkup.LANGUAGES.forEach { (tag, name) ->
+                    Row(Modifier.fillMaxWidth().clickable { pick = tag }.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = pick == tag, onClick = { pick = tag })
+                        Text(tr(name))
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = { onPick(pick) }) { Text(tr("Übernehmen")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
     )
 }

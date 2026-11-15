@@ -65,6 +65,8 @@ data class AppSettings(
     val docStyleLines: String = "",
     /** Autokorrektur in documents (AP-125): the rules switched off (ids of docs/text/AutoCorrect, comma-separated). */
     val docAutocorrectOff: String = "",
+    /** Eigene Ersetzungen der Autokorrektur (AP-125 f): one per line, „Kürzel⇥Ersetzung“ (docs/text/AutoCorrect.ownEntries). */
+    val docAutocorrectOwn: String = "",
     /** Put the default logo into every document. */
     val autoLogo: Boolean = false,
     /** Own details for letters and e-mails (name, function, phone, e-mail, room); prefills the "Absender" fields of templates. */
@@ -349,6 +351,7 @@ class SettingsStore(context: Context) {
             .putString("tudUnit", next.tudUnit)
             .putString("docStyleLines", next.docStyleLines)
             .putString("docAutocorrectOff", next.docAutocorrectOff)
+            .putString("docAutocorrectOwn", next.docAutocorrectOwn)
             .putBoolean("autoLogo", next.autoLogo)
             .putString("senderInfo", next.senderInfo)
             .putString("favoriteTemplates", next.favoriteTemplates.joinToString("\n"))
@@ -481,6 +484,7 @@ class SettingsStore(context: Context) {
             tudUnit = prefs.getString("tudUnit", d.tudUnit) ?: d.tudUnit,
             docStyleLines = prefs.getString("docStyleLines", d.docStyleLines) ?: d.docStyleLines,
             docAutocorrectOff = prefs.getString("docAutocorrectOff", d.docAutocorrectOff) ?: d.docAutocorrectOff,
+            docAutocorrectOwn = prefs.getString("docAutocorrectOwn", d.docAutocorrectOwn) ?: d.docAutocorrectOwn,
             autoLogo = prefs.getBoolean("autoLogo", d.autoLogo),
             senderInfo = prefs.getString("senderInfo", d.senderInfo) ?: d.senderInfo,
             favoriteTemplates = prefs.getString("favoriteTemplates", "").orEmpty().lines().filter { it.isNotBlank() },

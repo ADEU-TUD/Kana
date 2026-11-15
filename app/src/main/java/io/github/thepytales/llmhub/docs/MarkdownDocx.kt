@@ -52,6 +52,14 @@ object MarkdownDocx {
         /** Abschnitte (AP-43/45): header and footer of each section break of the document, and the current one (0: none yet). */
         var breaks: List<Pair<String, String>> = emptyList()
         var section = 0
+        /** Sprache des Dokuments (AP-126 b): Word's spelling and hyphenation follow it. */
+        var language = "de-DE"
+        /** Wissenschaft (AP-126 c): the targets of Querverweise, the ids of the headings in order, bookmark ids. */
+        var targets: List<DocFields.Entry> = emptyList()
+        var headingIds: ArrayDeque<String> = ArrayDeque()
+        var bookmarks = 0
+        /** Fußnoten als Endnoten (AP-126 c). */
+        var endnotes = false
         val settings: Boolean get() = notes.isNotEmpty() || even
         val width: Int get() = if (landscape) TEXT_WIDTH_LANDSCAPE else TEXT_WIDTH
         val height: Int get() = if (landscape) TEXT_HEIGHT_LANDSCAPE else TEXT_HEIGHT
@@ -76,7 +84,10 @@ object MarkdownDocx {
             if (c.footer) append("<Override PartName=\"/word/footer$n.xml\" ContentType=\"$CT.footer+xml\"/>")
             if (c.header) append("<Override PartName=\"/word/header$n.xml\" ContentType=\"$CT.header+xml\"/>")
         }
-        if (c.notes.isNotEmpty()) append("<Override PartName=\"/word/footnotes.xml\" ContentType=\"$CT.footnotes+xml\"/>")
+        if (c.notes.isNotEmpty()) {
+            if (c.endnotes) append("<Override PartName=\"/word/endnotes.xml\" ContentType=\"$CT.endnotes+xml\"/>")
+            else append("<Override PartName=\"/word/footnotes.xml\" ContentType=\"$CT.footnotes+xml\"/>")
+        }
         if (c.settings) append("<Override PartName=\"/word/settings.xml\" ContentType=\"$CT.settings+xml\"/>")
         append("<Override PartName=\"/word/styles.xml\" ContentType=\"$CT.styles+xml\"/>")
         append("<Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\"/>")
@@ -91,7 +102,10 @@ object MarkdownDocx {
             if (c.footer) append("<Relationship Id=\"rIdFooter$id\" Type=\"$R_NS/footer\" Target=\"footer$n.xml\"/>")
             if (c.header) append("<Relationship Id=\"rIdHeader$id\" Type=\"$R_NS/header\" Target=\"header$n.xml\"/>")
         }
-        if (c.notes.isNotEmpty()) append("<Relationship Id=\"rIdFootnotes\" Type=\"$R_NS/footnotes\" Target=\"footnotes.xml\"/>")
+        if (c.notes.isNotEmpty()) {
+            if (c.endnotes) append("<Relationship Id=\"rIdEndnotes\" Type=\"$R_NS/endnotes\" Target=\"endnotes.xml\"/>")
+            else append("<Relationship Id=\"rIdFootnotes\" Type=\"$R_NS/footnotes\" Target=\"footnotes.xml\"/>")
+        }
         if (c.settings) append("<Relationship Id=\"rIdSettings\" Type=\"$R_NS/settings\" Target=\"settings.xml\"/>")
         append("<Relationship Id=\"rIdStyles\" Type=\"$R_NS/styles\" Target=\"styles.xml\"/>")
         if (withLogo) append("<Relationship Id=\"rIdLogo\" Type=\"$R_NS/image\" Target=\"media/logo.png\"/>")
@@ -111,6 +125,7 @@ object MarkdownDocx {
      * structure shows in the navigation pane and screen readers can jump between headings.
      */
     private fun styles(themeFont: String) = buildString {
+        val lang = ctx.language
         // Formatvorlagen of the document (AP-46) as Word styles, so „Überschrift 1 ändern“ in Word works on them too.
         val sheet = ctx.sheet
         val body = sheet?.of(io.github.thepytales.llmhub.docs.text.ParaKind.NORMAL)
@@ -120,7 +135,7 @@ object MarkdownDocx {
         val after = body?.let { it.after * 20 } ?: 120
         append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<w:styles xmlns:w=\"$W_NS\">")
         append("<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii=\"$font\" w:hAnsi=\"$font\" w:cs=\"$font\"/>")
-        append("<w:sz w:val=\"$bodySize\"/><w:lang w:val=\"de-DE\" w:eastAsia=\"de-DE\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>")
+        append("<w:sz w:val=\"$bodySize\"/><w:lang w:val=\"${lang}\" w:eastAsia=\"${lang}\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>")
         append("<w:pPrDefault><w:pPr><w:spacing w:after=\"$after\" w:line=\"$line\" w:lineRule=\"auto\"/></w:pPr></w:pPrDefault></w:docDefaults>")
         append("<w:style w:type=\"paragraph\" w:default=\"1\" w:styleId=\"Standard\"><w:name w:val=\"Normal\"/><w:qFormat/></w:style>")
         fun rPr(kind: io.github.thepytales.llmhub.docs.text.ParaKind, fallback: String): String {
@@ -153,6 +168,12 @@ object MarkdownDocx {
         append("<w:style w:type=\"paragraph\" w:styleId=\"FootnoteText\"><w:name w:val=\"footnote text\"/><w:basedOn w:val=\"Standard\"/>")
         append("<w:pPr><w:spacing w:after=\"40\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:rPr><w:sz w:val=\"18\"/></w:rPr></w:style>")
         append("<w:style w:type=\"character\" w:styleId=\"FootnoteReference\"><w:name w:val=\"footnote reference\"/><w:rPr><w:vertAlign w:val=\"superscript\"/></w:rPr></w:style>")
+        if (ctx.endnotes) {
+            append("<w:style w:type=\"paragraph\" w:styleId=\"EndnoteText\"><w:name w:val=\"endnote text\"/><w:basedOn w:val=\"Standard\"/>")
+            append("<w:pPr><w:spacing w:after=\"40\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:rPr><w:sz w:val=\"18\"/></w:rPr></w:style>")
+            append("<w:style w:type=\"character\" w:styleId=\"EndnoteReference\"><w:name w:val=\"endnote reference\"/><w:rPr><w:vertAlign w:val=\"superscript\"/></w:rPr></w:style>")
+        }
+        append("<w:style w:type=\"character\" w:styleId=\"Hyperlink\"><w:name w:val=\"Hyperlink\"/><w:rPr><w:color w:val=\"1D4ED8\"/><w:u w:val=\"single\"/></w:rPr></w:style>")
         append("<w:style w:type=\"paragraph\" w:styleId=\"Caption\"><w:name w:val=\"caption\"/><w:basedOn w:val=\"Standard\"/><w:qFormat/>")
         append("<w:pPr><w:jc w:val=\"center\"/><w:spacing w:after=\"200\"/></w:pPr><w:rPr><w:i/><w:color w:val=\"555555\"/><w:sz w:val=\"18\"/></w:rPr></w:style>")
         append("</w:styles>")
@@ -164,14 +185,16 @@ object MarkdownDocx {
             "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" " +
             "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" " +
             "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:title>${esc(title)}</dc:title>" +
-            "<dc:language>de-DE</dc:language><dc:creator>Lora</dc:creator>" +
+            "<dc:language>${ctx.language}</dc:language><dc:creator>Lora</dc:creator>" +
             "<dcterms:created xsi:type=\"dcterms:W3CDTF\">$now</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">$now</dcterms:modified>" +
             "</cp:coreProperties>"
     }
 
-    fun write(file: File, title: String, markdown: String, theme: DocTheme = DocTheme()) {
+    fun write(file: File, title: String, source: String, theme: DocTheme = DocTheme()) {
+        // Wissenschaft (AP-126 c): numbered headings and cross references as the numbers are now.
+        val markdown = DocFields.forExport(source)
         val notes = DocMarkup.footnotes(DocMarkup.isolate(markdown))
-        writeWith(file, title, markdown, notes.notes, theme) { withLogo -> document(title, notes.body, theme, withLogo) }
+        writeWith(file, title, markdown, notes.notes, theme, DocFields.entries(source)) { withLogo -> document(title, notes.body, theme, withLogo) }
     }
 
     /**
@@ -204,13 +227,13 @@ object MarkdownDocx {
         }
     }
 
-    private fun writeWith(file: File, title: String, markdown: String, notes: List<DocMarkup.Note>, theme: DocTheme, body: (Boolean) -> String) {
+    private fun writeWith(file: File, title: String, markdown: String, notes: List<DocMarkup.Note>, theme: DocTheme, targets: List<DocFields.Entry> = DocFields.entries(markdown), body: (Boolean) -> String) {
         val logo = theme.logo?.takeIf { theme.logoSize != null }
         val setup = DocMarkup.pageSetup(markdown)
         val breaks = DocMarkup.sectionMargins(setup, DocMarkup.sections(markdown))
         val c = Ctx(
             notes,
-            header = setup.hasHeader || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() },
+            header = setup.hasHeader || setup.pageNumbers && setup.numbersMoved && setup.numbersTop || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() },
             footer = setup.pageNumbers || theme.footer.isNotBlank() || setup.footer.isNotBlank() || setup.footerEven.isNotBlank() || setup.titlePage && setup.footerFirst.isNotBlank() ||
                 breaks.any { it.second.isNotBlank() },
         )
@@ -219,12 +242,16 @@ object MarkdownDocx {
         c.first = setup.titlePage
         c.even = setup.hasEven
         c.headings = DocMarkup.tocEntries(markdown)
+        c.language = DocMarkup.language(markdown)
+        c.targets = targets
+        c.headingIds = ArrayDeque(targets.filter { it.kind == DocFields.Kind.HEADING }.map { it.id })
+        c.endnotes = DocFields.endnotes(markdown)
         c.sheet = io.github.thepytales.llmhub.docs.text.Styles.read(markdown).takeIf { it.explicit || it.changed.isNotEmpty() }
         current.set(c)
         try {
             // The body first: it collects the pictures that the package lists.
             val document = body(logo != null)
-            val footnotes = if (notes.isEmpty()) null else footnotesXml(notes)
+            val footnotes = if (notes.isEmpty()) null else footnotesXml(notes, c.endnotes)
             ZipOutputStream(file.outputStream()).use { zip ->
                 fun bytes(name: String, content: ByteArray) {
                     zip.putNextEntry(ZipEntry(name))
@@ -235,19 +262,19 @@ object MarkdownDocx {
                 entry("[Content_Types].xml", contentTypes(c))
                 entry("_rels/.rels", RELS)
                 entry("word/_rels/document.xml.rels", docRels(logo != null, c))
-                if (c.footer) entry("word/footer1.xml", footer(setup.footer, theme.footer, setup.pageNumbers))
-                if (c.header) entry("word/header1.xml", header(setup.header, setup.date))
+                if (c.footer) entry("word/footer1.xml", footer(setup.footer, theme.footer, setup.pageNumbers, setup))
+                if (c.header) entry("word/header1.xml", header(setup.header, setup.date, setup.pageNumbers, setup))
                 // Deckblatt: own header and footer of the first page (no page number); even pages: theirs.
                 if (c.first && c.footer) entry("word/footer2.xml", footer(setup.footerFirst, "", false))
                 if (c.first && c.header) entry("word/header2.xml", header(setup.headerFirst, false))
-                if (c.even && c.footer) entry("word/footer3.xml", footer(setup.footerEven, theme.footer, setup.pageNumbers))
-                if (c.even && c.header) entry("word/header3.xml", header(setup.headerEven, setup.date))
+                if (c.even && c.footer) entry("word/footer3.xml", footer(setup.footerEven, theme.footer, setup.pageNumbers, setup))
+                if (c.even && c.header) entry("word/header3.xml", header(setup.headerEven, setup.date, setup.pageNumbers, setup))
                 // Abschnitte: header and footer of each further section.
                 c.breaks.forEachIndexed { k, (h, f) ->
-                    if (c.footer) entry("word/footer${4 + k}.xml", footer(f, theme.footer, setup.pageNumbers))
-                    if (c.header) entry("word/header${4 + k}.xml", header(h, setup.date))
+                    if (c.footer) entry("word/footer${4 + k}.xml", footer(f, theme.footer, setup.pageNumbers, setup))
+                    if (c.header) entry("word/header${4 + k}.xml", header(h, setup.date, setup.pageNumbers, setup))
                 }
-                if (footnotes != null) entry("word/footnotes.xml", footnotes)
+                if (footnotes != null) entry(if (c.endnotes) "word/endnotes.xml" else "word/footnotes.xml", footnotes)
                 if (c.settings) entry("word/settings.xml", settings(c))
                 entry("word/styles.xml", styles(if (theme.style == DocStyle.TUD) "Noto Sans" else if (theme.style == DocStyle.CLASSIC) "Georgia" else "Calibri"))
                 entry("docProps/core.xml", core(title.ifBlank { markdown.lineSequence().firstOrNull { it.startsWith("# ") }?.removePrefix("# ")?.trim() ?: "Dokument" }))
@@ -271,20 +298,23 @@ object MarkdownDocx {
     /** Word links the separator lines of the footnote area from the settings; even pages get their own headers there. */
     private fun settings(c: Ctx) = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<w:settings xmlns:w=\"$W_NS\">" + (if (c.even) "<w:evenAndOddHeaders/>" else "") +
-        (if (c.notes.isNotEmpty()) "<w:footnotePr><w:footnote w:id=\"-1\"/><w:footnote w:id=\"0\"/></w:footnotePr>" else "") + "</w:settings>"
+        (if (c.notes.isNotEmpty()) (if (c.endnotes) "<w:endnotePr><w:pos w:val=\"docEnd\"/><w:endnote w:id=\"-1\"/><w:endnote w:id=\"0\"/></w:endnotePr>" else "<w:footnotePr><w:footnote w:id=\"-1\"/><w:footnote w:id=\"0\"/></w:footnotePr>") else "") + "</w:settings>"
 
-    private fun footnotesXml(notes: List<DocMarkup.Note>) = buildString {
-        append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<w:footnotes xmlns:w=\"$W_NS\" xmlns:r=\"$R_NS\">")
-        append("<w:footnote w:type=\"separator\" w:id=\"-1\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:separator/></w:r></w:p></w:footnote>")
-        append("<w:footnote w:type=\"continuationSeparator\" w:id=\"0\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:continuationSeparator/></w:r></w:p></w:footnote>")
+    /** The notes as Word footnotes – or, with [end] (AP-126 c), as endnotes at the end of the document. */
+    private fun footnotesXml(notes: List<DocMarkup.Note>, end: Boolean = false) = buildString {
+        val t = if (end) "endnote" else "footnote"
+        val style = if (end) "Endnote" else "Footnote"
+        append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<w:${t}s xmlns:w=\"$W_NS\" xmlns:r=\"$R_NS\">")
+        append("<w:$t w:type=\"separator\" w:id=\"-1\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:separator/></w:r></w:p></w:$t>")
+        append("<w:$t w:type=\"continuationSeparator\" w:id=\"0\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:continuationSeparator/></w:r></w:p></w:$t>")
         for (n in notes) {
-            append("<w:footnote w:id=\"${n.number}\"><w:p><w:pPr><w:pStyle w:val=\"FootnoteText\"/></w:pPr>")
-            append("<w:r><w:rPr><w:rStyle w:val=\"FootnoteReference\"/></w:rPr><w:footnoteRef/></w:r>")
+            append("<w:$t w:id=\"${n.number}\"><w:p><w:pPr><w:pStyle w:val=\"${style}Text\"/></w:pPr>")
+            append("<w:r><w:rPr><w:rStyle w:val=\"${style}Reference\"/></w:rPr><w:${t}Ref/></w:r>")
             append("<w:r><w:t xml:space=\"preserve\"> </w:t></w:r>")
             append(inlineSegments(n.text).joinToString("") { segRun(it, RunStyle(size = 18)) })
-            append("</w:p></w:footnote>")
+            append("</w:p></w:$t>")
         }
-        append("</w:footnotes>")
+        append("</w:${t}s>")
     }
 
     private fun field(instr: String, shown: String, rPr: String) =
@@ -297,6 +327,43 @@ object MarkdownDocx {
     /** Text of a header or footer with its fields `{seite}`/`{seiten}` as PAGE / NUMPAGES fields. */
     private fun fieldRuns(text: String, rPr: String): String = DocMarkup.fieldPieces(text).joinToString("") { (isField, t) ->
         if (isField) field(if (t == "seite") "PAGE" else "NUMPAGES", "1", rPr) else "<w:r>$rPr<w:t xml:space=\"preserve\">${esc(t)}</w:t></w:r>"
+    }
+
+    /**
+     * Header or footer with the page number at its own place (AP-126 b): [left], [center] and [right] (texts with fields)
+     * at a centre and a right tab, like Word's own header and footer.
+     */
+    private fun threeParts(tag: String, left: String, center: String, right: String): String {
+        val rPr = "<w:rPr><w:color w:val=\"888888\"/><w:sz w:val=\"16\"/></w:rPr>"
+        val tab = "<w:r>$rPr<w:tab/></w:r>"
+        val content = buildString {
+            if (left.isNotBlank()) append(fieldRuns(left, rPr))
+            if (center.isNotBlank() || right.isNotBlank()) append(tab)
+            if (center.isNotBlank()) append(fieldRuns(center, rPr))
+            if (right.isNotBlank()) append(tab).append(fieldRuns(right, rPr))
+        }
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<w:$tag xmlns:w=\"$W_NS\" xmlns:r=\"$R_NS\"><w:p><w:pPr><w:tabs><w:tab w:val=\"center\" w:pos=\"${TEXT_WIDTH / 2}\"/>" +
+            "<w:tab w:val=\"right\" w:pos=\"$TEXT_WIDTH\"/></w:tabs></w:pPr>$content</w:p></w:$tag>"
+    }
+
+    /** The three parts of a header ([top]) or footer, with the page number at its place. */
+    private fun parts(texts: List<String>, numbers: Boolean, setup: DocMarkup.PageSetup, top: Boolean): List<String> {
+        val slots = texts.map { mutableListOf(it).filter { t -> t.isNotBlank() }.toMutableList() }
+        if (numbers && setup.numbersTop == top) slots[setup.numbersSlot] += setup.numbersText
+        return slots.map { it.joinToString("   ·   ") }
+    }
+
+    private fun footer(own: String, org: String, numbers: Boolean, setup: DocMarkup.PageSetup): String {
+        if (!setup.numbersMoved) return footer(own, org, numbers)
+        val p = parts(listOf(listOf(own, org).filter { it.isNotBlank() }.joinToString("   ·   "), "", ""), numbers, setup, top = false)
+        return threeParts("ftr", p[0], p[1], p[2])
+    }
+
+    private fun header(text: String, date: Boolean, numbers: Boolean, setup: DocMarkup.PageSetup): String {
+        if (!setup.numbersMoved) return header(text, date)
+        val p = parts(listOf(text, "", if (date) DocMarkup.today() else ""), numbers, setup, top = true)
+        return threeParts("hdr", p[0], p[1], p[2])
     }
 
     /** Footer line ([own] and the theme's [org] line) and "Seite X von Y" (PAGE / NUMPAGES fields, updated by Word). */
@@ -424,11 +491,16 @@ object MarkdownDocx {
         // Ausrichtung of the picture and its caption (AP-125 d).
         val jc = when (img.align) { "left" -> "left"; "right" -> "right"; else -> "center" }
         val pictureRun = "<w:r>" + drawing(media.rel, id, "Bild $n", img.altText.ifBlank { "Bild $n" }, cx, cy) + "</w:r>"
-        img.wrap?.let { side -> return floatingPicture(side, pictureRun, if (caption) runs(img.alt) else null, cx, cy) }
+        img.wrap?.let { side ->
+            val label = img.nr?.let { captionLabel(DocFields.Kind.FIGURE, it, caption) }.orEmpty()
+            return floatingPicture(side, pictureRun, if (caption || label.isNotEmpty()) label + runs(img.alt) else null, cx, cy)
+        }
         val picture = para(
             pictureRun,
             (if (caption) "<w:keepNext/>" else "") + "<w:spacing w:before=\"120\" w:after=\"${if (caption) 60 else 160}\"/><w:jc w:val=\"$jc\"/>",
         )
+        if (img.nr != null) return picture.replace("<w:spacing w:before=\"120\" w:after=\"160\"/>", "<w:keepNext/><w:spacing w:before=\"120\" w:after=\"60\"/>") +
+            bookmarked(para(captionLabel(DocFields.Kind.FIGURE, img.nr, caption) + runs(img.alt), "<w:pStyle w:val=\"Caption\"/><w:jc w:val=\"$jc\"/>"), img.nr)
         return picture + if (caption) para(runs(img.alt), "<w:pStyle w:val=\"Caption\"/><w:jc w:val=\"$jc\"/>") else ""
     }
 
@@ -507,7 +579,14 @@ object MarkdownDocx {
         }
     }
 
-    private fun segRun(seg: Segment, base: RunStyle) = run(
+    private fun segRun(seg: Segment, base: RunStyle): String {
+        val r = segRunPlain(seg, base)
+        // Querverweis (AP-126 c): a link to a place in the document jumps to its bookmark.
+        val target = seg.link?.takeIf { it.startsWith("#") && it.length > 1 }?.substring(1) ?: return r
+        return "<w:hyperlink w:anchor=\"${bm(target)}\" w:history=\"1\">$r</w:hyperlink>"
+    }
+
+    private fun segRunPlain(seg: Segment, base: RunStyle) = run(
         seg.text,
         base.copy(
             mono = base.mono || seg.code,
@@ -526,7 +605,29 @@ object MarkdownDocx {
     )
 
     /** A footnote mark in the text; Word numbers it and puts the note at the bottom of the page. */
-    private fun noteRef(n: Int) = "<w:r><w:rPr><w:rStyle w:val=\"FootnoteReference\"/></w:rPr><w:footnoteReference w:id=\"$n\"/></w:r>"
+    private fun noteRef(n: Int) =
+        if (ctx.endnotes) "<w:r><w:rPr><w:rStyle w:val=\"EndnoteReference\"/></w:rPr><w:endnoteReference w:id=\"$n\"/></w:r>"
+        else "<w:r><w:rPr><w:rStyle w:val=\"FootnoteReference\"/></w:rPr><w:footnoteReference w:id=\"$n\"/></w:r>"
+
+    /** Word's name of the bookmark of a target (AP-126 c): letters, digits and „_“, at most 40. */
+    private fun bm(id: String) = id.replace('-', '_').take(40)
+
+    /** [paragraph] (one `<w:p>`) inside a bookmark named after [id] – the place a cross reference jumps to. */
+    private fun bookmarked(paragraph: String, id: String?): String {
+        if (id == null || !paragraph.startsWith("<w:p>")) return paragraph
+        val n = 100 + ctx.bookmarks++
+        val at = paragraph.indexOf("</w:pPr>").let { if (it >= 0) it + 8 else 5 }
+        val end = paragraph.lastIndexOf("</w:p>")
+        return paragraph.substring(0, at) + "<w:bookmarkStart w:id=\"$n\" w:name=\"${bm(id)}\"/>" + paragraph.substring(at, end) +
+            "<w:bookmarkEnd w:id=\"$n\"/>" + paragraph.substring(end)
+    }
+
+    /** „Abbildung “ SEQ Abbildung „: “ – the label of a numbered caption as Word writes it (its Verzeichnis lists it). */
+    private fun captionLabel(kind: DocFields.Kind, id: String, hasText: Boolean): String {
+        val word = if (kind == DocFields.Kind.FIGURE) DocFields.figureWord(ctx.language) else DocFields.tableWord(ctx.language)
+        val no = ctx.targets.firstOrNull { it.id == id }?.number ?: "1"
+        return run("$word ") + field("SEQ $word \\* ARABIC", no, "") + (if (hasText) run(": ") else "")
+    }
 
     private fun runs(text: String, base: RunStyle = RunStyle()): String =
         // Formulas (AP-16) as Word formulas, the text around them as runs.
@@ -578,7 +679,9 @@ object MarkdownDocx {
             append(jc(text))
         }
         val base = if (p.kind == io.github.thepytales.llmhub.docs.text.ParaKind.CODE) RunStyle(mono = true, size = 20) else null
-        return para(if (base != null) runs(text, base) else runs(text), pPr)
+        // Lesezeichen (AP-126 c): the marker b=… names the paragraph as a target.
+        val mark = Regex(";b=([0-9a-z-]+)").find(m.groupValues[2])?.groupValues?.get(1)?.let { "lz-$it" }
+        return bookmarked(para(if (base != null) runs(text, base) else runs(text), pPr), mark)
     }
 
     /** Alignment of a paragraph of the Fließtext-Editor (marker `<!--a:c-->` at its start, AP-44). */
@@ -599,7 +702,10 @@ object MarkdownDocx {
 
     private fun document(title: String, markdown: String, theme: DocTheme, withLogo: Boolean): String = buildString {
         head(theme, withLogo)
-        for (b in parseBlocks(DocumentWriter.withTitle(title, markdown))) block(b, theme)
+        val full = DocumentWriter.withTitle(title, markdown)
+        // A title heading added here is no target of its own (AP-126 c): the ids stay with their headings.
+        if (full.trimStart().startsWith("# ") && !markdown.trimStart().startsWith("# ")) ctx.headingIds.addFirst("kap-dokumenttitel")
+        for (b in parseBlocks(full)) block(b, theme)
         tail()
     }
 
@@ -761,6 +867,12 @@ object MarkdownDocx {
         when {
             DocMarkup.isPageBreak(text) -> append("<w:p><w:r><w:br w:type=\"page\"/></w:r></w:p>")
             DocMarkup.isToc(text) -> toc()
+            DocFields.isFigureList(text) -> captionList(DocFields.Kind.FIGURE)
+            DocFields.isTableList(text) -> captionList(DocFields.Kind.TABLE)
+            // Beschriftung einer Tabelle (AP-126 c): above the table, kept with it.
+            DocFields.tableCaption(text) != null -> DocFields.tableCaption(text)!!.let { cap ->
+                append(bookmarked(para(captionLabel(DocFields.Kind.TABLE, cap.id, cap.text.isNotBlank()) + runs(cap.text), "<w:pStyle w:val=\"Caption\"/><w:keepNext/><w:jc w:val=\"left\"/><w:spacing w:before=\"120\" w:after=\"60\"/>"), cap.id))
+            }
             LatexOmml.display(text) != null -> append(LatexOmml.paragraph(LatexOmml.display(text)!!))
             DocMarkup.isComment(text) -> {}
             else -> {
@@ -774,6 +886,23 @@ object MarkdownDocx {
      * Inhaltsverzeichnis (AP-16) as Word field (TOC, levels 1–3, linked): it lists the headings at once; Word fills in
      * the page numbers with „Felder aktualisieren“ (F9).
      */
+    /** Abbildungs- oder Tabellenverzeichnis (AP-126 c) as Word field (TOC \\c over the captions), filled in at once. */
+    private fun StringBuilder.captionList(kind: DocFields.Kind) {
+        val word = if (kind == DocFields.Kind.FIGURE) DocFields.figureWord(ctx.language) else DocFields.tableWord(ctx.language)
+        append(para(run(DocFields.listTitle(kind, ctx.language), RunStyle(bold = true, size = 28)), "<w:spacing w:before=\"120\" w:after=\"120\"/>"))
+        val begin = "<w:r><w:fldChar w:fldCharType=\"begin\" w:dirty=\"true\"/></w:r><w:r><w:instrText xml:space=\"preserve\"> TOC \\h \\z \\c \"$word\" </w:instrText></w:r><w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>"
+        val end = "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r>"
+        val entries = ctx.targets.filter { it.kind == kind }
+        if (entries.isEmpty()) {
+            append(para(begin + run("–") + end))
+            return
+        }
+        entries.forEachIndexed { i, e ->
+            val text = e.label + if (e.text.isNotBlank()) ": " + e.text else ""
+            append(para((if (i == 0) begin else "") + run(text) + (if (i == entries.lastIndex) end else ""), "<w:pStyle w:val=\"TableofFigures\"/><w:spacing w:after=\"40\"/>"))
+        }
+    }
+
     private fun StringBuilder.toc() {
         val entries = ctx.headings
         val rPr = ""
@@ -813,7 +942,7 @@ object MarkdownDocx {
                     val style = if (def != null) RunStyle() else RunStyle(bold = true, size = size, color = if (b.level <= 2) accent else null, font = headFont)
                     val align = jc(b.text).ifEmpty { if (b.level == 1 && theme.style == DocStyle.CLASSIC) "<w:jc w:val=\"center\"/>" else "" }
                     val level = b.level.coerceIn(1, 4)
-                    append(para(runs(b.text, style), "<w:pStyle w:val=\"Heading$level\"/><w:keepNext/>$border<w:spacing w:before=\"240\" w:after=\"120\"/>$align"))
+                    append(bookmarked(para(runs(b.text, style), "<w:pStyle w:val=\"Heading$level\"/><w:keepNext/>$border<w:spacing w:before=\"240\" w:after=\"120\"/>$align"), if (b.level <= 4) ctx.headingIds.removeFirstOrNull() else null))
                 }
                 is Block.Paragraph -> paragraph(b.text)
                 is Block.Item -> {
