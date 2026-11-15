@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -199,7 +198,7 @@ internal fun AtMenuPopup(c: AppContainer, doc: LiveDoc?, state: FlowState, m: At
     val query = text.substring((m.at + 1).coerceAtMost(text.length), m.seg.selection.start.coerceIn(m.at + 1, text.length).coerceAtLeast((m.at + 1).coerceAtMost(text.length)))
     val all = remember(doc?.id) { atEntries(c, doc) }
     val shown = atFilter(all, query).take(10)
-    androidx.compose.material3.DropdownMenu(true, onDismissRequest = onDone, properties = androidx.compose.ui.window.PopupProperties(focusable = false)) {
+    DropdownMenu(true, onDismissRequest = onDone, properties = androidx.compose.ui.window.PopupProperties(focusable = false)) {
         if (shown.isEmpty()) Text(tr("Nichts gefunden"), style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
         shown.forEach { e ->
             MenuRow(e.label, e.group, true) {
