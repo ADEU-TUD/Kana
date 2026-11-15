@@ -7362,6 +7362,12 @@ Beim Tippen in Dokumenten. Strg+Z direkt danach nimmt eine Korrektur zurück.	Wh
 Satzanfang groß	Capitalise first letter of sentences
 ZWei GRoßbuchstaben am Wortanfang	TWo INitial CApitals
 Häufige Tippfehler (udn → und)	Common typos (teh → the)
+Eigene Ersetzungen (mfg → Mit freundlichen Grüßen)	Own replacements (brb → be right back)
+Eigene Ersetzungen	Own replacements
+Das Kürzel wird ersetzt, sobald danach ein Leerzeichen oder Satzzeichen folgt – wie in Word.	The shortcut is replaced as soon as a space or punctuation mark follows – as in Word.
+Kürzel	Shortcut
+Noch keine – zum Beispiel „mfg“ → „Mit freundlichen Grüßen“.	None yet – for example “brb” → “be right back”.
+Ersetzung löschen: {0}	Delete replacement: {0}
 Strg+← / →, Strg+↑ / ↓	Ctrl+← / →, Ctrl+↑ / ↓
 Wort- bzw. absatzweise (mit Umschalt: markieren)	By word or paragraph (with Shift: select)
 Strg+Pos1 / Strg+Ende	Ctrl+Home / Ctrl+End

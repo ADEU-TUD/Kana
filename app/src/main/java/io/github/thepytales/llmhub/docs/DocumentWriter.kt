@@ -383,6 +383,8 @@ object DocumentWriter {
             append("table{border-collapse:collapse;width:100%;margin:8pt 0 12pt;font-size:9.5pt;break-inside:auto}")
             // Textumbruch (AP-125 e): only running text goes on beside a floating picture; blocks start below it.
             append("table,pre,hr,figure{clear:both}")
+            // AP-125 f: the picture and the first paragraph beside it are not split by a page end.
+            append(".umfluss{break-inside:avoid;page-break-inside:avoid}")
             append("thead{display:table-header-group}")
             append("tr{break-inside:avoid}th,td{padding:5pt 7pt;text-align:left;vertical-align:top}")
             append("hr{border:none;border-top:1px solid #d9dde3;margin:14pt 0}")
@@ -627,8 +629,16 @@ object DocumentWriter {
         }
         // Letters: closing formula and signature stay together on one page.
         val closingAt = if (letter == null) -1 else blocks.indexOfLast { it is Block.Paragraph && LetterBuilder.isClosing(it.text) }
+        // Textumbruch (AP-125 f): a picture the text runs beside stays on one page with the first paragraph after it
+        // (like the editor's Seitenansicht) – else the browser pushes the picture alone to the next page.
+        var wrapOpen = false
         for ((i, b) in blocks.withIndex()) {
             if (b !is Block.Item) closeList()
+            val plain = b is Block.Heading || b is Block.Paragraph && DocMarkup.image(b.text) == null && DocMarkup.section(b.text) == null &&
+                DocMarkup.orientation(b.text) == null && !DocMarkup.isPageBreak(b.text) && !DocMarkup.isComment(b.text)
+            if (wrapOpen && !plain) { append("</div>\n"); wrapOpen = false }
+            if (b is Block.Paragraph && DocMarkup.image(b.text)?.wrap != null) { append("<div class=\"umfluss\">\n"); wrapOpen = true }
+            val closeWrap = wrapOpen && plain
             if (i == closingAt) append("<div class=\"closing\">\n")
             when (b) {
                 is Block.Heading -> append("<h${b.level}${alignStyle(b.text)}>${inl(b.text)}</h${b.level}>\n")
@@ -728,7 +738,9 @@ object DocumentWriter {
                 }
                 Block.Rule -> append("<hr>\n")
             }
+            if (closeWrap) { append("</div>\n"); wrapOpen = false }
         }
+        if (wrapOpen) append("</div>\n")
         closeList()
         if (closingAt >= 0) append("</div>\n")
         if (landscape) append("</section>\n")

@@ -82,6 +82,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -1732,16 +1733,26 @@ private fun insertFootnote(state: FlowState) {
     state.changed()
 }
 
-/** Raster to choose the size of a new table (Einfügen › Tabelle). */
-/** Extras › Autokorrektur (AP-125): each rule on or off, for all documents. */
+/** Extras › Autokorrektur (AP-125): each rule on or off, and the own Ersetzungen (AP-125 f), for all documents. */
 @Composable
 private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
     var off by remember { mutableStateOf(AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff)) }
+    val own = remember { AutoCorrect.ownEntries(c.settings.current.docAutocorrectOwn).toMutableStateList() }
+    var from by remember { mutableStateOf("") }
+    var to by remember { mutableStateOf("") }
+    fun add() {
+        val a = from.filterNot { it.isWhitespace() }
+        val b = to.trim()
+        if (a.isEmpty() || b.isEmpty()) return
+        own.removeAll { it.first.equals(a, ignoreCase = true) }
+        own.add(0, a to b)
+        from = ""; to = ""
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(tr("Autokorrektur")) },
         text = {
-            Column {
+            Column(Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState())) {
                 HintText(tr("Beim Tippen in Dokumenten. Strg+Z direkt danach nimmt eine Korrektur zurück."))
                 Spacer(Modifier.height(8.dp))
                 AutoCorrect.Rule.entries.forEach { rule ->
@@ -1753,11 +1764,38 @@ private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
                         Switch(checked = rule !in off, onCheckedChange = { on -> off = if (on) off - rule else off + rule })
                     }
                 }
+                Spacer(Modifier.height(12.dp))
+                Text(tr("Eigene Ersetzungen"), style = MaterialTheme.typography.titleSmall)
+                HintText(tr("Das Kürzel wird ersetzt, sobald danach ein Leerzeichen oder Satzzeichen folgt – wie in Word."))
+                Spacer(Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(from, { from = it.filterNot { ch -> ch.isWhitespace() } }, singleLine = true, label = { Text(tr("Kürzel")) }, modifier = Modifier.width(120.dp))
+                    Spacer(Modifier.width(8.dp))
+                    OutlinedTextField(
+                        to, { to = it.replace("\n", " ").replace("\t", " ") }, singleLine = true, label = { Text(tr("Ersetzen durch")) },
+                        modifier = Modifier.weight(1f),
+                        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onDone = { add() }),
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    TextButton(onClick = ::add, enabled = from.isNotBlank() && to.isNotBlank()) { Text(tr("Hinzufügen")) }
+                }
+                if (own.isEmpty()) HintText(tr("Noch keine – zum Beispiel „mfg“ → „Mit freundlichen Grüßen“."))
+                own.toList().forEach { entry ->
+                    Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(entry.first, Modifier.width(120.dp), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text("→ " + entry.second, Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        IconButton(onClick = { own.remove(entry) }, modifier = Modifier.size(32.dp)) {
+                            Icon(Icons.Outlined.Delete, contentDescription = tr("Ersetzung löschen: {0}", entry.first), modifier = Modifier.size(16.dp))
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                c.settings.update { it.copy(docAutocorrectOff = AutoCorrect.setting(off)) }
+                // A pair typed but not added yet counts as well.
+                add()
+                c.settings.update { it.copy(docAutocorrectOff = AutoCorrect.setting(off), docAutocorrectOwn = AutoCorrect.ownSetting(own)) }
                 onDismiss()
             }) { Text(tr("Übernehmen")) }
         },
@@ -1765,6 +1803,7 @@ private fun AutoCorrectDialog(c: AppContainer, onDismiss: () -> Unit) {
     )
 }
 
+/** Raster to choose the size of a new table (Einfügen › Tabelle). */
 @Composable
 private fun TablePickDialog(onDismiss: () -> Unit, onPick: (Int, Int) -> Unit) {
     var hover by remember { mutableStateOf(3 to 3) }
@@ -2621,7 +2660,7 @@ private fun FlowField(
             val typedAt = sel.start - 1
             val fix = if (v.text.length == old.text.length + 1 && sel.collapsed && typedAt >= 0 && r.text == v.text && v.composition == null) {
                 val code = r.chars.getOrNull(typedAt)?.code == true || r.paras[r.paraAt(typedAt)].kind == ParaKind.CODE
-                AutoCorrect.after(r.text, sel.start, r.text[typedAt], AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff), code)
+                AutoCorrect.after(r.text, sel.start, r.text[typedAt], AutoCorrect.rulesOff(c.settings.current.docAutocorrectOff), code, AutoCorrect.ownEntries(c.settings.current.docAutocorrectOwn))
             } else null
             state.checkpoint(group = true)
             seg.rich = r

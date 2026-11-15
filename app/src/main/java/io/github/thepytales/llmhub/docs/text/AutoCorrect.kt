@@ -14,6 +14,7 @@ object AutoCorrect {
         SENTENCE("sentence", "Satzanfang groß"),
         TWO_CAPS("twocaps", "ZWei GRoßbuchstaben am Wortanfang"),
         TYPOS("typos", "Häufige Tippfehler (udn → und)"),
+        OWN("own", "Eigene Ersetzungen (mfg → Mit freundlichen Grüßen)"),
     }
 
     /** One correction: replace [range] (in the text after typing) with [text]; the cursor ends at [cursor]. */
@@ -21,6 +22,24 @@ object AutoCorrect {
 
     fun rulesOff(setting: String): Set<Rule> = setting.split(',').mapNotNull { id -> Rule.entries.firstOrNull { it.id == id.trim() } }.toSet()
     fun setting(off: Set<Rule>): String = off.joinToString(",") { it.id }
+
+    /**
+     * Eigene Ersetzungen (AP-125 f, like Word's AutoKorrektur list): one per line, „Kürzel⇥Ersetzung“. The Kürzel is a
+     * word as typed (letters, digits and marks, no spaces); case does not matter, a capital first letter typed is kept.
+     */
+    fun ownEntries(setting: String): List<Pair<String, String>> = setting.lines().mapNotNull { line ->
+        val tab = line.indexOf('\t')
+        if (tab <= 0) return@mapNotNull null
+        val from = line.substring(0, tab).trim()
+        val to = line.substring(tab + 1).trim()
+        if (from.isEmpty() || to.isEmpty() || from.any { it.isWhitespace() }) null else from to to
+    }.distinctBy { it.first.lowercase() }
+
+    fun ownSetting(entries: List<Pair<String, String>>): String = entries
+        .map { (a, b) -> a.filterNot { it.isWhitespace() } to b.replace('\t', ' ').replace('\n', ' ').trim() }
+        .filter { it.first.isNotEmpty() && it.second.isNotEmpty() }
+        .distinctBy { it.first.lowercase() }
+        .joinToString("\n") { (a, b) -> "$a\t$b" }
 
     /** Abbreviations after which no sentence begins (z. B., bzw. …), lower case, without the dot. */
     private val ABBREVIATIONS = setOf(
@@ -42,9 +61,11 @@ object AutoCorrect {
      * The correction after [typed] was typed at [cursor] − 1 in [text] (the text after typing; [cursor] behind the
      * new character), or null. [code]: the character stands in code (no correction there).
      */
-    fun after(text: String, cursor: Int, typed: Char, off: Set<Rule> = emptySet(), code: Boolean = false): Fix? {
+    fun after(text: String, cursor: Int, typed: Char, off: Set<Rule> = emptySet(), code: Boolean = false, own: List<Pair<String, String>> = emptyList()): Fix? {
         if (code || cursor < 1 || cursor > text.length) return null
         val before = text.substring(0, cursor - 1)
+        // Eigene Ersetzungen first: a Kürzel may hold marks that other rules would change („(tud)“, „->x“).
+        if (Rule.OWN !in off && own.isNotEmpty() && (typed.isWhitespace() || typed in ".,;:!?)")) ownFix(text, cursor, own, off)?.let { return it }
         // Quotes as they are typed: „…“ in German, ’ as apostrophe inside a word.
         if (Rule.QUOTES !in off && typed == '"') {
             val prev = before.lastOrNull()
@@ -93,6 +114,27 @@ object AutoCorrect {
         }
         if (Rule.SENTENCE !in off && word[0].isLowerCase() && sentenceStartsAt(text, a)) {
             return Fix(a until a + 1, word[0].uppercase(), cursor, Rule.SENTENCE)
+        }
+        return null
+    }
+
+    /** The Kürzel before the typed character (from the last space): its Ersetzung, with a capital typed kept. */
+    private fun ownFix(text: String, cursor: Int, own: List<Pair<String, String>>, off: Set<Rule>): Fix? {
+        val end = cursor - 1
+        var a = end
+        while (a > 0 && !text[a - 1].isWhitespace()) a--
+        if (a == end) return null
+        val token = text.substring(a, end)
+        // A mark typed to end the word („mfg.“) also may belong to the Kürzel („z.b.“): the whole token first.
+        val candidates = listOf(token, token.trimEnd('.', ',', ';', ':', '!', '?', ')'), token.trimStart('(', '„', '"'))
+        for (t in candidates.distinct()) {
+            if (t.isEmpty()) continue
+            val to = own.firstOrNull { it.first == t }?.second ?: own.firstOrNull { it.first.equals(t, ignoreCase = true) }?.second ?: continue
+            val start = a + token.indexOf(t)
+            var fixed = if (t[0].isUpperCase() && t.drop(1).any { it.isLowerCase() } || t.length == 1 && t[0].isUpperCase()) to.replaceFirstChar { it.uppercase() } else to
+            if (Rule.SENTENCE !in off && fixed[0].isLowerCase() && sentenceStartsAt(text, start)) fixed = fixed.replaceFirstChar { it.uppercase() }
+            if (fixed == t) return null
+            return Fix(start until start + t.length, fixed, cursor - t.length + fixed.length, Rule.OWN)
         }
         return null
     }

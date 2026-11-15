@@ -246,6 +246,8 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
     var first = true
     var paraBase = 0
     var tables = 0
+    // Textumbruch (AP-125 f): the item of a picture the next text field runs beside (index in items), else -1.
+    var wrapItem = -1
     for (seg in state.segs) {
         if (seg is FlowSeg.Raw && isHiddenSetting(seg.markdown)) continue
         if (!first) { items += PageLayout.Space(gap); owners += seg to -2 }
@@ -259,15 +261,31 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 val lines = (if (seg.linesFor == key) seg.linesCache else null)
                     ?: naturalLines(layout, rich, seg.breaks, seg.deleted)?.also { seg.linesFor = key; seg.linesCache = it }
                     ?: return null
+                // Beside a picture (AP-125 e/f): the picture and the lines next to it are one piece that is not split
+                // – Word keeps an anchored picture with its paragraph; the field is at least as high as the picture.
+                // The piece is the picture's item (its room goes above the picture, which moves the text with it);
+                // the lines below it go on as usual, a paragraph cut by the picture's lower edge counts on from there.
+                val wrap = state.wraps[seg.id]
+                var skip = 0
+                if (wrap != null && wrapItem >= 0 && wrapItem == items.size - 2 && items.last() is PageLayout.Space) {
+                    val space = items.removeAt(items.size - 1).height
+                    owners.removeAt(owners.size - 1)
+                    var top = 0f
+                    while (skip < lines.size && top < wrap.height - 0.5f) { top += lines[skip].height; skip++ }
+                    val beside = maxOf(top, wrap.height, if (skip == lines.size) minField else 0f)
+                    items[wrapItem] = PageLayout.Block(items[wrapItem].height + space + beside)
+                }
+                wrapItem = -1
                 val paraOf = lines.map { rich.paraAt(it.offset) }
                 // The empty line Compose adds after a paragraph (its line break) is the room between paragraphs: a
                 // space, not a line of the paragraph (Witwen/Waisen count only real lines).
                 val gap = BooleanArray(lines.size) { k -> k > 0 && paraOf[k - 1] == paraOf[k] && rich.text.getOrNull(lines[k].offset) == '\n' }
                 val counts = HashMap<Int, Int>()
-                paraOf.forEachIndexed { k, p -> if (!gap[k]) counts[p] = (counts[p] ?: 0) + 1 }
+                paraOf.forEachIndexed { k, p -> if (!gap[k] && k >= skip) counts[p] = (counts[p] ?: 0) + 1 }
                 val seen = HashMap<Int, Int>()
                 var total = 0f
                 lines.forEachIndexed { k, line ->
+                    if (k < skip) { total += line.height; return@forEachIndexed }
                     val p = paraOf[k]
                     if (gap[k]) {
                         items += PageLayout.Space(line.height)
@@ -282,7 +300,7 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                     owners += seg to line.offset
                     total += line.height
                 }
-                if (total < minField) { items += PageLayout.Space(minField - total); owners += seg to -2 }
+                if ((skip == 0 || skip < lines.size) && total < maxOf(minField, wrap?.height ?: 0f)) { items += PageLayout.Space(maxOf(minField, wrap?.height ?: 0f) - total); owners += seg to -2 }
                 paraBase += rich.paras.size
             }
             is FlowSeg.Raw -> if (seg.isTable) {
@@ -299,6 +317,7 @@ internal fun pageItems(state: FlowState, gap: Float, minField: Float): Pair<List
                 owners += seg to hs.size
             } else {
                 val h = seg.height.takeIf { it >= 0f } ?: return null
+                wrapItem = if (DocMarkup.image(seg.markdown)?.wrap != null) items.size else -1
                 items += if (DocMarkup.isPageBreak(seg.markdown) || DocMarkup.section(seg.markdown) != null) PageLayout.Break(h) else PageLayout.Block(h)
                 owners += seg to -1
             }
@@ -325,7 +344,8 @@ internal fun applyPlan(plan: PageLayout.Plan, owners: List<Pair<FlowSeg, Int>>, 
                 if (plan.repeat[k]) repeat.getOrPut(seg.id) { mutableSetOf() } += off
             }
             is FlowSeg.Text -> if (off >= 0) {
-                if (firstLine[seg.id] == k) tops[seg.id] = push
+                // The first line of the field (offset 0) – not the first one below a picture beside the text (AP-125 f).
+                if (firstLine[seg.id] == k && off == 0) tops[seg.id] = push
                 else breaks.getOrPut(seg.id) { mutableListOf() } += PageBreakAt.at(seg.rich.text, off, push)
             }
         }

@@ -469,9 +469,16 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Bildunterschrift und Umbruch „Quadrat“, im PDF genauso. Auch im Blocksatz reichen die Zeilen neben dem Bild bis an
     das Bild. Nebenbei: Das PDF übernimmt jetzt die Ausrichtung von Absätzen (zentriert, rechtsbündig, Blocksatz) – vorher
     stand dort alles linksbündig.
+  - **Eigene Ersetzungen und Bilder am Seitenende** (AP-125 f): Unter *Extras › Autokorrektur …* legst du eigene
+    Kürzel an („mfg“ → „Mit freundlichen Grüßen“, „tud“ → „TU Dresden“) – sie werden beim Tippen ersetzt, sobald ein
+    Leerzeichen, Enter oder Satzzeichen folgt; Strg+Z direkt danach nimmt die Ersetzung zurück. Ein Bild mit Text daneben
+    wird nicht mehr vom Seitenende abgeschnitten: Passt es nicht mehr auf die Seite, wandert es mit den Zeilen daneben auf
+    die nächste – in der Seitenansicht wie im PDF (dort blieb vorher der Text zurück und das Bild stand allein auf der
+    nächsten Seite).
   - Nebenbei: *Datei › Exportieren* nahm den Stand beim Öffnen – jetzt den aktuellen.
   Tests `DocEditorChromeTest`, `DocEditorLookTest` (Vorher/Nachher-Bilder), `AppShortcutsTest`, `AutoCorrectTest`,
-  `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder).
+  `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder),
+  `FlowWrapPdfTest`.
 
   | Vorher | Nachher | Datei-Menü | Rechtsklick |
   | --- | --- | --- | --- |
