@@ -108,7 +108,30 @@ data class ParaFormat(
     val tabs: List<TabStop> = emptyList(),
     /** Lesezeichen (AP-126 c): the paragraph is the target „#lz-name“ of Querverweise. */
     val bookmark: String? = null,
+    /** Abstand vor und nach dem Absatz in pt (AP-126 d, Absatz-Dialog); null: der der Formatvorlage. */
+    val before: Int? = null,
+    val after: Int? = null,
+    /** Mit nächstem Absatz zusammenhalten (AP-126 d): the paragraph stays on the page of the one after it. */
+    val keep: Boolean = false,
+    /** Seitenumbruch oberhalb (AP-126 d): the paragraph starts a new page. */
+    val pageBefore: Boolean = false,
+    /** Rahmen und Schattierung (AP-126 d): a thin line around the paragraph, a background colour (rrggbb, lower case). */
+    val border: Boolean = false,
+    val shade: String? = null,
+    /**
+     * Listen-Optionen (AP-126 d): the form of the numbers or the bullet ([ListStyles]), the number this item starts the
+     * list at, or „weiter“ – the numbers go on from the list before.
+     */
+    val listFormat: String? = null,
+    val listStart: Int? = null,
+    val listContinue: Boolean = false,
 ) {
+    /** A frame or a background (consecutive paragraphs with the same one share one box, as in Word). */
+    val boxed: Boolean get() = border || shade != null
+
+    /** What a new paragraph after this one (Enter) does not take over: a page break, a new start of the numbers. */
+    fun forNext(): ParaFormat = copy(checked = false, soft = false, bookmark = null, pageBefore = false, listStart = null, listContinue = false)
+
     /** The paragraph marker (`<!--a:c;s=title-->`) or "" when it has nothing to say. */
     fun marker(): String {
         val parts = buildList {
@@ -118,6 +141,15 @@ data class ParaFormat(
             if (first != 0) add("f=$first")
             if (tabs.isNotEmpty()) add("t=" + TabStop.write(tabs))
             bookmark?.let { add("b=$it") }
+            before?.let { add("v=$it") }
+            after?.let { add("n=$it") }
+            if (keep) add("k=1")
+            if (pageBefore) add("p=1")
+            if (border) add("r=1")
+            shade?.let { add("h=$it") }
+            listFormat?.let { add("lf=$it") }
+            listStart?.let { add("ls=$it") }
+            if (listContinue) add("ls=w")
         }
         if (align == Align.LEFT && parts.isEmpty()) return ""
         return "<!--a:" + (align.mark ?: "") + parts.joinToString("") { ";$it" } + "-->"
@@ -137,6 +169,14 @@ data class ParaFormat(
                     "f" -> v.toIntOrNull()?.let { p = p.copy(first = it.coerceIn(-80, 80)) }
                     "t" -> p = p.copy(tabs = TabStop.parse(v))
                     "b" -> v.takeIf { Regex("[0-9a-z]+(-[0-9a-z]+)*").matches(it) }?.let { p = p.copy(bookmark = it) }
+                    "v" -> v.toIntOrNull()?.let { p = p.copy(before = it.coerceIn(0, 200)) }
+                    "n" -> v.toIntOrNull()?.let { p = p.copy(after = it.coerceIn(0, 200)) }
+                    "k" -> p = p.copy(keep = v != "0")
+                    "p" -> p = p.copy(pageBefore = v != "0")
+                    "r" -> p = p.copy(border = v != "0")
+                    "h" -> v.takeIf { Regex("[0-9a-f]{6}").matches(it) }?.let { p = p.copy(shade = it) }
+                    "lf" -> v.takeIf { ListStyles.known(it) }?.let { p = p.copy(listFormat = it) }
+                    "ls" -> if (v == "w") p = p.copy(listContinue = true, listStart = null) else v.toIntOrNull()?.let { p = p.copy(listStart = it.coerceIn(0, 9999), listContinue = false) }
                 }
             }
             return p
@@ -219,7 +259,7 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
         val last = paraAt(removedEnd)
         val newLines = inserted.count { it == '\n' }
         val head = paras[first]
-        val next = if (head.kind.endsAtEnter) ParaFormat(align = head.align) else head.copy(checked = false, soft = false, bookmark = null)
+        val next = if (head.kind.endsAtEnter) ParaFormat(align = head.align) else head.forNext()
         val newParas = ArrayList<ParaFormat>(paras.size - (last - first) + newLines)
         newParas.addAll(paras.subList(0, first))
         newParas += head
@@ -518,6 +558,8 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
             var cur: StringBuilder? = null
             var curKind: ParaKind? = null
             val numbers = IntArray(6)
+            // Listen-Optionen (AP-126 d): the numbers of the list before, for a list that goes on („weiter“).
+            var lastNumbers = IntArray(6)
             fun flush() {
                 cur?.let { if (it.isNotBlank()) blocks += it.toString() }
                 cur = null
@@ -543,7 +585,12 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
                     }
                     listLike -> {
                         // A list of another kind (bullets → numbers → checklist) starts its own block.
-                        if (curKind == null || !curKind!!.list || (!p.soft && p.indent == 0 && curKind != p.kind)) { flush(); numbers.fill(0) }
+                        if (curKind == null || !curKind!!.list || (!p.soft && p.indent == 0 && curKind != p.kind)) {
+                            flush()
+                            if (numbers.any { it > 0 }) lastNumbers = numbers.copyOf()
+                            numbers.fill(0)
+                            if (p.listContinue && p.kind == ParaKind.NUMBERED) lastNumbers.copyInto(numbers)
+                        }
                         val b = cur ?: StringBuilder().also { cur = it }
                         curKind = p.kind
                         if (p.soft) {
@@ -555,7 +602,11 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
                         if (b.isNotEmpty()) b.append('\n')
                         b.append("  ".repeat(lvl))
                         when (p.kind) {
-                            ParaKind.NUMBERED -> { numbers[lvl]++; b.append("${numbers[lvl]}. ") }
+                            ParaKind.NUMBERED -> {
+                                p.listStart?.let { numbers[lvl] = (it - 1).coerceAtLeast(0) }
+                                numbers[lvl]++
+                                b.append("${numbers[lvl]}. ")
+                            }
                             ParaKind.CHECK -> b.append(if (p.checked) "- [x] " else "- [ ] ")
                             else -> b.append("- ")
                         }

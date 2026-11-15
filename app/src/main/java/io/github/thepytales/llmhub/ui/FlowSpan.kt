@@ -77,7 +77,7 @@ private fun offsetAtX(t: FlowSeg.Text, x: Float, lastLine: Boolean): Int {
     val line = if (lastLine) layout.lineCount - 1 else 0
     val y = (layout.getLineTop(line) + layout.getLineBottom(line)) / 2f
     val shown = layout.getOffsetForPosition(Offset(x, y))
-    return Shown(t.rich.text, t.breaks, t.deleted).toOrig(shown)
+    return Shown(t.rich.text, t.shownBreaks, t.deleted).toOrig(shown)
 }
 
 /** Selection over all fields (Strg+A in a document of several fields). */

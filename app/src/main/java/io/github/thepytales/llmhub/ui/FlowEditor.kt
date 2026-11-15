@@ -78,6 +78,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -106,6 +107,7 @@ import androidx.compose.ui.input.pointer.isMetaPressed as metaHeld
 import androidx.compose.ui.input.pointer.isShiftPressed as shiftHeld
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -234,8 +236,29 @@ sealed class FlowSeg {
         val hunks: List<io.github.thepytales.llmhub.docs.text.TrackDiff.Hunk> get() = tracking().first
         val deleted: List<Pair<Int, String>> get() = tracking().second
 
+        /** Rechtschreibung beim Tippen (AP-126 e): the text checked last and its misspelled words. */
+        var spell by mutableStateOf<Pair<String, List<IntRange>>?>(null)
+        /** Abstand vor/nach (AP-126 d): room before paragraphs (offset → px), set by the field from the paragraph formats. */
+        var gaps by mutableStateOf<Map<Int, Float>>(emptyMap())
+        private var shownKey: Triple<List<PageBreakAt>, Map<Int, Float>, String>? = null
+        private var shownCache: List<PageBreakAt> = emptyList()
+
+        /** The page breaks with the room of the paragraphs' own space – what the text field shows. */
+        val shownBreaks: List<PageBreakAt> get() {
+            val b = breaks
+            val g = gaps
+            if (g.isEmpty()) return b
+            val key = shownKey
+            val text = rich.text
+            if (key == null || key.first !== b || key.second !== g || key.third !== text) {
+                shownCache = withGaps(b, g, text)
+                shownKey = Triple(b, g, text)
+            }
+            return shownCache
+        }
+
         /** Where [offset] of the text is in the shown text (with the room of the page breaks and removed text). */
-        fun shown(offset: Int): Int = shownOffset(breaks, deleted, offset)
+        fun shown(offset: Int): Int = shownOffset(shownBreaks, deleted, offset)
 
 
         /** This text as Markdown blocks, made once per text (große Dokumente: only the piece typed in is made anew). */
@@ -331,6 +354,20 @@ class FlowState(markdown: String) {
 
     /** Sprache des Dokuments (AP-126 b, `<!-- sprache: … -->`): Autokorrektur and spelling follow it. */
     var language = "de-DE"
+    /** Rechtschreibung beim Tippen (AP-126 e): on/off and a counter that makes every field check again. */
+    var spellLive by mutableStateOf(true)
+    var spellRound by mutableIntStateOf(0)
+    /**
+     * A dialog of the editor asked for from anywhere (keys, Rechtsklick, menus – AP-126 e/f): „thesaurus“, „vergleich“,
+     * „baustein“ … – shown by the editor itself, also while the menus are hidden.
+     */
+    var dialog by mutableStateOf<String?>(null)
+    /** Docs-Komfort (AP-126 f): the open @-Menü, Steuerzeichen anzeigen, Fokusmodus. */
+    internal var atMenu by mutableStateOf<AtMenu?>(null)
+    var showMarks by mutableStateOf(false)
+    var focusMode by mutableStateOf(false)
+    /** Seitenlayout of the document (AP-126 d): paper, page colour, watermark, Silbentrennung. */
+    var layout by mutableStateOf(io.github.thepytales.llmhub.docs.DocMarkup.Layout())
 
     /** Nummerierte Überschriften (AP-126 c): text field id and paragraph → „1.2“, drawn before the heading. */
     var headingNos by mutableStateOf<Map<Pair<Long, Int>, String>>(emptyMap())
@@ -955,6 +992,8 @@ internal fun flowAnnotated(
     r: RichText, base: TextStyle, accent: Color, muted: Color, codeBg: Color, density: Float,
     sheet: StyleSheet = StyleSheet(), zoom: Float = 1f, marks: List<Pair<IntRange, Color>> = emptyList(),
     inserted: List<IntRange> = emptyList(),
+    /** Silbentrennung im Blocksatz (AP-126 d: the document may switch it off). */
+    hyphenate: Boolean = true,
 ): AnnotatedString = buildAnnotatedString {
     append(r.text)
     val listIndent = 28f * zoom
@@ -982,7 +1021,7 @@ internal fun flowAnnotated(
                 // when a page break splits a paragraph.
                 lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Proportional, LineHeightStyle.Trim.None),
                 // Silbentrennung (AP-43) where it matters: in justified text.
-                hyphens = if (p.align == Align.JUSTIFY) Hyphens.Auto else Hyphens.None,
+                hyphens = if (p.align == Align.JUSTIFY && hyphenate) Hyphens.Auto else Hyphens.None,
             ),
             range.first, end.coerceAtLeast(range.first),
         )
@@ -1060,26 +1099,11 @@ internal fun flowAnnotated(
     }
 }
 
-/** The list marks of the paragraphs (•, 1., ☐) – drawn in the gutter, not part of the text. */
-private fun listMarks(r: RichText): List<Pair<Int, String>> {
-    val out = mutableListOf<Pair<Int, String>>()
-    val counters = IntArray(6)
-    var prevList = false
-    r.paras.forEachIndexed { i, p ->
-        if (!p.kind.list) { counters.fill(0); prevList = false; return@forEachIndexed }
-        if (p.soft) return@forEachIndexed
-        if (!prevList) counters.fill(0)
-        prevList = true
-        val lvl = p.indent.coerceIn(0, 5)
-        for (k in lvl + 1 until 6) counters[k] = 0
-        out += i to when (p.kind) {
-            ParaKind.NUMBERED -> { counters[lvl]++; if (lvl % 3 == 1) ('a' + (counters[lvl] - 1) % 26) + "." else "${counters[lvl]}." }
-            ParaKind.CHECK -> "check"
-            else -> when (lvl % 3) { 0 -> "•"; 1 -> "◦"; else -> "▪" }
-        }
-    }
-    return out
-}
+/**
+ * The list marks of the paragraphs (•, 1., ☐) – drawn in the gutter, not part of the text; with Listen-Optionen
+ * (AP-126 d) in their own form (a., i., 1.1., ■ …), counted as in the PDF and the Word file.
+ */
+private fun listMarks(r: RichText): List<Pair<Int, String>> = editorListLabels(r).entries.sortedBy { it.key }.map { it.key to it.value }
 
 /**
  * The editor: menus, toolbar and the pages with the running text. [markdown] is the tab's Markdown; changes come back
@@ -1104,7 +1128,7 @@ fun FlowEditor(
      */
     chromeInHost: Boolean = false,
 ) {
-    val state = remember(doc.id, tabId) { FlowState(markdown).also { FlowState.shown = java.lang.ref.WeakReference(it) } }
+    val state = remember(doc.id, tabId) { FlowState(markdown).also { FlowState.shown = java.lang.ref.WeakReference(it); it.spellLive = c.settings.current.docSpellLive } }
     val scope = rememberCoroutineScope()
     var view by remember { mutableStateOf(FlowView.PAGES) }
     var zoom by remember { mutableStateOf(1f) }
@@ -1269,20 +1293,26 @@ fun FlowEditor(
         ReviewBar(state)
         if (trackBase != null) TrackBar(state, onBase = onTrackBase, onStop = { host.onTrack?.invoke() })
         Row(Modifier.weight(1f).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
-            if (outline && !narrow) {
+            if (outline && !narrow && !state.focusMode) {
                 FlowOutline(state, onJump = { state.jumpToHeading(it) }, onClose = { outline = false }, modifier = Modifier.width(if (chromeInHost) 208.dp else 240.dp))
                 androidx.compose.material3.VerticalDivider()
             }
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 FlowPages(
-                    c, doc, tabId, state, view, zoom, narrow, host, scroll, ruler = ruler, onWrite = { askWrite = true },
+                    c, doc, tabId, state, view, zoom, narrow, host, scroll, ruler = ruler && !state.focusMode, onWrite = { askWrite = true },
                     onRevise = ::quickRevise, onFind = ::openFind,
                 )
             }
         }
-        if (chromeInHost && !narrow) FlowStatusBar(state, view, zoom, onZoom = { zoom = it }, tracking = trackBase != null, onTrack = host.onTrack)
+        if (chromeInHost && !narrow && !state.focusMode) FlowStatusBar(state, view, zoom, onZoom = { zoom = it }, tracking = trackBase != null, onTrack = host.onTrack)
     }
 
+    // Dialogs asked for by keys, the Rechtsklick-Menü or the menus (AP-126 e/f).
+    when (state.dialog) {
+        "thesaurus" -> ThesaurusDialog(c, state, onDismiss = { state.dialog = null })
+        "vergleich" -> CompareDialog(c, doc, state, onDismiss = { state.dialog = null })
+        else -> FlowComfortDialogs(c, doc, state)
+    }
     if (askWrite) {
         PromptDialog(
             title = tr("Hilf mir schreiben"),
@@ -1593,6 +1623,12 @@ private fun FlowMenus(
     var bookmarkAsk by remember { mutableStateOf(false) }
     // Diagramme und Whiteboard (AP-61).
     var newDiagram by remember { mutableStateOf<String?>(null) }
+    // Absatz und Seite (AP-126 d).
+    var paragraphAsk by remember { mutableStateOf(false) }
+    var listAsk by remember { mutableStateOf(false) }
+    var borderAsk by remember { mutableStateOf(false) }
+    var layoutAsk by remember { mutableStateOf(false) }
+    var columnsAsk by remember { mutableStateOf(false) }
     @Composable
     fun menu(name: String, items: @Composable (close: () -> Unit) -> Unit) {
         Box {
@@ -1654,6 +1690,9 @@ private fun FlowMenus(
             HorizontalDivider()
             item(if (outline) "✓ Gliederung" else "Gliederung", onClick = onOutline, close = close)
             item(if (ruler) "✓ Lineal" else "Lineal", onClick = onRuler, close = close)
+            // Docs-Komfort (AP-126 f).
+            item(if (state.showMarks) "✓ Steuerzeichen anzeigen (¶)" else "Steuerzeichen anzeigen (¶)", onClick = { state.showMarks = !state.showMarks }, close = close)
+            item(if (state.focusMode) "✓ Fokusmodus" else "Fokusmodus", onClick = { state.focusMode = !state.focusMode }, close = close)
             item("Markdown-Quelltext", onClick = host.onSource, close = close)
             item("Lesemodus", onClick = host.onRead, close = close)
         }
@@ -1667,6 +1706,10 @@ private fun FlowMenus(
             item("Seitenumbruch", "Strg+Enter", onClick = { state.insertBlock("\\newpage") }, close = close)
             item("Seitenzahlen …", onClick = { pageNumbers = true }, close = close)
             item("Abschnittsumbruch …", onClick = { sectionFor = DocMarkup.Section() }, close = close)
+            // Querformat und Spalten ab dem Cursor (AP-126 d).
+            item("Querformat ab hier", onClick = { state.insertBlock(DocMarkup.LANDSCAPE_START) }, close = close)
+            item("Hochformat ab hier", onClick = { state.insertBlock(DocMarkup.LANDSCAPE_END) }, close = close)
+            item("Spalten …", onClick = { columnsAsk = true }, close = close)
             item("Inhaltsverzeichnis", onClick = { state.insertBlock(DocMarkup.TOC) }, close = close)
             item("Fußnote", onClick = { insertFootnote(state) }, close = close)
             HorizontalDivider()
@@ -1676,6 +1719,14 @@ private fun FlowMenus(
             item("Lesezeichen …", onClick = { bookmarkAsk = true }, close = close)
             item("Abbildungsverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.FIGURES) }, close = close)
             item("Tabellenverzeichnis", onClick = { state.insertBlock(io.github.thepytales.llmhub.docs.DocFields.TABLES) }, close = close)
+            HorizontalDivider()
+            // Docs-Komfort (AP-126 f): Bausteine, Textfeld, Formen, Diagramm aus Daten, Emoji; im Text auch mit @.
+            item("Baustein …", onClick = { state.dialog = "baustein" }, close = close)
+            item("Markierung als Baustein speichern …", onClick = { state.dialog = "baustein-speichern" }, close = close)
+            item("Textfeld", onClick = { state.insertTextBox() }, close = close)
+            item("Form …", onClick = { state.dialog = "form" }, close = close)
+            item("Diagramm aus Tabelle …", onClick = { state.dialog = "diagramm-daten" }, close = close)
+            item("Emoji …", onClick = { state.dialog = "emoji" }, close = close)
             HorizontalDivider()
             item("Formel", onClick = { state.insertBlock("$$\nE = mc^2\n$$") }, close = close)
             item("Diagramm …", onClick = { newDiagram = "flow" }, close = close)
@@ -1712,6 +1763,11 @@ private fun FlowMenus(
                 item(k.label, when (k.level) { 0 -> if (k == ParaKind.NORMAL) "Strg+Alt+0" else ""; else -> "Strg+Alt+${k.level}" }, onClick = { state.kind(k) }, close = close)
             }
             HorizontalDivider()
+            // Absatz und Seite (AP-126 d), like Word's dialogs.
+            item("Absatz …", onClick = { paragraphAsk = true }, close = close)
+            item("Listen-Optionen …", enabled = state.paraHere().kind.list, onClick = { listAsk = true }, close = close)
+            item("Rahmen und Schattierung …", onClick = { borderAsk = true }, close = close)
+            item("Seitenlayout (Papier, Farbe, Wasserzeichen) …", onClick = { layoutAsk = true }, close = close)
             HorizontalDivider()
             // Zeilenabstand (AP-44).
             val p = state.paraHere()
@@ -1739,6 +1795,16 @@ private fun FlowMenus(
             item("Markierung mit Lora überarbeiten …", onClick = onRevise, close = close)
             item("Lora fragen", onClick = host.onAskAi, close = close)
             item("Rechtschreibung prüfen", "F7", onClick = host.onSpell, close = close)
+            // Überprüfen (AP-126 e), like Word.
+            item((if (state.spellLive) "✓ " else "") + tr("Rechtschreibung beim Tippen"), onClick = {
+                state.spellLive = !state.spellLive
+                val on = state.spellLive
+                c.settings.update { it.copy(docSpellLive = on) }
+            }, close = close)
+            item("Thesaurus …", "Umschalt+F7", onClick = { state.dialog = "thesaurus" }, close = close)
+            val reading = c.speaker.playingId.collectAsState().value == READ_ID
+            item(if (reading) "Vorlesen beenden" else "Vorlesen", "Strg+Alt+Leertaste", onClick = { readAloud(c, state) }, close = close)
+            item("Fassungen vergleichen …", onClick = { state.dialog = "vergleich" }, close = close)
             item("Autokorrektur …", onClick = { autoCorrect = true }, close = close)
             host.onSpellAi?.let { item("Rechtschreibung prüfen (KI)", onClick = it, close = close) }
             host.onTrack?.let { item("Änderungen nachverfolgen", onClick = it, close = close) }
@@ -1758,6 +1824,11 @@ private fun FlowMenus(
     if (special) SpecialCharsDialog(onDismiss = { special = false }) { ch -> special = false; state.insertText(ch) }
     if (autoCorrect) AutoCorrectDialog(c, onDismiss = { autoCorrect = false })
     if (captionAsk) CaptionDialog(state, onDismiss = { captionAsk = false })
+    if (paragraphAsk) ParagraphDialog(state, onDismiss = { paragraphAsk = false })
+    if (listAsk) ListOptionsDialog(state, onDismiss = { listAsk = false })
+    if (borderAsk) BorderDialog(state, onDismiss = { borderAsk = false })
+    if (layoutAsk) PageLayoutDialog(state, onDismiss = { layoutAsk = false })
+    if (columnsAsk) ColumnsDialog(state, onDismiss = { columnsAsk = false })
     if (crossRef) CrossRefDialog(state, onDismiss = { crossRef = false })
     if (bookmarkAsk) BookmarkDialog(state, onDismiss = { bookmarkAsk = false })
     if (pageNumbers) {
@@ -2357,14 +2428,18 @@ private fun FlowPages(
     val raws = remember(state.version) { state.rawMarkdown() }
     val setup = remember(raws) { DocMarkup.pageSetup(raws) }
     state.language = remember(raws) { DocMarkup.language(raws) }
+    // Seitenlayout (AP-126 d): paper, page colour and watermark of the sheets.
+    val layout = remember(raws) { DocMarkup.layout(raws) }
+    if (state.layout != layout) state.layout = layout
     val numberedHeadings = remember(raws) { io.github.thepytales.llmhub.docs.DocFields.numberedHeadings(raws) }
     val nos = remember(state.version, numberedHeadings) { if (numberedHeadings) state.headingNumbers() else emptyMap() }
     if (state.headingNos != nos) state.headingNos = nos
     val margin = if (narrow) 20.dp else (setup.marginMm * 3.7795f).dp * zoom
     val pages = view == FlowView.PAGES && !narrow
-    val pageWidth = if (pages) 794.dp * zoom else androidx.compose.ui.unit.Dp.Unspecified
-    // A4 is 297 mm high; the text area between the margins makes one page, pages lie 16 dp apart.
-    val pageFull = 1123.dp * zoom
+    val (paperW, paperH) = layout.paperMm
+    val pageWidth = if (pages) (paperW * 3.7795f).dp * zoom else androidx.compose.ui.unit.Dp.Unspecified
+    // A4 is 297 mm high (A5, Letter: their height); the text area between the margins makes one page, pages lie 16 dp apart.
+    val pageFull = (paperH * 3.7795f).dp * zoom
     val pageGap = 16.dp
     val spacing = 6.dp
     val textHeightPx = with(density) { (pageFull - margin * 2).toPx() }
@@ -2395,6 +2470,11 @@ private fun FlowPages(
     val outline = MaterialTheme.colorScheme.outline
     val sheetBorder = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
     val marginText = rememberTextMeasurer()
+    val darkSheet = look.card.luminance() < 0.5f
+    val sheetColor = pageColor(layout)?.let { if (darkSheet) it.copy(alpha = 0.12f) else it }
+    val watermarkText = if (layout.watermark.isBlank()) null else remember(layout.watermark, zoom, darkSheet) {
+        marginText.measure(layout.watermark, TextStyle(fontSize = (60f * zoom).sp, fontWeight = FontWeight.Bold, color = (if (darkSheet) Color.White else Color(0xFF6E6E6E)).copy(alpha = 0.16f)), maxLines = 1, softWrap = false)
+    }
     val topPad = if (narrow) 8.dp else 24.dp
     val count = state.pageCount.coerceAtLeast(1)
     val today = remember { DocMarkup.today() }
@@ -2445,6 +2525,10 @@ private fun FlowPages(
                                         val top = p * (full + gap)
                                         if (top + full < viewTop || top > viewBottom) continue
                                         drawRoundRect(look.card, Offset(0f, top), androidx.compose.ui.geometry.Size(size.width, full), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
+                                        // Seitenfarbe (AP-126 d): the sheet in the document's colour (a soft tint in the dark theme).
+                                        sheetColor?.let { drawRoundRect(it, Offset(0f, top), androidx.compose.ui.geometry.Size(size.width, full), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx())) }
+                                        // Wasserzeichen (AP-126 d): grey and turned in the middle of the sheet.
+                                        watermarkText?.let { drawWatermark(layout.watermark, top, full, it) }
                                         drawRoundRect(sheetBorder, Offset(0f, top), androidx.compose.ui.geometry.Size(size.width, full), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()), style = androidx.compose.ui.graphics.drawscope.Stroke(1.dp.toPx()))
                                         val pm = pageMargins(setup, p + 1, count, today, sectionOf(state.sectionPages, setup, p + 1))
                                         // Measured first and drawn as a layout: drawText(measurer, text, topLeft) only allows the
@@ -2541,6 +2625,14 @@ private fun RawBlock(doc: LiveDoc, tabId: String?, state: FlowState, seg: FlowSe
             IconButton(onClick = { state.setRaw(seg, "") }, modifier = Modifier.size(28.dp)) { Icon(Icons.Outlined.Delete, contentDescription = tr("Löschen"), modifier = Modifier.size(16.dp)) }
         }
         if (edit) SectionDialog(section, onDismiss = { edit = false }) { s2 -> edit = false; state.setRaw(seg, DocMarkup.sectionMarker(s2)) }
+        return
+    }
+    // Querformat und Spalten (AP-126 d): a marker line like the section break, with 🗑.
+    pageMarkerLabel(seg.markdown)?.let { label ->
+        Row(outer.then(measure), verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.weight(1f)) { MarkerLine(label) }
+            IconButton(onClick = { state.setRaw(seg, "") }, modifier = Modifier.size(28.dp)) { Icon(Icons.Outlined.Delete, contentDescription = tr("Löschen"), modifier = Modifier.size(16.dp)) }
+        }
         return
     }
     // Beschriftung einer Tabelle (AP-126 c): „Tabelle 2: …“ above it.
@@ -2695,10 +2787,17 @@ private fun FlowTextMenu(
                 }
                 entry(tr("Zum Wörterbuch hinzufügen")) {
                     val word0 = text.substring(w.first, w.last + 1)
+                    state.ignoreWord(word0)
                     kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch { runCatching { io.github.thepytales.llmhub.docs.LocalSpelling.learn(word0, state.language) } }
                 }
+                if (list.isNotEmpty()) entry(tr("Alle ignorieren")) { state.ignoreWord(text.substring(w.first, w.last + 1)) }
                 HorizontalDivider()
             }
+        }
+        // Thesaurus (AP-126 e): synonyms of the word under the cursor.
+        if (word != null) {
+            entry(tr("Synonyme …"), tr("Umschalt+F7")) { state.dialog = "thesaurus" }
+            HorizontalDivider()
         }
         entry(tr("Ausschneiden"), tr("Strg+X"), enabled = hasSelection) { cutSelection(c, state, seg) }
         entry(tr("Kopieren"), tr("Strg+C"), enabled = hasSelection) { if (state.spanParts() != null) state.copySpan(c) else copySelection(c, seg) }
@@ -2814,17 +2913,37 @@ private fun FlowField(
     val marks = quoted.map { it to commentColor } + hits.map { it to (if (it == current) currentHit else hitColor) } +
         listOfNotNull(spanHere?.let { it to look.brand.copy(alpha = 0.28f) })
     val inserted = seg.hunks.map { it.ins }.filter { !it.isEmpty() }
-    val annotated = remember(rich, look.brand, zoom, sheet, marks, inserted) { flowAnnotated(rich, base, look.brand, muted, codeBg, density.density, sheet, zoom, marks, inserted) }
+    val hyphenate = state.layout.hyphenation
+    val annotated = remember(rich, look.brand, zoom, sheet, marks, inserted, hyphenate) { flowAnnotated(rich, base, look.brand, muted, codeBg, density.density, sheet, zoom, marks, inserted, hyphenate) }
     val tabbed = remember(annotated, seg.tabExtra, density) { FlowTabs.annotate(annotated, seg.tabExtra, density.density, density.fontScale) }
     val measurer = rememberTextMeasurer()
     // Textumbruch ums Bild (AP-125 e): the lines beside a picture before this text are narrower.
     val wrap = state.wraps[seg.id]
     val fieldPx = seg.layout?.size?.width ?: 0
-    val shownText = remember(tabbed, wrap, fieldPx, base) {
-        if (wrap == null || fieldPx == 0) tabbed else wrapAround(tabbed, measurer, base, fieldPx, wrap, with(density) { 1.sp.toPx() })
+    // Fokusmodus (AP-126 f): only the paragraph at the cursor in full colour.
+    val keepPara = if (state.focusMode && state.active === seg) rich.paraRange(rich.paraAt(seg.selection.min.coerceIn(0, rich.text.length))) else null
+    val faint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+    val focusText = remember(tabbed, state.focusMode, keepPara, faint) { if (state.focusMode) dimmed(tabbed, keepPara?.let { it.first..(it.last + 1) }, faint) else tabbed }
+    val shownText = remember(focusText, wrap, fieldPx, base) {
+        if (wrap == null || fieldPx == 0) focusText else wrapAround(focusText, measurer, base, fieldPx, wrap, with(density) { 1.sp.toPx() })
     }
     val value = TextFieldValue(shownText, seg.selection, seg.composition)
     val pxPerMm = with(density) { (3.7795f * zoom).dp.toPx() }
+    // Abstand vor/nach (AP-126 d): room before paragraphs, in px of this zoom.
+    val gapsPx = remember(rich, sheet, zoom, density) {
+        val pt = paraGapsPt(rich, sheet)
+        if (pt.isEmpty()) emptyMap() else pt.mapValues { (_, v) -> with(density) { (v * 4f / 3f * zoom).dp.toPx() } }
+    }
+    androidx.compose.runtime.SideEffect { if (seg.gaps != gapsPx) seg.gaps = gapsPx }
+    // Rechtschreibung beim Tippen (AP-126 e): a moment after typing stops, the field is checked on the device.
+    LaunchedEffect(rich.text, state.language, state.spellLive, state.spellRound) {
+        if (!state.spellLive) { seg.spell = null; return@LaunchedEffect }
+        delay(700)
+        val r = seg.rich
+        val found = FlowSpell.errors(r.text, r.chars, { o -> r.paras[r.paraAt(o)].kind }, state.language)
+        seg.spell = r.text to found
+    }
+    val shownBreaks = seg.shownBreaks
     val marksList = remember(rich) { listMarks(rich) }
     val onSurface = MaterialTheme.colorScheme.onSurface
     /** Rechtsklick-Menü (AP-125): where it opens in this field, or null. */
@@ -2911,6 +3030,15 @@ private fun FlowField(
             seg.composition = v.composition
             seg.typing = typing
             state.changed()
+            // Das @-Menü (AP-126 f, like Google Docs): „@“ at the start of a word opens it; what follows filters it.
+            if (v.text.length == old.text.length + 1 && sel.collapsed && sel.start > 0 && r.text.getOrNull(sel.start - 1) == '@' &&
+                (sel.start == 1 || r.text[sel.start - 2].isWhitespace())) state.atMenu = AtMenu(seg, sel.start - 1)
+            state.atMenu?.let { m ->
+                val q = if (m.seg === seg) r.text.substring((m.at + 1).coerceAtMost(r.text.length), sel.start.coerceIn((m.at + 1).coerceAtMost(r.text.length), r.text.length)) else ""
+                // It closes when the „@“ is gone, the cursor left it, or the words after it fit no entry (an ordinary „@“).
+                if (m.seg === seg && (r.text.getOrNull(m.at) != '@' || sel.start <= m.at || '\n' in q || q.length > 30 ||
+                        ' ' in q && atFilter(atEntries(c, null), q).isEmpty())) state.atMenu = null
+            }
             if (fix != null) {
                 // Its own step: Rückgängig right after it takes back only the correction (like Word).
                 state.checkpoint()
@@ -2957,7 +3085,7 @@ private fun FlowField(
                     val l = seg.layout ?: continue
                     val pos = e.changes.firstOrNull()?.position ?: continue
                     e.changes.forEach { it.consume() }
-                    val o = Shown(seg.rich.text, seg.breaks, seg.deleted).toOrig(l.getOffsetForPosition(pos)).coerceIn(0, seg.rich.text.length)
+                    val o = Shown(seg.rich.text, seg.shownBreaks, seg.deleted).toOrig(l.getOffsetForPosition(pos)).coerceIn(0, seg.rich.text.length)
                     val link = seg.rich.chars.getOrNull(o)?.link ?: seg.rich.chars.getOrNull(o - 1)?.link?.takeIf { o == seg.rich.text.length }
                     if (link != null) runCatching { uri.openUri(link) } else state.selectSentence(seg, o)
                     continue
@@ -2967,7 +3095,7 @@ private fun FlowField(
                 e.changes.forEach { it.consume() }
                 val l = seg.layout
                 if (l != null) {
-                    val o = Shown(seg.rich.text, seg.breaks, seg.deleted).toOrig(l.getOffsetForPosition(at)).coerceIn(0, seg.rich.text.length)
+                    val o = Shown(seg.rich.text, seg.shownBreaks, seg.deleted).toOrig(l.getOffsetForPosition(at)).coerceIn(0, seg.rich.text.length)
                     val sel = seg.selection
                     if (sel.collapsed || o < sel.min || o > sel.max) {
                         state.spanAnchor = null
@@ -2984,6 +3112,14 @@ private fun FlowField(
                 FlowTextMenu(c, state, seg, host, onWrite = onWrite, onRevise = onRevise, onDismiss = { menuAt = null })
             }
         }
+        // The @-Menü (AP-126 f) below the „@“.
+        state.atMenu?.takeIf { it.seg === seg }?.let { m ->
+            val l = seg.layout
+            val r = l?.let { it.getCursorRect(seg.shown(m.at).coerceIn(0, it.layoutInput.text.length)) }
+            Box(Modifier.offset { androidx.compose.ui.unit.IntOffset((r?.left ?: 0f).roundToInt(), (r?.bottom ?: 0f).roundToInt()) }.size(1.dp)) {
+                AtMenuPopup(c, null, state, m, onDone = { state.atMenu = null })
+            }
+        }
         OwnTextMenu {
         BasicTextField(
             value = value,
@@ -2991,9 +3127,9 @@ private fun FlowField(
             textStyle = base,
             cursorBrush = SolidColor(look.brand),
             // Page breaks inside the text: room shown in the text, not part of it.
-            visualTransformation = remember(seg.breaks, seg.deleted, density) {
-                if (seg.breaks.isEmpty() && seg.deleted.isEmpty()) VisualTransformation.None
-                else PageSpacers(seg.breaks, density.density, density.fontScale, seg.deleted, SpanStyle(color = Color(0xFFC62828), textDecoration = TextDecoration.LineThrough))
+            visualTransformation = remember(shownBreaks, seg.deleted, density) {
+                if (shownBreaks.isEmpty() && seg.deleted.isEmpty()) VisualTransformation.None
+                else PageSpacers(shownBreaks, density.density, density.fontScale, seg.deleted, SpanStyle(color = Color(0xFFC62828), textDecoration = TextDecoration.LineThrough))
             },
             onTextLayout = { l ->
                 seg.layout = l
@@ -3027,8 +3163,14 @@ private fun FlowField(
                 }
                 .semantics { contentDescription = tr("Dokumenttext") }
                 .drawBehind {
-                    // List marks (•, 1., a.) in the gutter before the indented text.
                     val layout = seg.layout ?: return@drawBehind
+                    // Rahmen und Schattierung (AP-126 d) behind the text.
+                    drawParaBoxes(layout, rich, seg::shown, onSurface.copy(alpha = 0.7f))
+                    // Steuerzeichen anzeigen (AP-126 f): ¶, · and →.
+                    if (state.showMarks) drawMarks(layout, rich, seg::shown, measurer, marksStyle(base, muted.copy(alpha = 0.7f)))
+                    // Rechtschreibung beim Tippen (AP-126 e): wavy lines while the text is the one checked.
+                    seg.spell?.takeIf { it.first == rich.text && state.spellLive }?.let { drawSpellLines(layout, it.second, seg::shown) }
+                    // List marks (•, 1., a.) in the gutter before the indented text.
                     marksList.forEach { (pi, mark) ->
                         if (mark == "check") return@forEach
                         val off = seg.shown(rich.starts[pi]).coerceAtMost(layout.layoutInput.text.length)
@@ -3058,6 +3200,16 @@ private fun FlowField(
                 .onPreviewKeyEvent { e ->
                     state.shiftDown = e.isShiftPressed
                     if (e.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+                    // The @-Menü (AP-126 f): Enter takes the first entry, Esc closes it.
+                    state.atMenu?.takeIf { it.seg === seg }?.let { m ->
+                        if (e.key == Key.Escape) { state.atMenu = null; return@onPreviewKeyEvent true }
+                        if (e.key == Key.Enter || e.key == Key.NumPadEnter) {
+                            val q = seg.rich.text.substring(m.at + 1, seg.selection.start.coerceIn(m.at + 1, seg.rich.text.length))
+                            val first = atFilter(atEntries(c, null), q).firstOrNull()
+                            state.atMenu = null
+                            if (first != null) { state.dropAt(m); first.act(state); return@onPreviewKeyEvent true }
+                        }
+                    }
                     // Over the edges of this field: other pieces, the selection over several of them (FlowSpan).
                     if (state.pieceKey(c, seg, e)) return@onPreviewKeyEvent true
                     val cmd = e.isCtrlPressed || e.isMetaPressed
@@ -3073,6 +3225,9 @@ private fun FlowField(
                         e.isAltPressed && shift && !cmd && (e.key == Key.DirectionUp || e.key == Key.DirectionDown) -> state.moveParagraphs(seg, e.key == Key.DirectionUp)
                         shift && !cmd && !e.isAltPressed && e.key == Key.F3 -> state.cycleCase(seg)
                         !shift && !cmd && !e.isAltPressed && e.key == Key.F7 -> { host.onSpell(); true }
+                        // Thesaurus (Umschalt+F7) and Vorlesen (Strg+Alt+Leertaste) like Word (AP-126 e).
+                        shift && !cmd && !e.isAltPressed && e.key == Key.F7 -> { state.dialog = "thesaurus"; true }
+                        cmd && e.isAltPressed && !shift && e.key == Key.Spacebar -> { readAloud(c, state); true }
                         // Schrift größer/kleiner: Strg+Umschalt+> and < – on a German keyboard the key beside Umschalt
                         // (with Umschalt bigger, without smaller), on others Strg+Umschalt+. and , (also Google Docs).
                         cmd && !e.isAltPressed && isAngleKey(e) -> state.stepFontSize(seg, up = shift)

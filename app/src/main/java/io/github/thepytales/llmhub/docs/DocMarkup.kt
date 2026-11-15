@@ -177,7 +177,72 @@ object DocMarkup {
     }
 
     /** A setting line of the page or the language (`<!-- kopfzeile: … -->`, `<!-- sprache: en-GB -->`): not part of the text. */
-    fun isPageSetting(line: String): Boolean = SETTING.matches(line) || LANGUAGE.matches(line)
+    fun isPageSetting(line: String): Boolean = SETTING.matches(line) || LANGUAGE.matches(line) || LAYOUT.matches(line)
+
+    // ── Seitenlayout (AP-126 d) ────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Papierformat, Seitenfarbe, Wasserzeichen and Silbentrennung of the whole document, as setting lines:
+     * `<!-- papier: a5 -->`, `<!-- seitenfarbe: fff8e1 -->`, `<!-- wasserzeichen: ENTWURF -->`, `<!-- silbentrennung: aus -->`.
+     * Without them the page is A4, white, without a watermark, hyphenated in justified text (as always).
+     */
+    data class Layout(val paper: String = "a4", val color: String? = null, val watermark: String = "", val hyphenation: Boolean = true) {
+        /** Width and height of the paper in mm. */
+        val paperMm: Pair<Int, Int> get() = when (paper) { "a5" -> 148 to 210; "letter" -> 216 to 279; else -> 210 to 297 }
+
+        /** Width and height in twentieths of a point (Word). */
+        val paperTwips: Pair<Int, Int> get() = when (paper) { "a5" -> 8391 to 11906; "letter" -> 12240 to 15840; else -> 11906 to 16838 }
+
+        /** The CSS name of the paper (`@page{size:…}`). */
+        val paperCss: String get() = when (paper) { "a5" -> "A5"; "letter" -> "letter"; else -> "A4" }
+    }
+
+    /** Papers to choose (id to name). */
+    val PAPERS = listOf("a4" to "A4 (210 × 297 mm)", "a5" to "A5 (148 × 210 mm)", "letter" to "Letter (216 × 279 mm)")
+
+    /** Light page colours (Word's and Docs' choice of soft ones), rrggbb. */
+    val PAGE_COLORS = listOf("fff8e1", "f1f8e9", "e3f2fd", "fce4ec", "f3e5f5", "f5f5f5")
+
+    /** Watermarks Word offers ready-made. */
+    val WATERMARKS = listOf("ENTWURF", "VERTRAULICH", "MUSTER", "NICHT KOPIEREN", "DRINGEND")
+
+    private val LAYOUT = Regex("^\\s*<!--\\s*(papier|seitenfarbe|wasserzeichen|silbentrennung)\\s*:\\s*(.*?)\\s*-->\\s*$", RegexOption.IGNORE_CASE)
+
+    fun layout(markdown: String): Layout {
+        var l = Layout()
+        for (line in markdown.lineSequence()) {
+            val m = LAYOUT.find(line) ?: continue
+            val v = m.groupValues[2].trim()
+            l = when (m.groupValues[1].lowercase()) {
+                "papier" -> l.copy(paper = v.lowercase().takeIf { p -> PAPERS.any { it.first == p } } ?: "a4")
+                "seitenfarbe" -> l.copy(color = v.lowercase().removePrefix("#").takeIf { Regex("[0-9a-f]{6}").matches(it) })
+                "wasserzeichen" -> l.copy(watermark = v.replace("-->", "").take(40))
+                else -> l.copy(hyphenation = on(v))
+            }
+        }
+        return l
+    }
+
+    /** [markdown] with [layout] as setting lines at the end (only what differs from the default). */
+    fun withLayout(markdown: String, layout: Layout): String {
+        val body = markdown.lines().filterNot { LAYOUT.matches(it) }.joinToString("\n").trimEnd()
+        val lines = buildList {
+            if (layout.paper != "a4") add("<!-- papier: ${layout.paper} -->")
+            layout.color?.let { add("<!-- seitenfarbe: $it -->") }
+            if (layout.watermark.isNotBlank()) add("<!-- wasserzeichen: ${layout.watermark.replace("-->", "").replace("\n", " ").trim()} -->")
+            if (!layout.hyphenation) add("<!-- silbentrennung: aus -->")
+        }
+        return if (lines.isEmpty()) "$body\n" else body + "\n\n" + lines.joinToString("\n\n") + "\n"
+    }
+
+    // ── Spalten (AP-126 d) ─────────────────────────────────────────────────────────────────────────────────
+
+    private val COLUMNS = Regex("^\\s*<!--\\s*spalten\\s*:\\s*([1-3])\\s*-->\\s*$", RegexOption.IGNORE_CASE)
+
+    /** Spalten: from a line `<!-- spalten: 2 -->` on, the text runs in 2 (or 3) columns, until `<!-- spalten: 1 -->`. */
+    fun columns(text: String): Int? = COLUMNS.find(text.trim())?.groupValues?.get(1)?.toIntOrNull()
+
+    fun columnsMarker(n: Int) = "<!-- spalten: ${n.coerceIn(1, 3)} -->"
 
     /** Name of the language [tag] („Englisch (GB)“). */
     fun languageName(tag: String): String = LANGUAGES.firstOrNull { it.first == tag }?.second ?: tag
@@ -255,7 +320,7 @@ object DocMarkup {
 
     /** The Markdown without editor notes (comment lines); markers for page breaks, orientation and sections stay. */
     fun stripComments(markdown: String): String = markdown.lines()
-        .filter { !COMMENT.matches(it) || orientation(it) != null || isPageBreak(it) || section(it) != null }.joinToString("\n")
+        .filter { !COMMENT.matches(it) || orientation(it) != null || isPageBreak(it) || section(it) != null || columns(it) != null }.joinToString("\n")
 
     // ── Abschnitte (AP-43/45) ──────────────────────────────────────────────────────────────────────────────
 

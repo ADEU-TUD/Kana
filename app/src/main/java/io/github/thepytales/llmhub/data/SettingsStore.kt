@@ -67,6 +67,10 @@ data class AppSettings(
     val docAutocorrectOff: String = "",
     /** Eigene Ersetzungen der Autokorrektur (AP-125 f): one per line, „Kürzel⇥Ersetzung“ (docs/text/AutoCorrect.ownEntries). */
     val docAutocorrectOwn: String = "",
+    /** Rechtschreibung beim Tippen (AP-126 e): wavy lines under misspelled words in documents. */
+    val docSpellLive: Boolean = true,
+    /** Eigene Bausteine (AP-126 f): one per entry „Name⇥Markdown“ (line breaks in the Markdown as ⏎), see ui/FlowComfort. */
+    val docSnippets: String = "",
     /** Put the default logo into every document. */
     val autoLogo: Boolean = false,
     /** Own details for letters and e-mails (name, function, phone, e-mail, room); prefills the "Absender" fields of templates. */
@@ -352,6 +356,8 @@ class SettingsStore(context: Context) {
             .putString("docStyleLines", next.docStyleLines)
             .putString("docAutocorrectOff", next.docAutocorrectOff)
             .putString("docAutocorrectOwn", next.docAutocorrectOwn)
+            .putBoolean("docSpellLive", next.docSpellLive)
+            .putString("docSnippets", next.docSnippets)
             .putBoolean("autoLogo", next.autoLogo)
             .putString("senderInfo", next.senderInfo)
             .putString("favoriteTemplates", next.favoriteTemplates.joinToString("\n"))
@@ -485,6 +491,8 @@ class SettingsStore(context: Context) {
             docStyleLines = prefs.getString("docStyleLines", d.docStyleLines) ?: d.docStyleLines,
             docAutocorrectOff = prefs.getString("docAutocorrectOff", d.docAutocorrectOff) ?: d.docAutocorrectOff,
             docAutocorrectOwn = prefs.getString("docAutocorrectOwn", d.docAutocorrectOwn) ?: d.docAutocorrectOwn,
+            docSpellLive = prefs.getBoolean("docSpellLive", d.docSpellLive),
+            docSnippets = prefs.getString("docSnippets", d.docSnippets) ?: d.docSnippets,
             autoLogo = prefs.getBoolean("autoLogo", d.autoLogo),
             senderInfo = prefs.getString("senderInfo", d.senderInfo) ?: d.senderInfo,
             favoriteTemplates = prefs.getString("favoriteTemplates", "").orEmpty().lines().filter { it.isNotBlank() },

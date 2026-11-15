@@ -60,8 +60,18 @@ object MarkdownDocx {
         var bookmarks = 0
         /** Fußnoten als Endnoten (AP-126 c). */
         var endnotes = false
-        val settings: Boolean get() = notes.isNotEmpty() || even
-        val width: Int get() = if (landscape) TEXT_WIDTH_LANDSCAPE else TEXT_WIDTH
+        /** Seitenlayout (AP-126 d): paper, page colour, watermark; the lists counted as in the editor; columns now. */
+        var layout = DocMarkup.Layout()
+        val lists = io.github.thepytales.llmhub.docs.text.ListStyles.Counter()
+        var columns = 1
+        /** Nummerierte Überschriften as a Word list (AP-126 c): on, and the numbers of the headings in order (null: title). */
+        var numbered = false
+        var headingNos: ArrayDeque<String?> = ArrayDeque()
+        /** The section now started at a change of columns (on the same page). */
+        var continuous = false
+        val settings: Boolean get() = notes.isNotEmpty() || even || layout.color != null
+        val width: Int get() = if (layout.paper != "a4") ((if (landscape) layout.paperTwips.second else layout.paperTwips.first) - 2 * margin).coerceAtLeast(2000) / columns
+            else (if (landscape) TEXT_WIDTH_LANDSCAPE else TEXT_WIDTH) / columns
         val height: Int get() = if (landscape) TEXT_HEIGHT_LANDSCAPE else TEXT_HEIGHT
     }
 
@@ -89,6 +99,7 @@ object MarkdownDocx {
             else append("<Override PartName=\"/word/footnotes.xml\" ContentType=\"$CT.footnotes+xml\"/>")
         }
         if (c.settings) append("<Override PartName=\"/word/settings.xml\" ContentType=\"$CT.settings+xml\"/>")
+        if (c.numbered) append("<Override PartName=\"/word/numbering.xml\" ContentType=\"$CT.numbering+xml\"/>")
         append("<Override PartName=\"/word/styles.xml\" ContentType=\"$CT.styles+xml\"/>")
         append("<Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\"/>")
         append("</Types>")
@@ -107,6 +118,7 @@ object MarkdownDocx {
             else append("<Relationship Id=\"rIdFootnotes\" Type=\"$R_NS/footnotes\" Target=\"footnotes.xml\"/>")
         }
         if (c.settings) append("<Relationship Id=\"rIdSettings\" Type=\"$R_NS/settings\" Target=\"settings.xml\"/>")
+        if (c.numbered) append("<Relationship Id=\"rIdNumbering\" Type=\"$R_NS/numbering\" Target=\"numbering.xml\"/>")
         append("<Relationship Id=\"rIdStyles\" Type=\"$R_NS/styles\" Target=\"styles.xml\"/>")
         if (withLogo) append("<Relationship Id=\"rIdLogo\" Type=\"$R_NS/image\" Target=\"media/logo.png\"/>")
         c.media.forEach { append("<Relationship Id=\"${it.rel}\" Type=\"$R_NS/image\" Target=\"${it.name}\"/>") }
@@ -191,8 +203,9 @@ object MarkdownDocx {
     }
 
     fun write(file: File, title: String, source: String, theme: DocTheme = DocTheme()) {
-        // Wissenschaft (AP-126 c): numbered headings and cross references as the numbers are now.
-        val markdown = DocFields.forExport(source)
+        // Wissenschaft (AP-126 c): cross references as the numbers are now; numbered headings as Word's own list
+        // numbering (a heading's number is no text, Word counts on when headings move).
+        val markdown = if (DocFields.numberedHeadings(source)) DocFields.refresh(source) else DocFields.forExport(source)
         val notes = DocMarkup.footnotes(DocMarkup.isolate(markdown))
         writeWith(file, title, markdown, notes.notes, theme, DocFields.entries(source)) { withLogo -> document(title, notes.body, theme, withLogo) }
     }
@@ -231,17 +244,25 @@ object MarkdownDocx {
         val logo = theme.logo?.takeIf { theme.logoSize != null }
         val setup = DocMarkup.pageSetup(markdown)
         val breaks = DocMarkup.sectionMargins(setup, DocMarkup.sections(markdown))
+        val layout = DocMarkup.layout(markdown)
         val c = Ctx(
             notes,
-            header = setup.hasHeader || setup.pageNumbers && setup.numbersMoved && setup.numbersTop || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() },
+            header = setup.hasHeader || setup.pageNumbers && setup.numbersMoved && setup.numbersTop || setup.headerEven.isNotBlank() || setup.titlePage && setup.headerFirst.isNotBlank() || breaks.any { it.first.isNotBlank() } ||
+                layout.watermark.isNotBlank(),
             footer = setup.pageNumbers || theme.footer.isNotBlank() || setup.footer.isNotBlank() || setup.footerEven.isNotBlank() || setup.titlePage && setup.footerFirst.isNotBlank() ||
                 breaks.any { it.second.isNotBlank() },
         )
         c.breaks = breaks
+        c.layout = layout
         c.margin = setup.marginTwips
         c.first = setup.titlePage
         c.even = setup.hasEven
         c.headings = DocMarkup.tocEntries(markdown)
+        if (DocFields.numberedHeadings(markdown) && !markdown.lineSequence().any { Regex("^#{1,4}\\s+(<!--.*?-->)?[\\d.]+${DocFields.NUMBER_GAP}").containsMatchIn(it) }) {
+            c.numbered = true
+            // The Inhaltsverzeichnis shows the numbers before the headings (Word renews it with F9).
+            c.headings = DocMarkup.tocEntries(DocFields.numberHeadings(markdown))
+        }
         c.language = DocMarkup.language(markdown)
         c.targets = targets
         c.headingIds = ArrayDeque(targets.filter { it.kind == DocFields.Kind.HEADING }.map { it.id })
@@ -263,19 +284,20 @@ object MarkdownDocx {
                 entry("_rels/.rels", RELS)
                 entry("word/_rels/document.xml.rels", docRels(logo != null, c))
                 if (c.footer) entry("word/footer1.xml", footer(setup.footer, theme.footer, setup.pageNumbers, setup))
-                if (c.header) entry("word/header1.xml", header(setup.header, setup.date, setup.pageNumbers, setup))
+                if (c.header) entry("word/header1.xml", watermarked(header(setup.header, setup.date, setup.pageNumbers, setup), layout.watermark))
                 // Deckblatt: own header and footer of the first page (no page number); even pages: theirs.
                 if (c.first && c.footer) entry("word/footer2.xml", footer(setup.footerFirst, "", false))
-                if (c.first && c.header) entry("word/header2.xml", header(setup.headerFirst, false))
+                if (c.first && c.header) entry("word/header2.xml", watermarked(header(setup.headerFirst, false), layout.watermark))
                 if (c.even && c.footer) entry("word/footer3.xml", footer(setup.footerEven, theme.footer, setup.pageNumbers, setup))
-                if (c.even && c.header) entry("word/header3.xml", header(setup.headerEven, setup.date, setup.pageNumbers, setup))
+                if (c.even && c.header) entry("word/header3.xml", watermarked(header(setup.headerEven, setup.date, setup.pageNumbers, setup), layout.watermark))
                 // Abschnitte: header and footer of each further section.
                 c.breaks.forEachIndexed { k, (h, f) ->
                     if (c.footer) entry("word/footer${4 + k}.xml", footer(f, theme.footer, setup.pageNumbers, setup))
-                    if (c.header) entry("word/header${4 + k}.xml", header(h, setup.date, setup.pageNumbers, setup))
+                    if (c.header) entry("word/header${4 + k}.xml", watermarked(header(h, setup.date, setup.pageNumbers, setup), layout.watermark))
                 }
                 if (footnotes != null) entry(if (c.endnotes) "word/endnotes.xml" else "word/footnotes.xml", footnotes)
                 if (c.settings) entry("word/settings.xml", settings(c))
+                if (c.numbered) entry("word/numbering.xml", headingNumbering())
                 entry("word/styles.xml", styles(if (theme.style == DocStyle.TUD) "Noto Sans" else if (theme.style == DocStyle.CLASSIC) "Georgia" else "Calibri"))
                 entry("docProps/core.xml", core(title.ifBlank { markdown.lineSequence().firstOrNull { it.startsWith("# ") }?.removePrefix("# ")?.trim() ?: "Dokument" }))
                 if (logo != null) bytes("word/media/logo.png", logo)
@@ -292,12 +314,51 @@ object MarkdownDocx {
         }
     }
 
+    /**
+     * Nummerierte Überschriften (AP-126 c) as Word's mehrstufige Liste: 1, 1.1, 1.1.1 … with a space after the number –
+     * the headings name it (numPr), so Word counts and renews them itself.
+     */
+    private fun headingNumbering(): String = buildString {
+        append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<w:numbering xmlns:w=\"$W_NS\">")
+        append("<w:abstractNum w:abstractNumId=\"0\"><w:multiLevelType w:val=\"multilevel\"/>")
+        for (k in 0 until 6) {
+            val text = (1..k + 1).joinToString(".") { "%$it" }
+            append("<w:lvl w:ilvl=\"$k\"><w:start w:val=\"1\"/><w:numFmt w:val=\"decimal\"/><w:lvlText w:val=\"$text\"/><w:lvlJc w:val=\"left\"/>")
+            append("<w:suff w:val=\"space\"/><w:pPr><w:ind w:left=\"0\" w:firstLine=\"0\"/></w:pPr></w:lvl>")
+        }
+        append("</w:abstractNum><w:num w:numId=\"1\"><w:abstractNumId w:val=\"0\"/></w:num></w:numbering>")
+    }
+
+    /**
+     * Wasserzeichen (AP-126 d) as Word writes it: a grey text shape in the header part, turned 45°, in the middle of the
+     * page behind the text – Word lists it under *Entwurf › Wasserzeichen*.
+     */
+    private fun watermarked(headerXml: String, text: String): String {
+        if (text.isBlank()) return headerXml
+        val shape = "<w:p><w:pPr><w:pStyle w:val=\"Header\"/></w:pPr><w:r><w:pict>" +
+            "<v:shapetype id=\"_x0000_t136\" coordsize=\"21600,21600\" o:spt=\"136\" adj=\"10800\" path=\"m@7,l@8,m@5,21600l@6,21600e\">" +
+            "<v:formulas><v:f eqn=\"sum #0 0 10800\"/><v:f eqn=\"prod #0 2 1\"/><v:f eqn=\"sum 21600 0 @1\"/><v:f eqn=\"sum 0 0 @2\"/>" +
+            "<v:f eqn=\"sum 21600 0 @3\"/><v:f eqn=\"if @0 @3 0\"/><v:f eqn=\"if @0 21600 @1\"/><v:f eqn=\"if @0 0 @2\"/><v:f eqn=\"if @0 @4 21600\"/>" +
+            "<v:f eqn=\"mid @5 @6\"/><v:f eqn=\"mid @8 @5\"/><v:f eqn=\"mid @7 @8\"/><v:f eqn=\"mid @6 @7\"/><v:f eqn=\"sum @6 0 @5\"/></v:formulas>" +
+            "<v:path textpathok=\"t\" o:connecttype=\"custom\" o:connectlocs=\"@9,0;@10,10800;@11,21600;@12,10800\" o:connectangles=\"270,180,90,0\"/>" +
+            "<v:textpath on=\"t\" fitshape=\"t\"/><v:handles><v:h position=\"#0,bottomRight\" xrange=\"6629,14971\"/></v:handles>" +
+            "<o:lock v:ext=\"edit\" text=\"t\" shapetype=\"t\"/></v:shapetype>" +
+            "<v:shape id=\"PowerPlusWaterMarkObject\" o:spid=\"_x0000_s2049\" type=\"#_x0000_t136\" " +
+            "style=\"position:absolute;margin-left:0;margin-top:0;width:440pt;height:110pt;rotation:315;z-index:-251657216;" +
+            "mso-position-horizontal:center;mso-position-horizontal-relative:margin;mso-position-vertical:center;mso-position-vertical-relative:margin\" " +
+            "o:allowincell=\"f\" fillcolor=\"silver\" stroked=\"f\"><v:fill opacity=\".5\"/>" +
+            "<v:textpath style=\"font-family:&quot;Calibri&quot;;font-size:1pt\" string=\"${attr(text)}\"/></v:shape></w:pict></w:r></w:p>"
+        val ns = " xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\""
+        val open = Regex("<w:hdr ([^>]*)>").find(headerXml) ?: return headerXml
+        return headerXml.substring(0, open.range.first) + "<w:hdr " + open.groupValues[1] + ns + ">" + shape + headerXml.substring(open.range.last + 1)
+    }
+
     /** Numbers of the header/footer parts: 1 for all pages, 2 for the first, 3 for even pages. */
     private fun parts(c: Ctx) = listOfNotNull(1, 2.takeIf { c.first }, 3.takeIf { c.even }) + c.breaks.indices.map { 4 + it }
 
     /** Word links the separator lines of the footnote area from the settings; even pages get their own headers there. */
     private fun settings(c: Ctx) = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<w:settings xmlns:w=\"$W_NS\">" + (if (c.even) "<w:evenAndOddHeaders/>" else "") +
+        "<w:settings xmlns:w=\"$W_NS\">" + (if (c.layout.color != null) "<w:displayBackgroundShape/>" else "") + (if (c.even) "<w:evenAndOddHeaders/>" else "") +
         (if (c.notes.isNotEmpty()) (if (c.endnotes) "<w:endnotePr><w:pos w:val=\"docEnd\"/><w:endnote w:id=\"-1\"/><w:endnote w:id=\"0\"/></w:endnotePr>" else "<w:footnotePr><w:footnote w:id=\"-1\"/><w:footnote w:id=\"0\"/></w:footnotePr>") else "") + "</w:settings>"
 
     /** The notes as Word footnotes – or, with [end] (AP-126 c), as endnotes at the end of the document. */
@@ -658,11 +719,8 @@ object MarkdownDocx {
         }
         val pPr = buildString {
             style?.let { append("<w:pStyle w:val=\"$it\"/>") }
-            when {
-                p.spacing != null -> append("<w:spacing w:after=\"120\" w:line=\"${(p.spacing * 240).toInt()}\" w:lineRule=\"auto\"/>")
-                style == null && p.kind != io.github.thepytales.llmhub.docs.text.ParaKind.CODE -> append(if (sheet != null) "" else SPACING)
-                p.kind == io.github.thepytales.llmhub.docs.text.ParaKind.CODE -> append("<w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/>")
-            }
+            // Absatz-Optionen (AP-126 d), in the order Word wants: keepNext, pageBreakBefore, pBdr, shd, tabs, spacing, ind.
+            append(boxPPr(p))
             if (p.tabs.isNotEmpty()) {
                 append("<w:tabs>")
                 p.tabs.forEach { t ->
@@ -670,6 +728,13 @@ object MarkdownDocx {
                     append("<w:tab w:val=\"$v\" w:pos=\"${(t.mm * 56.693f).toInt()}\"/>")
                 }
                 append("</w:tabs>")
+            }
+            val code = p.kind == io.github.thepytales.llmhub.docs.text.ParaKind.CODE
+            when {
+                p.spacing != null -> append(spacingXml(p, null, 120, (p.spacing * 240).toInt()))
+                code -> append(spacingXml(p, null, 0, 240))
+                style == null && sheet == null -> append(spacingXml(p, null, 120, 276))
+                else -> append(spacingXml(p, null, null, null))
             }
             if (p.left != 0 || p.first != 0) {
                 val left = (p.left * 56.693f).toInt()
@@ -692,6 +757,32 @@ object MarkdownDocx {
         else -> ""
     }
 
+    /** The paragraph format in the marker of [text] (AP-44/126), or null. */
+    private fun formatOf(text: String): io.github.thepytales.llmhub.docs.text.ParaFormat? =
+        io.github.thepytales.llmhub.ui.ALIGN_MARK.find(text.trimStart())?.let { io.github.thepytales.llmhub.docs.text.ParaFormat.fromMarker(io.github.thepytales.llmhub.docs.text.ParaFormat(), it) }
+
+    /**
+     * Absatz-Optionen (AP-126 d): mit nächstem zusammenhalten, Seitenumbruch oberhalb, Rahmen and Schattierung – right
+     * after pStyle. [keepNext]: the block keeps with the next anyway (headings); [border]: its own lines (unless framed).
+     */
+    private fun boxPPr(p: io.github.thepytales.llmhub.docs.text.ParaFormat?, keepNext: Boolean = false, border: String = "", numPr: String = ""): String = buildString {
+        if (keepNext || p?.keep == true) append("<w:keepNext/>")
+        if (p?.pageBefore == true) append("<w:pageBreakBefore/>")
+        append(numPr)
+        if (p?.border == true) append("<w:pBdr>" + listOf("top", "left", "bottom", "right").joinToString("") { "<w:$it w:val=\"single\" w:sz=\"6\" w:space=\"4\" w:color=\"444444\"/>" } + "</w:pBdr>")
+        else append(border)
+        p?.shade?.let { append("<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"${it.uppercase()}\"/>") }
+    }
+
+    /** `<w:spacing>`: the paragraph's own space before/after (pt) over the given ones (twips); [line] in 240ths; "" for none. */
+    private fun spacingXml(p: io.github.thepytales.llmhub.docs.text.ParaFormat?, before: Int?, after: Int?, line: Int?): String {
+        val b = p?.before?.let { it * 20 } ?: before
+        val a = p?.after?.let { it * 20 } ?: after
+        if (b == null && a == null && line == null) return ""
+        return "<w:spacing" + (b?.let { " w:before=\"$it\"" } ?: "") + (a?.let { " w:after=\"$it\"" } ?: "") +
+            (line?.let { " w:line=\"$it\" w:lineRule=\"auto\"" } ?: "") + "/>"
+    }
+
     private fun para(content: String, pPr: String = "") =
         "<w:p>${if (pPr.isEmpty()) "" else "<w:pPr>$pPr</w:pPr>"}$content</w:p>"
 
@@ -705,7 +796,9 @@ object MarkdownDocx {
         val full = DocumentWriter.withTitle(title, markdown)
         // A title heading added here is no target of its own (AP-126 c): the ids stay with their headings.
         if (full.trimStart().startsWith("# ") && !markdown.trimStart().startsWith("# ")) ctx.headingIds.addFirst("kap-dokumenttitel")
-        for (b in parseBlocks(full)) block(b, theme)
+        val blocks = parseBlocks(full)
+        if (ctx.numbered) ctx.headingNos = ArrayDeque(DocFields.headingNumbers(blocks.filterIsInstance<Block.Heading>().filter { it.level <= 4 }.map { it.level }))
+        for (b in blocks) block(b, theme)
         tail()
     }
 
@@ -714,7 +807,10 @@ object MarkdownDocx {
         append("<w:document xmlns:w=\"$W_NS\" xmlns:r=\"$R_NS\" ")
         append("xmlns:m=\"${LatexOmml.NS}\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" ")
         // Text boxes (Textumbruch ums Bild, AP-125 e).
-        append("xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"><w:body>")
+        append("xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\">")
+        // Seitenfarbe (AP-126 d).
+        ctx.layout.color?.let { append("<w:background w:color=\"${it.uppercase()}\"/>") }
+        append("<w:body>")
         if (withLogo) append(logoParagraph(theme))
         if (theme.style == DocStyle.TUD && theme.unit.isNotBlank()) {
             val lines = theme.unit.lines().map { it.trim() }.filter { it.isNotEmpty() }
@@ -746,9 +842,14 @@ object MarkdownDocx {
             if (c.footer && c.first) append("<w:footerReference w:type=\"first\" r:id=\"rIdFooter2\"/>")
             if (c.footer && c.even) append("<w:footerReference w:type=\"even\" r:id=\"rIdFooter3\"/>")
         }
-        append(if (landscape) "<w:pgSz w:w=\"16838\" w:h=\"11906\" w:orient=\"landscape\"/>" else "<w:pgSz w:w=\"11906\" w:h=\"16838\"/>")
+        // Spalten (AP-126 d): a section of columns starts on the same page.
+        if (c.continuous) append("<w:type w:val=\"continuous\"/>")
+        c.continuous = false
+        val (pw, ph) = c.layout.paperTwips
+        append(if (landscape) "<w:pgSz w:w=\"$ph\" w:h=\"$pw\" w:orient=\"landscape\"/>" else "<w:pgSz w:w=\"$pw\" w:h=\"$ph\"/>")
         val m = c.margin
         append("<w:pgMar w:top=\"$m\" w:right=\"$m\" w:bottom=\"$m\" w:left=\"$m\" w:header=\"708\" w:footer=\"708\" w:gutter=\"0\"/>")
+        if (c.columns > 1) append("<w:cols w:num=\"${c.columns}\" w:space=\"454\"/>")
         if (c.first && c.sections == 0) append("<w:titlePg/>")
         c.sections++
         append("</w:sectPr>")
@@ -856,6 +957,15 @@ object MarkdownDocx {
             }
             return
         }
+        // Spalten (AP-126 d): the text so far ends its section (with its columns); the next one has the new number.
+        DocMarkup.columns(text)?.let { n ->
+            if (n != c.columns) {
+                append(para("", sectPr(c.landscape)))
+                c.columns = n
+                c.continuous = true
+            }
+            return
+        }
         // Abschnittsumbruch: the section so far ends here; the next one starts on a new page with its own header/footer.
         if (DocMarkup.section(text) != null) {
             if (c.section < c.breaks.size) {
@@ -929,6 +1039,7 @@ object MarkdownDocx {
             if (end >= 0) insert(end, "<w:r><w:br w:type=\"textWrapping\" w:clear=\"all\"/></w:r>")
             ctx.floating = false
         }
+        if (b !is Block.Item) ctx.lists.end()
         val accent = accentOf(theme)
         val headFont = headFontOf(theme)
         run {
@@ -942,15 +1053,23 @@ object MarkdownDocx {
                     val style = if (def != null) RunStyle() else RunStyle(bold = true, size = size, color = if (b.level <= 2) accent else null, font = headFont)
                     val align = jc(b.text).ifEmpty { if (b.level == 1 && theme.style == DocStyle.CLASSIC) "<w:jc w:val=\"center\"/>" else "" }
                     val level = b.level.coerceIn(1, 4)
-                    append(bookmarked(para(runs(b.text, style), "<w:pStyle w:val=\"Heading$level\"/><w:keepNext/>$border<w:spacing w:before=\"240\" w:after=\"120\"/>$align"), if (b.level <= 4) ctx.headingIds.removeFirstOrNull() else null))
+                    val hp = formatOf(b.text)
+                    // Nummerierte Überschriften (AP-126 c): the level of the number (1 → 0, 1.2 → 1 …) of Word's list.
+                    val no = if (ctx.numbered && b.level <= 4) ctx.headingNos.removeFirstOrNull() else null
+                    val numPr = no?.let { "<w:numPr><w:ilvl w:val=\"${it.count { ch -> ch == '.' }}\"/><w:numId w:val=\"1\"/></w:numPr>" }.orEmpty()
+                    append(bookmarked(para(runs(b.text, style), "<w:pStyle w:val=\"Heading$level\"/>${boxPPr(hp, keepNext = true, border = border, numPr = numPr)}${spacingXml(hp, 240, 120, null)}$align"), if (b.level <= 4) ctx.headingIds.removeFirstOrNull() else null))
                 }
                 is Block.Paragraph -> paragraph(b.text)
                 is Block.Item -> {
                     val left = 360 + 360 * b.indent
                     val box = Regex("^\\[([ xX])]\\s+").find(b.text)
-                    val marker = if (box == null) b.marker else if (box.groupValues[1].isBlank()) "☐" else "☒"
+                    // Listen-Optionen (AP-126 d): own numbers or bullets, counted as in the editor.
+                    val ip = formatOf(b.text)
+                    val label = if (box == null) ctx.lists.item(b.marker.first().isDigit(), b.indent, ip ?: io.github.thepytales.llmhub.docs.text.ParaFormat(), editor = false) else null
+                    val marker = if (box == null) label ?: b.marker else if (box.groupValues[1].isBlank()) "☐" else "☒"
                     val text = if (box == null) b.text else b.text.substring(box.range.last + 1)
-                    append(para(run(marker) + "<w:r><w:tab/></w:r>" + runs(text), "<w:spacing w:after=\"60\"/><w:ind w:left=\"${left + 360}\" w:hanging=\"360\"/>"))
+                    val hang = if (marker.length > 3) 360 + 90 * (marker.length - 3) else 360
+                    append(para(run(marker) + "<w:r><w:tab/></w:r>" + runs(text), "${boxPPr(ip)}${spacingXml(ip, null, 60, null)}<w:ind w:left=\"${left + hang}\" w:hanging=\"$hang\"/>${jc(b.text)}"))
                 }
                 is Block.Quote -> append(
                     para(
@@ -995,12 +1114,14 @@ object MarkdownDocx {
         rows.forEachIndexed { r, row ->
             // The head row repeats on every page and is announced as column header by screen readers.
             append(if (r == 0) "<w:tr><w:trPr><w:tblHeader/></w:trPr>" else "<w:tr>")
-            for (c in 0 until cols) {
+            // Verbundene Zellen (AP-126 d): one cell over its columns (gridSpan).
+            for ((c, text, n) in DocBlocks.spans(row, cols)) {
                 val fill = if (accent != null) accent else "F1F3F5"
                 val shade = if (r == 0) "<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"$fill\"/>" else ""
-                append("<w:tc><w:tcPr><w:tcW w:w=\"${colW(c)}\" w:type=\"dxa\"/>$shade</w:tcPr>")
+                val w = (c until c + n).sumOf { colW(it) }
+                append("<w:tc><w:tcPr><w:tcW w:w=\"$w\" w:type=\"dxa\"/>${if (n > 1) "<w:gridSpan w:val=\"$n\"/>" else ""}$shade</w:tcPr>")
                 val headColor = if (r == 0 && accent != null) "FFFFFF" else null
-                append(para(runs(row.getOrNull(c).orEmpty(), RunStyle(bold = r == 0, color = headColor))))
+                append(para(runs(text, RunStyle(bold = r == 0, color = headColor))))
                 append("</w:tc>")
             }
             append("</w:tr>")
