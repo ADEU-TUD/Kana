@@ -376,13 +376,13 @@ object XlsxReader {
 
     /** Like [texts], but runs (`<r>`) with their own format become cell text with formatting (see [CellRich]). */
     private fun richTexts(x: String, from: Int, to: Int): String {
-        val first = x.indexOf("<r>", from)
-        if (first < 0 || first >= to || x.indexOf("<rPr", from).let { it < 0 || it >= to }) return texts(x, from, to)
+        val first = find(x, "<r>", from, to)
+        if (first < 0 || find(x, "<rPr", from, to) < 0) return texts(x, from, to)
         val runs = ArrayList<Pair<String, io.github.thepytales.llmhub.docs.text.CharFormat>>()
         var i = first
         while (true) {
-            val s = x.indexOf("<r>", i)
-            if (s < 0 || s >= to) break
+            val s = find(x, "<r>", i, to)
+            if (s < 0) break
             val e = x.indexOf("</r>", s).let { if (it < 0 || it > to) to else it }
             val pr = child(x, s + 3, e, "rPr")?.third.orEmpty()
             fun has(tag: String) = Regex("<$tag(\\s+val=\"(1|true|single|double)\")?\\s*/>").containsMatchIn(pr) || pr.contains("<$tag>")
@@ -399,6 +399,22 @@ object XlsxReader {
         return CellRich.fromRuns(runs)
     }
 
+    /**
+     * [needle] in [x] between [from] and [to] (-1 if not there). Searching only up to the end of the cell matters: a
+     * plain indexOf runs to the end of the sheet whenever a cell has no formula, no runs or no style – with 100 000
+     * rows that took over eight minutes (AP-132).
+     */
+    private fun find(x: String, needle: String, from: Int, to: Int): Int {
+        val last = minOf(to, x.length) - needle.length
+        val first = needle[0]
+        var i = from
+        while (i <= last) {
+            if (x[i] == first && x.regionMatches(i, needle, 0, needle.length)) return i
+            i++
+        }
+        return -1
+    }
+
     /** End of a tag name starting at [from] (before the first space, "/" or ">"). */
     private fun nameEnd(x: String, from: Int, te: Int): Int {
         var j = from
@@ -413,8 +429,8 @@ object XlsxReader {
     private fun child(x: String, from: Int, to: Int, name: String): Triple<Int, Int, String?>? {
         var i = from
         while (true) {
-            val lt = x.indexOf("<$name", i)
-            if (lt < 0 || lt >= to) return null
+            val lt = find(x, "<$name", i, to)
+            if (lt < 0) return null
             val after = x.getOrNull(lt + 1 + name.length)
             if (after != ' ' && after != '>' && after != '/') { i = lt + 1; continue }
             val te = x.indexOf('>', lt)
@@ -429,8 +445,8 @@ object XlsxReader {
     private fun attr(x: String, lt: Int, te: Int, name: String): String? {
         var i = lt
         while (true) {
-            val at = x.indexOf("$name=", i)
-            if (at < 0 || at >= te) return null
+            val at = find(x, "$name=", i, te)
+            if (at < 0) return null
             if (!x[at - 1].isWhitespace()) { i = at + 1; continue }
             val q = x[at + name.length + 1]
             if (q != '"' && q != '\'') return null

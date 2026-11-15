@@ -83,6 +83,8 @@ class OfflineProfileTest {
     private val made = lazy {
         if (System.getProperty("adeu.data").isNullOrBlank()) System.setProperty("adeu.data", File(base, "daten").absolutePath)
         AppContainer(Context(File(base, "files").apply { mkdirs() }, File(base, "cache").apply { mkdirs() }))
+            // The tripwire refuses at once; the three repetitions of a server request (5 + 15 + 30 s) need not wait.
+            .also { it.llm.retryPauseMs = { 0 } }
     }
     private val c by made
     private var server: HttpServer? = null

@@ -10,7 +10,7 @@
 #
 # Usage: .github/scripts/release-local.sh <version-code> <template-windows.zip>
 #   e.g. .github/scripts/release-local.sh 26 ADEU-LLM-1.0.25-Windows.zip
-# With PUBLISH=1 (and UPDATE_NOTES="Was ist neu") the result goes straight to the public update repository, from
+# Runs all tests first (SKIP_TESTS=1 to skip). With PUBLISH=1 (and UPDATE_NOTES="Was ist neu") the result goes straight to the public update repository, from
 # where the apps update themselves (.github/scripts/publish-update.sh, needs "gh auth login").
 # Needs JDK 17+, the Android SDK with NDK (local.properties with sdk.dir, or ANDROID_HOME), git and CMake (for the
 # local language models, see app/llama.gradle.kts) and internet access for the speech libraries.
@@ -26,6 +26,13 @@ mkdir -p "$dist"
 if [ ! -f "$root/keystore.properties" ] && [ -z "${KEYSTORE_PATH:-}" ]; then
   echo "Kein Signaturschlüssel: keystore.properties anlegen (Vorlage keystore.properties.example) oder KEYSTORE_PATH usw. setzen." >&2
   exit 1
+fi
+
+# AP-132: the full test collection before every release (the PR-Check only runs the areas a change touches).
+# SKIP_TESTS=1 skips it, e.g. when the same state was just tested.
+if [ "${SKIP_TESTS:-}" != "1" ]; then
+  echo "== Alle Tests"
+  (cd "$root" && ./gradlew --no-daemon -q :speech:test && ./gradlew --no-daemon -q -p desktop test)
 fi
 
 echo "== Android $VERSION_NAME"

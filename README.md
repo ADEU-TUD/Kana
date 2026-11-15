@@ -1831,8 +1831,63 @@ Windows) und veröffentlicht selbst.
 
 ### PR-Check
 
-Jeder Pull Request startet `.github/workflows/pr-check.yml` (etwa 6–8 Minuten): Android-App kompilieren (ohne lokale
-Modelle), Tests der Sprach-Engine und des gemeinsamen Codes. Der vollständige Build mit Emulator bleibt im Release-Workflow.
+Jeder Pull Request startet `.github/workflows/pr-check.yml`. Seit AP-132 prüft er nur, was die Änderung betrifft – die
+Regeln stehen in [`desktop/testbereiche.txt`](desktop/testbereiche.txt):
+
+- **Nur Texte** (README, `docs/`, `tools/`, Release-Skripte): nichts zu bauen, der Check ist in unter einer Minute grün.
+- **Nur Android-Dateien**: die Android-App wird kompiliert.
+- **Sonst**: Android-App kompilieren (ohne lokale Modelle), Tests der Sprach-Engine, die Desktop-Tests der **Bereiche**,
+  die die geänderten Dateien betreffen (Dokumente, Tabellen, Folien, Gestalten, Video, PDF, Mail, Lora, Terminal,
+  Transkription, Lokal, Datenschutz, Dateien, Literatur, Chat, Oberfläche), dazu jede Testklasse, die eine geänderte
+  Datei direkt benutzt (aus dem kompilierten Code gelesen), und immer die schnellen **Kern**-Tests (Übersetzungen,
+  Bedienelemente, Barrierefreiheit). Welche Tests liefen und warum, steht in der Zusammenfassung des Laufs.
+- Eine Änderung in der **Mitte der App** (`AppContainer`, `SettingsStore`, Theme, Build-Dateien …), an einer Datei, die
+  15 und mehr Testklassen direkt benutzen, oder an einer Datei, die zu keinem Bereich passt, lässt **alle** Tests laufen.
+
+Die **volle Sammlung** läuft außerdem jeden Sonntag nachts auf `main` (füllt dabei den Gradle-Zwischenspeicher, aus dem
+die PRs lesen), von Hand (*Actions › PR-Check › Run workflow*) und **vor jedem Release** (Job *tests* in
+`android.yml`, Schritt „Alle Tests“ in `release-local.sh`, überspringbar mit `SKIP_TESTS=1`). Der vollständige Build
+mit Emulator bleibt im Release-Workflow.
+
+Lokal dasselbe:
+
+```bash
+./gradlew -p desktop testAuswahl                       # Tests zu den Änderungen gegenüber origin/main (auch nicht eingecheckte)
+./gradlew -p desktop testAuswahl -Pzeigen              # nur anzeigen, welche Tests liefen und warum
+./gradlew -p desktop testAuswahl -Pbereiche=video,pdf  # bestimmte Bereiche (dazu immer „kern“)
+./gradlew -p desktop testAuswahl -Pseit=<Stand> -Pbis=<Stand> -Pzeigen   # die Regeln an einem früheren PR ausprobieren
+```
+
+Neue Testklassen, die in keinem Bereich stehen, laufen als Kern-Tests immer mit – es geht also nichts verloren; besser
+trägt man sie bei ihrem Bereich ein. Neue Quelldateien, die zu keinem Muster passen, lassen alle Tests laufen, bis sie
+eingetragen sind.
+
+**Tempo (AP-132)**: Die ganze Desktop-Sammlung brauchte auf GitHub 15 ¾ Minuten Testzeit, 60 % davon in drei
+Tests: Eine Excel-Datei mit 100 000 Zeilen einzulesen dauerte über 6 Minuten (Suchen in `XlsxReader` liefen bis ans
+Dateiende, wenn einer Zelle Formel, Formatierung oder Stil fehlte – ein echter Tempo-Fehler der App, jetzt behoben),
+`OfflineProfileTest` wartete die drei Wiederholungs-Pausen einer Serveranfrage ab (50 s, jetzt im Test ohne Pause), und
+`LoraFigureTest` zeichnet über 2 000 Bilder (jetzt auf allen Kernen gleichzeitig). Auf Rechnern mit vier und mehr Kernen
+laufen die Testklassen in zwei JVMs. In Cloud-Containern ohne Bildschirm nimmt der Test-Lauf für PDFs die *headless
+shell* von Playwright, wenn sie da ist (das volle Chrome wartet dort 60 s je PDF).
+
+### Vorher/Nachher-Bilder auf Knopfdruck
+
+Für jede Design-Stufe (Grundsatz des [Design-Arbeitsplans](docs/DESIGN-ARBEITSPLAN.md)):
+
+```bash
+./gradlew -p desktop vergleich                                   # alle *LookTest und *ReviewTest gegen origin/main
+./gradlew -p desktop vergleich -Ptests=DocEditorLookTest,ControlsLookTest -Pbasis=origin/main
+```
+
+Die Aufgabe lässt die Bild-Tests im Zweig laufen (mit allem, was noch nicht eingecheckt ist), checkt den Stand von
+`-Pbasis` in `build/vergleich-vorher` als eigenes Arbeitsverzeichnis aus (`git worktree`) und lässt dort dieselben Tests
+laufen – zuerst mit den Testdateien des Zweigs, damit neue Szenen auch „vorher“ entstehen, und wenn die mit dem alten
+Code nicht kompilieren, mit denen der Basis. Jedes PNG, das die Tests unter `desktop/build` geschrieben haben, wird mit
+seinem Gegenstück verglichen: **Abweichung in Prozent** der Bildpunkte und die **geänderten Stellen rot umrandet**.
+Ergebnis: `desktop/build/vergleich/index.html` – eine Datei mit eingebetteten Bildern (geänderte zuerst, neue und
+weggefallene markiert, unveränderte nur als Liste), die sich direkt als Vergleichsseite zeigen lässt; die Bilder in
+voller Größe liegen daneben in `bilder/`. Kleine Unterschiede durch Kantenglättung zählen nicht (`-Pschwelle`, Standard
+24 von 255 je Farbkanal). Der erste Lauf baut die Basis einmal ganz (einige Minuten), danach geht es schneller.
 
 ### Release ohne GitHub Actions
 

@@ -131,6 +131,9 @@ class LlmClient(private val settings: SettingsStore, private val usage: UsageSto
     var localLimits: ((String) -> io.github.thepytales.llmhub.local.LocalLimits)? = null
     /** Thermal state of this device (AP-116, Android; LocalLlm.heat). */
     var localHeat: (() -> io.github.thepytales.llmhub.local.Heat)? = null
+
+    /** How long to wait before repeating a request, in ms for a wait of so many seconds (tests shorten it, AP-132). */
+    var retryPauseMs: (Long) -> Long = { it * 1000 }
     /** Hitzeschutz (AP-116): pause before a request on a warm device, at most [coolMaxMs]; check every [heatCheckMs] during one. */
     internal var coolStepMs = 15_000L
     internal var coolMaxMs = 120_000L
@@ -310,7 +313,7 @@ class LlmClient(private val settings: SettingsStore, private val usage: UsageSto
                 val fallback = if (code == 429) 15L * (attempt + 1) else SERVER_RETRY_WAITS[attempt]
                 val wait = ((e as? ApiException)?.retryAfter ?: fallback).coerceIn(1, MAX_RETRY_WAIT)
                 onRetry(reason, wait)
-                delay(wait * 1000)
+                delay(retryPauseMs(wait))
                 attempt++
             }
         }

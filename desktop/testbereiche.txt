@@ -1,0 +1,153 @@
+# Testbereiche (AP-132): Welche Tests der PR-Check für welche geänderten Dateien laufen lässt.
+#
+#   ./gradlew -p desktop testAuswahl                      # Tests zu den Änderungen gegenüber origin/main (auch nicht eingecheckte)
+#   ./gradlew -p desktop testAuswahl -Pseit=HEAD^1        # gegenüber einem bestimmten Stand (so im PR-Check)
+#   ./gradlew -p desktop testAuswahl -Pbereiche=video,pdf # bestimmte Bereiche (dazu immer „kern“)
+#   ./gradlew -p desktop testAuswahl -Pzeigen             # nur anzeigen, was liefe
+#
+# Aufbau: [name] Beschreibung, darunter „quellen:“ (Dateimuster) und „tests:“ (Namen von Testklassen, * erlaubt).
+# Muster mit / am Anfang gelten ab dem Repository, alle anderen ab dem Paket io/github/thepytales/llmhub/ in
+# app/src/main/java und desktop/src/main/kotlin. * steht für beliebige Zeichen ohne /, ** auch über Ordner hinweg.
+#
+# Regeln (testbereiche.gradle.kts):
+#  - Eine Datei aus [doku] braucht keine Tests, eine aus [android] nur den Android-Build (gemeinsame Dateien, die die
+#    Windows-Version durch eine eigene ersetzt, erkennt die Auswahl selbst).
+#  - Eine Datei aus [alles] – und jede Datei, die zu keinem Bereich passt – lässt die volle Sammlung laufen. Ebenso eine
+#    Datei, die mindestens 15 Testklassen direkt benutzen (z. B. AppContainer, SettingsStore): sie betrifft fast alles.
+#  - Sonst laufen die Tests aller Bereiche, zu denen die Datei passt, dazu jede Testklasse, die eine Klasse der Datei
+#    direkt benutzt (aus dem kompilierten Code gelesen), und immer die Tests aus [kern].
+#  - Eine geänderte Testdatei lässt ihre eigenen Tests laufen und alle, die sie benutzen (z. B. CommandCorpus).
+#  - Testklassen, die in keinem Bereich stehen, gehören zu [kern] und laufen immer – neue Tests gehen so nie verloren.
+#  - Vor jedem Release und einmal pro Woche läuft ohnehin die volle Sammlung (README › PR-Check).
+
+[doku] Texte, Pläne, Werkzeuge außerhalb der App – keine Tests
+quellen: /**.md /docs/** /tools/** /License.md /.github/updater/** /**.gitignore /keystore.properties.example
+quellen: /.github/scripts/** /.github/workflows/android.yml /.github/workflows/macos.yml /.github/workflows/publish-update.yml
+quellen: /desktop/icons/** /desktop/macos/** /desktop/launcher/** /desktop/tools/**
+
+[android] Nur die Android-App (der PR-Check kompiliert sie ohnehin)
+quellen: /app/src/main/res/** /app/src/main/AndroidManifest.xml /app/build.gradle.kts /app/llama.gradle.kts /app/proguard-rules.pro
+quellen: /build.gradle.kts /settings.gradle.kts /gradle.properties
+
+[alles] Build und Mittelpunkt der App – volle Sammlung
+quellen: /desktop/*.gradle.kts /desktop/gradle.properties /desktop/testbereiche.txt /gradle/** /gradlew /gradlew.bat
+quellen: /speech/*.gradle.kts /.github/workflows/pr-check.yml /desktop/src/test/resources/**
+quellen: /desktop/src/main/kotlin/android/** /desktop/src/main/kotlin/androidx/** /app/src/main/java/android/**
+quellen: App.kt AppContainer.kt LlmHubApp.kt Brand.kt ErrorLog.kt
+quellen: data/SettingsStore.kt data/ChatModels.kt data/Stores.kt data/AtomicFiles.kt data/AppTools.kt data/AppMap.kt
+quellen: ui/Theme.kt ui/ThemePlatform.kt ui/Components.kt ui/Controls.kt ui/AppRoot.kt ui/I18n.kt ui/TextI18n.kt
+quellen: ui/Dialogs.kt ui/Scrollbars.kt ui/Design.kt ui/PlatformUi.kt ui/DesktopModifiers.kt ui/Keys.kt
+
+[kern] Läuft bei jeder Änderung an der App (schnell, prüft quer über alles)
+quellen: /app/src/main/resources/i18n/**
+tests: I18nCoverageTest AndroidRegexTest ErrorLogTest UiChecksTest AccessibilityTest ControlsBehaviourTest ControlsLookTest
+
+[dokumente] Dokument-Editor, Word-Treue, Briefe und Vorlagen
+quellen: docs/text/** ui/Flow*.kt ui/Doc*.kt ui/MarkdownEditor.kt ui/MarkdownHiding.kt ui/LineBreak.kt ui/RichClipboard.kt
+quellen: ui/TextMenuPlatform.kt ui/TemplateUi.kt ui/TemplatesScreen.kt ui/CreateUi.kt ui/DayUndo.kt ui/ExternalOffice.kt
+quellen: docs/DocumentWriter.kt docs/DocxExtras.kt docs/MarkdownDocx.kt docs/LetterBuilder.kt docs/RtfWriter.kt
+quellen: docs/OpenDocumentWriter.kt docs/OdfImport.kt docs/OfficeImport.kt docs/DocHelpers.kt docs/DocMarkup.kt
+quellen: docs/LiveDoc.kt docs/DocFiles.kt docs/DocTheme.kt docs/StyleCheck.kt docs/AccessibilityCheck.kt docs/Contrast.kt
+quellen: docs/LocalSpelling.kt docs/MathText.kt docs/LatexOmml.kt docs/LatexWriter.kt docs/EpubWriter.kt docs/MoreFormats.kt
+quellen: docs/QtiWriter.kt docs/SemesterPlan.kt docs/HtmlPdf.kt docs/MarkdownPdf.kt docs/PrintModel.kt docs/PrintPilot.kt
+quellen: docs/FontRescue.kt docs/DocumentSources.kt docs/OfficeFiles.kt docs/FormatConvert.kt
+quellen: data/TemplateLibrary.kt data/HouseStyle.kt data/BuiltInTemplates.kt data/DesignTemplates.kt agent/DocumentTools.kt
+quellen: agent/StyleActions.kt agent/OfficeActions.kt docs/TudBrand.kt /app/src/main/resources/tud/** /desktop/src/main/resources/tud/**
+quellen: /desktop/src/main/resources/fonts/**
+tests: AutoCorrectTest DocsEditorTest EditorCoreTest EditorRestTest Flow*Test PageLayoutTest WordFidelityTest WordKeysTest
+tests: MarkdownHidingTest LetterAndDocumentsTest TemplatesAndFormsTest PruefsammlungTest DocsAndSlidesExtrasTest
+tests: DocBlocksLookTest DocEditor*Test PrintAndFontsTest StyleCheckTest LocalFormatsTest OfficeSuiteTest FormatConvertTest
+tests: FormatsAndResearchTest
+
+[tabellen] Tabellen, Diagramme aus Zahlen, CSV
+quellen: ui/Sheet*.kt ui/ChartView.kt docs/Sheet*.kt docs/XlsxReader.kt docs/CellRich.kt docs/Charts.kt docs/ChartLinks.kt
+quellen: docs/OfficeCharts.kt docs/CsvPilot.kt agent/OfficeActions.kt
+tests: SheetExtrasTest SheetsLikeExcelTest ChartsAndLoraCalcTest OfficeChartsTest CsvPilotTest OfficeSuiteTest
+
+[folien] Folien und Präsentieren
+quellen: ui/Slide*.kt ui/PresentScreens.kt docs/Slide*.kt docs/Pptx*.kt docs/PaperDeck.kt agent/OfficeActions.kt
+tests: SlidesLikePowerPointTest PptxReaderTest SharedCanvasTest DocsAndSlidesExtrasTest OfficeSuiteTest
+
+[gestalten] Gestalten, Whiteboard, Diagramme, Bilder
+quellen: creative/** ui/Design*.kt ui/CreateDesigns.kt ui/WhiteboardScreen.kt ui/Diagram*.kt docs/Diagrams.kt
+quellen: docs/DiagramRaster.kt data/Designs.kt data/DesignSupport.kt agent/DesignTools.kt ui/ImageEdit.kt ui/ImageActions.kt
+quellen: ui/Images*.kt ui/ImageViewer.kt ui/ImageEncoding.kt data/ImageGallery.kt ui/Logo.kt ui/LoraFigure.kt data/LogoStore.kt
+tests: CreativeScreenTest CreativeTest DiagramsTest SharedCanvasTest ImageEditTest LogoTest LoraFigureTest
+
+[video] Videoeditor, Bildschirmaufnahme, Export
+quellen: video/** ui/Video*.kt ui/ScreenRecordUi.kt ui/MediaPreview.kt ui/MediaLook.kt ui/Extensions*.kt desktop/Extensions.kt
+tests: Video*Test TextCutTest ScreenRecorderTest ExportQueue*Test MediaLookTest ExtensionsTest
+
+[pdf] PDF-Werkzeug, Scanner, Drucken
+quellen: docs/Pdf*.kt ui/Pdf*.kt docs/PrintPilot.kt docs/DocScanner.kt docs/ScanImages.kt ui/Scan*.kt docs/PdfConvert.kt
+quellen: desktop/WiaScanner.kt desktop/WindowsOcr.kt desktop/OfficePdf.kt ui/CompareScreen.kt
+tests: Pdf*Test DocScannerTest PrintAndFontsTest
+
+[mail] Postfach, Outlook, IMAP
+quellen: ui/Mail*.kt agent/Mail*.kt agent/LoraMail.kt agent/OutlookTools.kt data/Outlook*.kt data/MailServer.kt data/MailBox.kt
+quellen: net/Imap.kt files/MailText.kt desktop/ComOutlook.kt desktop/Com.kt
+tests: Mail*Test OutlookTest ComErrorsTest
+
+[lora] Lora: Befehle, Werkzeuge, Gedächtnis, Abläufe
+quellen: agent/** ui/Lora*.kt data/Lora*.kt data/Memory.kt data/CommandModel.kt data/Batches.kt data/Roles.kt ui/CommandPalette.kt
+quellen: ui/CommandModelPrompt.kt ui/Spotlight.kt ui/QuestionCard.kt ui/Approvals.kt ui/AgentProtocol.kt ui/EvidenceCard.kt
+quellen: ui/MemoryUi.kt ui/BatchScreen.kt ui/CheckDialogs.kt ui/FieldAssist*.kt /app/src/main/resources/befehle/**
+quellen: desktop/LoraLayout.kt
+tests: Lora*Test Command*Test MemoryTest WorkingMemoryTest DryRunTest ProposalTest ModesAndQuestionsTest ErrorHelpTest
+tests: HarnessTest ToolsTest ToolsAndDrawerTest BatchTest RolesTest EvidenceAndExcerptTest KnowledgeAndBackupTest
+tests: ProjectsAndSuggestionsTest GamesAndAiNoteTest FolderAskTest LiveApiTest
+
+[terminal] Server-Terminal (SSH, SFTP)
+quellen: ssh/** ui/Server*.kt
+tests: Server*Test
+
+[transkription] Transkription, Diktat, Sprachausgabe, Spracherkennung
+quellen: transcribe/** audio/** ui/Transcript*.kt ui/Dictation*.kt ui/VoiceMode.kt ui/LocalVoiceUi.kt ui/CodingUi.kt
+quellen: ui/TranscriptionSettings.kt data/Vocabulary.kt ui/VocabularyUi.kt desktop/WindowsSpeech.kt /speech/**
+tests: Transcri*Test DictationTest SpeechStreamTest VoiceAndAutoModelTest LocalVoiceTest VocabularyTest ReliabilityTest
+
+[lokal] Modelle auf dem Gerät, Einrichtung, Orte, Suche nach Bedeutung
+quellen: local/** ui/LocalModelsScreen.kt ui/LocalSetup.kt ui/ModelsScreen.kt ui/PlacesScreen.kt ui/SetupWizard.kt
+quellen: data/ModelCatalog.kt data/ModelsRepository.kt data/ModelMirror.kt data/ModelFilter.kt data/OwnModels.kt
+quellen: data/FileDownload.kt data/Places.kt data/DataPlace.kt ui/DataPlaceUi.kt data/LocalEmbedding.kt data/SemanticSearch.kt
+quellen: ui/MemoryUsage.kt data/MemoryMeter.kt ui/EnvironmentsScreen.kt ui/MailLocalModel.kt ui/LargeAttachment.kt
+quellen: files/AttachmentBudget.kt /app/src/main/resources/suche/** desktop/ProcessMemory.kt
+tests: Local*Test LlamaPackagesTest LongTextLocalTest OfflineProfileTest OwnModelsTest ModelMirrorTest SpeedForecastTest
+tests: PlacesLookTest SetupLookTest SemanticRestTest AttachmentBudgetTest
+
+[datenschutz] Pseudonymisierung, Datenschutzseite, Tresor, Schlüssel
+quellen: data/Pii*.kt data/Pseudonymizer.kt data/Privacy.kt ui/Privacy*.kt ui/PiiModelPrompt.kt data/Vault.kt ui/VaultScreen.kt
+quellen: data/SecretBox.kt data/SecureStorage.kt data/SecurePrefs.kt data/DeviceKey.kt data/SyncGuard.kt desktop/Secrets.kt
+quellen: /app/src/main/resources/pii/** files/FileProtect.kt files/OfficeCrypto.kt
+tests: PrivacyTest PrivacyPageTest PseudonymCorpusTest PiiModelTest VaultTest StorageAndSafetyTest SyncGateWindowTest
+
+[dateien] Dateien, Formate, Ordner, Cloud und Handy
+quellen: files/** ui/Files*.kt ui/FileToolsUi.kt ui/QuickLook.kt ui/FilePicker.kt ui/Folder*.kt ui/FormatConvertUi.kt
+quellen: data/FileLibrary.kt data/LocalFolder.kt data/LoraDrive.kt data/LoraRoot.kt ui/Drive*.kt data/Nextcloud.kt
+quellen: ui/NextcloudUi.kt net/WebDav.kt data/PhoneSync.kt ui/SyncUi.kt desktop/SyncSession.kt data/Backup.kt ui/BackupUi.kt
+quellen: desktop/WindowsShell.kt desktop/DroppedFiles.kt desktop/Images.kt desktop/Paths.kt ui/PhoneBrowser.kt
+quellen: data/Knowledge.kt ui/KnowledgeUi.kt docs/FormatConvert.kt
+tests: FileLibraryTest FileToolsTest QuickLookTest LoraFilesTest WindowsIntegrationTest Sync*Test PhoneSyncTest
+tests: AndroidCatchUpTest ConnectionsTest FormatsAndResearchTest FormatConvertTest KnowledgeAndBackupTest CsvPilotTest
+
+[literatur] Literatur und Quellen
+quellen: research/** ui/Literature*.kt
+tests: BibliographyTest LiteratureSourcesTest TeachingAndResearchTest FormatsAndResearchTest EvidenceAndExcerptTest
+
+[chat] Chat, Modi, Modelle im Netz
+quellen: ui/Chat*.kt ui/Markdown.kt ui/ModeUi.kt ui/AskAiPopup.kt data/ChatRepository.kt data/ChatTitles.kt data/ChatTree.kt
+quellen: data/ChatFilter.kt net/LlmClient.kt ui/AiUseNoteUi.kt ui/Notices.kt ui/NoticeBar.kt ui/Tip.kt
+tests: Chat*Test MarkdownHidingTest ModesAndQuestionsTest GamesAndAiNoteTest HoverLookTest
+
+[oberflaeche] Einstellungen, Seitenleiste, Fenster, Updates, Verbindungen und die übrigen Bildschirme
+quellen: ui/Settings*.kt ui/*Settings.kt ui/AppDrawer.kt ui/Welcome.kt ui/HelpScreen.kt ui/UpdatePrompt.kt update/**
+quellen: desktop/** ui/ExtraWindows.kt ui/PanelResizer.kt ui/CtrlWheel.kt ui/NavRules.kt ui/WindowHooks.kt
+quellen: ui/BrowserPanel.kt ui/ShellRequests.kt ui/Chips.kt ui/UsageScreen.kt data/UsageStore.kt data/Accounts.kt
+quellen: net/** data/McpServers.kt ui/RepoPicker.kt data/UniWatch.kt ui/ErrorHelp.kt tasks/** ui/TasksScreen.kt
+quellen: data/ScheduledTask.kt ui/TaskDelivery.kt ui/Games*.kt ui/GamePlatform.kt data/LearningGames.kt data/Proposals.kt
+quellen: ui/ProposalScreen.kt ui/LoraTour.kt ui/LoraHelper.kt ui/Spotlight.kt ui/ToolsSettings.kt AppShortcuts.kt SelfTest.kt
+quellen: Main.kt ui/LoraFileDialog.kt ui/DrivePlatform.kt ui/DesignPlatform.kt ui/ChatPlatform.kt ui/ScanPlatform.kt
+quellen: /desktop/src/main/resources/lizenzen/** /desktop/src/main/resources/icon.png /desktop/src/main/resources/tray.png
+tests: AccountsTest UpdatesTest ExtensionsTest ExtraWindowsTest ZoomTest PanelResizerTest MacClickFixTest AppShortcutsTest
+tests: NewToolsLookTest Round2EndLookTest BrowserLiveTest ConnectionsTest ServerStatusTest ProposalTest GamesAndAiNoteTest
+tests: ChatFoldersTest LoraHelpTest BedienungReviewTest HoverLookTest LoraPanelLookTest ToolsAndDrawerTest

@@ -173,6 +173,16 @@ sourceSets.main {
 tasks.test {
     useJUnitPlatform()
     jvmArgs(BROWSER_JVM_ARGS)
+    // AP-132: in containers without a desktop (cloud sessions) the full Chrome waits on Google services and never prints
+    // – 60 s per PDF; Playwright's headless shell prints at once. Only for the tests, and only where it is installed.
+    if (System.getenv("ADEU_BROWSER").isNullOrBlank()) {
+        File("/opt/pw-browsers").listFiles().orEmpty().sortedDescending()
+            .map { File(it, "chrome-headless-shell-linux64/chrome-headless-shell") }.firstOrNull { it.canExecute() }
+            ?.let { systemProperty("adeu.browser", it.path) }
+    }
+    // Test classes in two JVMs where the machine has four cores or more; each class stays in one JVM (AP-132: 27 → 5½ min
+    // together with the faster tests, on a 4-core cloud machine).
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceIn(1, 2)
 }
 
 compose.desktop {
@@ -274,3 +284,7 @@ val portableResources by tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("portable/resources"))
 }
 tasks.matching { it.name == "prepareAppResources" }.configureEach { dependsOn("speechDesktopNatives") }
+
+// AP-132: only the tests a change concerns (testbereiche.txt) and pictures before/after (vergleich).
+apply(from = "testbereiche.gradle.kts")
+apply(from = "vergleich.gradle.kts")
