@@ -488,7 +488,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Doppelklick** direkt auf dem Blatt bearbeiten (Enter übernimmt, Esc bricht ab; `{seite}` wird zur Seitenzahl).
     Nebenbei: Eine Markierung bleibt beim Öffnen eines Menüs erhalten (vorher wirkte z. B. *Format › Fett* aus dem Menü
     nicht auf den markierten Text), und Seitenränder per Lineal, Formatvorlagen oder in der Gliederung verschobene
-    Abschnitte werden sofort gespeichert (vorher erst mit der nächsten Eingabe).
+    Abschnitte werden sofort gespeichert (vorher erst mit der nächsten Eingabe); die Zeilen der Seiteneinrichtung stehen
+    nicht mehr als Marke „Seiteneinrichtung: …“ im Text.
   - Nebenbei: *Datei › Exportieren* nahm den Stand beim Öffnen – jetzt den aktuellen.
   Tests `DocEditorChromeTest`, `DocEditorLookTest` (Vorher/Nachher-Bilder), `AppShortcutsTest`, `AutoCorrectTest`,
   `WordKeysTest`, `DocEditorKeysTest`, `FlowBlocksTest`, `DocEditorBlocksTest`, `DocBlocksLookTest` (Bilder),

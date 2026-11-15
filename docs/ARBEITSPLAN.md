@@ -408,7 +408,7 @@ Blatt bearbeiten (Enter übernimmt, Esc bricht ab, Klick daneben übernimmt; die
 Abschnitts, je nach Blatt). Nebenbei behoben: **eine Markierung blieb beim Öffnen eines Menüs nicht erhalten** (Compose hebt
 sie beim Fokuswechsel auf – *Format › Fett* aus dem Menü wirkte so nicht auf das Markierte; jetzt bleibt sie wie in Word),
 und **Änderungen über das ganze Dokument wurden erst mit der nächsten Eingabe gespeichert** (Ränder per Lineal,
-Formatvorlagen, Abschnitte in der Gliederung verschieben, jetzt auch Seitenzahlen). Tests `FlowOfficeBasicsTest`,
+Formatvorlagen, Abschnitte in der Gliederung verschieben, jetzt auch Seitenzahlen), und die **Einstellungszeilen der Seite** (`<!-- kopfzeile: … -->` usw.) standen als Marke „Seiteneinrichtung: …“ mit Stift und Papierkorb im Fließtext – jetzt unsichtbar wie die der Formatvorlagen (sie wirken ja auf dem Blatt). Tests `FlowOfficeBasicsTest`,
 `ui/DocEditorBasicsTest`. Als Nächstes: **(c) Wissenschaft**.
 
 ### AP-127 ☐ Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva · L (Wunsch Hauptnutzer 14.11.2026, Eigenregie)
