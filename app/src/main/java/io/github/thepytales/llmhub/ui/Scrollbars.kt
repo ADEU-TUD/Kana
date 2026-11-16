@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
@@ -23,9 +24,11 @@ import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.PointerInputModifierNode
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn as FoundationLazyColumn
 import androidx.compose.foundation.verticalScroll as foundationVerticalScroll
@@ -137,8 +140,15 @@ private class ScrollbarElement(val geometry: ScrollGeometry) : ModifierNodeEleme
     override fun InspectorInfo.inspectableProperties() { name = "scrollbar" }
 }
 
-/** Draws the bar over the content and lets the mouse drag it; everything else goes to the content as before. */
-private class ScrollbarNode(var geometry: ScrollGeometry) : DelegatingNode(), DrawModifierNode, CompositionLocalConsumerModifierNode {
+/**
+ * Draws the bar over the content and lets the mouse drag it; everything else goes to the content as before.
+ *
+ * Implements [PointerInputModifierNode] itself and hands everything to [pointerInput]: Compose 1.7 casts every node
+ * that delegates pointer input to [PointerInputModifierNode] when the screen density changes (LayoutNode.density,
+ * e.g. window moved to a monitor with another scaling) – without this the app ended with a ClassCastException.
+ */
+private class ScrollbarNode(var geometry: ScrollGeometry) :
+    DelegatingNode(), DrawModifierNode, CompositionLocalConsumerModifierNode, PointerInputModifierNode {
     private var hovered = false
     private var dragging = false
 
@@ -152,46 +162,53 @@ private class ScrollbarNode(var geometry: ScrollGeometry) : DelegatingNode(), Dr
         return inset + (track - length) * pos to length
     }
 
-    init {
-        delegate(SuspendingPointerInputModifierNode {
-            awaitPointerEventScope {
-                while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Initial)
-                    val change = event.changes.firstOrNull() ?: continue
-                    val px = density
-                    val h = size.height.toFloat()
-                    val bar = bar(h, px)
-                    val onBar = bar != null && change.position.x >= size.width - GRIP_DP * px &&
-                        change.position.y in bar.first..(bar.first + bar.second)
-                    when (event.type) {
-                        PointerEventType.Press -> if (onBar && bar != null) {
-                            change.consume()
-                            dragging = true
-                            invalidateDraw()
-                            var last = change.position.y
-                            while (true) {
-                                val c = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull() ?: break
-                                c.consume()
-                                if (!c.pressed) break
-                                val dy = c.position.y - last
-                                last = c.position.y
-                                if (dy != 0f) geometry.drag(dy, h, h - 2 * BAR_INSET_DP * px - bar.second)
-                            }
-                            dragging = false
-                            invalidateDraw()
+    private val pointerInput = delegate(SuspendingPointerInputModifierNode {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent(PointerEventPass.Initial)
+                val change = event.changes.firstOrNull() ?: continue
+                val px = density
+                val h = size.height.toFloat()
+                val bar = bar(h, px)
+                val onBar = bar != null && change.position.x >= size.width - GRIP_DP * px &&
+                    change.position.y in bar.first..(bar.first + bar.second)
+                when (event.type) {
+                    PointerEventType.Press -> if (onBar && bar != null) {
+                        change.consume()
+                        dragging = true
+                        invalidateDraw()
+                        var last = change.position.y
+                        while (true) {
+                            val c = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull() ?: break
+                            c.consume()
+                            if (!c.pressed) break
+                            val dy = c.position.y - last
+                            last = c.position.y
+                            if (dy != 0f) geometry.drag(dy, h, h - 2 * BAR_INSET_DP * px - bar.second)
                         }
-                        else -> {
-                            val now = onBar && event.type != PointerEventType.Exit
-                            if (now != hovered) {
-                                hovered = now
-                                invalidateDraw()
-                            }
+                        dragging = false
+                        invalidateDraw()
+                    }
+                    else -> {
+                        val now = onBar && event.type != PointerEventType.Exit
+                        if (now != hovered) {
+                            hovered = now
+                            invalidateDraw()
                         }
                     }
                 }
             }
-        })
-    }
+        }
+    })
+
+    override fun onPointerEvent(pointerEvent: PointerEvent, pass: PointerEventPass, bounds: IntSize) =
+        pointerInput.onPointerEvent(pointerEvent, pass, bounds)
+
+    override fun onCancelPointerInput() = pointerInput.onCancelPointerInput()
+    override fun onDensityChange() = pointerInput.onDensityChange()
+    override fun onViewConfigurationChange() = pointerInput.onViewConfigurationChange()
+    override fun interceptOutOfBoundsChildEvents() = pointerInput.interceptOutOfBoundsChildEvents()
+    override fun sharePointerInputWithSiblings() = pointerInput.sharePointerInputWithSiblings()
 
     override fun ContentDrawScope.draw() {
         drawContent()

@@ -251,6 +251,34 @@ class ControlsBehaviourTest {
         assertTrue(list.firstVisibleItemIndex > 40, "Liste gescrollt: ${list.firstVisibleItemIndex}")
     }
 
+    /**
+     * A new screen density (window on another monitor, other scaling, Lora 1.0.75) must not end the app: Compose cast the
+     * scrollbar to PointerInputModifierNode and failed with a ClassCastException. The bar still drags afterwards.
+     */
+    @Test
+    fun scrollbarSurvivesANewDensity() = ui {
+        val page = androidx.compose.foundation.ScrollState(0)
+        var scale by mutableStateOf(1f)
+        show {
+            androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalDensity provides Density(scale)) {
+                androidx.compose.foundation.layout.Column(Modifier.fillMaxSize().testTag("seite").verticalScroll(page)) {
+                    repeat(60) { Text("Zeile $it", Modifier.padding(8.dp)) }
+                }
+            }
+        }
+        scale = 1.25f
+        settle()
+        scale = 1f
+        settle()
+        val w = onNodeWithTag("seite").fetchSemanticsNode().size.width.toFloat()
+        onNodeWithTag("seite").performMouseInput {
+            moveTo(androidx.compose.ui.geometry.Offset(w - 5f, 20f)); press()
+            moveTo(androidx.compose.ui.geometry.Offset(w - 5f, 220f)); release()
+        }
+        settle()
+        assertTrue(page.value > page.maxValue / 3, "Seite nach neuer Dichte gescrollt: ${page.value} von ${page.maxValue}")
+    }
+
     /** Red buttons stay readable (4.5:1) in every style, light and dark. */
     @Test
     fun redButtonsAreReadable() {
