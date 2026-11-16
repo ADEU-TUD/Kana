@@ -15,5 +15,7 @@ Seiten nicht belegen ließ, bleibt draußen. Keine Namen von Personen.
 **Auslieferung** wie die Modelle: die App lädt die Datei von diesem Repository an einem festen Commit
 (`KnowledgePacks.CATALOG` in `data/KnowledgePacks.kt`) und prüft sie mit SHA-256. Für ein neues Paket oder eine neue
 Fassung: Datei hier ändern, `version` erhöhen, committen, dann Commit, Größe und SHA-256 im Katalog eintragen
-(`sha256sum tools/wissen/lehramt-tud.json`). `KnowledgePackTest` prüft, dass jede Angabe Quelle und Stand hat und der
+(`sha256sum tools/wissen/lehramt-tud.json`) und die Datei nach `app/src/main/resources/wissen/` kopieren. Seit 1.0.77
+bringt die App jedes Paket des Katalogs selbst mit und installiert es von dort (kein Internet nötig; unter Windows kam
+der Download teils mit falscher Prüfsumme an) – geladen wird nur, was keine Kopie in der App hat. `KnowledgePackTest` prüft, dass jede Angabe Quelle und Stand hat und der
 Katalog zur Datei passt.

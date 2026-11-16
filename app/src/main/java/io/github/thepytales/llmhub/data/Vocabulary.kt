@@ -4,6 +4,7 @@ import io.github.thepytales.llmhub.AppContainer
 import io.github.thepytales.llmhub.ui.tr
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -234,16 +235,50 @@ object KnowledgePacks {
         return have.origin.isEmpty() && (offer(id)?.version ?: 0) > have.version
     }
 
-    /** Downloads [offer] (blocking, on an IO thread), checks it and installs it. */
-    fun download(c: AppContainer, offer: Offer, progress: (Double) -> Unit = {}) {
-        val part = File(dir(c), offer.id + ".part")
-        FileDownload.fetch(offer.url, part, offer.size, { false }, progress)
-        if (part.length() != offer.size || FileDownload.sha256(part) != offer.sha256) {
-            part.delete()
-            error(tr("Das Paket ist beschädigt angekommen (Prüfsumme stimmt nicht) – bitte später erneut versuchen."))
+    private val _loading = MutableStateFlow<Map<String, Double>>(emptyMap())
+    /** Packs being downloaded right now and how far (0…1) – also those the setup wizard started in the background. */
+    val loading: StateFlow<Map<String, Double>> = _loading
+    private val locks = java.util.concurrent.ConcurrentHashMap<String, Any>()
+
+    /**
+     * Downloads [offer] (blocking, on an IO thread), checks it and installs it. One download per pack at a time: the
+     * setup wizard loads recommended packs in the background, and a click on „Laden“ meanwhile used to write into the
+     * same part file – the pack arrived broken („Prüfsumme stimmt nicht“, Lora 1.0.76). Each try now has its own
+     * file, a second caller waits and finds the pack installed, and a transfer that arrives broken is tried once more.
+     */
+    fun download(c: AppContainer, offer: Offer, progress: (Double) -> Unit = {}) = synchronized(locks.getOrPut(offer.id) { Any() }) {
+        val have = installed(c).firstOrNull { it.id == offer.id }
+        if (have != null && have.origin.isEmpty() && have.version >= offer.version) return@synchronized
+        dir(c).listFiles { f -> f.name == offer.id + ".part" || (f.name.startsWith(offer.id + "-") && f.extension == "part") }?.forEach { it.delete() }
+        // The app carries the pack itself (the same file, same SHA-256): no internet needed, nothing to arrive broken.
+        builtIn(offer)?.let { install(c, it); return@synchronized }
+        _loading.update { it + (offer.id to 0.0) }
+        try {
+            repeat(2) { attempt ->
+                val part = File.createTempFile(offer.id + "-", ".part", dir(c))
+                try {
+                    FileDownload.fetch(offer.url, part, offer.size, { false }) { p -> _loading.update { it + (offer.id to p) }; progress(p) }
+                    if (part.length() == offer.size && FileDownload.sha256(part) == offer.sha256) {
+                        install(c, part.readText())
+                        return@synchronized
+                    }
+                    android.util.Log.e("Wissenspakete", "${offer.url}: ${part.length()} statt ${offer.size} Bytes, SHA-256 ${FileDownload.sha256(part)}, Anfang: " +
+                        part.readBytes().take(200).toByteArray().toString(Charsets.UTF_8).replace(Regex("\\s+"), " "))
+                    if (attempt == 1) error(tr("Das Paket ist beschädigt angekommen (Prüfsumme stimmt nicht) – bitte später erneut versuchen."))
+                } finally {
+                    part.delete()
+                }
+            }
+        } finally {
+            _loading.update { it - offer.id }
         }
-        install(c, part.readText())
-        part.delete()
+    }
+
+    /** The copy of [offer] inside the app (resources/wissen), if it is exactly the catalog's file. */
+    fun builtIn(offer: Offer): String? {
+        val bytes = KnowledgePacks::class.java.getResourceAsStream("/wissen/${offer.id}.json")?.use { it.readBytes() } ?: return null
+        val sha = java.security.MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+        return if (bytes.size.toLong() == offer.size && sha == offer.sha256) bytes.toString(Charsets.UTF_8) else null
     }
 
     /** Installs a pack from its text (download or import); replaces one with the same id. */
