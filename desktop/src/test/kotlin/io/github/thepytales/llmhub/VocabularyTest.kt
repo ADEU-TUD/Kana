@@ -69,6 +69,53 @@ class VocabularyTest {
         assertTrue(Regex("/[0-9a-f]{40}/tools/wissen/lehramt-tud.json$").containsMatchIn(offer.url), "fester Commit im Katalog eingetragen")
     }
 
+    /**
+     * „Das Paket ist beschädigt angekommen“ (1.0.76): the setup wizard loads a recommended pack in the background and a
+     * click on „Laden“ meanwhile wrote into the same part file. Two downloads at once now give one request and an intact
+     * pack, a part file left over from before is not taken for a finished download, and a broken transfer is tried again.
+     */
+    @Test
+    fun aPackLoadedTwiceAtOnceOrBrokenOnceStillArrivesIntact() {
+        val file = File("../tools/wissen/lehramt-tud.json")
+        val bytes = file.readBytes()
+        val requests = java.util.concurrent.atomic.AtomicInteger()
+        var breakFirst = false
+        val server = com.sun.net.httpserver.HttpServer.create(java.net.InetSocketAddress("127.0.0.1", 0), 0)
+        server.executor = java.util.concurrent.Executors.newCachedThreadPool()
+        server.createContext("/pack.json") { ex ->
+            val n = requests.incrementAndGet()
+            val body = if (breakFirst && n == 1) bytes.copyOf().also { it[100] = 'X'.code.toByte() } else bytes
+            ex.sendResponseHeaders(200, body.size.toLong())
+            ex.responseBody.use { out -> body.toList().chunked(4096).forEach { out.write(it.toByteArray()); out.flush(); Thread.sleep(60) } }
+        }
+        server.start()
+        val base = kotlin.io.path.createTempDirectory("packs").toFile()
+        try {
+            val c = AppContainer(android.content.Context(File(base, "files").apply { mkdirs() }, File(base, "cache").apply { mkdirs() }))
+            val offer = KnowledgePacks.offer("lehramt-tud")!!.copy(url = "http://127.0.0.1:${server.address.port}/pack.json")
+            // Left over from an earlier, broken try: as long as the pack, but not the pack.
+            File(c.appContext.filesDir, "wissen/lehramt-tud.part").apply { parentFile.mkdirs(); writeBytes(ByteArray(bytes.size) { 'x'.code.toByte() }) }
+            val errors = java.util.concurrent.CopyOnWriteArrayList<Throwable>()
+            val threads = List(2) { Thread { runCatching { KnowledgePacks.download(c, offer) }.onFailure { errors += it } }.apply { start() } }
+            threads.forEach { it.join(20_000) }
+            assertTrue(errors.isEmpty(), "kein Fehler: $errors")
+            assertEquals(1, requests.get(), "der zweite Aufruf wartet und findet das Paket fertig")
+            assertEquals(offer.version, KnowledgePacks.installed(c).single { it.id == offer.id }.version)
+            assertTrue(KnowledgePacks.loading.value.isEmpty())
+            assertTrue(File(c.appContext.filesDir, "wissen").listFiles()!!.none { it.extension == "part" }, "keine Teildateien übrig")
+
+            KnowledgePacks.delete(c, offer.id)
+            requests.set(0)
+            breakFirst = true
+            KnowledgePacks.download(c, offer)
+            assertEquals(2, requests.get(), "kaputte Übertragung einmal neu geladen")
+            assertNotNull(KnowledgePacks.installed(c).firstOrNull { it.id == offer.id })
+        } finally {
+            server.stop(0)
+            base.deleteRecursively()
+        }
+    }
+
     @Test
     fun entriesWithoutSourceAreDroppedFromDownloadedPacks() {
         val text = """{"id":"probe","titel":"Probe","eintraege":[{"begriff":"A","erklaerung":"x","quelle":"https://a.de","stand":"2026-01-01"},{"begriff":"B","erklaerung":"ohne Quelle"},{"begriff":"C","quelle":"http://unsicher.de","stand":"2026-01-01"}]}"""

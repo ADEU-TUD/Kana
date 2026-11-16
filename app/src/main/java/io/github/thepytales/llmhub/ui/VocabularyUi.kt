@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -99,7 +98,7 @@ fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
     val packsVersion by KnowledgePacks.version.collectAsState()
     val packs = remember(packsVersion) { KnowledgePacks.installed(c) }
     val scope = rememberCoroutineScope()
-    val loading = remember { mutableStateMapOf<String, Double>() }
+    val loading by KnowledgePacks.loading.collectAsState()
     HintText(tr("Was sich zur App dazuladen lässt – nur, wer es braucht. Alles lässt sich hier auch wieder löschen."))
     Section(tr("Modelle für Lora")) {
         ContentRow(
@@ -123,11 +122,7 @@ fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
                 tr(o.title), tr(o.description) + (have?.let { " " + tr("Geladen: {0} Einträge, Stand {1}.", it.entries.size, it.date) } ?: ""),
                 tr("{0} KB", (o.size / 1024).coerceAtLeast(1)), installed = have != null, progress = loading[o.id],
                 onLoad = {
-                    loading[o.id] = 0.0
-                    scope.launch {
-                        runCatching { withContext(Dispatchers.IO) { KnowledgePacks.download(c, o) { p -> loading[o.id] = p } } }.onFailure { Notices.error(it) }
-                        loading.remove(o.id)
-                    }
+                    scope.launch { runCatching { withContext(Dispatchers.IO) { KnowledgePacks.download(c, o) } }.onFailure { Notices.error(it) } }
                 },
                 onDelete = { KnowledgePacks.delete(c, o.id) },
                 update = KnowledgePacks.updatable(c, o.id),
@@ -331,6 +326,7 @@ fun RolesSettings(c: AppContainer) {
         io.github.thepytales.llmhub.data.Roles.packs(roles).filter { it !in have }.mapNotNull { KnowledgePacks.offer(it) }
     }
     val scope = rememberCoroutineScope()
+    val loading by KnowledgePacks.loading.collectAsState()
     Section(tr("Wofür nutzt du Lora?")) {
         HintText(tr("Danach richten sich die vorgeschlagenen Werkzeuge, die Reihenfolge der TU Vorlagen, Loras Vorschläge und empfohlene Inhalte zum Nachladen."))
         androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -348,7 +344,8 @@ fun RolesSettings(c: AppContainer) {
         missing.forEach { o ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 HintText(tr("Empfohlen: Wissenspaket „{0}“.", tr(o.title)), Modifier.weight(1f))
-                TextButton(onClick = {
+                if (o.id in loading) Text(tr("Wird geladen …"), style = MaterialTheme.typography.bodySmall)
+                else TextButton(onClick = {
                     scope.launch { runCatching { withContext(Dispatchers.IO) { KnowledgePacks.download(c, o) } }.onFailure { Notices.error(it) } }
                 }) { Text(tr("Laden")) }
             }
