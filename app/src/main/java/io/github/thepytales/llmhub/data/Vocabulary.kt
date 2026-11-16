@@ -250,6 +250,8 @@ object KnowledgePacks {
         val have = installed(c).firstOrNull { it.id == offer.id }
         if (have != null && have.origin.isEmpty() && have.version >= offer.version) return@synchronized
         dir(c).listFiles { f -> f.name == offer.id + ".part" || (f.name.startsWith(offer.id + "-") && f.extension == "part") }?.forEach { it.delete() }
+        // The app carries the pack itself (the same file, same SHA-256): no internet needed, nothing to arrive broken.
+        builtIn(offer)?.let { install(c, it); return@synchronized }
         _loading.update { it + (offer.id to 0.0) }
         try {
             repeat(2) { attempt ->
@@ -260,6 +262,8 @@ object KnowledgePacks {
                         install(c, part.readText())
                         return@synchronized
                     }
+                    android.util.Log.e("Wissenspakete", "${offer.url}: ${part.length()} statt ${offer.size} Bytes, SHA-256 ${FileDownload.sha256(part)}, Anfang: " +
+                        part.readBytes().take(200).toByteArray().toString(Charsets.UTF_8).replace(Regex("\\s+"), " "))
                     if (attempt == 1) error(tr("Das Paket ist beschädigt angekommen (Prüfsumme stimmt nicht) – bitte später erneut versuchen."))
                 } finally {
                     part.delete()
@@ -268,6 +272,13 @@ object KnowledgePacks {
         } finally {
             _loading.update { it - offer.id }
         }
+    }
+
+    /** The copy of [offer] inside the app (resources/wissen), if it is exactly the catalog's file. */
+    fun builtIn(offer: Offer): String? {
+        val bytes = KnowledgePacks::class.java.getResourceAsStream("/wissen/${offer.id}.json")?.use { it.readBytes() } ?: return null
+        val sha = java.security.MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+        return if (bytes.size.toLong() == offer.size && sha == offer.sha256) bytes.toString(Charsets.UTF_8) else null
     }
 
     /** Installs a pack from its text (download or import); replaces one with the same id. */
