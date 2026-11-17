@@ -173,6 +173,22 @@ vorher: Ein Design in *Erstellen › Gestalten* mit drei Formen und eine Präsen
   erwartet: Auf dem Beamer die Folie, auf dem Laptop Notizen, nächste Folie und Zeit.
   ort: area.files
 
+== AP-130 Video: flüssige Vorschau
+geräte: windows
+vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten auf dem Office-PC.
+- Abspielkopf ziehen
+  tun: Das Video in einen neuen Videoeditor ziehen und sofort den Abspielkopf über die ganze Zeitleiste hin und her ziehen.
+  erwartet: Das Bild folgt der Maus ohne Warten (kurz etwas unscharf); nach dem Loslassen kommt das scharfe Bild.
+  ort: tool.video
+- Vorschau wird vorbereitet
+  tun: Oben rechts neben *Gespeichert* schauen, solange das Video neu ist.
+  erwartet: *Vorschau wird vorbereitet* mit Kreis erscheint und verschwindet, wenn die Vorschaudatei fertig ist.
+  ort: tool.video
+- Abspielen ohne Ruckeln
+  tun: Mit der Leertaste eine Minute abspielen, auch nach einem Titel oder Bild-in-Bild.
+  erwartet: Bild und Ton laufen gleichmäßig, ohne Hänger.
+  ort: tool.video
+
 == AP-131 Server-Terminal: Lora im Terminal, Dateien, Tabs
 geräte: windows, macos, linux
 vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.

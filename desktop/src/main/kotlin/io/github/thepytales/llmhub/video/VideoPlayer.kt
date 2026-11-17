@@ -11,6 +11,7 @@ import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
 import java.io.File
+import kotlin.math.abs
 import java.io.InputStream
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -42,7 +43,9 @@ class VideoPlayer {
     val speed: StateFlow<Double> = _speed.asStateFlow()
 
     /** Where a picture of the preview came from (AP-70): a single picture from the file or the graph, playing, J. */
-    enum class Source { FILE, GRAPH, PLAY, BACK }
+    enum class Source { FILE, GRAPH, PLAY, BACK,
+        /** The nearest picture of the strip while the playhead is dragged (AP-130); the exact one follows. */
+        NEAR }
 
     /** A picture as the screen got it, with the time it shows (tests check size, place and gaps of the sequence). */
     class Shown(val image: ImageBitmap, val at: Double, val source: Source)
@@ -62,6 +65,16 @@ class VideoPlayer {
     private var shownTicket = 0L
     private var shownKey: Any? = null
     private var lastKey: Any? = null
+    /** Bildpuffer (AP-130): the last single pictures by their key, so going back to a place shows it at once. */
+    private val cache = object : LinkedHashMap<Any, Pair<ImageBitmap, Source>>(64, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Any, Pair<ImageBitmap, Source>>?) = size > CACHE
+    }
+    /** The ffmpeg run of the single picture being made (AP-130: stopped when a newer place makes it useless). */
+    @Volatile private var stillProc: Process? = null
+    /** Where the last single picture was asked for. */
+    @Volatile private var nearFrom = -1.0
+    /** The request whose near picture is shown: exact pictures of older requests are kept but not shown any more. */
+    private var nearTicket = 0L
     /** Playbacks begun: a single picture asked for before one is not shown any more. */
     @Volatile private var starts = 0
 
@@ -90,25 +103,50 @@ class VideoPlayer {
         _position.value = pos
         val key = stillKey(project, pos)
         val ticket: Long
+        val cached: Pair<ImageBitmap, Source>?
         synchronized(lock) {
             if (key == shownKey) { shownTicket = ++wantedStill; lastKey = key; return }
             if (key == lastKey) return
             ticket = ++wantedStill
             lastKey = key
             if (project.clips.isEmpty()) { shownTicket = ticket; shownKey = key; _frame.value = null; return }
+            cached = cache[key]
+            if (cached != null) { shownTicket = ticket; shownKey = key }
+        }
+        // A place shown before comes from the Bildpuffer at once (no ffmpeg run).
+        if (cached != null) { show(cached.first, pos, cached.second); return }
+        // Sofort ein nahes Bild (AP-130): the strip's picture of this second, then the exact one – only when the playhead
+        // moved (an edit at the same place keeps the old picture until the new one is there, without a blurred flash).
+        val moved = abs(pos - nearFrom).also { nearFrom = pos } > 1e-6
+        if (moved) near(project, pos)?.let { img ->
+            synchronized(lock) { nearTicket = ticket }
+            show(img, pos, Source.NEAR)
+            // The picture being made is for an older place and would not be shown any more: stop it, the newest comes sooner.
+            stillProc?.destroyForcibly()
         }
         val began = starts
         stills.execute {
             if (ticket != wantedStill) return@execute
-            val made = still(project, pos)
+            val made = still(project, pos) { ticket == wantedStill }
             synchronized(lock) {
                 if (made == null) { if (lastKey == key) lastKey = null; return@execute }
-                if (began != starts || ticket < shownTicket) return@execute
+                cache[key] = made!!
+                // While dragging, near pictures of newer places are on screen: an exact one of an older place would jump back.
+                if (began != starts || ticket < shownTicket || ticket < nearTicket) return@execute
                 shownTicket = ticket
                 shownKey = key
             }
             show(made!!.first, pos, made.second)
         }
+    }
+
+    /** The strip's picture of the clip on V1 at [t] (AP-130), or null (no strip yet, a picture file, nothing there). */
+    private fun near(p: VideoProject, t: Double): ImageBitmap? {
+        val (i, src) = p.at(t) ?: return null
+        val file = File(p.clips[i].path)
+        if (FrameStrips.get(file) == null) { FrameStrips.ensure(file); return null }
+        val (w, h) = VideoRender.previewSize(p)
+        return FrameStrips.near(file, src, w, h)
     }
 
     /** What decides the single picture at [pos]: the project without what the picture does not show, and the frame. */
@@ -133,7 +171,7 @@ class VideoPlayer {
     /** One picture of the timeline at [t] (preview size), as the export shows it there (without titles). */
     fun picture(p: VideoProject, t: Double): ImageBitmap? = still(p, t)?.first
 
-    private fun still(p: VideoProject, t: Double): Pair<ImageBitmap, Source>? {
+    private fun still(p: VideoProject, t: Double, live: () -> Boolean = { true }): Pair<ImageBitmap, Source>? {
         if (p.clips.isEmpty()) return null
         val exe = Media.ffmpeg() ?: return null
         val (w, h) = VideoRender.previewSize(p)
@@ -143,7 +181,7 @@ class VideoPlayer {
             val picture = Media.isStill(file)
             // At the very end of a file there may be no picture any more: then the one just before.
             val img = rgba(exe, VideoRender.previewStillArgs(p, file, src, picture), w, h)
-                ?: if (picture) null else rgba(exe, VideoRender.previewStillArgs(p, file, maxOf(0.0, src - 0.12), false), w, h)
+                ?: if (picture || !live()) null else rgba(exe, VideoRender.previewStillArgs(p, file, maxOf(0.0, src - 0.12), false), w, h)
             return img?.let { it to Source.FILE }
         }
         val work = File(Media.cacheDir, "bild-${System.nanoTime()}")
@@ -163,7 +201,8 @@ class VideoPlayer {
     private fun rgba(exe: String, args: List<String>, w: Int, h: Int): ImageBitmap? = runCatching {
         stillRuns++
         val proc = ProcessBuilder(listOf(exe) + args).redirectError(ProcessBuilder.Redirect.DISCARD).start()
-        val bytes = proc.inputStream.use { it.readNBytes(w * h * 4) }
+        stillProc = proc
+        val bytes = try { proc.inputStream.use { it.readNBytes(w * h * 4) } } finally { if (stillProc === proc) stillProc = null }
         if (!proc.waitFor(30, TimeUnit.SECONDS)) proc.destroyForcibly()
         if (bytes.size < w * h * 4) null
         else Image.makeRaster(ImageInfo(w, h, ColorType.RGBA_8888, ColorAlphaType.UNPREMUL), bytes, w * 4).toComposeImageBitmap()
@@ -350,6 +389,9 @@ class VideoPlayer {
     companion object {
         /** Seconds of the timeline per preview run; the next one follows on. */
         const val WINDOW = 600.0
+
+        /** Single pictures kept in the Bildpuffer (about 1 MB each at preview size). */
+        const val CACHE = 48
 
         /** [p] without what its single picture does not show (titles, subtitles and sound are laid over or played). */
         internal fun pictureOf(p: VideoProject): VideoProject = p.copy(

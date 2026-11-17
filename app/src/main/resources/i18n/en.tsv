@@ -229,6 +229,7 @@ Format einfügen	Paste format
 Formatiert	Formatted
 Foto in {0} s …	Picture in {0} s …
 Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
+Für eine flüssige Vorschau entsteht im Hintergrund eine kleine Fassung jeder Datei: {0}. Bis dahin kann die Vorschau stocken.	For a smooth preview, a small version of each file is made in the background: {0}. Until then the preview may stutter.
 Gelöscht: „{0}“	Deleted: “{0}”
 Geschrieben: „{0}“	Typed: “{0}”
 Gruppieren	Group
@@ -291,6 +292,7 @@ Verlauf der Schritte …	History of steps …
 Vertikal zentrieren	Center vertically
 Vorführen ab hier	Present from here
 Vorher: {0}	Before: {0}
+Vorschau wird vorbereitet ({0})	Preparing preview ({0})
 Was in den letzten Paketen neu ist, wird hier Schritt für Schritt am Gerät geprüft: lesen, ausprobieren, dann *Passt* oder *Passt nicht* – mit Notiz und Bildschirmfoto. Am Ende geht ein Bericht über *Problem melden* hinaus.	What is new in the latest packages is checked here on the device, step by step: read, try it, then *Fits* or *Does not fit* – with a note and a screenshot. At the end a report goes out via *Report a problem*.
 Weiter prüfen	Continue checking
 Wie vor dem ersten Schritt	As before the first step

@@ -439,10 +439,13 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
         withContext(Dispatchers.IO) { VideoHub.store.save(h.project) }
         saved = h.version
     }
-    // Proxy files for a smooth preview, one after another in the background.
+    // Proxy files for a smooth preview, one after another in the background. First the Bildstreifen (AP-130, quick: key
+    // frames only) for the near pictures while dragging; again from each proxy once it is there.
     LaunchedEffect((h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).toSet()) {
         withContext(Dispatchers.IO) {
-            (h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).distinct().map { File(it) }.filter { it.isFile }.forEach { runCatching { Media.makeProxy(it) } }
+            val files = (h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).distinct().map { File(it) }.filter { it.isFile }
+            files.forEach { io.github.thepytales.llmhub.video.FrameStrips.ensure(it) }
+            files.forEach { runCatching { Media.makeProxy(it) }; io.github.thepytales.llmhub.video.FrameStrips.ensure(it) }
         }
     }
     val p = h.project
@@ -846,6 +849,7 @@ private fun EditorHeader(
             tr("{0} × {1} · {2} fps · {3}", p.width, p.height, p.fps, clock(p.duration)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
         )
+        PreparingBadge(labelled = wide)
         SavedBadge(saved, labelled = wide)
         ToolGroup {
             TipIconButton(Icons.Outlined.VideoLibrary, tr(if (poolShown) "Medienpool einklappen" else "Medienpool zeigen"), { layout.togglePool(poolShown); onFocus() }, selected = poolShown)

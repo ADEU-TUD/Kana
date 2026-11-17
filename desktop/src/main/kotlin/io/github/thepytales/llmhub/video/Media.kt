@@ -132,7 +132,7 @@ object Media {
         return MediaInfo(dur, w, h, fps, videoLine != null, audio, rot)
     }
 
-    private fun hash(file: File): String {
+    internal fun hash(file: File): String {
         val md = MessageDigest.getInstance("SHA-1")
         md.update((file.absolutePath + "|" + file.length() + "|" + file.lastModified()).toByteArray())
         return md.digest().joinToString("") { "%02x".format(it) }.take(16)
@@ -148,6 +148,9 @@ object Media {
 
     private val making = ConcurrentHashMap.newKeySet<String>()
 
+    /** Names of the files whose proxy is being made right now (AP-130: shown in the editor). */
+    val preparing = kotlinx.coroutines.flow.MutableStateFlow<Set<String>>(emptySet())
+
     /** Makes the proxy of [file] (blocking; returns it, or null when ffmpeg fails). */
     fun makeProxy(file: File, info: MediaInfo? = probe(file)): File? {
         proxy(file)?.let { return it }
@@ -156,6 +159,7 @@ object Media {
         val exe = ffmpeg() ?: return null
         val target = File(cacheDir, "proxy-${hash(file)}.mp4")
         if (!making.add(target.path)) return null
+        preparing.value = preparing.value + file.name
         try {
             val tmp = File(cacheDir, target.name + ".part.mp4")
             val (code, out) = run(
@@ -169,6 +173,7 @@ object Media {
             return target
         } finally {
             making.remove(target.path)
+            preparing.value = preparing.value - file.name
         }
     }
 
