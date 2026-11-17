@@ -147,7 +147,9 @@ quellen: net/** data/McpServers.kt ui/RepoPicker.kt data/UniWatch.kt ui/ErrorHel
 quellen: data/ScheduledTask.kt ui/TaskDelivery.kt ui/Games*.kt ui/GamePlatform.kt data/LearningGames.kt data/Proposals.kt
 quellen: ui/ProposalScreen.kt ui/LoraTour.kt ui/LoraHelper.kt ui/Spotlight.kt ui/ToolsSettings.kt AppShortcuts.kt SelfTest.kt
 quellen: Main.kt ui/LoraFileDialog.kt ui/DrivePlatform.kt ui/DesignPlatform.kt ui/ChatPlatform.kt ui/ScanPlatform.kt
+quellen: data/DeviceChecks.kt ui/DeviceChecksSection.kt ui/ScreenCapture.kt /app/src/main/resources/pruefungen/**
 quellen: /desktop/src/main/resources/lizenzen/** /desktop/src/main/resources/icon.png /desktop/src/main/resources/tray.png
 tests: AccountsTest UpdatesTest ExtensionsTest ExtraWindowsTest ZoomTest PanelResizerTest MacClickFixTest AppShortcutsTest
 tests: NewToolsLookTest Round2EndLookTest BrowserLiveTest ConnectionsTest ServerStatusTest ProposalTest GamesAndAiNoteTest
 tests: ChatFoldersTest LoraHelpTest BedienungReviewTest HoverLookTest LoraPanelLookTest ToolsAndDrawerTest
+tests: DeviceChecksTest

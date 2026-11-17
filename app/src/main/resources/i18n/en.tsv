@@ -89,6 +89,8 @@
 (ohne Titel)	(untitled)
 (wie gemerkt)	(as remembered)
 (zusammengefügt)	(merged)
+*Problem melden* übernimmt den Bericht als Beschreibung. Die Bildschirmfotos kann eine Mail nicht von selbst mitnehmen – als ZIP speichern und anhängen.	*Report a problem* takes the report as its description. A mail cannot carry the screenshots by itself – save them as a ZIP and attach it.
+*Problem melden* übernimmt den Bericht als Beschreibung; dort per E-Mail oder als GitHub-Issue senden.	*Report a problem* takes the report as its description; send it there by e-mail or as a GitHub issue.
 + Code	+ Code
 + Neue Folie ▾	+ New slide ▾
 + Spalte	+ Column
@@ -128,7 +130,10 @@ Abgebrochen – nichts verschoben.	Cancelled – nothing moved.
 Abgebrochen – {0} Mails sind schon eingeordnet.	Cancelled – {0} mails are already sorted.
 Ablauf: {0}	Workflow: {0}
 Alle Einstellungen der App.	All settings of the app.
+Alle Prüfungen zurücksetzen?	Reset all checks?
+Alle Schritte passen – diese Pakete sind auf diesem Gerät geprüft.	All steps fit – these packages are checked on this device.
 Alles lässt sich später unter Einstellungen › Lora, › Werkzeuge und › Modelle auf diesem Gerät ändern. Downloads laufen im Hintergrund weiter.	Everything can be changed later under Settings › Lora, › Tools and › Models on this device. Downloads continue in the background.
+Alles zurücksetzen …	Reset everything …
 An diese Sitzungen:	To these sessions:
 An mehrere senden	Send to several
 Anderen Schlüssel	Another key
@@ -144,14 +149,23 @@ Ausgabe zeigen	Show output
 Bedenke:	Keep in mind:
 Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).	Commands and short tasks on this device, everything demanding on the university server (chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).
 Bereich, Einstellung, Chat – oder sag, was du tun willst …	Area, setting, chat – or say what you want to do …
+Bericht mit Bildern als ZIP …	Report with pictures as ZIP …
+Bericht über Problem melden	Send report via Report a problem
+Bild anhängen …	Attach picture …
+Bildschirmfoto	Screenshot
+Bildschirmfoto angehängt: {0}	Screenshot attached: {0}
+Bildschirmfoto in {0} Sekunden – jetzt zur Stelle gehen.	Screenshot in {0} seconds – go to the place now.
+Bildschirmfoto ist beim Schritt „{0}“.	The screenshot is with the step “{0}”.
 Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Lora antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.	So far {0} % without a server: {1} × instantly on the device (avg {2}), {3} × with the language model on this device (avg {4}), {5} × on the server (avg {6}). Measured until Lora answers or hands over; only numbers are counted, no content.
 Dafür den Schlüssel des Uni-Servers eintragen (Einstellungen › Konto).	Enter the key of the university server for this (Settings › Account).
+Das Bildschirmfoto ist nicht gelungen.	The screenshot did not work.
 Das beantwortet das Modell auf diesem Gerät – ich gebe es weiter.	The model on this device will answer that – I am handing it over.
 Das geht hier: {0}.	That is done here: {0}.
 Das Modell auf diesem PC ({0}) ist klein – bei Shell-Befehlen liegt es öfter daneben. Der TU-Server schlägt zuverlässiger vor.	The model on this PC ({0}) is small – it gets shell commands wrong more often. The TU server proposes more reliably.
 Das Modell auf diesem PC ist für das Terminal zu langsam. {0} Der TU-Server antwortet in wenigen Sekunden und schlägt Shell-Befehle zuverlässiger vor.	The model on this PC is too slow for the terminal. {0} The TU server answers within a few seconds and proposes shell commands more reliably.
 Das Terminal ist geschlossen – bitte neu verbinden.	The terminal is closed – please connect again.
 Das Terminal wartet auf deine Eingabe (z. B. Passwort oder Ja/Nein) – tippe sie dort ein. Lora sieht sie nicht.	The terminal is waiting for your input (e.g. a password or yes/no) – type it there. Lora does not see it.
+Das soll passieren	What should happen
 Dateien auf dem Server	Files on the server
 Dateien aus dem Explorer hierher ziehen, um sie hochzuladen.	Drag files from the Explorer here to upload them.
 Dateien ausblenden	Hide files
@@ -167,6 +181,7 @@ Die Dateien des Servers sind nicht erreichbar (SFTP ist dort vielleicht aus).	Th
 Die Daten bleiben an der TU Dresden – kein externer Anbieter.	The data stays at TU Dresden – no external provider.
 Die Fragen vom ersten Start erneut stellen	Ask the questions from the first start again
 Die Pseudonymisierung findet Namen, Schulen und Orte zuverlässiger, bevor etwas an einen Server geht.	Pseudonymization finds names, schools and places more reliably before anything goes to a server.
+Die ZIP-Datei konnte nicht gespeichert werden.	The ZIP file could not be saved.
 Die Änderungen sind noch nicht auf dem Server gespeichert.	The changes are not saved on the server yet.
 Diese Vorlagen könnten passen:	These templates might fit:
 Diese Zeile wird in jede Sitzung eingetippt und sofort ausgeführt ({0}):	This line is typed into each session and run at once ({0}):
@@ -177,10 +192,27 @@ Eine Zeile an mehrere Sitzungen	One line to several sessions
 Einstellung: {0}	Setting: {0}
 Einstellung: {0} → {1}	Setting: {0} → {1}
 Empfehlung für diesen PC: {0}	Recommendation for this PC: {0}
+Ergebnisse, Notizen und Bildschirmfotos dieses Geräts werden gelöscht; alle Schritte sind wieder offen.	Results, notes and screenshots of this device are deleted; all steps are open again.
 Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vorschläge.	Load a model first (Settings › Local models), otherwise there are no proposals.
 Etwas anderes	Something else
 Farbe im Tab	Colour of the tab
 Feste Abläufe	Fixed workflows
+Foto in {0} s …	Picture in {0} s …
+Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
+Hingehen	Go there
+Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht.	Check new features on the device step by step: fits / does not fit, note, screenshot, report.
+Nichts offen auf diesem Gerät	Nothing open on this device
+Notiz (was war anders?)	Note (what was different?)
+Passt nicht	Does not fit
+Prüfung beginnen	Start checking
+Prüfungen am Gerät	Checks on the device
+So geht's	How to do it
+Vorher: {0}	Before: {0}
+Was in den letzten Paketen neu ist, wird hier Schritt für Schritt am Gerät geprüft: lesen, ausprobieren, dann *Passt* oder *Passt nicht* – mit Notiz und Bildschirmfoto. Am Ende geht ein Bericht über *Problem melden* hinaus.	What is new in the latest packages is checked here on the device, step by step: read, try it, then *Fits* or *Does not fit* – with a note and a screenshot. At the end a report goes out via *Report a problem*.
+Weiter prüfen	Continue checking
+Wieder offen	Open again
+Zuletzt: passt (Lora {0})	Last time: fits (Lora {0})
+Zuletzt: passt nicht (Lora {0})	Last time: does not fit (Lora {0})
 folgt dem Terminal	follows the terminal
 Frist in den Kalender	Deadline into the calendar
 Frühere Chats suchen	Search earlier chats
@@ -299,6 +331,8 @@ Wo Lora denkt, wenn sie im Server-Terminal Befehle vorschlägt. Externe Cloud-An
 Wo soll ich arbeiten?	Where should I work?
 Wo soll Lora im Server-Terminal denken?	Where should Lora think in the Server Terminal?
 Während Lora denkt, ist der PC ausgelastet (Lüfter, Akku).	While Lora thinks, the PC is busy (fan, battery).
+passt	fits
+passt nicht	does not fit
 z. B. Wie viel Speicher ist frei? · Deploy wie immer	e.g. How much space is free? · Deploy as usual
 Zeig die letzten Fehler im Log der Anwendung	Show the latest errors in the application log
 Zum Beispiel	For example
@@ -5539,6 +5573,7 @@ noch kein Bereich	no area yet
 zugeklappt	folded
 {0} % von {1}	{0} % of {1}
 {0} % · {1} Beiträge · {2} Wörter	{0} % · {1} turns · {2} words
+{0} (dieses Gerät)	{0} (this device)
 {0} ({1} Codes)	{0} ({1} codes)
 {0} (Änderungen)	{0} (changes)
 {0} Abbildung(en) ohne Alternativtext – oben beschreiben und neu erzeugen (auf dem Original).	{0} figure(s) without alternative text – describe them above and create again (on the original).
@@ -5548,6 +5583,7 @@ zugeklappt	folded
 {0} Abschnitte · {1}k Zeichen · 	{0} sections · {1}k characters · 
 {0} Abschnitte, identisch codiert: {1} %	{0} sections, coded identically: {1} %
 {0} Datei(en) hochgeladen.	{0} file(s) uploaded.
+{0} Schritte offen – neue Funktionen Schritt für Schritt prüfen	{0} steps open – check new features step by step
 {0} ist ein großes Modell.	{0} is a large model.
 {0} Mail(s) als gelesen markiert	{0} mail(s) marked as read
 {0} Mail(s) als ungelesen markiert	{0} mail(s) marked as unread
@@ -5573,6 +5609,7 @@ zugeklappt	folded
 {0} ist geladen und liest die Mails	{0} is loaded and reads the mails
 {0} laden ({1})	Download {0} ({1})
 {0} liest die Mails	{0} reads the mails
+{0} von {1} Schritten geprüft · {2} offen	{0} of {1} steps checked · {2} open
 {0} wird heruntergeladen … {1} %	Downloading {0} … {1} %
 {0} Zellen ohne überzählige Leerzeichen	{0} cells without extra spaces
 {0} abweichend	{0} differing
@@ -5718,6 +5755,7 @@ zugeklappt	folded
 {0} Zuordnung(en) auf diesem Gerät	{0} assignment(s) on this device
 {0} leere Zeilen entfernt	{0} empty rows removed
 {0} lässt sich nicht an andere Apps weitergeben.	{0} cannot be passed on to other apps.
+{0} · Schritt {1} von {2}	{0} · step {1} of {2}
 {0} · automatisch beim Start	{0} · automatically at startup
 {0} · eigene	{0} · own
 {0} · Neue Version {1} verfügbar	{0} · New version {1} available

@@ -99,6 +99,7 @@ val SETTINGS_INDEX = listOf(
     Command(trLater("Inhalte zum Nachladen"), "settings/downloads", trLater("Einstellungen"), "nachladen herunterladen download modelle wissenspaket lehramt paket befehlsmodell erkennungsmodell löschen"),
     Command(trLater("Updates"), "settings/updates", trLater("Einstellungen"), "update aktualisieren neue version installieren netzlaufwerk"),
     Command(trLater("Verbindungen"), "settings/connections", trLater("Einstellungen"), "nextcloud cloudstore webdav mcp server werkzeuge anbinden integration token oauth"),
+    Command(trLater("Prüfungen am Gerät"), "settings/checks", trLater("Einstellungen"), "prüfen prüfung prüfliste testen am gerät passt passt nicht bericht abnahme"),
 )
 
 /** All words of the query must occur in title, group or keywords; title matches come first. */

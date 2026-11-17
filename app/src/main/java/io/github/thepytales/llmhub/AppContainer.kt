@@ -70,6 +70,8 @@ class AppContainer(context: Context) {
     val github = GitHubClient(settings, llm.http)
     val githubTools = GitHubTools(github)
     val logos = LogoStore(files)
+    /** Geführte Prüfung am Gerät (AP-133). */
+    val deviceChecks = io.github.thepytales.llmhub.data.DeviceCheckStore(files)
     /** Address book for letters. */
     val contacts = ListStore<Contact>(FileBackend(File(files, "contacts.json")), Contact.serializer(), { it.id })
     /** Own documents the model can search (global and per project). */

@@ -21,12 +21,19 @@ import io.github.thepytales.llmhub.update.UpdatePlatform
 import io.github.thepytales.llmhub.update.Updates
 import java.net.URLEncoder
 
+/** A description handed to *Problem melden* by another page (the report of the checks on the device, AP-133). */
+object ProblemDraft {
+    @Volatile var text: String? = null
+
+    fun take(): String = text.orEmpty().also { text = null }
+}
+
 /** Einstellungen › Problem melden: a description plus the anonymized error log, as e-mail (share) or GitHub issue. */
 @Composable
 fun HelpSection() {
     val context = LocalContext.current
     val uri = LocalUriHandler.current
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf(ProblemDraft.take()) }
     val log = remember { ErrorLog.anonymizedText() }
     // Notes of the platform, e.g. how mouse clicks arrived on a Mac (only the app's own counters and fixed labels).
     val notes = remember { runCatching { ErrorLog.diagnostics() }.getOrDefault("").trim() }

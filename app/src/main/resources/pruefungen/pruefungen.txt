@@ -1,0 +1,191 @@
+# Offene Prüfungen am Gerät (AP-133) – Einstellungen › Prüfungen am Gerät führt Schritt für Schritt hindurch.
+#
+# Aufbau:
+#   == AP-xx Titel des Pakets        beginnt ein Paket
+#   geräte: windows, macos, linux, android | alle   (für alle Schritte des Pakets; ohne Angabe: alle)
+#   vorher: Was man vor den Schritten braucht (optional)
+#   - Kurzer Titel des Schritts      beginnt einen Schritt
+#     tun: Was man tut
+#     erwartet: Was passieren soll
+#     ort: Ort der App-Landkarte zum Hingehen (z. B. area.files, tool.video, settings.lora; optional)
+#     geräte: nur für diesen Schritt (optional)
+#   Längere Texte gehen in eingerückten Zeilen weiter.
+#
+# Ein neues Paket bringt seine Prüfschritte hier mit. Ist ein Paket am Gerät geprüft (☑ im Arbeitsplan), kommt es
+# hier heraus. Der Titel eines Schritts ist sein Schlüssel: wer ihn ändert, lässt den Schritt neu prüfen.
+# PruefungenTest prüft, dass die Datei fehlerfrei ist und jeder Ort existiert.
+
+== AP-120 Lora einrichten Schritt für Schritt
+geräte: alle
+vorher: Jemand ohne Vorwissen, dem du zuschaust (z. B. eine neue Kollegin).
+- Einrichtung ohne Vorwissen
+  tun: Die Person öffnet *Lora einrichten* (Strg+K › „Lora einrichten“) und geht alle Schritte allein durch. Du schaust
+    nur zu und hilfst nicht.
+  erwartet: Sie kommt ohne Nachfrage bis zum Ende. Stellen, an denen sie gestockt hat, kommen in die Notiz.
+  ort: area.setup
+- Schmales Fenster und große Schrift
+  tun: *Lora einrichten* in einem schmalen Fenster (PC) bzw. mit großer Schrift (Android) öffnen und jeden Schritt ansehen.
+  erwartet: Nichts ist abgeschnitten oder überlappt; alle Knöpfe sind erreichbar.
+  ort: area.setup
+
+== AP-121 Videoeditor für Einsteiger
+geräte: windows
+vorher: Windows-Anzeige auf 150 % (Einstellungen › System › Anzeige › Skalierung), ein kurzes Video auf dem PC.
+- Mauszeiger an den Rändern
+  tun: Video in die Zeitleiste ziehen, mit der Maus an den Anfang und das Ende des Clips fahren und ziehen.
+  erwartet: Der Mauszeiger wird zum Doppelpfeil; Ziehen kürzt den Clip genau dort, wo die Maus ist.
+  ort: tool.video
+- Rechtsklick in der Zeitleiste
+  tun: Rechtsklick auf einen Clip, einen Titel, eine Tonspur, einen Marker und eine leere Stelle.
+  erwartet: Jedes Mal ein passendes Menü in Klartext direkt an der Maus.
+  ort: tool.video
+- Ziehen aus dem Explorer
+  tun: Eine Videodatei aus dem Explorer auf die Startseite des Videoeditors ziehen, dann eine zweite in den offenen Editor.
+  erwartet: Die erste startet ein neues Projekt, die zweite landet in der Zeitleiste.
+  ort: tool.video
+- Leisten bei 1366 × 768
+  tun: Bildschirmauflösung 1366 × 768 und 150 % einstellen (oder das Fenster so klein machen) und den Editor ansehen.
+  erwartet: Alle Leisten bleiben ohne Umbruch, nichts ist abgeschnitten.
+  ort: tool.video
+- Lehrvideo ohne Vorwissen
+  tun: Jemand ohne Erfahrung im Videoschnitt kürzt ein Video, setzt einen Titel und exportiert – nur mit der Schrittkarte
+    „So entsteht dein Video“.
+  erwartet: Das klappt ohne Nachfrage. Unklare Texte der Schrittkarte kommen in die Notiz.
+  ort: video.guide
+
+== AP-122 Lora: neues Aussehen und Animationen
+geräte: windows, android
+- Arbeitskarte im Chat
+  tun: Lora im Chat etwas Längeres geben (z. B. „Fasse diese PDF zusammen“ mit einer langen PDF) und zusehen.
+  erwartet: Die Arbeitskarte mit Lora ist gut zu erkennen, bewegt sich ruhig und flackert nicht.
+  ort: area.chat
+- Startseite im dunklen Design
+  tun: *Darstellung* auf Dunkel stellen und zur Startseite gehen.
+  erwartet: Lora und alle Texte sind gut zu sehen, kein heller Rand um Lora.
+  ort: settings.appearance
+- App-Symbole
+  tun: Symbol ansehen – Windows: Taskleiste, Startmenü, Infobereich; Android: Startbildschirm und Benachrichtigung.
+  erwartet: Überall das neue Symbol, scharf und nicht abgeschnitten.
+- Ruhigere Bewegungen
+  tun: *Ruhigere Bewegungen* einschalten und Lora wecken.
+  erwartet: Lora bewegt sich deutlich ruhiger, nichts springt oder blinkt.
+  ort: settings.lora
+
+== AP-123 Bedienelemente aus einem Guss
+geräte: windows
+- Tooltips an Symbol-Knöpfen
+  tun: Ein Dokument öffnen und mit der Maus über die Symbol-Knöpfe der Leiste fahren.
+  erwartet: Nach kurzer Zeit erscheint zu jedem Knopf ein Tooltip mit Namen (und Taste).
+  ort: area.files
+- Enter und Esc in Dialogen
+  tun: Strg+K öffnen und mit Enter bestätigen; in *Dateien* eine Datei umbenennen (Enter übernimmt, Esc bricht ab); einen
+    Chat löschen und mit Esc abbrechen.
+  erwartet: Enter löst den Hauptknopf aus, Esc schließt ohne Änderung; der Löschen-Knopf ist rot.
+  ort: area.files
+- Hoher Kontrast mit Sprachausgabe
+  tun: Windows-Kontrastdesign einschalten, die Sprachausgabe (Strg+Win+Enter) starten und durch Einstellungen und Chat
+    gehen.
+  erwartet: Alle Knöpfe sind lesbar und umrandet; die Sprachausgabe liest die Namen der Knöpfe vor.
+- Bildlaufleisten
+  tun: Eine lange Seite öffnen (z. B. Einstellungen › Datenschutz) und mit der Maus an den rechten Rand gehen.
+  erwartet: Eine Bildlaufleiste ist zu sehen und lässt sich ziehen.
+  ort: settings.privacy
+- Android-App startet
+  geräte: android
+  tun: Die Android-App installieren, starten und Seitenleiste, Dateien, Chat und Einstellungen öffnen.
+  erwartet: Alles öffnet sich ohne Absturz; Knöpfe und Dialoge sehen aus wie am PC.
+
+== AP-125 Dokumente verhalten sich wie Word
+geräte: windows
+vorher: Ein neues Dokument in *Dateien* (+ › Dokument).
+- Rechtsklick-Menü im Text
+  tun: Ein Wort markieren und rechts klicken; dann ein falsch geschriebenes Wort („Haus aufgabe“) rechts anklicken.
+  erwartet: Ausschneiden, Kopieren, Einfügen, *Nur Text einfügen*, Link, Kommentar, Lora fragen; beim falschen Wort
+    stehen Vorschläge oben, dazu *Zum Wörterbuch hinzufügen* und *Ignorieren*.
+  ort: area.files
+- Autokorrektur beim Tippen
+  tun: „das ist gut. dann geht es los“ tippen, dann "Hallo" mit geraden Anführungszeichen, dann „a -- b“ und „...“.
+    Direkt nach einer Korrektur Strg+Z drücken.
+  erwartet: „Dann“ groß, „Hallo“ mit deutschen Anführungszeichen, – und …; Strg+Z nimmt nur die Korrektur zurück.
+  ort: area.files
+- Eigene Ersetzungen
+  tun: *Extras › Autokorrektur*: „mfg“ → „Mit freundlichen Grüßen“ eintragen, dann im Text „mfg “ tippen.
+  erwartet: Das Kürzel wird ersetzt; Strg+Z stellt „mfg“ wieder her.
+  ort: area.files
+- Word-Tasten
+  tun: Im Text Strg+B, Strg+Umschalt+E, Strg+R und Strg+K drücken; in Folien ein Element wählen und Strg+D drücken.
+  erwartet: Fett (die Seitenleiste bleibt), zentriert, rechtsbündig, Strg+K öffnet die Befehlssuche; in Folien wird
+    dupliziert.
+  ort: area.files
+- Bild anfassen
+  tun: Ein Bild einfügen, anklicken, an einer Ecke ziehen; rechts klicken › Umbruch › Text umfließt.
+  erwartet: Griffe erscheinen, das Seitenverhältnis bleibt; der Text fließt um das Bild.
+  ort: area.files
+- Tabellenspalten ziehen
+  tun: Eine Tabelle einfügen und die Grenze zwischen zwei Spalten ziehen.
+  erwartet: Der Mauszeiger wird zum Doppelpfeil, die Spaltenbreite folgt der Maus.
+  ort: area.files
+- Austausch mit Word
+  tun: Das Dokument mit Überschrift, Liste, Tabelle und umflossenem Bild als .docx speichern und in Word öffnen.
+  erwartet: Überschriften, Liste, Tabelle und Bild mit Umfluss stehen in Word wie in Lora.
+  ort: area.files
+
+== AP-126 Dokumente: Funktionsumfang wie Word und Google Docs
+geräte: windows
+- Drucken
+  tun: Im Dokument *Datei › Drucken* wählen.
+  erwartet: Der Druckdialog von Windows erscheint mit der richtigen Seitenzahl; der Ausdruck sieht aus wie die Seitenansicht.
+  ort: area.files
+- Herunterladen als
+  tun: *Datei › Herunterladen als* nacheinander Word, PDF und OpenDocument wählen und die Dateien öffnen.
+  erwartet: Alle drei öffnen sich in Word, im PDF-Programm bzw. LibreOffice und zeigen denselben Inhalt.
+  ort: area.files
+- Beschriftungen und Verzeichnisse
+  tun: Zwei Bilder mit Beschriftung einfügen, einen Querverweis setzen und ein Abbildungsverzeichnis einfügen; als .docx
+    speichern und in Word mit F9 aktualisieren.
+  erwartet: Nummern, Querverweis und Verzeichnis stimmen in Lora und bleiben in Word richtig.
+  ort: area.files
+
+== AP-131 Server-Terminal: Lora im Terminal, Dateien, Tabs
+geräte: windows, macos, linux
+vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.
+- Lora fragt den Speicher ab
+  tun: Mit dem Server verbinden und in Loras Spalte „Wie viel Speicher ist frei?“ schreiben; den Befehl mit *Ausführen*
+    bestätigen.
+  erwartet: Der Befehl erscheint im Terminal und läuft; Lora sagt danach in einem Satz, wie viel frei ist – passend zur
+    Ausgabe.
+  ort: tool.server
+- Deploy wie immer
+  tun: In Loras Spalte „Deploy wie immer“ schreiben und Schritt für Schritt bestätigen.
+  erwartet: Jeder Schritt wartet auf einen Klick; nach dem letzten sagt Lora, was herauskam.
+  ort: tool.server
+- sudo mit Passwort
+  tun: Lora einen Befehl mit `sudo` vorschlagen lassen und ausführen.
+  erwartet: Die Karte sagt „wartet auf deine Eingabe“, der Fokus springt ins Terminal; das Passwort tippst du dort, es
+    ist nirgends zu sehen.
+  ort: tool.server
+- Eigene Eingabeaufforderung
+  tun: Auf einem Server mit eigener Eingabeaufforderung (nicht `user@host:/pfad$`) einen Schritt von Lora ausführen.
+  erwartet: Der Schritt endet trotzdem von allein (bei fish/csh: über *Ist fertig*).
+  ort: tool.server
+- Schlüssel einrichten
+  tun: *Schlüssel* › erzeugen › *Auf den Server legen* › *Mit Schlüssel anmelden* › neu verbinden.
+  erwartet: Die Anmeldung klappt ohne Passwort; das gespeicherte Passwort ist vergessen.
+  ort: tool.server
+- Konfigurationsdatei bearbeiten
+  tun: Im Seitenfenster *Dateien* eine `.env.local` öffnen, ändern, Strg+S; danach im Terminal `ls -l` vergleichen; eine
+    Datei aus dem Explorer hineinziehen.
+  erwartet: Die Änderung steht auf dem Server, Besitzer und Rechte sind gleich geblieben; die gezogene Datei ist hochgeladen.
+  ort: tool.server
+- Zwei Tabs
+  tun: Zwei Sitzungen öffnen (Live rot, Test grün) und *An mehrere senden* mit `uptime`.
+  erwartet: Die Tabs tragen ihre Farbe; `uptime` läuft nur in den angekreuzten Sitzungen, nach einer zweiten Rückfrage.
+  ort: tool.server
+
+== AP-86 Lokale Modelle auf dem Mac laden
+geräte: macos
+vorher: Ein Mac mit Apple-Chip und mindestens 16 GB Arbeitsspeicher.
+- Qwen 3.5 9B laden und im Postfach nutzen
+  tun: *Modelle auf diesem Gerät* › Qwen 3.5 9B laden und starten, dann im Postfach eine Antwort entwerfen lassen.
+  erwartet: Das Modell lädt, startet ohne Fehlermeldung und antwortet im Postfach.
+  ort: area.local

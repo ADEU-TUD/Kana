@@ -1939,6 +1939,19 @@ weggefallene markiert, unveränderte nur als Liste), die sich direkt als Verglei
 voller Größe liegen daneben in `bilder/`. Kleine Unterschiede durch Kantenglättung zählen nicht (`-Pschwelle`, Standard
 24 von 255 je Farbkanal). Der erste Lauf baut die Basis einmal ganz (einige Minuten), danach geht es schneller.
 
+### Prüfungen am Gerät (Prüfliste)
+
+Was ein Paket am Gerät (Windows, macOS, Linux, Android) noch prüfen lassen will, steht in
+[`app/src/main/resources/pruefungen/pruefungen.txt`](app/src/main/resources/pruefungen/pruefungen.txt) – je Paket
+(`== AP-xx Titel`, `geräte:`, `vorher:`) die Schritte (`- Titel`) mit `tun:`, `erwartet:` und optional `ort:` (ein Ort
+der App-Landkarte zum *Hingehen*) und `geräte:`. In der App führt *Einstellungen › Prüfungen am Gerät* Schritt für
+Schritt hindurch: *Passt* / *Passt nicht*, Notiz, Bildschirmfoto (am PC nach 5 Sekunden vom ganzen Bildschirm, damit man
+vorher zur Stelle gehen kann; überall *Bild anhängen …*). Was passt, verschwindet; ein Paket, dessen Schritte alle
+passen, steht unter *Erledigt*. Der Bericht (zuerst, was nicht passt) geht als Beschreibung an *Problem melden*, die
+Bilder als ZIP. **Ein neues Paket bringt seine Prüfschritte hier mit**; ist es am Gerät geprüft, kommt es heraus. Der
+Titel eines Schritts ist sein Schlüssel – wer ihn ändert, lässt ihn neu prüfen. `DeviceChecksTest` prüft, dass die Datei
+fehlerfrei ist, jeder Ort existiert und jedes Paket in einem Arbeitsplan steht.
+
 ### Release ohne GitHub Actions
 
 Das Actions-Kontingent ist aufgebraucht, deshalb baut der Workflow (`.github/workflows/android.yml`) nicht mehr bei jedem
