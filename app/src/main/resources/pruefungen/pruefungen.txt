@@ -173,6 +173,23 @@ vorher: Ein Design in *Erstellen › Gestalten* mit drei Formen und eine Präsen
   erwartet: Auf dem Beamer die Folie, auf dem Laptop Notizen, nächste Folie und Zeit.
   ort: area.files
 
+== AP-128 Video: Datenschutz in Unterrichtsvideos
+geräte: windows
+vorher: Ein kurzes Unterrichtsvideo, in dem Namen fallen (transkribiert), und das Videoeditor-Paket mit Gesichtserkennung.
+- Namen im Ton finden
+  tun: Transkript-Leiste › *Namen im Ton schützen …*, eigene Namen eintragen, *Namen suchen*, eine Stelle *Anhören*.
+  erwartet: Alle gesprochenen Namen stehen in der Liste; beim Anhören piept es genau über dem Namen.
+  ort: tool.video
+- Stumm und Stimme verfremden
+  tun: Bei einer Stelle *Stumm*, bei einer anderen *Stimme verfremden* wählen und anhören.
+  erwartet: Stumm ist still, verfremdet klingt wie ein Telefon mit Flattern; der Rest des Videos klingt normal.
+  ort: tool.video
+- Prüfliste vor dem Export
+  tun: *Exportieren* öffnen.
+  erwartet: Oben *Datenschutz vor dem Export* mit offenen Punkten (Gesichter, Namen); *Beheben* hilft, der Knopf heißt
+    sonst *Trotzdem exportieren*; das Protokoll nennt einen Export trotz offener Punkte.
+  ort: video.export
+
 == AP-130 Video: flüssige Vorschau
 geräte: windows
 vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten auf dem Office-PC.

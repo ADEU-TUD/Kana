@@ -107,7 +107,9 @@ object TextCut {
                     if (prev != null && sa - prev > maxPause) {
                         tokens += Token(c.id, i, paragraphs.size, prev, sa, tl(prev), tl(sa), pauseLabel((sa - prev) / c.speed), Kind.PAUSE, speaker = s.speaker)
                     }
-                    tokens += Token(c.id, i, paragraphs.size, sa, sb, tl(sa), tl(sb), w, Kind.WORD, RoughCut.isFiller(w, t.language), s.speaker)
+                    // Namen im Ton (AP-128): a protected name shows as „[Name]“ in the text of the video too.
+                    val shown = if (p.bleeps.isNotEmpty() && NameGuard.covered(p, c.path, sa, sb)) NameGuard.MASK else w
+                    tokens += Token(c.id, i, paragraphs.size, sa, sb, tl(sa), tl(sb), shown, Kind.WORD, RoughCut.isFiller(w, t.language), s.speaker)
                     lastEnd = sb
                 }
                 paragraphs += Paragraph(c.id, i, first, tokens.lastIndex, s.speaker?.let { t.speakerName(it) }?.takeIf { t.diarized }, tokens[first].start, tokens.last().end)

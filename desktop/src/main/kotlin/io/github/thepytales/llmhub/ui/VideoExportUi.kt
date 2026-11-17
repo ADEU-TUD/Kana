@@ -70,7 +70,16 @@ internal fun wireExportQueue(c: AppContainer) {
  * card encodes where there is one. The exports go into the queue and run in the background.
  */
 @Composable
-internal fun ExportDialog(c: AppContainer, p: VideoProject, onDismiss: () -> Unit) {
+internal fun ExportDialog(
+    c: AppContainer,
+    p: VideoProject,
+    onDismiss: () -> Unit,
+    onEdit: ((VideoProject) -> VideoProject) -> Unit = {},
+    onShow: (Double) -> Unit = {},
+    onNames: () -> Unit = {},
+) {
+    /** Open points of the Prüfliste (AP-128); null while it checks. */
+    var issues by remember { mutableStateOf<List<PrivacyIssue>?>(emptyList()) }
     val prefs = remember { c.appContext.getSharedPreferences("ui_state", 0) }
     val remembered = remember { io.github.thepytales.llmhub.agent.LoraPrefs.default(c, "video.export", "vorgabe")?.let { v -> VideoRender.PRESETS.firstOrNull { it.id == v }?.id } }
     var presets by remember { mutableStateOf(setOf(remembered ?: VideoRender.PRESETS.first().id)) }
@@ -89,6 +98,11 @@ internal fun ExportDialog(c: AppContainer, p: VideoProject, onDismiss: () -> Uni
         title = { Text(tr("Video exportieren")) },
         text = {
             Column(Modifier.width(560.dp).heightIn(max = 620.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                // Prüfliste vor dem Export (AP-128): faces, names in the sound and in the subtitles.
+                if (p.privacyCheck) {
+                    PrivacyCheck(c, p, onEdit, onShow = { t -> onShow(t); onDismiss() }, onNames = onNames, onOpen = { issues = it })
+                    HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                }
                 Text(tr("Was?"), style = MaterialTheme.typography.labelLarge)
                 VideoRender.PRESETS.forEach { pr ->
                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)).clickable { presets = if (pr.id in presets) presets - pr.id else presets + pr.id }, verticalAlignment = Alignment.CenterVertically) {
@@ -144,9 +158,13 @@ internal fun ExportDialog(c: AppContainer, p: VideoProject, onDismiss: () -> Uni
                 val dir = if (target == "folder") folder!! else c.drive.created
                 val upload = if (target == "nextcloud") WebDavClient.join(c.nextcloud.resultFolder, "Videos") else null
                 val added = ExportQueue.add(p, VideoRender.PRESETS.map { it.id }.filter { it in presets }, kinds, dir, hardware, upload)
+                // Hinweis im Protokoll (AP-128): exported although points of the Prüfliste were open.
+                issues?.takeIf { it.isNotEmpty() && p.privacyCheck }?.let { open ->
+                    io.github.thepytales.llmhub.agent.ToolActions.log(tr("Video „{0}“ trotz offener Datenschutz-Punkte exportiert: {1}", p.title, open.joinToString("; ") { it.text }))
+                }
                 Notices.info(tr("{0} Export(e) in der Warteschlange – du kannst weiterarbeiten.", added.size))
                 onDismiss()
-            }) { Text(tr("Exportieren")) }
+            }) { Text(if (p.privacyCheck && !issues.isNullOrEmpty()) tr("Trotzdem exportieren") else tr("Exportieren")) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
     )

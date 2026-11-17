@@ -135,12 +135,16 @@ Absätze verschoben	Paragraphs moved
 Alle Einstellungen der App.	All settings of the app.
 Alle Prüfungen zurücksetzen?	Reset all checks?
 Alle Schritte passen – diese Pakete sind auf diesem Gerät geprüft.	All steps fit – these packages are checked on this device.
+Alle abhaken	Tick all
 Alle wiederherstellen	Restore all
+Alle: {0}	All: {0}
 Alles lässt sich später unter Einstellungen › Lora, › Werkzeuge und › Modelle auf diesem Gerät ändern. Downloads laufen im Hintergrund weiter.	Everything can be changed later under Settings › Lora, › Tools and › Models on this device. Downloads continue in the background.
 Alles zurücksetzen …	Reset everything …
 An diese Sitzungen:	To these sessions:
 An mehrere senden	Send to several
 Anderen Schlüssel	Another key
+Anhören	Listen
+Anonymisierung im Video „{0}“: {1} Gesicht(er) vor dem Export verpixelt.	Anonymisation in the video “{0}”: {1} face(s) pixelated before the export.
 Auf den Server legen …	Put it on the server …
 Auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Bis dahin laufen freie Anfragen über den Server bzw. gar nicht („Nur lokal“).	No language model is installed on this device yet (Settings › Models on this device). Until then free requests run on the server, or not at all (“Local only”).
 Auf diesem PC ist kein Sprachmodell installiert, und mit {0} GB Arbeitsspeicher wäre ein brauchbares Modell für Shell-Befehle zu langsam. Der TU-Server ist hier die bessere Wahl.	No language model is installed on this PC, and with {0} GB of memory a usable model for shell commands would be too slow. The TU server is the better choice here.
@@ -152,6 +156,7 @@ Ausgabe ausblenden	Hide output
 Ausgabe zeigen	Show output
 Bedenke:	Keep in mind:
 Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).	Commands and short tasks on this device, everything demanding on the university server (chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).
+Beheben	Fix
 Beim letzten Mal blieb etwas ungespeichert – etwa weil Lora abgestürzt ist oder geschlossen wurde.	Something was left unsaved last time – for example because Lora crashed or was closed.
 Bereich, Einstellung, Chat – oder sag, was du tun willst …	Area, setting, chat – or say what you want to do …
 Bericht mit Bildern als ZIP …	Report with pictures as ZIP …
@@ -189,6 +194,7 @@ Dateien ausblenden	Hide files
 Dateien des Servers nicht erreichbar: {0}	Files of the server not reachable: {0}
 Dateien ersetzen?	Replace files?
 Dateien zum Hochladen wählen	Choose files to upload
+Datenschutz vor dem Export	Privacy before the export
 Dein PC ist stark genug: {0} Dann verlässt nichts den PC, auch keine Logs.	Your PC is strong enough: {0} Then nothing leaves the PC, not even logs.
 Dein Schlüssel liegt jetzt auf dem Server.	Your key is now on the server.
 Der Ordner wird mit allem darin gelöscht ({0} Einträge) – auf dem Server gibt es keinen Papierkorb.	The folder is deleted with everything in it ({0} entries) – there is no recycle bin on the server.
@@ -197,12 +203,14 @@ Die Datei wird auf dem Server gelöscht – dort gibt es keinen Papierkorb.	The 
 Die Dateien des Servers sind nicht erreichbar (SFTP ist dort vielleicht aus).	The files of the server cannot be reached (SFTP may be switched off there).
 Die Daten bleiben an der TU Dresden – kein externer Anbieter.	The data stays at TU Dresden – no external provider.
 Die Fragen vom ersten Start erneut stellen	Ask the questions from the first start again
+Die Gesichtserkennung fehlt – Gesichter nicht geprüft.	Face detection is missing – faces not checked.
 Die Pseudonymisierung findet Namen, Schulen und Orte zuverlässiger, bevor etwas an einen Server geht.	Pseudonymization finds names, schools and places more reliably before anything goes to a server.
 Die ZIP-Datei konnte nicht gespeichert werden.	The ZIP file could not be saved.
 Die Änderungen sind noch nicht auf dem Server gespeichert.	The changes are not saved on the server yet.
 Diese Vorlagen könnten passen:	These templates might fit:
 Diese Zeile wird in jede Sitzung eingetippt und sofort ausgeführt ({0}):	This line is typed into each session and run at once ({0}):
 Effekt bei Clip {0}	Effect on clip {0}
+Eigene Namen, einer je Zeile (z. B. die Teilnehmerliste)	Names of your own, one per line (e.g. the list of participants)
 Ein Klick geht zurück bis direkt nach diesem Schritt; Wiederholen (Strg+Y) holt die Schritte danach zurück.	A click goes back to right after this step; Redo (Ctrl+Y) brings the later steps back.
 Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell.	A small model on this device maps what you write to Lora or in Ctrl+K to an action of the app within milliseconds – offline, even with typos. When it is unsure it carries out nothing; Lora asks a language model as before.
 Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich.	A new key pair (Ed25519) is created on this device. The private key stays in the Lora folder and only your user account can read it; a passphrase protects it in addition.
@@ -229,24 +237,41 @@ Format einfügen	Paste format
 Formatiert	Formatted
 Foto in {0} s …	Picture in {0} s …
 Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
+Für dieses Projekt nicht mehr prüfen	Do not check this project any more
 Für eine flüssige Vorschau entsteht im Hintergrund eine kleine Fassung jeder Datei: {0}. Bis dahin kann die Vorschau stocken.	For a smooth preview, a small version of each file is made in the background: {0}. Until then the preview may stutter.
 Gelöscht: „{0}“	Deleted: “{0}”
 Geschrieben: „{0}“	Typed: “{0}”
+Gesichter in {0} Clip(s), die nicht verpixelt sind	Faces in {0} clip(s) that are not pixelated
 Gruppieren	Group
 Hingehen	Go there
 Horizontal zentrieren	Center horizontally
+Im Ton habe ich keine Namen gefunden.	I found no names in the sound.
 In den Hintergrund	Send to back
 In den Vordergrund	Bring to front
 In/Out gesetzt	In/Out set
+Kein Clip hat ein Transkript – erst in der Transkript-Leiste transkribieren oder zuordnen.	No clip has a transcript – transcribe or assign one in the transcript panel first.
+Kein Clip hat ein Transkript – erst transkribieren, dann finde ich die Namen.	No clip has a transcript – transcribe first, then I will find the names.
+Keine Gesichter und Namen gefunden, die noch offen sind.	No open faces or names found.
+Keine Namen gefunden.	No names found.
 Lautstärke von Clip {0}	Volume of clip {0}
 Leerraum geändert	Spacing changed
 Leerzeichen eingefügt	Space inserted
 Leerzeichen gelöscht	Space deleted
 Links ausrichten	Align left
+Lora sucht Namen im Transkript der Clips – mit dem Namensschutz und deiner Liste. Jede Stelle wird im Export und in der Vorschau überpiept, stumm geschaltet oder die Stimme verfremdet; Untertitel und Text zeigen „[Name]“. Alles bleibt auf diesem Gerät.	Lora looks for names in the transcript of the clips – with the name protection and your list. Each place is beeped, muted or the voice disguised in the export and the preview; subtitles and text show “[Name]”. Everything stays on this device.
 Marker gelöscht	Marker deleted
 Marker gesetzt	Marker set
 Marker verschoben	Marker moved
 Medien geändert	Media changed
+Namen im Ton ({0}) …	Names in the sound ({0}) …
+Namen im Ton im Video „{0}“: {1} Stelle(n) gefunden.	Names in the sound of the video “{0}”: {1} place(s) found.
+Namen im Ton im Video „{0}“: {1} Stelle(n) {2} (Lora).	Names in the sound of the video “{0}”: {1} place(s) {2} (Lora).
+Namen im Ton im Video „{0}“: {1} Stelle(n) überpiept.	Names in the sound of the video “{0}”: {1} place(s) beeped.
+Namen im Ton schützen	Protect names in the sound
+Namen im Ton schützen …	Protect names in the sound …
+Namen in {0} Untertitel(n)	Names in {0} subtitle(s)
+Namen suchen	Find names
+Neu suchen	Search again
 Neue Folie danach	New slide after
 Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht.	Check new features on the device step by step: fits / does not fit, note, screenshot, report.
 Nichts offen auf diesem Gerät	Nothing open on this device
@@ -255,9 +280,12 @@ Notiz (was war anders?)	Note (what was different?)
 Oben ausrichten	Align top
 PDF-Werkzeugkasten · {0} Änderung(en) nicht gespeichert	PDF toolbox · {0} change(s) not saved
 Passt nicht	Does not fit
+Piepen	Beep
+Prüfe Gesichter, Namen im Ton und in Untertiteln …	Checking faces, names in the sound and in subtitles …
 Prüfung beginnen	Start checking
 Prüfungen am Gerät	Checks on the device
 Rechts ausrichten	Align right
+Schützt {0} Stelle(n) mit Namen im Ton …	Protecting {0} place(s) with names in the sound …
 Seiteneinstellung	Page setting
 So geht's	How to do it
 Spalte eingefügt	Column inserted
@@ -268,6 +296,8 @@ Strg+Umschalt+C	Ctrl+Shift+C
 Strg+Umschalt+G	Ctrl+Shift+G
 Strg+Umschalt+↑	Ctrl+Shift+↑
 Strg+Umschalt+↓	Ctrl+Shift+↓
+Stumm	Mute
+Suche Gesichter und verpixle sie …	Finding and pixelating faces …
 Tab gelöscht	Tab deleted
 Tab hinzugefügt	Tab added
 Tabellenblatt gelöscht	Sheet deleted
@@ -280,6 +310,7 @@ Ton des Projekts	Project sound
 Ton eingefügt	Sound inserted
 Ton gelöscht	Sound deleted
 Ton geändert	Sound changed
+Trotzdem exportieren	Export anyway
 Umbenannt in „{0}“	Renamed to “{0}”
 Ungespeicherte Arbeit wiederherstellen?	Restore unsaved work?
 Unten ausrichten	Align bottom
@@ -290,6 +321,7 @@ Verlauf	History
 Verlauf der Schritte	History of steps
 Verlauf der Schritte …	History of steps …
 Vertikal zentrieren	Center vertically
+Video „{0}“ trotz offener Datenschutz-Punkte exportiert: {1}	Video “{0}” exported despite open privacy points: {1}
 Vorführen ab hier	Present from here
 Vorher: {0}	Before: {0}
 Vorschau wird vorbereitet ({0})	Preparing preview ({0})
@@ -364,6 +396,7 @@ Name des Schlüssels	Name of the key
 Neu: Modelle für dieses Gerät	New: models for this device
 Neuen Schlüssel erzeugen	Create a new key
 Nicht gespeichert: {0}	Not saved: {0}
+nicht im Schnitt	not in the cut
 nicht ohne Rückfrage: {0}	not without asking: {0}
 Nichts geht an einen Server – dafür schlichtere, langsamere Antworten, kurze Texte, keine Websuche. Braucht ein Sprachmodell auf diesem Gerät.	Nothing goes to a server – in exchange plainer, slower answers, short texts, no web search. Needs a language model on this device.
 Nichts verlässt den PC – auch keine Ausgaben, Logs oder Ordnernamen.	Nothing leaves the PC – no output, logs or folder names either.
@@ -5675,7 +5708,10 @@ zugeklappt	folded
 {0} Abschnitte · {1}k Zeichen · 	{0} sections · {1}k characters · 
 {0} Abschnitte, identisch codiert: {1} %	{0} sections, coded identically: {1} %
 {0} Datei(en) hochgeladen.	{0} file(s) uploaded.
+{0} Name(n) im Ton ohne Piepen: {1}	{0} name(s) in the sound without a beep: {1}
 {0} Schritte offen – neue Funktionen Schritt für Schritt prüfen	{0} steps open – check new features step by step
+{0} Stelle(n) mit Namen im Ton {1} – Liste unter Transkript › Namen im Ton.	{0} place(s) with names in the sound {1} – list under Transcript › Names in the sound.
+{0} Stelle(n) · {1} geprüft	{0} place(s) · {1} checked
 {0} Zeilen eingefügt	{0} rows inserted
 {0} Zeilen gelöscht	{0} rows deleted
 {0} Zellen geändert ({1} …)	{0} cells changed ({1} …)
@@ -5963,6 +5999,7 @@ zugeklappt	folded
 Übersicht	Overview
 Überspringen	Skip
 Übertrage die angehängte Präsentation Folie für Folie in diese Präsentation – gleiche Reihenfolge, gleiche Inhalte, aber in die Folientypen der App (Titel, Abschnitt, Inhalt, zwei Spalten, Zitat); Notizen bleiben Notizen.	Transfer the attached presentation slide by slide into this presentation – same order, same content, but in the app's slide types (title, section, content, two columns, quote); notes stay notes.
+überpiept	beeped
 Σ Summe der Spalte darunter einfügen	Σ Insert sum of the column below
 – keine (Hauptcode) –	– none (main code) –
 „Als PDF speichern“ legt alle Seiten mit Texterkennung in Dateien › Scans ab – durchsuchbar und per Sync auch auf den anderen Geräten.	“Save as PDF” puts all pages with text recognition into Files › Scans – searchable and, through the sync, also on the other devices.

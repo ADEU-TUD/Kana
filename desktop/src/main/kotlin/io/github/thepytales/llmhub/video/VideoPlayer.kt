@@ -398,6 +398,7 @@ class VideoPlayer {
             id = "", title = "", overlays = emptyList(), audio = emptyList(), subtitles = emptyList(), burnSubtitles = false,
             sound = AudioSettings(), transcripts = emptyMap(), markers = emptyList(), markIn = null, markOut = null,
             media = emptyList(), bins = emptyList(), magnet = true, pendingTranscripts = emptyMap(), audioTracks = 1,
+            bleeps = emptyList(), nameList = "", privacyCheck = true,
             trackStates = p.trackStates.filterKeys { it.startsWith("V") }, createdAt = 0, updatedAt = 0,
         )
     }

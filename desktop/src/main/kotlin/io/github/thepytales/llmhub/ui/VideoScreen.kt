@@ -826,7 +826,14 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
         assignTranscript = false
         h.edit { it.copy(transcripts = it.transcripts + map.mapValues { e -> e.value.id }) }
     }
-    if (actions.export) ExportDialog(c, p, onDismiss = { actions.export = false; refocus() })
+    if (actions.export) ExportDialog(
+        c, p, onDismiss = { actions.export = false; refocus() },
+        onEdit = { f -> h.edit(f = f) },
+        onShow = { t -> player.seek(h.project, t) },
+        onNames = { actions.names = true },
+    )
+    // Namen im Ton schützen (AP-128).
+    if (actions.names) NameGuardDialog(c, h, player, onDismiss = { actions.names = false; refocus() })
     VideoActionDialogs(actions)
     if (keys) VideoShortcutsDialog { keys = false; runCatching { focus.requestFocus() } }
 }
