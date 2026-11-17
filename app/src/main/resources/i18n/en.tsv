@@ -207,6 +207,8 @@ Ein Klick geht zurück bis direkt nach diesem Schritt; Wiederholen (Strg+Y) holt
 Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell.	A small model on this device maps what you write to Lora or in Ctrl+K to an action of the app within milliseconds – offline, even with typos. When it is unsure it carries out nothing; Lora asks a language model as before.
 Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich.	A new key pair (Ed25519) is created on this device. The private key stays in the Lora folder and only your user account can read it; a passphrase protects it in addition.
 Ein paar kurze Fragen, dann geht es los.	A few short questions, then we can start.
+Eine Ebene nach hinten	Send backward
+Eine Ebene nach vorne	Bring forward
 Eine Zeile an mehrere Sitzungen	One line to several sessions
 Einstellung: {0}	Setting: {0}
 Einstellung: {0} → {1}	Setting: {0} → {1}
@@ -219,36 +221,52 @@ Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vo
 Etwas anderes	Something else
 Farbe im Tab	Colour of the tab
 Feste Abläufe	Fixed workflows
+Folie duplizieren	Duplicate slide
 Folie eingefügt	Slide inserted
 Folie {0}: {1} geändert	Slide {0}: {1} changed
 Folien umsortiert	Slides reordered
+Format einfügen	Paste format
 Formatiert	Formatted
 Foto in {0} s …	Picture in {0} s …
 Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
 Gelöscht: „{0}“	Deleted: “{0}”
 Geschrieben: „{0}“	Typed: “{0}”
+Gruppieren	Group
 Hingehen	Go there
+Horizontal zentrieren	Center horizontally
+In den Hintergrund	Send to back
+In den Vordergrund	Bring to front
 In/Out gesetzt	In/Out set
 Lautstärke von Clip {0}	Volume of clip {0}
 Leerraum geändert	Spacing changed
 Leerzeichen eingefügt	Space inserted
 Leerzeichen gelöscht	Space deleted
+Links ausrichten	Align left
 Marker gelöscht	Marker deleted
 Marker gesetzt	Marker set
 Marker verschoben	Marker moved
 Medien geändert	Media changed
+Neue Folie danach	New slide after
 Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht.	Check new features on the device step by step: fits / does not fit, note, screenshot, report.
 Nichts offen auf diesem Gerät	Nothing open on this device
 Noch keine Schritte – jede Änderung erscheint hier.	No steps yet – every change appears here.
 Notiz (was war anders?)	Note (what was different?)
+Oben ausrichten	Align top
 PDF-Werkzeugkasten · {0} Änderung(en) nicht gespeichert	PDF toolbox · {0} change(s) not saved
 Passt nicht	Does not fit
 Prüfung beginnen	Start checking
 Prüfungen am Gerät	Checks on the device
+Rechts ausrichten	Align right
 Seiteneinstellung	Page setting
 So geht's	How to do it
 Spalte eingefügt	Column inserted
 Spalte gelöscht	Column deleted
+Strg+G	Ctrl+G
+Strg+M	Ctrl+M
+Strg+Umschalt+C	Ctrl+Shift+C
+Strg+Umschalt+G	Ctrl+Shift+G
+Strg+Umschalt+↑	Ctrl+Shift+↑
+Strg+Umschalt+↓	Ctrl+Shift+↓
 Tab gelöscht	Tab deleted
 Tab hinzugefügt	Tab added
 Tabellenblatt gelöscht	Sheet deleted
@@ -263,12 +281,15 @@ Ton gelöscht	Sound deleted
 Ton geändert	Sound changed
 Umbenannt in „{0}“	Renamed to “{0}”
 Ungespeicherte Arbeit wiederherstellen?	Restore unsaved work?
+Unten ausrichten	Align bottom
 Untertitel eingefügt	Subtitle inserted
 Untertitel gelöscht	Subtitle deleted
 Untertitel geändert	Subtitle changed
 Verlauf	History
 Verlauf der Schritte	History of steps
 Verlauf der Schritte …	History of steps …
+Vertikal zentrieren	Center vertically
+Vorführen ab hier	Present from here
 Vorher: {0}	Before: {0}
 Was in den letzten Paketen neu ist, wird hier Schritt für Schritt am Gerät geprüft: lesen, ausprobieren, dann *Passt* oder *Passt nicht* – mit Notiz und Bildschirmfoto. Am Ende geht ein Bericht über *Problem melden* hinaus.	What is new in the latest packages is checked here on the device, step by step: read, try it, then *Fits* or *Does not fit* – with a note and a screenshot. At the end a report goes out via *Report a problem*.
 Weiter prüfen	Continue checking
@@ -4852,7 +4873,7 @@ tippen	tap
 Tippen auf einen Abschnitt öffnet die Codes statt abzuspielen.	Tapping a section opens the codes instead of playing it.
 Tippen oder lange drücken: Abschnitt bearbeiten	Tap or long-press: edit section
 Tippen: ab diesem Wort abspielen · lange drücken (Rechtsklick): bearbeiten, teilen, kommentieren · F4 Abspielen/Anhalten, F3/F5 zurück/vor, F6 Abschnitt wiederholen, Strg+F Suchen	Tap: play from this word · long-press (right-click): edit, split, comment · F4 play/pause, F3/F5 back/forward, F6 repeat section, Ctrl+F search
-Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Strg hält das Einrasten an).	Tips: click selects, Shift+click selects several, dragging on the empty area selects everything inside the frame. Arrow keys move (with Shift 10 mm), Ctrl+D duplicates, Del deletes, Ctrl+Z undoes. Ctrl+mouse wheel zooms, the mouse wheel moves the view; when dragging, an element snaps to the page and other elements (Ctrl stops snapping).
+Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Alt hält das Einrasten an, Strg+Ziehen kopiert); Rechtsklick zeigt, was mit dem Element geht.	Tips: click selects, Shift+click selects several, dragging on the empty area selects everything inside the frame. Arrow keys move (with Shift 10 mm), Ctrl+D duplicates, Del deletes, Ctrl+Z undoes. Ctrl+mouse wheel zooms, the mouse wheel moves the view; when dragging, an element snaps to the page and other elements (Alt stops snapping, Ctrl+drag copies); a right click shows what can be done with the element.
 Tippst du im Chat etwas wie „dunkles Design“, zeigt Lora darüber den passenden Ort der App.	If you type something like “dark design” in the chat, Lora shows the matching place in the app above it.
 Titel	Title
 Titel & Bauchbinde	Title & lower third

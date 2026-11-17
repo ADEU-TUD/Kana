@@ -146,6 +146,33 @@ geräte: windows
   erwartet: Nummern, Querverweis und Verzeichnis stimmen in Lora und bleiben in Word richtig.
   ort: area.files
 
+== AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva
+geräte: windows
+vorher: Ein Design in *Erstellen › Gestalten* mit drei Formen und eine Präsentation mit vier Folien.
+- Rechtsklick auf ein Element
+  tun: In Gestalten eine Form rechts anklicken, dann eine leere Stelle.
+  erwartet: Am Element ein Menü mit Ausschneiden, Kopieren, Duplizieren, Ebenen, Ausrichten und Format übertragen; auf
+    der leeren Stelle Einfügen und Alles auswählen.
+  ort: area.templates
+- Gleiche Abstände
+  tun: Drei Formen nebeneinander legen und die mittlere langsam zwischen die beiden anderen ziehen.
+  erwartet: Sie rastet in der Mitte ein; zwei pinke Maße zeigen den gleichen Abstand in mm.
+  ort: area.templates
+- Strg-Ziehen und Format übertragen
+  tun: Eine Form mit Strg ziehen; dann eine Form wählen, Strg+Umschalt+C, eine andere wählen, Strg+Umschalt+V.
+  erwartet: Strg-Ziehen legt eine Kopie ab, das Original bleibt; die zweite Form bekommt Farbe, Rahmen und Ecken der ersten.
+  ort: area.templates
+- Folienleiste
+  tun: In der Präsentation eine Folie in der Leiste links nach unten ziehen, dann eine Folie rechts anklicken; *+ Neue
+    Folie ▾* öffnen.
+  erwartet: Die Folie wandert an die neue Stelle; das Menü bietet Neue Folie, Duplizieren, Verschieben, Vorführen und
+    Löschen; die Layouts erscheinen als kleine Folien.
+  ort: area.files
+- Referentenansicht
+  tun: *Vorführen ab dieser Folie* (Umschalt+F5) mit zwei Bildschirmen (Beamer) starten.
+  erwartet: Auf dem Beamer die Folie, auf dem Laptop Notizen, nächste Folie und Zeit.
+  ort: area.files
+
 == AP-131 Server-Terminal: Lora im Terminal, Dateien, Tabs
 geräte: windows, macos, linux
 vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.

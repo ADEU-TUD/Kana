@@ -119,6 +119,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -214,12 +216,13 @@ fun SlidesBody(
         selected = sel + 1
     }
     fun duplicate() { set(slides.toMutableList().apply { add(sel + 1, slides[sel]) }); selected = sel + 1 }
-    fun move(delta: Int) {
-        val to = sel + delta
-        if (to !in slides.indices || to == 0 || sel == 0) return
-        set(slides.toMutableList().apply { val x = removeAt(sel); add(to, x) })
+    /** Moves slide [from] to place [to] (Folienleiste: Ziehen, AP-127); the title slide stays first. */
+    fun moveSlide(from: Int, to: Int) {
+        if (to !in slides.indices || to == 0 || from == 0 || from == to) return
+        set(slides.toMutableList().apply { val x = removeAt(from); add(to, x) })
         selected = to
     }
+    fun move(delta: Int) = moveSlide(sel, sel + delta)
     /** Splits slides with more than six points (no model needed). */
     fun splitFull() {
         val (list, n) = SlideDeck.splitFull(slides)
@@ -274,9 +277,8 @@ fun SlidesBody(
             Box {
                 ToolLabel(tr("+ Neue Folie ▾")) { add = true }
                 DropdownMenu(expanded = add, onDismissRequest = { add = false }) {
-                    SlideDeck.Layout.entries.filter { it != SlideDeck.Layout.TITLE }.forEach { l ->
-                        DropdownMenuItem(text = { Text(l.label) }, onClick = { add = false; addSlide(l) })
-                    }
+                    // Layouts als Galerie (AP-127 d): each one as a small slide, like PowerPoint's „Neue Folie“.
+                    LayoutGallery(frame) { l -> add = false; addSlide(l) }
                 }
             }
             VerticalDivider(Modifier.height(24.dp).padding(horizontal = 2.dp))
@@ -320,7 +322,30 @@ fun SlidesBody(
             }
             else -> Row(Modifier.weight(1f)) {
                 LazyColumn(Modifier.width(190.dp).fillMaxHeight(), contentPadding = PaddingValues(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    itemsIndexed(slides) { i, s -> Thumb(i, s, slides.size, frame, i == sel, Modifier.fillMaxWidth(), slides) { selected = i } }
+                    // Folienleiste wie PowerPoint (AP-127 d): ziehen zum Verschieben, Rechtsklick für die Folie.
+                    itemsIndexed(slides, key = { i, _ -> i }) { i, s ->
+                        StripThumb(
+                            i, s, slides, frame, i == sel,
+                            onClick = { selected = i },
+                            onMove = { to -> moveSlide(i, to) },
+                            onMenu = { a ->
+                                selected = i
+                                when (a) {
+                                    StripAction.NEW -> { set(slides.toMutableList().apply { add(i + 1, SlideDeck.template(SlideDeck.Layout.CONTENT)) }); selected = i + 1 }
+                                    StripAction.DUPLICATE -> { set(slides.toMutableList().apply { add(i + 1, slides[i]) }); selected = i + 1 }
+                                    StripAction.UP -> moveSlide(i, i - 1)
+                                    StripAction.DOWN -> moveSlide(i, i + 1)
+                                    StripAction.DELETE -> if (slides.size > 1) {
+                                        val removed = slides[i]
+                                        set(slides.toMutableList().apply { removeAt(i) })
+                                        selected = (i - 1).coerceAtLeast(0)
+                                        Notices.undo(tr("Folie gelöscht"), restore = { set(slides.toMutableList().apply { add(i.coerceAtMost(size), removed) }) })
+                                    }
+                                    StripAction.PRESENT -> presenting = i
+                                }
+                            },
+                        )
+                    }
                     item {
                         Surface(
                             onClick = { set(slides + SlideDeck.template(SlideDeck.Layout.CONTENT)); selected = slides.size },
@@ -1421,4 +1446,88 @@ private fun ColorDot(hex: String?, selected: Boolean, onClick: () -> Unit) {
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) { if (color == null) Text("∅", style = MaterialTheme.typography.labelSmall) }
+}
+
+/** What the Rechtsklick-Menü of the Folienleiste offers (AP-127 d). */
+internal enum class StripAction { NEW, DUPLICATE, UP, DOWN, DELETE, PRESENT }
+
+/**
+ * A slide in the Folienleiste (AP-127 d): click chooses it, dragging up or down moves it (the title slide stays first),
+ * a right click opens its menu – Neue Folie, Duplizieren, Nach vorn/hinten, Löschen, Vorführen ab hier.
+ */
+@Composable
+private fun StripThumb(
+    i: Int,
+    s: SlideDeck.Slide,
+    deck: List<SlideDeck.Slide>,
+    frame: DeckFrame,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onMove: (Int) -> Unit,
+    onMenu: (StripAction) -> Unit,
+) {
+    var menu by remember { mutableStateOf(false) }
+    var dy by remember { mutableStateOf(0f) }
+    var itemPx by remember { mutableStateOf(1f) }
+    val gapPx = with(androidx.compose.ui.platform.LocalDensity.current) { 10.dp.toPx() }
+    val latestMove by androidx.compose.runtime.rememberUpdatedState(onMove)
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .onSizeChanged { itemPx = it.height.toFloat() + gapPx }
+            .zIndex(if (dy != 0f) 1f else 0f)
+            .graphicsLayer { translationY = dy; shadowElevation = if (dy != 0f) 8f else 0f }
+            .pointerInput(i) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val ev = awaitPointerEvent()
+                        if (ev.type == androidx.compose.ui.input.pointer.PointerEventType.Press && ev.buttons.isSecondaryPressed) menu = true
+                    }
+                }
+            }
+            .pointerInput(i) {
+                if (i == 0) return@pointerInput
+                detectDragGestures(
+                    onDragEnd = {
+                        val to = (i + Math.round(dy / itemPx)).coerceIn(1, deck.lastIndex)
+                        dy = 0f
+                        if (to != i) latestMove(to)
+                    },
+                    onDragCancel = { dy = 0f },
+                ) { change, d -> change.consume(); dy += d.y }
+            },
+    ) {
+        Thumb(i, s, deck.size, frame, selected, Modifier.fillMaxWidth(), deck, onClick)
+        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+            @Composable
+            fun item(label: String, keys: String, a: StripAction, enabled: Boolean = true) =
+                MenuRow(tr(label), if (keys.isEmpty()) "" else tr(keys), enabled) { menu = false; onMenu(a) }
+            item("Neue Folie danach", "Strg+M", StripAction.NEW)
+            item("Folie duplizieren", "Strg+D", StripAction.DUPLICATE)
+            item("Nach vorn", "Strg+Umschalt+↑", StripAction.UP, enabled = i > 1)
+            item("Nach hinten", "Strg+Umschalt+↓", StripAction.DOWN, enabled = i in 1 until deck.lastIndex)
+            item("Vorführen ab hier", "", StripAction.PRESENT)
+            HorizontalDivider()
+            item("Folie löschen", "", StripAction.DELETE, enabled = deck.size > 1)
+        }
+    }
+}
+
+/** The layouts of a new slide as small slides with their names (AP-127 d). */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LayoutGallery(frame: DeckFrame, onPick: (SlideDeck.Layout) -> Unit) {
+    FlowRow(Modifier.width(500.dp).padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), maxItemsInEachRow = 3) {
+        SlideDeck.Layout.entries.filter { it != SlideDeck.Layout.TITLE }.forEach { l ->
+            Column(
+                Modifier.width(150.dp).clip(RoundedCornerShape(6.dp)).clickable(role = androidx.compose.ui.semantics.Role.Button) { onPick(l) }.padding(4.dp),
+            ) {
+                // Fixed sizes: the menu measures its content by intrinsics, which the slide (BoxWithConstraints) cannot give.
+                Box(Modifier.size(142.dp, 80.dp).border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))) {
+                    SlideCanvas(SlideDeck.template(l), Modifier.size(142.dp, 80.dp), 2, 3, frame)
+                }
+                Text(l.label, style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 4.dp))
+            }
+        }
+    }
 }

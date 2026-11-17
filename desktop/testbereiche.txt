@@ -66,13 +66,13 @@ tests: SheetExtrasTest SheetsLikeExcelTest ChartsAndLoraCalcTest OfficeChartsTes
 
 [folien] Folien und Präsentieren
 quellen: ui/Slide*.kt ui/PresentScreens.kt docs/Slide*.kt docs/Pptx*.kt docs/PaperDeck.kt agent/OfficeActions.kt
-tests: SlidesLikePowerPointTest PptxReaderTest SharedCanvasTest DocsAndSlidesExtrasTest OfficeSuiteTest
+tests: SlidesLikePowerPointTest PptxReaderTest SharedCanvasTest DocsAndSlidesExtrasTest OfficeSuiteTest CanvasHandlingTest
 
 [gestalten] Gestalten, Whiteboard, Diagramme, Bilder
-quellen: creative/** ui/Design*.kt ui/CreateDesigns.kt ui/WhiteboardScreen.kt ui/Diagram*.kt docs/Diagrams.kt
+quellen: creative/** ui/Design*.kt ui/CreateDesigns.kt ui/WhiteboardScreen.kt ui/Diagram*.kt docs/Diagrams.kt ui/CanvasMenu.kt
 quellen: docs/DiagramRaster.kt data/Designs.kt data/DesignSupport.kt agent/DesignTools.kt ui/ImageEdit.kt ui/ImageActions.kt
 quellen: ui/Images*.kt ui/ImageViewer.kt ui/ImageEncoding.kt data/ImageGallery.kt ui/Logo.kt ui/LoraFigure.kt data/LogoStore.kt
-tests: CreativeScreenTest CreativeTest DiagramsTest SharedCanvasTest ImageEditTest LogoTest LoraFigureTest
+tests: CreativeScreenTest CreativeTest DiagramsTest SharedCanvasTest ImageEditTest LogoTest LoraFigureTest CanvasHandlingTest
 
 [video] Videoeditor, Bildschirmaufnahme, Export
 quellen: video/** ui/Video*.kt ui/ScreenRecordUi.kt ui/MediaPreview.kt ui/MediaLook.kt ui/Extensions*.kt desktop/Extensions.kt
