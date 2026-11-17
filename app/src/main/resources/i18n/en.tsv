@@ -129,9 +129,13 @@ Abbrechen (Strg+C)	Stop (Ctrl+C)
 Abgebrochen – nichts verschoben.	Cancelled – nothing moved.
 Abgebrochen – {0} Mails sind schon eingeordnet.	Cancelled – {0} mails are already sorted.
 Ablauf: {0}	Workflow: {0}
+Absatz eingefügt	Paragraph inserted
+Absätze verbunden	Paragraphs joined
+Absätze verschoben	Paragraphs moved
 Alle Einstellungen der App.	All settings of the app.
 Alle Prüfungen zurücksetzen?	Reset all checks?
 Alle Schritte passen – diese Pakete sind auf diesem Gerät geprüft.	All steps fit – these packages are checked on this device.
+Alle wiederherstellen	Restore all
 Alles lässt sich später unter Einstellungen › Lora, › Werkzeuge und › Modelle auf diesem Gerät ändern. Downloads laufen im Hintergrund weiter.	Everything can be changed later under Settings › Lora, › Tools and › Models on this device. Downloads continue in the background.
 Alles zurücksetzen …	Reset everything …
 An diese Sitzungen:	To these sessions:
@@ -148,15 +152,28 @@ Ausgabe ausblenden	Hide output
 Ausgabe zeigen	Show output
 Bedenke:	Keep in mind:
 Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).	Commands and short tasks on this device, everything demanding on the university server (chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).
+Beim letzten Mal blieb etwas ungespeichert – etwa weil Lora abgestürzt ist oder geschlossen wurde.	Something was left unsaved last time – for example because Lora crashed or was closed.
 Bereich, Einstellung, Chat – oder sag, was du tun willst …	Area, setting, chat – or say what you want to do …
 Bericht mit Bildern als ZIP …	Report with pictures as ZIP …
 Bericht über Problem melden	Send report via Report a problem
 Bild anhängen …	Attach picture …
+Bild-in-Bild eingefügt	Picture-in-picture inserted
+Bild-in-Bild gelöscht	Picture-in-picture deleted
+Bild-in-Bild geändert	Picture-in-picture changed
 Bildschirmfoto	Screenshot
 Bildschirmfoto angehängt: {0}	Screenshot attached: {0}
 Bildschirmfoto in {0} Sekunden – jetzt zur Stelle gehen.	Screenshot in {0} seconds – go to the place now.
 Bildschirmfoto ist beim Schritt „{0}“.	The screenshot is with the step “{0}”.
 Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Lora antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.	So far {0} % without a server: {1} × instantly on the device (avg {2}), {3} × with the language model on this device (avg {4}), {5} × on the server (avg {6}). Measured until Lora answers or hands over; only numbers are counted, no content.
+Block	Block
+Clip eingefügt	Clip inserted
+Clip gelöscht	Clip deleted
+Clip geteilt	Clip split
+Clip geändert	Clip changed
+Clip {0} gekürzt	Clip {0} trimmed
+Clip {0} geändert	Clip {0} changed
+Clips umsortiert	Clips reordered
+Codeblock	Code block
 Dafür den Schlüssel des Uni-Servers eintragen (Einstellungen › Konto).	Enter the key of the university server for this (Settings › Account).
 Das Bildschirmfoto ist nicht gelungen.	The screenshot did not work.
 Das beantwortet das Modell auf diesem Gerät – ich gebe es weiter.	The model on this device will answer that – I am handing it over.
@@ -185,32 +202,82 @@ Die ZIP-Datei konnte nicht gespeichert werden.	The ZIP file could not be saved.
 Die Änderungen sind noch nicht auf dem Server gespeichert.	The changes are not saved on the server yet.
 Diese Vorlagen könnten passen:	These templates might fit:
 Diese Zeile wird in jede Sitzung eingetippt und sofort ausgeführt ({0}):	This line is typed into each session and run at once ({0}):
+Effekt bei Clip {0}	Effect on clip {0}
+Ein Klick geht zurück bis direkt nach diesem Schritt; Wiederholen (Strg+Y) holt die Schritte danach zurück.	A click goes back to right after this step; Redo (Ctrl+Y) brings the later steps back.
 Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell.	A small model on this device maps what you write to Lora or in Ctrl+K to an action of the app within milliseconds – offline, even with typos. When it is unsure it carries out nothing; Lora asks a language model as before.
 Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich.	A new key pair (Ed25519) is created on this device. The private key stays in the Lora folder and only your user account can read it; a passphrase protects it in addition.
 Ein paar kurze Fragen, dann geht es los.	A few short questions, then we can start.
 Eine Zeile an mehrere Sitzungen	One line to several sessions
 Einstellung: {0}	Setting: {0}
 Einstellung: {0} → {1}	Setting: {0} → {1}
+Einstellungen geändert	Settings changed
+Elemente	Elements
 Empfehlung für diesen PC: {0}	Recommendation for this PC: {0}
 Ergebnisse, Notizen und Bildschirmfotos dieses Geräts werden gelöscht; alle Schritte sind wieder offen.	Results, notes and screenshots of this device are deleted; all steps are open again.
+Ersetzt: „{0}“ durch „{1}“	Replaced “{0}” with “{1}”
 Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vorschläge.	Load a model first (Settings › Local models), otherwise there are no proposals.
 Etwas anderes	Something else
 Farbe im Tab	Colour of the tab
 Feste Abläufe	Fixed workflows
+Folie eingefügt	Slide inserted
+Folie {0}: {1} geändert	Slide {0}: {1} changed
+Folien umsortiert	Slides reordered
+Formatiert	Formatted
 Foto in {0} s …	Picture in {0} s …
 Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
+Gelöscht: „{0}“	Deleted: “{0}”
+Geschrieben: „{0}“	Typed: “{0}”
 Hingehen	Go there
+In/Out gesetzt	In/Out set
+Lautstärke von Clip {0}	Volume of clip {0}
+Leerraum geändert	Spacing changed
+Leerzeichen eingefügt	Space inserted
+Leerzeichen gelöscht	Space deleted
+Marker gelöscht	Marker deleted
+Marker gesetzt	Marker set
+Marker verschoben	Marker moved
+Medien geändert	Media changed
 Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht.	Check new features on the device step by step: fits / does not fit, note, screenshot, report.
 Nichts offen auf diesem Gerät	Nothing open on this device
+Noch keine Schritte – jede Änderung erscheint hier.	No steps yet – every change appears here.
 Notiz (was war anders?)	Note (what was different?)
+PDF-Werkzeugkasten · {0} Änderung(en) nicht gespeichert	PDF toolbox · {0} change(s) not saved
 Passt nicht	Does not fit
 Prüfung beginnen	Start checking
 Prüfungen am Gerät	Checks on the device
+Seiteneinstellung	Page setting
 So geht's	How to do it
+Spalte eingefügt	Column inserted
+Spalte gelöscht	Column deleted
+Tab gelöscht	Tab deleted
+Tab hinzugefügt	Tab added
+Tabellenblatt gelöscht	Sheet deleted
+Tabellenblatt hinzugefügt	Sheet added
+Tabs umsortiert	Tabs reordered
+Titel eingefügt	Title inserted
+Titel gelöscht	Title deleted
+Titel geändert	Title changed
+Ton des Projekts	Project sound
+Ton eingefügt	Sound inserted
+Ton gelöscht	Sound deleted
+Ton geändert	Sound changed
+Umbenannt in „{0}“	Renamed to “{0}”
+Ungespeicherte Arbeit wiederherstellen?	Restore unsaved work?
+Untertitel eingefügt	Subtitle inserted
+Untertitel gelöscht	Subtitle deleted
+Untertitel geändert	Subtitle changed
+Verlauf	History
+Verlauf der Schritte	History of steps
+Verlauf der Schritte …	History of steps …
 Vorher: {0}	Before: {0}
 Was in den letzten Paketen neu ist, wird hier Schritt für Schritt am Gerät geprüft: lesen, ausprobieren, dann *Passt* oder *Passt nicht* – mit Notiz und Bildschirmfoto. Am Ende geht ein Bericht über *Problem melden* hinaus.	What is new in the latest packages is checked here on the device, step by step: read, try it, then *Fits* or *Does not fit* – with a note and a screenshot. At the end a report goes out via *Report a problem*.
 Weiter prüfen	Continue checking
+Wie vor dem ersten Schritt	As before the first step
 Wieder offen	Open again
+Zeile eingefügt	Row inserted
+Zeile gelöscht	Row deleted
+Zelle {0} geleert	Cell {0} cleared
+Zelle {0}: „{1}“	Cell {0}: “{1}”
 Zuletzt: passt (Lora {0})	Last time: fits (Lora {0})
 Zuletzt: passt nicht (Lora {0})	Last time: does not fit (Lora {0})
 folgt dem Terminal	follows the terminal
@@ -333,6 +400,8 @@ Wo soll Lora im Server-Terminal denken?	Where should Lora think in the Server Te
 Während Lora denkt, ist der PC ausgelastet (Lüfter, Akku).	While Lora thinks, the PC is busy (fan, battery).
 passt	fits
 passt nicht	does not fit
+vor {0} Std.	{0} h ago
+vor {0} s	{0} s ago
 z. B. Wie viel Speicher ist frei? · Deploy wie immer	e.g. How much space is free? · Deploy as usual
 Zeig die letzten Fehler im Log der Anwendung	Show the latest errors in the application log
 Zum Beispiel	For example
@@ -5584,6 +5653,12 @@ zugeklappt	folded
 {0} Abschnitte, identisch codiert: {1} %	{0} sections, coded identically: {1} %
 {0} Datei(en) hochgeladen.	{0} file(s) uploaded.
 {0} Schritte offen – neue Funktionen Schritt für Schritt prüfen	{0} steps open – check new features step by step
+{0} Zeilen eingefügt	{0} rows inserted
+{0} Zeilen gelöscht	{0} rows deleted
+{0} Zellen geändert ({1} …)	{0} cells changed ({1} …)
+{0} eingefügt	{0} inserted
+{0} entfernt	{0} removed
+{0} geändert	{0} changed
 {0} ist ein großes Modell.	{0} is a large model.
 {0} Mail(s) als gelesen markiert	{0} mail(s) marked as read
 {0} Mail(s) als ungelesen markiert	{0} mail(s) marked as unread
@@ -5791,6 +5866,7 @@ zugeklappt	folded
 Ändern lässt es sich jederzeit unter Einstellungen › Lora › Server-Terminal.	You can change it any time under Settings › Lora › Server Terminal.
 Ändert Folie {0} …	Changing slide {0} …
 Ändert sich der Text, bleibt der Standardwert für Lora „{0}“ – zum Ändern löschen und neu wählen.	If the text changes, Lora's default stays “{0}” – to change it, delete it and choose again.
+Änderung	Change
 Änderung abgelehnt	Change rejected
 Änderung angenommen	Change accepted
 Änderungen auf	changes on
@@ -5803,6 +5879,7 @@ zugeklappt	folded
 Änderungen werden nachverfolgt	Changes are being tracked
 Öffentlicher Schlüssel – darf weitergegeben werden (z. B. an die Administration):	Public key – may be passed on (e.g. to the administrators):
 Öffnen: {0}	Open: {0}
+Übergang bei Clip {0}	Transition at clip {0}
 öffentlich · Namen bleiben	public · names stay
 Öffentliche Quellen nicht ersetzen	Don't replace public sources
 Öffne die zweite Datei als weiteren Tab (Ordner-Symbol oben).	Open the second file as another tab (folder icon at the top).

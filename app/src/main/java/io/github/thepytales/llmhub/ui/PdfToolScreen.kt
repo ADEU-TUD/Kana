@@ -106,9 +106,27 @@ import java.io.File
 import java.util.UUID
 import kotlin.math.roundToInt
 
+/** What [PdfWork] writes down about an open PDF (AP-134), to offer it again after a crash. */
+@kotlinx.serialization.Serializable
+data class PdfJournalEntry(
+    val id: String,
+    val name: String,
+    val original: String? = null,
+    val file: String,
+    val history: List<String> = emptyList(),
+    val saved: String? = null,
+) {
+    fun files() = history + file
+    /** Changed and not saved, and the working copy is still there. */
+    fun recoverable() = history.isNotEmpty() && file != saved && File(file).isFile
+}
+
 /** An open PDF of the toolbox: the original, the working copy and earlier versions for „Rückgängig“. */
 class PdfTab(val id: String, val name: String, val original: File?, file: File) {
     var file by mutableStateOf(file)
+    /** The version last saved (or opened): differs from [file] while there are unsaved changes (AP-134). */
+    var savedFile by mutableStateOf<File?>(file)
+    val unsaved: Boolean get() = history.isNotEmpty() && file != savedFile
     var info by mutableStateOf<PdfInfo?>(null)
     val history = mutableStateListOf<File>()
     /** Form fields being edited (AP-11, Formular). */
@@ -144,12 +162,74 @@ object PdfWork {
                     runCatching { t.info = PdfTools.info(io.github.thepytales.llmhub.App.container.appContext, previous) }
                     PdfRender.close(current)
                     current.delete()
+                    persist(io.github.thepytales.llmhub.App.container.appContext)
                 }
             }
         }
     }
 
     fun dir(context: android.content.Context) = File(context.cacheDir, "pdf-work").apply { mkdirs() }
+
+    // ── Nichts geht verloren (AP-134): the open PDFs are written down after every change, so their working copies
+    // can be offered again after a crash (or after closing the app without saving). ──
+
+    private val journalJson = kotlinx.serialization.json.Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    private fun journalFile(context: android.content.Context) = File(context.filesDir, "pdf-arbeit.json")
+
+    /** Entries of the last run that were not restored or discarded yet; null = not read yet. */
+    private var leftovers: MutableList<PdfJournalEntry>? = null
+
+    private fun readJournal(context: android.content.Context): List<PdfJournalEntry> =
+        runCatching { journalJson.decodeFromString(kotlinx.serialization.builtins.ListSerializer(PdfJournalEntry.serializer()), journalFile(context).readText()) }
+            .getOrDefault(emptyList())
+
+    /** What the last run left: unsaved changes are kept for [recoverable], everything else is cleaned up. */
+    @Synchronized
+    private fun leftovers(context: android.content.Context): MutableList<PdfJournalEntry> = leftovers ?: run {
+        val open = tabs.map { it.id }.toSet()
+        val (keep, drop) = readJournal(context).filter { it.id !in open }.partition { it.recoverable() }
+        drop.forEach { e -> e.files().forEach { File(it).delete() } }
+        keep.toMutableList().also { leftovers = it }
+    }
+
+    /** Writes down the open PDFs (and what the last run left). */
+    @Synchronized
+    fun persist(context: android.content.Context) {
+        val entries = tabs.map { t ->
+            PdfJournalEntry(t.id, t.name, t.original?.absolutePath, t.file.absolutePath, t.history.map { it.absolutePath }, t.savedFile?.absolutePath)
+        } + leftovers(context)
+        runCatching { io.github.thepytales.llmhub.data.AtomicFiles.write(journalFile(context), journalJson.encodeToString(kotlinx.serialization.builtins.ListSerializer(PdfJournalEntry.serializer()), entries)) }
+    }
+
+    /** PDFs with changes that were never saved, from the last run. */
+    fun recoverable(context: android.content.Context): List<PdfJournalEntry> = synchronized(this) { leftovers(context).toList() }
+
+    /** Opens [e] again as a tab, with its Rückgängig. */
+    fun restore(context: android.content.Context, e: PdfJournalEntry): PdfTab {
+        val tab = PdfTab(e.id, e.name, e.original?.let { File(it) }, File(e.file))
+        tab.history.addAll(e.history.map { File(it) }.filter { it.isFile })
+        tab.savedFile = e.saved?.let { File(it) }
+        tab.info = runCatching { PdfTools.info(context, tab.file) }.getOrNull()
+        synchronized(this) { leftovers(context).removeAll { it.id == e.id } }
+        tabs += tab
+        selected = tabs.lastIndex
+        persist(context)
+        return tab
+    }
+
+    /** Throws the working copies of [e] away for good. */
+    fun discard(context: android.content.Context, e: PdfJournalEntry) {
+        e.files().forEach { File(it).delete() }
+        synchronized(this) { leftovers(context).removeAll { it.id == e.id } }
+        persist(context)
+    }
+
+    /** For tests: forget what was read (as after a restart). */
+    internal fun forgetForTest() {
+        tabs.clear()
+        leftovers = null
+        selected = 0
+    }
 
     /** Opens [source] in a new tab (a working copy; the original is only changed by „Speichern“). */
     suspend fun open(context: android.content.Context, source: File, name: String = source.name, page: Int = 1, keepOriginal: Boolean = true): PdfTab {
@@ -166,6 +246,7 @@ object PdfWork {
         tab.goTo = (page - 1).takeIf { it > 0 }
         tabs += tab
         selected = tabs.lastIndex
+        persist(context)
         return tab
     }
 
@@ -174,6 +255,7 @@ object PdfWork {
         tabs.remove(tab)
         (tab.history + tab.file).forEach { f -> PdfRender.close(f); f.delete() }
         selected = (if (selected >= i) selected - 1 else selected).coerceIn(0, (tabs.size - 1).coerceAtLeast(0))
+        persist(io.github.thepytales.llmhub.App.container.appContext)
     }
 }
 
@@ -190,6 +272,7 @@ private suspend fun PdfTab.change(context: android.content.Context, op: (src: Fi
     ok.exceptionOrNull()?.let { Notices.error(tr("Das hat nicht geklappt") + ": " + (it.message ?: it.javaClass.simpleName)); return false }
     history += file
     file = out
+    PdfWork.persist(context)
     info = withContext(Dispatchers.IO) { runCatching { PdfTools.info(context, out) }.getOrNull() }
     return true
 }
@@ -198,6 +281,7 @@ private fun PdfTab.undo(context: android.content.Context, scope: kotlinx.corouti
     val previous = history.removeLastOrNull() ?: return
     val current = file
     file = previous
+    PdfWork.persist(context)
     scope.launch {
         info = withContext(Dispatchers.IO) { runCatching { PdfTools.info(context, previous) }.getOrNull() }
         PdfRender.close(current)
@@ -268,7 +352,7 @@ fun PdfToolScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit = 
                             IconButton(onClick = {
                                 scope.launch {
                                     val ok = withContext(Dispatchers.IO) { runCatching { tab.file.copyTo(tab.original, overwrite = true) }.isSuccess }
-                                    if (ok) Notices.info(tr("Gespeichert") + ": " + tab.original.name) else Notices.error(tr("Speichern fehlgeschlagen – „Speichern unter“ versuchen."))
+                                    if (ok) { tab.savedFile = tab.file; PdfWork.persist(context); Notices.info(tr("Gespeichert") + ": " + tab.original.name) } else Notices.error(tr("Speichern fehlgeschlagen – „Speichern unter“ versuchen."))
                                 }
                             }) { Icon(Icons.Outlined.Save, contentDescription = tr("Speichern")) }
                         }
