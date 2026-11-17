@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -100,6 +101,7 @@ private fun settingsTitleDe(section: String?): String = when (section) {
     "transcription" -> "Transkription"
     "updates" -> "Updates"
     "help" -> tr("Problem melden")
+    "checks" -> tr("Prüfungen am Gerät")
     "downloads" -> tr("Inhalte zum Nachladen")
     else -> tr("Einstellungen")
 }
@@ -239,6 +241,7 @@ fun SettingsOverview(c: AppContainer, onNavigate: (String) -> Unit, deviceItem: 
             SettingsItem("settings/trash", Icons.Outlined.DeleteOutline, tr("Papierkorb"), tr("Gelöschte Chats und Transkripte wiederherstellen")),
             SettingsItem("settings/ram", Icons.Outlined.Speed, tr("Arbeitsspeicher"), memorySummary()),
             SettingsItem("settings/updates", Icons.Outlined.SystemUpdate, tr("Updates"), updateSummary()),
+            SettingsItem("settings/checks", Icons.Outlined.TaskAlt, tr("Prüfungen am Gerät"), checksSummary(c)),
             SettingsItem("settings/help", Icons.Outlined.BugReport, tr("Problem melden"), tr("Beschreibung und anonymes Fehlerprotokoll senden")),
         ),
         onNavigate,
@@ -253,6 +256,14 @@ fun SettingsOverview(c: AppContainer, onNavigate: (String) -> Unit, deviceItem: 
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
+
+/** Subtitle of *Prüfungen am Gerät* (AP-133): what is still open on this device. */
+@Composable
+private fun checksSummary(c: AppContainer): String {
+    val results by c.deviceChecks.results.items.collectAsStateWithLifecycle()
+    val open = c.deviceChecks.open(io.github.thepytales.llmhub.update.UpdatePlatform.KEY, results).size
+    return if (open == 0) tr("Nichts offen auf diesem Gerät") else tr("{0} Schritte offen – neue Funktionen Schritt für Schritt prüfen", open)
 }
 
 /** Version and what the last update check found, for the settings overview. */

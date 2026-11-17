@@ -129,7 +129,10 @@ object RoughCut {
                 if (c.fx.freeze || c.fx.reverse) return@forEachIndexed
                 val a = maxOf(cue.start, c.inSec)
                 val b = minOf(cue.end, c.outSec)
-                if (b - a >= 0.3) out += SubtitleCue(starts[i] + (a - c.inSec) / c.speed, starts[i] + (b - c.inSec) / c.speed, cue.lines.joinToString("\n"))
+                // Namen im Ton (AP-128): the protected names of this file read „[Name]“ in the subtitles.
+                val names = p.bleeps.filter { it.path == c.path }.map { it.name }
+                val text = cue.lines.joinToString("\n").let { if (names.isEmpty()) it else NameGuard.mask(it, names) }
+                if (b - a >= 0.3) out += SubtitleCue(starts[i] + (a - c.inSec) / c.speed, starts[i] + (b - c.inSec) / c.speed, text)
             }
         }
         return out.sortedBy { it.startSec }.let { list ->

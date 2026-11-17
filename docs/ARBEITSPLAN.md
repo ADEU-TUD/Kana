@@ -1,6 +1,6 @@
 # Arbeitsplan Lora (bis 1.0.43 „ADEU LLM“) – Runde 2
 
-Stand: 16.11.2026 (**AP-126 fertig** mit (d) Absatz und Seite, (e) Überprüfen, (f) Docs-Komfort und den Resten aus (c); für 1.0.75 · 1.0.74 veröffentlicht mit AP-125 (f) und AP-126 (a) bis (c)) · 15.11.2026 (**AP-126 (c)** Wissenschaft: Beschriftungen mit Nummer, Querverweise, Abbildungs- und Tabellenverzeichnis, nummerierte Überschriften, Lesezeichen, Endnoten) · 15.11.2026 (**AP-126 (a) und (b)**: Lückenliste Word/Docs [`office-luecken.md`](office-luecken.md), Grundausstattung – Drucken, Herunterladen als, Sprache, Details, Seitenzahlen einfügen, Kopf-/Fußzeile per Doppelklick) · 15.11.2026 (**AP-125 (f)** fertig: eigene Ersetzungen in der Autokorrektur, umflossene Bilder in Seitenansicht und PDF richtig eingeplant – damit AP-125 abgeschlossen) · 15.11.2026 (**AP-132** Entwicklung: Desktop-Tests 27 → 5½ min – dabei ein Tempo-Fehler beim Öffnen großer Excel-Dateien behoben –, PR-Check prüft nur die betroffenen Bereiche, Vorher/Nachher-Seite mit einem Befehl) · 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
+Stand: 17.11.2026 (**AP-128 fertig**: Namen im Ton piepen, stumm oder verfremdet, Prüfliste vor dem Export) · 17.11.2026 (**AP-130 fertig**: beim Ziehen folgt die Vorschau der Maus sofort, dieselbe Stelle kommt aus dem Bildpuffer, Vorbereitung sichtbar) · 17.11.2026 (**AP-127 fertig**: Rechtsklick, Strg-Ziehen, gleiche Abstände mit Maß und Format übertragen auf der Leinwand, Folienleiste zum Ziehen, Layouts als Galerie) · 17.11.2026 (**AP-134 fertig**: PDF-Arbeit kommt nach einem Absturz wieder, Verlauf der Schritte in Dokument, Tabelle, Folien und Video) · 17.11.2026 (**AP-133 fertig**: *Einstellungen › Prüfungen am Gerät* führt Schritt für Schritt durch die offenen Prüfungen aus der Liste `pruefungen.txt`, Bericht über *Problem melden*) · 16.11.2026 (**AP-126 fertig** mit (d) Absatz und Seite, (e) Überprüfen, (f) Docs-Komfort und den Resten aus (c); für 1.0.75 · 1.0.74 veröffentlicht mit AP-125 (f) und AP-126 (a) bis (c)) · 15.11.2026 (**AP-126 (c)** Wissenschaft: Beschriftungen mit Nummer, Querverweise, Abbildungs- und Tabellenverzeichnis, nummerierte Überschriften, Lesezeichen, Endnoten) · 15.11.2026 (**AP-126 (a) und (b)**: Lückenliste Word/Docs [`office-luecken.md`](office-luecken.md), Grundausstattung – Drucken, Herunterladen als, Sprache, Details, Seitenzahlen einfügen, Kopf-/Fußzeile per Doppelklick) · 15.11.2026 (**AP-125 (f)** fertig: eigene Ersetzungen in der Autokorrektur, umflossene Bilder in Seitenansicht und PDF richtig eingeplant – damit AP-125 abgeschlossen) · 15.11.2026 (**AP-132** Entwicklung: Desktop-Tests 27 → 5½ min – dabei ein Tempo-Fehler beim Öffnen großer Excel-Dateien behoben –, PR-Check prüft nur die betroffenen Bereiche, Vorher/Nachher-Seite mit einem Befehl) · 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
 Runde 1 (AP-01 bis AP-37) ist erledigt und steht ausführlich in [`ARBEITSPLAN-RUNDE-1.md`](ARBEITSPLAN-RUNDE-1.md).
 
 **Design steht im Design-Arbeitsplan** (seit 13.11.2026): Pakete zu Aussehen, Bedienbarkeit und Nutzerfreundlichkeit
@@ -76,8 +76,8 @@ Fairlight).
 | ~~Lora im Alltag~~ ☑ | AP-74 Fehlermeldungen in Klartext · AP-75 Lora-Verlauf mit „Nochmal“ · AP-76 Sprachmodell-Empfehlung nach Messung · AP-77 Probelauf und „Alles rückgängig“ · AP-78 Eigene Wörter und Wissenspakete · AP-79 Hausstil- und Barrierefreiheits-Check · AP-80 Rollenauswahl · AP-81 Videoexport-Warteschlange · AP-82 Vorschau für Video und Ton · AP-83 Lora-Pakete teilen · AP-84 Lora in mehreren Fenstern · AP-85 Große Anhänge vollständig nutzen (erledigt 10.11.2026, siehe *Erledigt*) |
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Lora offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Lora selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Lora Postfach · AP-113 Lora Namensschutz Runde 3 · AP-114 Lora Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
-| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · AP-133 Geführte Prüfung am Gerät · AP-134 Nichts geht verloren · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
-| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☐** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☐** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☐** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
+| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · ~~AP-133 Geführte Prüfung am Gerät~~ ☑ · ~~AP-134 Nichts geht verloren~~ ☑ · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
+| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
 | **Neu (12.11.2026)** | **AP-122 Lora: neues Aussehen und lebendigere Animationen ☑** (Wunsch Hauptnutzer; am 13.11.2026 freigegeben, in der App, für 1.0.70) |
@@ -107,8 +107,8 @@ ebenfalls in einem eigenen Chat; auch dort kommt der Messkorpus vor jedem Traini
 **Reihenfolge ab 14.11.2026 (Hauptnutzer nach der Werkzeug-Analyse)**: Aus der Analyse „Wie die Werkzeuge in Lora besser
 werden“ ([`WERKZEUG-ANALYSE.md`](WERKZEUG-ANALYSE.md), 85 Vorschläge, 79 übernommen; Nummern wie *Q-01* stehen bei der jeweiligen Stufe) sind AP-131 bis AP-154 und
 APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfohlene Reihenfolge:
-**AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) ◐ → **AP-125 (f)** (Reste Dokument) ☑ → **AP-133** (Prüfung am Gerät) →
-**AP-134** (nichts geht verloren) → wie bisher **AP-126** ☑ (vorgezogen, 15./16.11.2026) → **APD-16 + AP-127** → **APD-17b + AP-130** → **AP-128** →
+**AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) ◐ → **AP-125 (f)** (Reste Dokument) ☑ → **AP-133** (Prüfung am Gerät) ☑ →
+**AP-134** (nichts geht verloren) ☑ → wie bisher **AP-126** ☑ (vorgezogen, 15./16.11.2026) → **APD-16 + AP-127** (AP-127 ☑) → **APD-17b + AP-130** (AP-130 ☑) → **AP-128** ☑ →
 **AP-129** → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
 im Hörsaal (gestrichen).
@@ -240,15 +240,33 @@ Vergleichsseite mit einem Befehl entsteht.
 - **Offen**: der erste PR-Check auf GitHub (Zeit messen; GitHub-Rechner privater Repositorys haben evtl. nur zwei Kerne,
   dann läuft eine JVM).
 
-### AP-133 ☐ Geführte Prüfung am Gerät · M (Analyse Q-07)
+### AP-133 ☑ Geführte Prüfung am Gerät · M (Analyse Q-07)
 **Befund**: Viele Pakete stehen auf ◐, weil die Prüfung am Gerät (Windows, Android, macOS) offen ist.
 **Ziel**: Der Rückstau wird gezielt abgebaut. *Einstellungen › Über › Prüfungen* führt Schritt für Schritt durch die
 offenen Prüfungen aller Pakete (aus einer Liste im Repo, je Paket: Schritte, erwartetes Ergebnis, Plattform) – je Schritt
 *Passt / Passt nicht*, Notiz und Bildschirmfoto; am Ende ein Bericht über *Problem melden*. Erledigte Prüfungen verschwinden
 aus der Liste; neue Pakete bringen ihre Prüfschritte mit.
 **Fertig, wenn**: die offenen Prüfungen von AP-120 bis AP-125 in einer Sitzung am Windows-PC durchgegangen werden können.
+☑ *Stand 17.11.2026*: in der App (Windows, macOS, Linux, Android). Abweichung: Die App hat keine Seite *Über* – der Eintrag
+heißt *Einstellungen › Prüfungen am Gerät* (Gruppe *Daten*, über *Problem melden*; auch über Strg+K und Lora, Landkarte
+`settings.checks`).
+- **Liste im Repo**: `app/src/main/resources/pruefungen/pruefungen.txt` (beide Apps lesen sie), Aufbau in der Datei und in
+  der README › *Prüfungen am Gerät*. Darin jetzt 32 Schritte für Windows aus den offenen Prüfungen von AP-120, AP-121,
+  AP-122, AP-123, AP-125, AP-126 und AP-131, dazu Android-Schritte (AP-120, AP-122, AP-123) und macOS (AP-86, AP-131).
+  Die Mess-Aufgaben aus Runde 3 (AP-105 ff., `messen.py`) stehen nicht darin – sie brauchen den Entwicklungsteil.
+- **Code**: `data/DeviceChecks.kt` (Lesen der Liste mit Fehlerliste, `DeviceCheckStore`: Ergebnisse in `pruefungen.json`,
+  Bilder in `pruefungen/`, offene und erledigte Pakete je Gerät, Bericht, ZIP), `ui/DeviceChecksSection.kt` (Fortschritt,
+  Gerät wählen, Schrittkarte mit *So geht's*, *Das soll passieren*, *Hingehen*, *Bildschirmfoto* – am PC nach 5 s vom
+  ganzen Bildschirm, Android das Fenster der App (`ui/ScreenCapture.kt` je Plattform) –, *Bild anhängen …*, Notiz,
+  *Passt*, *Passt nicht*, *Überspringen*, *Wieder offen*; Pakete mit ihren Schritten, *Erledigt*, Bericht über *Problem
+  melden* (`ProblemDraft` füllt dort die Beschreibung), *Bericht mit Bildern als ZIP …*, *Alles zurücksetzen …*).
+- **Tests** `DeviceChecksTest` (7): Liste fehlerfrei, jeder Ort existiert, jedes Paket steht in einem Arbeitsplan,
+  AP-120 bis AP-125 haben Windows-Schritte; Lesen und Fehlermeldungen; Passt verschwindet, Passt nicht bleibt, erledigte
+  Pakete, Bericht mit „passt nicht“ zuerst, Neustart, ZIP, umbenannter Schritt, Zurücksetzen; Bild vor der Entscheidung;
+  die Seite führt Schritt für Schritt (Klicks bis zum Bericht in *Problem melden*), Bilder `build/screenshots/pruefungen-*.png`.
+- **Offen – am Gerät**: der erste echte Durchgang am Windows-PC (Bildschirmfoto bei 150 % Skalierung, zwei Bildschirme).
 
-### AP-134 ☐ Nichts geht verloren: Wiederherstellen und Verlauf · M–L (Analyse Q-04, Q-05)
+### AP-134 ☑ Nichts geht verloren: Wiederherstellen und Verlauf · M–L (Analyse Q-04, Q-05)
 - **(a) Ungespeicherte Arbeit nach Absturz wiederherstellen** (Q-04): In jedem Editor (Dokument, Tabelle, Folien,
   Gestalten, Whiteboard, Video, PDF-Markierungen, Transkript-Korrekturen) prüfen, was bei einem Absturz verloren geht;
   laufend einen Zwischenstand sichern und beim nächsten Start „Ungespeicherte Arbeit wiederherstellen?“ anbieten (mit
@@ -258,6 +276,31 @@ aus der Liste; neue Pakete bringen ihre Prüfschritte mit.
   Dokument, Tabelle, Folien und Video.
 **Fertig, wenn**: ein hart beendeter Prozess in jedem Editor höchstens die letzten Sekunden kostet (Test je Editor) und der
 Verlauf in vier Editoren da ist.
+☑ *Stand 17.11.2026*: in der App (Windows, macOS, Linux, Android; Video nur am PC).
+- **(a) Befund je Editor** (was ein Absturz kostet): Dokument (Fließtext) speichert 0,7 s nach dem letzten Tastendruck,
+  Tabelle und Folien bei jeder Änderung (Folientexte nach 0,4–0,6 s; eine Tabellenzelle beim Verlassen – wie Excel),
+  Gestalten, Whiteboard und Video 0,6 s nach der Änderung, Transkript-Korrekturen sofort – dort gehen höchstens die
+  letzten Sekunden verloren. **Verloren ging alles im PDF-Werkzeugkasten**: die Arbeitskopien lagen nur im
+  Zwischenspeicher, die Liste der offenen PDFs nur im Arbeitsspeicher. Jetzt schreibt `PdfWork` die offenen PDFs nach
+  jeder Änderung in `pdf-arbeit.json` (Name, Original, Arbeitskopie, Rückgängig-Stände, zuletzt gespeichert); beim
+  nächsten Start fragt `ui/RecoveryPrompt.kt` *Ungespeicherte Arbeit wiederherstellen?* mit Vorschau der ersten Seite,
+  Zahl der Änderungen, *Wiederherstellen* (öffnet den Werkzeugkasten, Rückgängig geht weiter), *Verwerfen* (löscht die
+  Arbeitskopien), *Alle wiederherstellen* und *Später* (fragt beim nächsten Start wieder). Gespeicherte oder unveränderte
+  PDFs werden nicht angeboten, ihre Arbeitskopien aufgeräumt. Lora während sie im Dokument schreibt: der Text wird erst
+  danach gespeichert (bleibt so).
+- **(b) Verlauf der Schritte** (`ui/StepHistory.kt`): Dokument *Bearbeiten › Verlauf …* (und *Mehr › Verlauf der
+  Schritte …*), Tabelle und Folien *Mehr › Verlauf der Schritte …*, Video Knopf *Verlauf der Schritte* neben
+  Rückgängig/Wiederholen. Die Liste zeigt die Schritte mit Namen und Zeit („Geschrieben: „…““, „Ersetzt: „Eins“ durch
+  „Drei““, „Tabelle eingefügt“, „Zelle B2: „1,3““, „Zeile gelöscht“, „Folie 2: Text geändert“, „Clip geteilt“, „Clip 1
+  gekürzt“ …), *Jetzt* oben, *Wie vor dem ersten Schritt* unten. Die Namen entstehen aus dem Vergleich zweier Stände –
+  keine der rund 80 Stellen mit Rückgängig musste angefasst werden. Ein Klick geht so viele Schritte zurück; Wiederholen
+  holt sie einzeln wieder.
+- **Tests** `ui/NothingLostTest` (7): PDF nach hartem Ende (alles im Speicher vergessen) wiederherstellen, Rückgängig
+  danach; gespeicherte/unveränderte nicht angeboten, *Verwerfen* löscht; die Startfrage mit Klick auf *Wiederherstellen*;
+  Dokument steht 1 s nach dem Tippen auf der Platte, ohne den Editor zu schließen; Namen und Sprung im Dokument (mit
+  Wiederholen danach); Namen für Tabellen, Folien und Video; der Dialog.
+- **Offen**: eigene Tests „hart beendet“ für Tabelle, Folien, Gestalten, Whiteboard und Video (heute aus dem Code belegt,
+  nicht je Editor getestet); der Verlauf für Gestalten und Whiteboard.
 
 **Office und Video (14.11.2026, Wunsch Hauptnutzer)**: Dokumente, Folien, Gestalten/Whiteboard und der Videoeditor
 sollen flüssiger und intuitiver werden, „wie Google Docs und Word“. Ziel für Dokumente: **ein vollwertiges Produkt** –
@@ -456,7 +499,7 @@ Strg+Umschalt+F). Tests `FlowParagraphPageTest`, `FlowReviewComfortTest`, `ui/Do
 Offen und bewusst später: Papierformat in Briefen im TU-Stil (CD unverändert), Zellen senkrecht verbinden, Grammatik auf dem
 Gerät, Smart-Chip-Dropdowns.
 
-### AP-127 ☐ Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva · L (Wunsch Hauptnutzer 14.11.2026, Eigenregie)
+### AP-127 ☑ Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva · L (Wunsch Hauptnutzer 14.11.2026, Eigenregie)
 Der Hauptnutzer hat diese Editoren wenig selbst genutzt; Maßstab sind PowerPoint, Google Slides und Canva.
 - **(a) Bestandsaufnahme** wie AP-126 (a), für die gemeinsame Leinwand (AP-50) und das Whiteboard (AP-61).
 - **(b) Objekte anfassen**: Griffe für Größe und Drehen (Umschalt: Seitenverhältnis bzw. 15°-Schritte), Strg-Ziehen
@@ -466,8 +509,35 @@ Der Hauptnutzer hat diese Editoren wenig selbst genutzt; Maßstab sind PowerPoin
 - **(c) Text in Objekten** wie im Dokument: Doppelklick bearbeitet, Esc wählt ab, Tasten und Autokorrektur aus AP-125.
 - **(d) Folien**: Folienleiste mit Ziehen und Rechtsklick, Layouts als Galerie, Referentenansicht prüfen.
 **Fertig, wenn**: eine Folie und ein Poster lassen sich so flüssig bauen wie in PowerPoint/Canva; Tests je Stufe.
+☑ *Stand 17.11.2026*: (a) bis (d) in der App; der Hauptnutzer prüft am Gerät (*Einstellungen › Prüfungen am Gerät*,
+Paket AP-127), ob Folie und Poster jetzt flüssig entstehen.
+- **(a)** Lückenliste [`leinwand-luecken.md`](leinwand-luecken.md): die Leinwand konnte schon viel (Griffe, Drehen,
+  Rahmenauswahl, Einrasten an Kanten und Mitte, Gruppen, Ausrichten/Verteilen, Ebenen, Doppelklick-Text). Es fehlten
+  Rechtsklick, Strg-Ziehen, gleiche Abstände, Format übertragen, Autokorrektur auf der Fläche und eine Folienleiste
+  zum Ziehen.
+- **(b) Objekte anfassen**: **Rechtsklick-Menü** (`ui/CanvasMenu.kt`, Gestalten und Folien) in Klartext mit Tasten –
+  am Element Ausschneiden, Kopieren, Einfügen, Duplizieren, Löschen, Gruppieren/aufheben, vier Ebenen-Befehle,
+  *Ausrichten ›* (sechs Richtungen, zwei Mal Verteilen), Format übertragen/einfügen, Sperren; auf leerer Fläche
+  Einfügen und Alles auswählen. Die rechte Taste wird als Mausereignis gelesen (für die Gesten ist sie kein „down“ –
+  die alte Ansicht-Verschieben-Geste mit rechts griff darum nie). **Strg-Ziehen kopiert**
+  (`DesignEditorState.copiesForDrag`, ein Schritt Rückgängig; auf Folien hängt das Loslassen die Kopien an), Einrasten
+  aus jetzt mit **Alt** wie in PowerPoint. **Gleiche Abstände** (`CanvasOps.equalGap`, `gaps`): rastet zwischen zwei
+  Nachbarn mittig ein oder auf den Abstand des Nachbarpaars, zeigt die gleichen Abstände als pinke Maße in mm
+  (`drawSpacings`). **Format übertragen** Strg+Umschalt+C/V (`CanvasOps.withFormat`; Folien: `SlideClipboard`).
+  Strg+X in Gestalten und auf Folien, Strg+C/D auf Folien.
+- **(c) Text**: Autokorrektur aus AP-125 (Satzanfang, Anführungszeichen, – …, eigene Ersetzungen) auch beim Tippen direkt
+  auf der Fläche (`CanvasTextEditor`).
+- **(d) Folien**: Folienleiste – Folie **ziehen** zum Verschieben (Titelfolie bleibt vorn), **Rechtsklick** (Neue Folie
+  danach, Duplizieren, Nach vorn/hinten, Vorführen ab hier, Löschen); **Layouts als Galerie** unter *+ Neue Folie ▾*
+  (jede als kleine Folie). Referentenansicht: am Gerät mit Beamer zu prüfen (Prüfliste).
+- **Tests** `ui/CanvasHandlingTest` (6): gleiche Abstände (Rasten, Maße, nicht in anderer Zeile), Strg-Ziehen mit einem
+  Schritt Rückgängig, Format übertragen, Folien-Menü (Duplizieren, Kopieren/Einfügen, Ausschneiden, Format, Ebenen),
+  Rechtsklick in Gestalten mit echter rechter Maustaste (Element, leere Fläche, *Ausrichten ›*), Folienleiste
+  (Rechtsklick, Ziehen um zwei Plätze, Galerie), Autokorrektur auf der Fläche. Bilder `desktop/build/ap127`.
+- **Weiter in AP-148 / APD-16**: Whiteboard (eigene Diagramm-Fläche) ohne Rechtsklick, gleiche Abstände und Format
+  übertragen; Verbinder auf der Leinwand; Ziehen in der Folienübersicht; Rechtschreib-Wellenlinie auf der Fläche.
 
-### AP-128 ☐ Video: Datenschutz in Unterrichtsvideos · M (Wunsch Hauptnutzer 14.11.2026, D)
+### AP-128 ☑ Video: Datenschutz in Unterrichtsvideos · M (Wunsch Hauptnutzer 14.11.2026, D)
 Gesichter verpixeln und Stimme verfremden gibt es (AP-54). Neu, alles auf dem Gerät:
 - **Namen piepen oder stummschalten**: Namen im Transkript finden (Namensschutz AP-67 plus eigene Liste, z. B. die
   Teilnehmerliste einfügen), Liste der Fundstellen zum Prüfen und Abhaken, je Stelle *Piepen · Stumm · Stimme
@@ -477,6 +547,31 @@ Gesichter verpixeln und Stimme verfremden gibt es (AP-54). Neu, alles auf dem Ge
   Exportprotokoll.
 **Fertig, wenn**: ein Unterrichtsvideo mit drei Namen und zwei Gesichtern sich in wenigen Klicks sauber exportieren lässt;
 Tests mit Beispielton und -bild.
+☑ *Stand 17.11.2026*: in der App (Windows, macOS, Linux); am Gerät mit einem echten Unterrichtsvideo zu prüfen
+(*Prüfungen am Gerät*, AP-128).
+- **Namen im Ton** (`video/NameGuard.kt`): sucht in den Transkripten der Clips (Wortzeiten) mit den Regeln des
+  Namensschutzes (AP-67, z. B. „Frau Kaltenbach“, häufige Vornamen) und einer eigenen Liste je Projekt (Teilnehmerliste,
+  ein Name je Zeile; auch im Genitiv „Annas“). Jede Fundstelle wird ein `Bleep` (Datei + Sekunden der Quelle – bleibt beim
+  Schneiden und Verschieben richtig) mit *Piepen · Stumm · Stimme verfremden* und Haken „geprüft“. Im Graphen von Export
+  **und** Vorschau (`NameGuard.soundChain`, vor Tempo und Richtung, auch für abgelösten Ton): Piepen = stumm plus 1-kHz-Ton,
+  Stumm = `volume=0`, Stimme verfremden = grobe Bits, schnelles Tremolo und Telefon-Band (vibrato und der Log-Modus von
+  acrusher lieferten NaN – loudnorm machte dann den ganzen Film leise; der Test prüft das). Untertitel aus dem Transkript
+  und der Text des Videos (Textbasierter Schnitt) zeigen „[Name]“.
+- **Oberfläche**: Transkript-Leiste › *Namen im Ton schützen …* (`ui/VideoPrivacyUi.kt`): eigene Namen, *Namen suchen*,
+  Liste mit Haken, Art je Stelle, *Anhören*, *Entfernen*, *Alle: Piepen/Stumm/Stimme verfremden*, *Alle abhaken*.
+- **Prüfliste vor dem Export**: oben im Export-Dialog *Datenschutz vor dem Export* – Gesichter in Clips ohne Verpixelung
+  (je Clip drei Bilder durch die Gesichtserkennung aus AP-54, ohne sie der Hinweis „nicht geprüft“), Namen im Ton ohne
+  Stelle, Namen in Untertiteln; je Punkt *Zeigen* (Abspielkopf dorthin) und *Beheben* (verpixeln, überpiepen,
+  „[Name]“); der Knopf heißt dann *Trotzdem exportieren*; *Für dieses Projekt nicht mehr prüfen*. Ein Export trotz offener
+  Punkte steht im Protokoll der Lora-Aktionen, ebenso Verpixeln und Überpiepen.
+- **Lora-Aktion** `video.protect_names` (Namen, Art) mit Vorschau der Stellen und Rückgängig.
+- **Tests** `ui/VideoPrivacyTest` (4): Namen aus Liste und Regeln, Einstellungen bleiben beim neuen Suchen, Genitiv,
+  „[Name]“ in Text und Untertiteln, Lage nach Umstellen der Clips; die Filter des Graphen; **ein Unterrichtsvideo mit drei
+  Namen und zwei Gesichtern** (Testton 440 Hz, gelbe Quadrate als Gesichter, Testdetektor): die Prüfliste findet alles,
+  *Beheben* macht es sauber, danach nichts offen; im Export ist die Stimme an den Namen weg und es piept dort (nicht
+  dazwischen), *Stumm* ist still, *Stimme verfremden* hörbar ohne den Film leise zu machen; der Dialog mit Klicks.
+- **Offen**: Namen, die die Regeln nicht kennen und nicht auf der Liste stehen, werden nicht gefunden (das
+  Erkennungsmodell aus AP-67/AP-113 ist für Texte gebaut; im Ton später); Prüfung am Gerät.
 
 ### AP-129 ☐ Video: was im Alltag fehlt · L (Wunsch Hauptnutzer 14.11.2026, D, in Stufen)
 Für **Vorlesungsaufzeichnungen**, **Interviews/Gespräche**, **kurze Clips** und **Unterrichtsvideos**. Vieles gibt es
@@ -487,13 +582,42 @@ schon (Übergänge, Bauchbinden, Kapitel, Rohschnitt nach Pausen und Füllwörte
   langen Aufnahme als Clip; Vorlagen für Titel und Abspann (TUD-Vorlagen unverändert).
 **Fertig, wenn**: die Lückenliste für die vier Zwecke nichts mit hohem Nutzen mehr als „fehlt“ führt.
 
-### AP-130 ☐ Video: flüssige Vorschau · M (Wunsch Hauptnutzer 14.11.2026, D)
+### AP-130 ☑ Video: flüssige Vorschau · M (Wunsch Hauptnutzer 14.11.2026, D)
 **Befund**: Die Vorschau ruckelt (Hauptnutzer). **Vorgehen**: zuerst messen (Abspielen, Spulen, Abspielkopf ziehen,
 Zoomen der Zeitleiste – kurze und 90-minütige Aufnahme, 1080p und 4K, mit und ohne Effekte), dann die Ursachen beheben
 (Vorschaudateien früher und sichtbar erzeugen, Bildpuffer, zwischengespeicherte Vorschaubilder der Zeitleiste, beim
 Ziehen sofort ein nahes Bild und das genaue nach dem Loslassen).
 **Fertig, wenn**: der Abspielkopf der Maus ohne spürbare Verzögerung folgt und 1080p ohne Ruckeln abspielt; Messwerte
 vorher/nachher im Test.
+☑ *Stand 17.11.2026*: in der App; am Office-PC mit einer echten Aufnahme zu prüfen (*Prüfungen am Gerät*, AP-130).
+- **Gemessen** (`VideoPreviewSpeedTest`, Werte in `desktop/build/ap130/messung.txt`; Testbild mit Ton, Schlüsselbild alle
+  2 s, Cloud-Rechner mit 4 Kernen; Median in ms):
+
+  | | Sprung (genaues Bild) | dieselbe Stelle erneut | Ziehen: Bild nahe der Maus | Bilder beim Ziehen (1,6 s) | Abspielen |
+  | --- | --- | --- | --- | --- | --- |
+  | 1080p ohne Vorschaudatei, vorher → nachher | 113 → 127–159 | 115 → **0** | 153 → **3** | 13 → **80** | 25 B/s |
+  | 1080p mit Vorschaudatei | 68 → 80 | 75 → **0** | 54 → **2** | 23 → **80** | 25 B/s |
+  | 4K ohne Vorschaudatei | 261 → 299–315 | 287 → **0** | 343 → **1–2** | 5 → **80** | 25 B/s |
+  | 4K mit Vorschaudatei | 69 → 70–75 | 72 → **0** | 45 → **1–2** | 23 → **80** | 25 B/s |
+
+  **Befund**: Abspielen lief schon gleichmäßig (Takt aus AP-70, 360 Zeilen aus der Vorschaudatei). Spürbar war das
+  Warten beim **Ziehen und Springen**: jedes Standbild war ein eigener ffmpeg-Lauf (70 ms, ohne Vorschaudatei bei 4K
+  250–350 ms), beim Ziehen kamen darum nur 5–23 Bilder in 1,6 s; dieselbe Stelle wurde jedes Mal neu erzeugt; und
+  Vorschaudateien entstanden still im Hintergrund – bis dahin las die Vorschau die großen Originale.
+- **Abhilfe**: **Bildstreifen** (`video/FrameStrips.kt`): je Datei ein kleines Bild pro Sekunde (108 Zeilen, als JPEG im
+  Speicher, rund 5 KB je Bild), gleich beim Öffnen nur aus den Schlüsselbildern gemacht (auch für 4K schnell, vor der
+  Vorschaudatei), danach noch einmal aus ihr. Beim **Ziehen** zeigt die Vorschau sofort das nächste Bild des Streifens
+  (Quelle `NEAR`, genau so eingepasst wie das genaue Bild – nichts springt), das genaue kommt beim Loslassen; ein
+  ffmpeg-Lauf für eine überholte Stelle wird abgebrochen. Bei einer Änderung an derselben Stelle bleibt das alte Bild
+  bis zum neuen (kein unscharfes Aufblitzen). **Bildpuffer** in `VideoPlayer`: die letzten 48 Standbilder, eine schon
+  gezeigte Stelle kommt ohne ffmpeg. **Sichtbar**: *Vorschau wird vorbereitet (n)* mit Kreis neben *Gespeichert*,
+  solange Vorschaudateien entstehen (Tooltip mit den Dateien).
+- **Tests**: `VideoPreviewSpeedTest` (Ziele: dieselbe Stelle ≤ 40 ms, Ziehen ≤ 120 ms, 1080p ≥ 22 Bilder/s);
+  `VideoPreviewCalmTest` (die nahen Bilder liegen pixelgenau wie die genauen, beim Ziehen nie ein älteres nach einem
+  neueren, eine Änderung ohne neues Bild braucht keinen Lauf) und die übrigen Video-Tests grün.
+- **Offen**: Messung am Office-PC mit echter Kamera-Aufnahme (lange GOP, hohe Bitrate) und einem 90-Minuten-Video
+  (Bildstreifen dann rund 27 MB je Datei); Zoomen der Zeitleiste wurde nicht gemessen (die Zeitleiste zeigt keine
+  Vorschaubilder).
 
 **Design (13.11.2026)**: AP-123 (Bedienelemente aus einem Guss) ist freigegeben, reicht dem Hauptnutzer aber noch
 nicht. Weiter geht es im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) mit **APD-01 Umfassendes UI-Review** (vorher

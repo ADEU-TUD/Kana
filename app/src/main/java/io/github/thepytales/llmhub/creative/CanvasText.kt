@@ -274,9 +274,24 @@ fun CanvasTextEditor(
             value = value,
             onValueChange = { v ->
                 if (v.text != value.text) {
-                    val next = FieldRich.reflow(value.text, chars, v.text, typing)
-                    value = v
-                    commit(v.text, next)
+                    var nv = v
+                    var next = FieldRich.reflow(value.text, chars, v.text, typing)
+                    // Autokorrektur wie im Dokument (AP-127 c, Regeln aus AP-125): one typed character, no input method composing.
+                    val at = v.selection.start - 1
+                    if (v.text.length == value.text.length + 1 && v.selection.collapsed && at >= 0 && v.composition == null) {
+                        val s = runCatching { io.github.thepytales.llmhub.App.container.settings.current }.getOrNull()
+                        io.github.thepytales.llmhub.docs.text.AutoCorrect.after(
+                            v.text, v.selection.start, v.text[at],
+                            s?.let { io.github.thepytales.llmhub.docs.text.AutoCorrect.rulesOff(it.docAutocorrectOff) } ?: emptySet(),
+                            own = s?.let { io.github.thepytales.llmhub.docs.text.AutoCorrect.ownEntries(it.docAutocorrectOwn) } ?: emptyList(),
+                        )?.let { fix ->
+                            val t = v.text.replaceRange(fix.range, fix.text)
+                            next = FieldRich.reflow(v.text, next, t, null)
+                            nv = TextFieldValue(t, TextRange(fix.cursor))
+                        }
+                    }
+                    value = nv
+                    commit(nv.text, next)
                 } else {
                     if (v.selection != value.selection) typing = null
                     value = v

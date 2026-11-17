@@ -93,6 +93,7 @@ object AppMap {
         settings("storage", trLater("Speicherorte"), trLater("Eigene Ordner für Dokumente, z. B. in Google Drive."), "speicherort ablage ordner google drive onedrive", android = false),
         settings("updates", trLater("Updates"), trLater("Version, nach Updates suchen, automatische Suche."), "update aktualisieren neue version installieren"),
         settings("downloads", trLater("Inhalte zum Nachladen"), trLater("Modelle, Spracherkennung, Videoeditor und Wissenspakete laden oder löschen."), "nachladen herunterladen download modelle wissenspaket lehramt paket befehlsmodell erkennungsmodell lora befehle namensschutz"),
+        settings("checks", trLater("Prüfungen am Gerät"), trLater("Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht."), "prüfen prüfung prüfliste testen am gerät passt nicht bericht abnahme"),
         settings("help", trLater("Problem melden"), trLater("Fehler beschreiben und anonymes Protokoll senden."), "problem fehler melden bug feedback absturz"),
     )
 

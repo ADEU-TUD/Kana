@@ -42,6 +42,8 @@ internal class VideoActions(
     var pickTranscript by mutableStateOf<String?>(null)
     var loraCut by mutableStateOf(false)
     var export by mutableStateOf(false)
+    /** Namen im Ton schützen is open (AP-128). */
+    var names by mutableStateOf(false)
 
     /** The playhead when a button is used: read then (the bar is not composed again while the video plays). */
     fun pos() = player.position.value

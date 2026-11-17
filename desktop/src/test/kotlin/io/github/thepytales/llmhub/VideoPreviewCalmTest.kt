@@ -165,18 +165,19 @@ class VideoPreviewCalmTest {
             // Dragging the playhead: a request every 25 ms for a second.
             for (i in 0 until 40) { player.seek(p, 0.5 + i * 0.12); Thread.sleep(25) }
             val during = shown.size
-            waitFor(10_000) { shown.lastOrNull()?.let { abs(it.at - (0.5 + 39 * 0.12)) < 1e-6 } == true }
+            // The exact picture at the end (AP-130: before it, the strip's near picture of the same place may come).
+            waitFor(10_000) { shown.lastOrNull()?.let { abs(it.at - (0.5 + 39 * 0.12)) < 1e-6 && it.source != VideoPlayer.Source.NEAR } == true }
             assertTrue(during >= 3, "Bilder schon während des Ziehens: $during")
             assertEquals(0.5 + 39 * 0.12, shown.last().at, 1e-6, "zuletzt das Bild am Abspielkopf")
-            val ats = shown.map { it.at }
+            val ats = synchronized(shown) { shown.map { it.at } }
             assertEquals(ats.sorted(), ats, "nie ein älteres Bild nach einem neueren")
             assertTrue(player.frame.value != null)
             player.seek(p, p.duration)
-            waitFor(10_000) { abs((shown.lastOrNull()?.at ?: 0.0) - p.duration) < 1e-6 }
+            waitFor(10_000) { shown.lastOrNull()?.let { abs(it.at - p.duration) < 1e-6 && it.source != VideoPlayer.Source.NEAR } == true }
             val end = assertNotNull(shown.lastOrNull())
             assertEquals(p.duration, end.at, 1e-6, "am Ende ein Bild")
             assertTrue(!look(end.image).blank, "am Ende kein schwarzes Bild")
-            assertTrue(shown.none { look(it.image).blank })
+            assertTrue(synchronized(shown) { shown.toList() }.none { look(it.image).blank })
         } finally {
             player.dispose()
         }

@@ -264,7 +264,10 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     /** Changes of the model the user has accepted (block texts), per version of the model. */
     val acceptedAi = remember(doc?.versions?.lastOrNull { it.byAi }?.id) { mutableStateListOf<String>() }
     val undo = remember(doc?.id) { mutableStateListOf<List<DocTab>>() }
+    /** When each state in [undo] was left (Verlauf der Schritte, AP-134 b). */
+    val undoAt = remember(doc?.id) { mutableStateListOf<Long>() }
     val redo = remember(doc?.id) { mutableStateListOf<List<DocTab>>() }
+    var historyOpen by remember { mutableStateOf(false) }
     val editing = remember(doc?.id, tabId) { TextEditing() }
     val inlineAi = rememberInlineAi(c)
     val listState = rememberLazyListState()
@@ -316,9 +319,10 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     fun save(author: String = "Sie", note: String = "", transform: (LiveDoc) -> LiveDoc) {
         val d = c.docs.get(doc?.id) ?: return
         undo += d.tabs
-        if (undo.size > 80) undo.removeAt(0)
+        undoAt += System.currentTimeMillis()
+        if (undo.size > 80) { undo.removeAt(0); undoAt.removeAt(0) }
         // Large tables: keep only as many steps as fit into about 60 million characters.
-        while (undo.size > 1 && undo.sumOf { tabs -> tabs.sumOf { it.markdown.length.toLong() } } > 60_000_000L) undo.removeAt(0)
+        while (undo.size > 1 && undo.sumOf { tabs -> tabs.sumOf { it.markdown.length.toLong() } } > 60_000_000L) { undo.removeAt(0); undoAt.removeAt(0) }
         redo.clear()
         c.docs.save(d.change(author, note, transform))
     }
@@ -423,6 +427,7 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     fun undoOnce() {
         val d = c.docs.get(doc?.id) ?: return
         val last = undo.removeLastOrNull() ?: return
+        undoAt.removeLastOrNull()
         redo += d.tabs
         editing.index = null
         c.docs.save(d.change("Sie", trLater("Rückgängig")) { it.copy(tabs = last) })
@@ -432,8 +437,18 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
         val d = c.docs.get(doc?.id) ?: return
         val next = redo.removeLastOrNull() ?: return
         undo += d.tabs
+        undoAt += System.currentTimeMillis()
         editing.index = null
         c.docs.save(d.change("Sie", "Wiederholt") { it.copy(tabs = next) })
+    }
+
+    /** Verlauf der Schritte (AP-134 b): the steps Rückgängig can take back, newest first, with names. */
+    fun history(): List<HistoryStep> {
+        val d = c.docs.get(doc?.id) ?: return emptyList()
+        return undo.indices.reversed().map { i ->
+            val after = if (i == undo.lastIndex) d.tabs else undo[i + 1]
+            HistoryStep(StepNames.tabs(d.docKind, undo[i], after), undoAt.getOrElse(i) { 0L })
+        }
     }
 
     /** The marked passage for requests to the model: selection, edited block or nothing. */
@@ -634,6 +649,10 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
                     Box {
                         IconButton(onClick = { more = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
                         DropdownMenu(expanded = more, onDismissRequest = { more = false }) {
+                            DropdownMenuItem(text = { Text(tr("Verlauf der Schritte …")) }, leadingIcon = { Icon(Icons.Outlined.History, null) }, onClick = {
+                                more = false
+                                historyOpen = true
+                            })
                             DropdownMenuItem(text = { Text(tr("Exportieren …")) }, leadingIcon = { Icon(Icons.Outlined.FileDownload, null) }, onClick = {
                                 more = false
                                 export = doc.title to DocMarkup.resolveImages(exportMarkdown(doc, null), docBase)
@@ -1038,6 +1057,15 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     if (chooseStyle && doc != null) StyleDialog(doc.style, onDismiss = { chooseStyle = false }) { style ->
         c.docs.update(doc.id) { it.copy(style = style) }
         chooseStyle = false
+    }
+    // Verlauf der Schritte (AP-134 b): in the Fließtext-Editor its own steps (keystroke groups), otherwise the document's.
+    if (historyOpen) {
+        val flowSteps = flowHost.history
+        HistoryDialog(
+            steps = flowSteps?.invoke() ?: history(),
+            onJump = { n -> if (flowSteps != null) flowHost.undoSteps?.invoke(n) else repeat(n) { undoOnce() } },
+            onDismiss = { historyOpen = false },
+        )
     }
     export?.let { (title, md) ->
         val d = doc

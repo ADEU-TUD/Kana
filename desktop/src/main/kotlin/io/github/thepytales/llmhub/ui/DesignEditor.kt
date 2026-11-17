@@ -94,6 +94,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.platform.testTag
+import io.github.thepytales.llmhub.creative.drawSpacings
+import androidx.compose.ui.input.pointer.isAltPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -510,6 +513,9 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
     var drag by remember { mutableStateOf<Drag?>(null) }
     var hover by remember { mutableStateOf<Int?>(null) }
     var lastClick by remember { mutableStateOf(0L to Offset.Zero) }
+    /** Where the Rechtsklick-Menü (AP-127) is open, in canvas pixels. */
+    var menuAt by remember { mutableStateOf<Offset?>(null) }
+    val measurer = androidx.compose.ui.text.rememberTextMeasurer()
     // Scale and position of the page now: the gesture handler lives longer than one composition (zoom, scrolling).
     val geo = remember { floatArrayOf(1f, 0f, 0f) }
     BoxWithConstraints(
@@ -528,7 +534,11 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                     ev.isCmd && ev.key == Key.Z -> { if (ev.isShiftPressed) state.redo() else state.undo(); true }
                     ev.isCmd && ev.key == Key.Y -> { state.redo(); true }
                     ev.isCmd && ev.key == Key.D -> { state.duplicate(); true }
+                    // Format übertragen (AP-127, Tasten wie in Word).
+                    ev.isCmd && ev.isShiftPressed && ev.key == Key.C -> { state.copyFormat(); true }
+                    ev.isCmd && ev.isShiftPressed && ev.key == Key.V -> { state.pasteFormat(); true }
                     ev.isCmd && ev.key == Key.C -> { state.copy(); DesignClipboard.mark(state.clipboard.size); true }
+                    ev.isCmd && ev.key == Key.X -> { state.copy(); DesignClipboard.mark(state.clipboard.size); state.delete(); true }
                     ev.isCmd && ev.key == Key.V -> { pasteFromClipboard(c, state); true }
                     ev.isCmd && ev.key == Key.A -> { state.selection = state.current.elements.filter { !it.locked }.map { it.id }.toSet(); true }
                     ev.key == Key.Delete || ev.key == Key.Backspace -> { state.delete(); true }
@@ -565,6 +575,7 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
         Canvas(
             Modifier
                 .fillMaxSize()
+                .testTag("design.canvas")
                 // Strg+wheel zooms the page here, not the whole interface (see ownsCtrlWheel in Main.kt).
                 .ownsCtrlWheel()
                 .onPointerEvent(PointerEventType.Scroll) { ev ->
@@ -581,6 +592,17 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                 }
                 .onPointerEvent(PointerEventType.Move) { ev ->
                     if (drag == null) hover = ev.changes.firstOrNull()?.let { handleAt(it.position) }
+                }
+                // Rechtsklick-Menü (AP-127): a press of the right button is no „down“ for the gestures in Compose, so it
+                // is read as a mouse event; on an element that element is selected first (with its group), like PowerPoint.
+                .onPointerEvent(PointerEventType.Press) { ev ->
+                    if (!ev.buttons.isSecondaryPressed) return@onPointerEvent
+                    val p = ev.changes.firstOrNull()?.position ?: return@onPointerEvent
+                    val hit = DesignGeometry.hit(state.current, toMm(p), 4f / geo[0])
+                    state.inlineText = null
+                    if (hit != null && hit.id !in state.selection) state.selection = state.withGroups(setOf(hit.id))
+                    if (hit == null) state.selection = emptySet()
+                    menuAt = p
                 }
                 .pointerHoverIcon(
                     when (hover) {
@@ -617,7 +639,12 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                                 if (double && hit.kind == ElementKind.TEXT && !hit.locked) { state.selection = setOf(hit.id); state.inlineText = hit.id }
                                 if (double && hit.kind == ElementKind.IMAGE) DesignCanvasActions.replaceImage?.invoke()
                                 val moving = state.selected.filter { !it.locked }
-                                if (moving.isEmpty()) null else { state.beginGesture(); Drag.Move(moving, mm) }
+                                when {
+                                    moving.isEmpty() -> null
+                                    // Strg-Ziehen kopiert (AP-127, wie PowerPoint und Canva): the copies move, the originals stay.
+                                    currentEvent.keyboardModifiers.isCmd && !shift -> { state.beginGesture(); Drag.Move(state.copiesForDrag(), mm) }
+                                    else -> { state.beginGesture(); Drag.Move(moving, mm) }
+                                }
                             }
                             else -> {
                                 if (!shift) state.selection = emptySet()
@@ -632,7 +659,8 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                             val pos = toMm(ch.position)
                             if ((ch.position - p).getDistance() > 2f) moved = true
                             when (val g = drag) {
-                                is Drag.Move -> if (moved) state.dragMove(g.start, pos - g.from, 7f / scale, free = ev.keyboardModifiers.isCmd)
+                                // Alt moves freely (no Einrasten) – Strg is copying since AP-127, as in PowerPoint.
+                                is Drag.Move -> if (moved) state.dragMove(g.start, pos - g.from, 7f / scale, free = ev.keyboardModifiers.isAltPressed)
                                 is Drag.Resize -> state.dragResize(g.start, g.handle, pos, Handle.keepsRatio(g.start) != ev.keyboardModifiers.isShiftPressed)
                                 is Drag.Rotate -> state.dragRotate(g.start, pos, ev.keyboardModifiers.isShiftPressed)
                                 is Drag.Marquee -> drag = g.copy(to = pos)
@@ -690,6 +718,8 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                     if (g.vertical) drawLine(Color(0xFFE6007E), Offset(g.at * scale, -2000f), Offset(g.at * scale, d.height * scale + 2000f), 1f)
                     else drawLine(Color(0xFFE6007E), Offset(-2000f, g.at * scale), Offset(d.width * scale + 2000f, g.at * scale), 1f)
                 }
+                // Gleiche Abstände mit Maß (AP-127).
+                drawSpacings(state.spacings, scale, measurer, Color(0xFFE6007E))
                 (drag as? Drag.Marquee)?.let { g ->
                     val tl = Offset(min(g.from.x, g.to.x), min(g.from.y, g.to.y)) * scale
                     val br = Offset(max(g.from.x, g.to.x), max(g.from.y, g.to.y)) * scale
@@ -697,6 +727,10 @@ private fun DesignCanvas(state: DesignEditorState, focus: FocusRequester) {
                     drawRect(EditorAccent, tl, Size(br.x - tl.x, br.y - tl.y), style = Stroke(1f))
                 }
             }
+        }
+        CanvasContextMenu(menuAt, state.menuContext(canPaste = true), onDismiss = { menuAt = null }) { a ->
+            state.perform(a) { pasteFromClipboard(c, state) }
+            if (a == CanvasAction.COPY || a == CanvasAction.CUT) DesignClipboard.mark(state.clipboard.size)
         }
         state.inlineText?.let { id ->
             val e = state.current.elements.firstOrNull { it.id == id && it.kind == ElementKind.TEXT }
@@ -859,7 +893,7 @@ private fun PageProperties(state: DesignEditorState) {
     HintText(tr("Ein anderes Format passt alle Elemente an die neue Größe an."))
     HorizontalDivider()
     HintText(
-        tr("Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Strg hält das Einrasten an)."),
+        tr("Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Alt hält das Einrasten an, Strg+Ziehen kopiert); Rechtsklick zeigt, was mit dem Element geht."),
     )
 }
 

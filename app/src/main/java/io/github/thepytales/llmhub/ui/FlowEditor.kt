@@ -325,6 +325,8 @@ class FlowState(markdown: String) {
     var version by mutableIntStateOf(0)
     private val undo = ArrayDeque<List<Pair<Long, Any>>>()
     private val redo = ArrayDeque<List<Pair<Long, Any>>>()
+    /** When each state in [undo] was left (for the Verlauf, AP-134). */
+    private val undoAt = ArrayDeque<Long>()
     private var lastPush = 0L
 
     /** Lora is writing at the cursor (AP-47): what she was asked, and the running request. */
@@ -486,7 +488,8 @@ class FlowState(markdown: String) {
         if (group && now - lastPush < 900 && undo.isNotEmpty()) { lastPush = now; return }
         lastPush = if (group) now else 0L
         undo.addLast(snapshot())
-        if (undo.size > 200) undo.removeFirst()
+        undoAt.addLast(now)
+        if (undo.size > 200) { undo.removeFirst(); undoAt.removeFirstOrNull() }
         redo.clear()
     }
 
@@ -508,6 +511,7 @@ class FlowState(markdown: String) {
 
     fun undo() {
         val s = undo.removeLastOrNull() ?: return
+        undoAt.removeLastOrNull()
         redo.addLast(snapshot())
         lastPush = 0L
         restore(s)
@@ -516,9 +520,22 @@ class FlowState(markdown: String) {
     fun redo() {
         val s = redo.removeLastOrNull() ?: return
         undo.addLast(snapshot())
+        undoAt.addLast(System.currentTimeMillis())
         lastPush = 0L
         restore(s)
     }
+
+    /** Verlauf der Schritte (AP-134 b): the changes that Rückgängig can take back, newest first, with names. */
+    fun history(): List<HistoryStep> {
+        val now = snapshot()
+        return undo.indices.reversed().map { i ->
+            val after = if (i == undo.lastIndex) now else undo[i + 1]
+            HistoryStep(describeFlowStep(undo[i], after), undoAt.getOrElse(i) { 0L })
+        }
+    }
+
+    /** Goes [n] steps back at once (Wiederholen brings them back one by one). */
+    fun undoSteps(n: Int) = repeat(n.coerceAtMost(undo.size)) { undo() }
 
     fun changed() {
         version++
@@ -941,6 +958,9 @@ class FlowHost(
     /** The editor's own Rückgängig, Wiederholen and Suchen (APD-15): Strg+Z/Y/F reach them from anywhere in the window. */
     var undo: (() -> Unit)? = null
     var redo: (() -> Unit)? = null
+    /** Its Verlauf der Schritte (AP-134 b). */
+    var history: (() -> List<HistoryStep>)? = null
+    var undoSteps: ((Int) -> Unit)? = null
     var find: (() -> Unit)? = null
     /** *Link …* for the selection (Rechtsklick-Menü, AP-125). */
     var link: (() -> Unit)? = null
@@ -1265,6 +1285,8 @@ fun FlowEditor(
     DisposableEffect(state, host, chromeInHost) {
         host.undo = { state.undo() }
         host.redo = { state.redo() }
+        host.history = { state.history() }
+        host.undoSteps = { n -> state.undoSteps(n) }
         host.find = ::openFind
         host.link = { state.active?.selection?.let { linkFor = it.min until it.max } }
         if (chromeInHost) {
@@ -1274,6 +1296,8 @@ fun FlowEditor(
         onDispose {
             host.undo = null
             host.redo = null
+            host.history = null
+            host.undoSteps = null
             host.find = null
             host.link = null
             host.menus = null
@@ -1613,6 +1637,7 @@ private fun FlowMenus(
 ) {
     var open by remember { mutableStateOf<String?>(null) }
     var tablePick by remember { mutableStateOf(false) }
+    var historyOpen by remember { mutableStateOf(false) }
     var sectionFor by remember { mutableStateOf<DocMarkup.Section?>(null) }
     var special by remember { mutableStateOf(false) }
     var autoCorrect by remember { mutableStateOf(false) }
@@ -1669,6 +1694,8 @@ private fun FlowMenus(
         menu("Bearbeiten") { close ->
             item("Rückgängig", "Strg+Z", state.canUndo, { state.undo() }, close)
             item("Wiederholen", "Strg+Y", state.canRedo, { state.redo() }, close)
+            // Verlauf der Schritte mit Sprung zurück (AP-134 b).
+            item("Verlauf …", "", onClick = { historyOpen = true }, close = close)
             HorizontalDivider()
             // Zwischenablage im Menü (AP-126 b), wie im Rechtsklick-Menü.
             val seg = state.active
@@ -1817,6 +1844,7 @@ private fun FlowMenus(
     sectionFor?.let { sec ->
         SectionDialog(sec, onDismiss = { sectionFor = null }) { s2 -> sectionFor = null; state.insertBlock(DocMarkup.sectionMarker(s2)) }
     }
+    if (historyOpen) HistoryDialog(state.history(), onJump = { n -> state.undoSteps(n) }, onDismiss = { historyOpen = false })
     if (tablePick) TablePickDialog(onDismiss = { tablePick = false }) { rows, cols ->
         tablePick = false
         state.insertBlock(DocBlocks.table(listOf(List(cols) { tr("Spalte {0}", it + 1) }) + List(rows - 1) { List(cols) { "" } }))
@@ -3336,3 +3364,18 @@ private fun FlowField(
 
 /** Check mark used by tests and the review (keeps the import of the icon set in one place). */
 internal val FLOW_CHECK = Icons.Outlined.Check
+
+/** Name of a step of the Fließtext-Editor from the states before and after it (AP-134 b). */
+internal fun describeFlowStep(before: List<Pair<Long, Any>>, after: List<Pair<Long, Any>>): String {
+    val rawA = before.filter { it.second is String }.associate { it.first to it.second as String }
+    val rawB = after.filter { it.second is String }.associate { it.first to it.second as String }
+    (rawB.keys - rawA.keys).firstOrNull()?.let { return tr("{0} eingefügt", StepNames.blockKind(rawB.getValue(it))) }
+    (rawA.keys - rawB.keys).firstOrNull()?.let { return tr("{0} entfernt", StepNames.blockKind(rawA.getValue(it))) }
+    rawA.keys.firstOrNull { rawA[it] != rawB[it] }?.let { return tr("{0} geändert", StepNames.blockKind(rawB.getValue(it))) }
+    fun text(snap: List<Pair<Long, Any>>) = snap.mapNotNull { (it.second as? RichText)?.text }.joinToString("\n")
+    val ta = text(before)
+    val tb = text(after)
+    if (ta != tb) return StepNames.text(ta, tb)
+    if (before.map { it.first } != after.map { it.first }) return tr("Absätze verschoben")
+    return tr("Formatiert")
+}

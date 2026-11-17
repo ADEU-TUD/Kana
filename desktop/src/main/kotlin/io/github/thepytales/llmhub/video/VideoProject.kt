@@ -233,6 +233,12 @@ data class VideoProject(
      * assigns each as soon as it is there.
      */
     val pendingTranscripts: Map<String, String> = emptyMap(),
+    /** Namen im Ton (AP-128): places beeped, muted or disguised in the export and the preview. */
+    val bleeps: List<Bleep> = emptyList(),
+    /** Names of one's own to look for (one per line, e.g. the participants), AP-128. */
+    val nameList: String = "",
+    /** Prüfliste vor dem Export (AP-128); false = switched off for this project. */
+    val privacyCheck: Boolean = true,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
 ) {

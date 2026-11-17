@@ -66,13 +66,13 @@ tests: SheetExtrasTest SheetsLikeExcelTest ChartsAndLoraCalcTest OfficeChartsTes
 
 [folien] Folien und Präsentieren
 quellen: ui/Slide*.kt ui/PresentScreens.kt docs/Slide*.kt docs/Pptx*.kt docs/PaperDeck.kt agent/OfficeActions.kt
-tests: SlidesLikePowerPointTest PptxReaderTest SharedCanvasTest DocsAndSlidesExtrasTest OfficeSuiteTest
+tests: SlidesLikePowerPointTest PptxReaderTest SharedCanvasTest DocsAndSlidesExtrasTest OfficeSuiteTest CanvasHandlingTest
 
 [gestalten] Gestalten, Whiteboard, Diagramme, Bilder
-quellen: creative/** ui/Design*.kt ui/CreateDesigns.kt ui/WhiteboardScreen.kt ui/Diagram*.kt docs/Diagrams.kt
+quellen: creative/** ui/Design*.kt ui/CreateDesigns.kt ui/WhiteboardScreen.kt ui/Diagram*.kt docs/Diagrams.kt ui/CanvasMenu.kt
 quellen: docs/DiagramRaster.kt data/Designs.kt data/DesignSupport.kt agent/DesignTools.kt ui/ImageEdit.kt ui/ImageActions.kt
 quellen: ui/Images*.kt ui/ImageViewer.kt ui/ImageEncoding.kt data/ImageGallery.kt ui/Logo.kt ui/LoraFigure.kt data/LogoStore.kt
-tests: CreativeScreenTest CreativeTest DiagramsTest SharedCanvasTest ImageEditTest LogoTest LoraFigureTest
+tests: CreativeScreenTest CreativeTest DiagramsTest SharedCanvasTest ImageEditTest LogoTest LoraFigureTest CanvasHandlingTest
 
 [video] Videoeditor, Bildschirmaufnahme, Export
 quellen: video/** ui/Video*.kt ui/ScreenRecordUi.kt ui/MediaPreview.kt ui/MediaLook.kt ui/Extensions*.kt desktop/Extensions.kt
@@ -147,7 +147,10 @@ quellen: net/** data/McpServers.kt ui/RepoPicker.kt data/UniWatch.kt ui/ErrorHel
 quellen: data/ScheduledTask.kt ui/TaskDelivery.kt ui/Games*.kt ui/GamePlatform.kt data/LearningGames.kt data/Proposals.kt
 quellen: ui/ProposalScreen.kt ui/LoraTour.kt ui/LoraHelper.kt ui/Spotlight.kt ui/ToolsSettings.kt AppShortcuts.kt SelfTest.kt
 quellen: Main.kt ui/LoraFileDialog.kt ui/DrivePlatform.kt ui/DesignPlatform.kt ui/ChatPlatform.kt ui/ScanPlatform.kt
+quellen: data/DeviceChecks.kt ui/DeviceChecksSection.kt ui/ScreenCapture.kt /app/src/main/resources/pruefungen/**
+quellen: ui/StepHistory.kt ui/RecoveryPrompt.kt
 quellen: /desktop/src/main/resources/lizenzen/** /desktop/src/main/resources/icon.png /desktop/src/main/resources/tray.png
 tests: AccountsTest UpdatesTest ExtensionsTest ExtraWindowsTest ZoomTest PanelResizerTest MacClickFixTest AppShortcutsTest
 tests: NewToolsLookTest Round2EndLookTest BrowserLiveTest ConnectionsTest ServerStatusTest ProposalTest GamesAndAiNoteTest
 tests: ChatFoldersTest LoraHelpTest BedienungReviewTest HoverLookTest LoraPanelLookTest ToolsAndDrawerTest
+tests: DeviceChecksTest NothingLostTest

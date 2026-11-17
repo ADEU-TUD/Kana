@@ -41,6 +41,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import io.github.thepytales.llmhub.creative.drawSpacings
+import androidx.compose.ui.input.pointer.isAltPressed
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import io.github.thepytales.llmhub.creative.CanvasTextEditor
 import io.github.thepytales.llmhub.creative.DesignEditorState
 import io.github.thepytales.llmhub.creative.DesignGeometry
@@ -91,6 +94,14 @@ internal fun SlideCanvasOverlay(
     var editing by remember { mutableStateOf<Int?>(null) }
     var lastClick by remember { mutableStateOf(0L to Offset.Zero) }
     val focus = remember { FocusRequester() }
+    /** Rechtsklick-Menü (AP-127): where it is open, in pixels. */
+    var menuAt by remember { mutableStateOf<Offset?>(null) }
+    val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+    fun act(a: CanvasAction) {
+        val (next, sel) = slideAction(a, latest, latestSelection) ?: return
+        onChange(next)
+        onSelect(sel)
+    }
     // Typed text is saved after a short pause (like the fields of the slide) and when the typing ends.
     var pending by remember { mutableStateOf<Triple<Int, String, Boolean>?>(null) }
     fun flush() {
@@ -122,6 +133,12 @@ internal fun SlideCanvasOverlay(
                 return true
             }
             when {
+                // Clipboard, Duplizieren and Format übertragen (AP-127), as in Gestalten.
+                ev.isCmd && ev.isShiftPressed && ev.key == Key.C -> { act(CanvasAction.COPY_FORMAT); true }
+                ev.isCmd && ev.isShiftPressed && ev.key == Key.V -> { act(CanvasAction.PASTE_FORMAT); true }
+                ev.isCmd && ev.key == Key.C -> { act(CanvasAction.COPY); true }
+                ev.isCmd && ev.key == Key.X -> { act(CanvasAction.CUT); true }
+                ev.isCmd && ev.key == Key.D -> { act(CanvasAction.DUPLICATE); true }
                 ev.isCmd && ev.key == Key.G -> {
                     onChange(SlideCanvas.group(latest, sel, io.github.thepytales.llmhub.data.newDesignId(), apart = ev.isShiftPressed)); true
                 }
@@ -153,11 +170,30 @@ internal fun SlideCanvasOverlay(
         }
         Canvas(
             Modifier.fillMaxSize().pointerInput(scale) {
+                // Rechtsklick-Menü (AP-127): the right button is no „down“ for the gestures, so it is read as a mouse event.
+                awaitPointerEventScope {
+                    while (true) {
+                        val ev = awaitPointerEvent()
+                        if (ev.type != androidx.compose.ui.input.pointer.PointerEventType.Press || !ev.buttons.isSecondaryPressed) continue
+                        val p = ev.changes.firstOrNull()?.position ?: continue
+                        flush()
+                        editing = null
+                        state.replace(SlideCanvas.design(latest))
+                        state.selection = SlideCanvas.ids(latestSelection)
+                        val hit = DesignGeometry.hit(state.current, toMm(p), 4f / scale)
+                        if (hit != null && hit.id !in state.selection) select(state.withGroups(setOf(hit.id)))
+                        if (hit == null) select(emptySet())
+                        menuAt = p
+                    }
+                }
+            }.pointerInput(scale) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     flush()
                     editing = null
                     runCatching { focus.requestFocus() }
+                    // Strg-Ziehen kopiert (AP-127): the originals stay where they were, the copies go where the drag ends.
+                    val copying = currentEvent.keyboardModifiers.isCmd && !currentEvent.keyboardModifiers.isShiftPressed
                     state.replace(SlideCanvas.design(latest))
                     state.selection = SlideCanvas.ids(latestSelection)
                     val shift = currentEvent.keyboardModifiers.isShiftPressed
@@ -198,7 +234,8 @@ internal fun SlideCanvasOverlay(
                         if ((ch.position - p).getDistance() > 2f) moved = true
                         when (val g = drag) {
                             // Strg moves freely (no Einrasten), Umschalt turns in 15° steps or keeps the proportions.
-                            is SlideDrag.Move -> if (moved) state.dragMove(g.start, pos - g.from, 7f / scale, free = ev.keyboardModifiers.isCmd)
+                            // Alt moves freely (no Einrasten); Strg copies since AP-127, as in PowerPoint.
+                            is SlideDrag.Move -> if (moved) state.dragMove(g.start, pos - g.from, 7f / scale, free = ev.keyboardModifiers.isAltPressed)
                             is SlideDrag.Resize -> state.dragResize(g.start, g.handle, pos, Handle.keepsRatio(g.start) != ev.keyboardModifiers.isShiftPressed)
                             is SlideDrag.Rotate -> state.dragRotate(g.start, pos, ev.keyboardModifiers.isShiftPressed)
                             is SlideDrag.Marquee -> drag = g.copy(to = pos)
@@ -215,7 +252,13 @@ internal fun SlideCanvasOverlay(
                         }
                     }
                     val live = drag != null && drag !is SlideDrag.Marquee && moved
-                    if (live) commit()
+                    if (live && copying && drag is SlideDrag.Move) {
+                        val sel = latestSelection.sorted()
+                        val movedNow = SlideCanvas.fromDesign(latest, state.current.elements)
+                        val copies = slideCopies(sel.mapNotNull { movedNow.getOrNull(it) }, 0.0)
+                        onChange(latest + copies)
+                        onSelect((latest.size until latest.size + copies.size).toSet())
+                    } else if (live) commit()
                     state.endGesture()
                     if (live) onLive(null)
                     drag = null
@@ -245,6 +288,8 @@ internal fun SlideCanvasOverlay(
                 if (g.vertical) drawLine(GuideColor, Offset(g.at * scale, 0f), Offset(g.at * scale, size.height), 1f)
                 else drawLine(GuideColor, Offset(0f, g.at * scale), Offset(size.width, g.at * scale), 1f)
             }
+            // Gleiche Abstände mit Maß (AP-127).
+            drawSpacings(state.spacings, scale, measurer, GuideColor)
             (drag as? SlideDrag.Marquee)?.let { g ->
                 val tl = Offset(min(g.from.x, g.to.x), min(g.from.y, g.to.y)) * scale
                 val br = Offset(max(g.from.x, g.to.x), max(g.from.y, g.to.y)) * scale
@@ -253,6 +298,18 @@ internal fun SlideCanvasOverlay(
             }
         }
         // Typing right on the slide (AP-50): in the box's font, size, colour and rotation, with formatting inside it.
+        CanvasContextMenu(
+            menuAt,
+            CanvasMenuContext(
+                selected = selection.size,
+                grouped = selection.any { latest.getOrNull(it)?.group?.isNotEmpty() == true },
+                locked = false,
+                canPaste = SlideClipboard.items.isNotEmpty(),
+                canPasteFormat = SlideClipboard.format != null && selection.isNotEmpty(),
+            ),
+            onDismiss = { menuAt = null },
+            canLock = false,
+        ) { act(it) }
         editing?.let { i ->
             val el = elements.getOrNull(i)?.let { e -> pending?.takeIf { it.first == i }?.let { e.copy(text = it.second, rich = it.third) } ?: e }
             if (el == null || el.kind != "text") LaunchedEffect(i) { editing = null }

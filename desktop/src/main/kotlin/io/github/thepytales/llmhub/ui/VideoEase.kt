@@ -271,6 +271,26 @@ internal fun BarButton(icon: ImageVector, label: String, tip: String, onClick: (
 }
 
 /** „Gespeichert“ in the header (AP-121): every change is stored by itself – beginners look for a save button. */
+/**
+ * Vorschau wird vorbereitet (AP-130): while proxy files are made in the background, a small sign says so – until then
+ * the preview is slower (it reads the original files).
+ */
+@Composable
+internal fun PreparingBadge(labelled: Boolean) {
+    val names by io.github.thepytales.llmhub.video.Media.preparing.collectAsState()
+    if (names.isEmpty()) return
+    val text = tr("Vorschau wird vorbereitet ({0})", names.size)
+    Tip(tr("Für eine flüssige Vorschau entsteht im Hintergrund eine kleine Fassung jeder Datei: {0}. Bis dahin kann die Vorschau stocken.", names.joinToString(", "))) {
+        Row(Modifier.padding(horizontal = 6.dp).semantics(mergeDescendants = true) { contentDescription = text }, verticalAlignment = Alignment.CenterVertically) {
+            androidx.compose.material3.CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp)
+            if (labelled) {
+                Spacer(Modifier.width(6.dp))
+                Text(text, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, softWrap = false)
+            }
+        }
+    }
+}
+
 @Composable
 internal fun SavedBadge(saved: Boolean, labelled: Boolean) {
     val text = tr(if (saved) "Gespeichert" else "Speichert …")

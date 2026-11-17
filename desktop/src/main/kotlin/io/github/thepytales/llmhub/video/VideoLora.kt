@@ -210,6 +210,31 @@ object VideoLora {
             }
         },
         ToolAction(
+            "video.protect_names", ActionArea.VIDEO, trLater("Namen im Ton schützen"),
+            "Datenschutz im Unterrichtsvideo (AP-128): sucht Namen im Transkript der Clips (Namensschutz und eigene Namen, z. B. die Teilnehmerliste) und überpiept sie im Ton – oder schaltet sie stumm bzw. verfremdet die Stimme; Untertitel zeigen „[Name]“. Alles auf dem Gerät.",
+            listOf(ActionParam("namen", "eigene Namen, mit Komma getrennt (optional)", required = false), ActionParam("art", "piepen, stumm oder stimme verfremden (leer: piepen)", required = false)),
+            risky = true, android = false,
+        ) { c, a ->
+            val p = need()
+            val ts = transcripts(c, p)
+            if (ts.isEmpty()) throw ActionFailed(tr("Kein Clip hat ein Transkript – erst transkribieren, dann finde ich die Namen."))
+            val ownText = listOf(p.nameList, a.s("namen").orEmpty().replace(',', '\n')).filter { it.isNotBlank() }.joinToString("\n")
+            val w = a.s("art").orEmpty().lowercase()
+            val mode = when { "stumm" in w || "mute" in w -> NameGuard.STUMM; "stimm" in w || "verfremd" in w || "voice" in w -> NameGuard.STIMME; else -> NameGuard.PIEP }
+            val found = NameGuard.find(p, ts, NameGuard.ownList(ownText))
+            val fresh = found.filter { b -> p.bleeps.none { it.id == b.id } }
+            if (found.isEmpty()) throw ActionFailed(tr("Im Ton habe ich keine Namen gefunden."))
+            val result = found.map { b -> if (b in fresh) b.copy(mode = mode) else b }
+            val label = when (mode) { NameGuard.STUMM -> tr("stumm"); NameGuard.STIMME -> tr("Stimme verfremdet"); else -> tr("überpiept") }
+            ActionPlan(
+                "video.protect_names", tr("Schützt {0} Stelle(n) mit Namen im Ton …", result.size), true,
+                result.take(8).map { b -> b.name to (NameGuard.timelineAt(p, b)?.let { clock(it) } ?: "") + " · " + label },
+            ) {
+                io.github.thepytales.llmhub.agent.ToolActions.log(tr("Namen im Ton im Video „{0}“: {1} Stelle(n) {2} (Lora).", p.title, result.size, label))
+                change(p, tr("{0} Stelle(n) mit Namen im Ton {1} – Liste unter Transkript › Namen im Ton.", result.size, label)) { pp -> pp.copy(bleeps = result, nameList = ownText) }
+            }
+        },
+        ToolAction(
             "video.marker", ActionArea.VIDEO, trLater("Marker setzen"),
             "Setzt einen Marker mit Notiz auf die Zeitleiste; Marker werden zu Kapiteln im MP4 und für YouTube (AP-53).",
             listOf(ActionParam("notiz", "Notiz, z. B. Kapitelname"), ActionParam("zeit", "Zeit, z. B. 1:30 (leer: Abspielposition)", required = false)),

@@ -121,6 +121,8 @@ internal fun TranscriptCutPanel(
     var wish by remember { mutableStateOf("") }
     var asking by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+    var namesOpen by remember { mutableStateOf(false) }
+    if (namesOpen) NameGuardDialog(c, h, player, onDismiss = { namesOpen = false }, load = load)
     val current = doc?.at(pos) ?: -1
     Column(modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(tr("Transkript"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.semantics { contentDescription = tr("Transkript") })
@@ -137,6 +139,8 @@ internal fun TranscriptCutPanel(
             val pauses = doc.pauses().size
             OutlinedButton(enabled = fillers > 0, onClick = { h.edit { TextCut.removeFillers(it, doc) }; state.clear(); Notices.info(tr("{0} Füllwörter entfernt. Mit Strg+Z rückgängig.", fillers)) }) { Text(tr("Füllwörter entfernen ({0})", fillers)) }
             OutlinedButton(enabled = pauses > 0, onClick = { h.edit { TextCut.shortenPauses(it, doc) }; state.clear(); Notices.info(tr("{0} Pausen gekürzt. Mit Strg+Z rückgängig.", pauses)) }) { Text(tr("Pausen kürzen ({0})", pauses)) }
+            // Datenschutz (AP-128): names in the sound beeped, muted or disguised.
+            OutlinedButton(onClick = { namesOpen = true }) { Text(if (p.bleeps.isEmpty()) tr("Namen im Ton schützen …") else tr("Namen im Ton ({0}) …", p.bleeps.size)) }
             if (state.hasSelection) Button(onClick = { state.deleteSelection(h) }) { Icon(Icons.Outlined.ContentCut, null, Modifier.size(16.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Herausschneiden") + " (Entf)") }
         }
         // Lora as editing assistant.

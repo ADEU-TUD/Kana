@@ -148,7 +148,10 @@ object VideoRender {
             val tempo = if (still) emptyList() else VideoFx.soundFilters(c.speed, c.fx.reverse, c.fx.voice)
             graph += if (mi?.hasAudio == true && !c.muted && !muted("V1") && !c.fx.freeze) {
                 val extra = if (tempo.isEmpty()) "" else tempo.joinToString(",", postfix = ",asetpts=PTS-STARTPTS,")
-                "[$k:a]$audioFormat,volume=${f(c.volume.toDouble())},asetpts=PTS-STARTPTS,${extra}apad,atrim=0:${f(s.length)}[a$i]"
+                // Namen im Ton (AP-128): beeped, muted or disguised by source time, before speed and direction.
+                val (lines, head) = NameGuard.soundChain(p.bleeps, c.path, ss, dur, "[$k:a]", audioFormat, "c$i")
+                graph += lines
+                "${head}volume=${f(c.volume.toDouble())},asetpts=PTS-STARTPTS,${extra}apad,atrim=0:${f(s.length)}[a$i]"
             } else "anullsrc=channel_layout=stereo:sample_rate=48000,atrim=0:${f(s.length)}[a$i]"
         }
         // Join: cross-dissolve / through black where a transition is set, otherwise a hard cut.
@@ -278,6 +281,9 @@ object VideoRender {
             val ss = if (m.reverse) maxOf(0.0, m.outSec - (cut + d) * sp) else m.inSec + cut * sp
             args += listOf("-ss", f(ss), "-t", f(d * sp), "-i", File(m.path).let { if (Media.isStill(it)) it else source(it) }.absolutePath)
             val idx = input++
+            // Namen im Ton (AP-128) also in sound taken off its clip or a second microphone of the same file.
+            val (nameLines, nameHead) = if (m.reverse) emptyList<String>() to "[$idx:a]$audioFormat," else NameGuard.soundChain(p.bleeps, m.path, ss, d * sp, "[$idx:a]", audioFormat, "m$k")
+            graph += nameLines
             val fade = m.fadeSec.coerceIn(0.0, m.length / 3)
             val fades = buildString {
                 if (fade > 0 && cut <= 1e-6) append("afade=t=in:st=0:d=${f(fade)},")
@@ -285,8 +291,8 @@ object VideoRender {
                 if (fade > 0 && endLocal <= d + 1e-6) append("afade=t=out:st=${f(endLocal - fade)}:d=${f(fade)},")
             }
             val delay = Math.round(start * 1000)
-            graph += if (tempo.isEmpty()) "[$idx:a]$audioFormat,volume=${f(m.volume.toDouble())},${fades}asetpts=PTS-STARTPTS,adelay=$delay|$delay[m$k]"
-            else "[$idx:a]$audioFormat,volume=${f(m.volume.toDouble())},asetpts=PTS-STARTPTS,${tempo.joinToString(",")},asetpts=PTS-STARTPTS,${fades}adelay=$delay|$delay[m$k]"
+            graph += if (tempo.isEmpty()) "${nameHead}volume=${f(m.volume.toDouble())},${fades}asetpts=PTS-STARTPTS,adelay=$delay|$delay[m$k]"
+            else "${nameHead}volume=${f(m.volume.toDouble())},asetpts=PTS-STARTPTS,${tempo.joinToString(",")},asetpts=PTS-STARTPTS,${fades}adelay=$delay|$delay[m$k]"
             mix += "m$k"
         }
         if (mix.isNotEmpty()) {

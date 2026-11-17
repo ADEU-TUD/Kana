@@ -181,6 +181,8 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
     crash?.let { report ->
         CrashDialog(report, onDismiss = { crash = null })
     }
+    // Nichts geht verloren (AP-134): unsaved work of the last run (PDF-Werkzeugkasten) is offered again.
+    if (crash == null) RecoveryPrompt(c, onOpen = { r -> runCatching { nav.navigate(r) { launchSingleTop = true } } })
     // A new version: asks at the start whether to install it (see Updates).
     if (crash == null) UpdatePrompt(c)
     // The recognition model of the pseudonymization, offered once (AP-67).

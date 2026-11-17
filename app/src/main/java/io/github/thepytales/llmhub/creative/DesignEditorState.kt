@@ -102,6 +102,15 @@ object Handle {
 data class Guide(val vertical: Boolean, val at: Float)
 
 /**
+ * A gap shown while moving (AP-127, intelligente Hilfslinien wie PowerPoint): from [from] to [to] along x
+ * ([horizontal]) or y, drawn at [across]; labelled with its size in mm. Equal gaps show together.
+ */
+data class Spacing(val horizontal: Boolean, val from: Float, val to: Float, val across: Float) {
+    val size: Float get() = to - from
+    val label: String get() = if (size >= 10f || size == Math.round(size).toFloat()) "${Math.round(size)} mm" else String.format(java.util.Locale.GERMANY, "%.1f mm", size)
+}
+
+/**
  * State of the design editor (AP-24): the design, the page and the selection, undo/redo, and the operations of the
  * canvas and the panels. All changes go through [edit], which keeps the history (coalescing typing in one field).
  */
@@ -134,6 +143,10 @@ class DesignEditorState(initial: Design) {
         pan = Offset.Zero
     }
     var guides by mutableStateOf<List<Guide>>(emptyList())
+    /** Gaps to the neighbours while moving (AP-127). */
+    var spacings by mutableStateOf<List<Spacing>>(emptyList())
+    /** Format übertragen (AP-127): the look taken with Strg+Umschalt+C, put on others with Strg+Umschalt+V. */
+    var formatClip by mutableStateOf<DesignElement?>(null)
     /** Increased to put the cursor into the text field of the panel (double click on a text). */
     var focusText by mutableIntStateOf(0)
     /** The text box being typed in right on the canvas (AP-50), or null. */
@@ -253,6 +266,35 @@ class DesignEditorState(initial: Design) {
         clipboard = selected
     }
 
+    /**
+     * Strg-Ziehen (AP-127, wie PowerPoint und Canva): copies of the selection right on top of it, selected; the drag then
+     * moves the copies and the originals stay. Part of the gesture's step of the history (call after [beginGesture]).
+     */
+    fun copiesForDrag(): List<DesignElement> {
+        val src = current.elements.filter { it.id in withGroups(selection) && !it.locked }
+        if (src.isEmpty()) return emptyList()
+        val groups = src.map { it.group }.filter { it.isNotEmpty() }.distinct().associateWith { newDesignId() }
+        val copies = src.map { it.copy(id = newDesignId(), slot = "", group = groups[it.group].orEmpty()) }
+        edit(record = false) { d -> mapPage(d) { it.copy(elements = it.elements + copies) } }
+        selection = copies.map { it.id }.toSet()
+        return copies
+    }
+
+    /** Format übertragen: takes the look of the one selected element; false without one. */
+    fun copyFormat(): Boolean {
+        formatClip = single ?: return false
+        return true
+    }
+
+    /** Puts the look taken with [copyFormat] on the selection (text look only on texts, picture filters only on pictures). */
+    fun pasteFormat(): Boolean {
+        val f = formatClip ?: return false
+        val ids = selected.filter { !it.locked && it.id != f.id }.map { it.id }.toSet()
+        if (ids.isEmpty()) return false
+        updateElements(ids) { CanvasOps.withFormat(it, f) }
+        return true
+    }
+
     fun paste() {
         if (clipboard.isEmpty()) return
         val copies = clipboard.map { it.copy(id = newDesignId(), x = it.x + 5f, y = it.y + 5f, slot = "") }
@@ -352,9 +394,16 @@ class DesignEditorState(initial: Design) {
             val ys = listOf(0f, design.height / 2, design.height) + others.flatMap { listOf(it.top, it.center.y, it.bottom) }
             fun best(edges: List<Float>, targets: List<Float>): Pair<Float, Float>? =
                 edges.flatMap { e -> targets.map { t -> (t - e) to t } }.filter { abs(it.first) <= snap }.minByOrNull { abs(it.first) }
-            best(listOf(b.left, b.center.x, b.right), xs)?.let { (d, at) -> dx += d; shown += Guide(true, at) }
-            best(listOf(b.top, b.center.y, b.bottom), ys)?.let { (d, at) -> dy += d; shown += Guide(false, at) }
-        }
+            val snapX = best(listOf(b.left, b.center.x, b.right), xs)
+            val snapY = best(listOf(b.top, b.center.y, b.bottom), ys)
+            snapX?.let { (d, at) -> dx += d; shown += Guide(true, at) }
+            snapY?.let { (d, at) -> dy += d; shown += Guide(false, at) }
+            // Gleiche Abstände (AP-127): when no edge caught, snap to the same gap as the neighbours.
+            if (snapX == null) CanvasOps.equalGap(DesignGeometry.bounds(movable)!!.translate(dx, dy), others, horizontal = true, snap)?.let { dx += it }
+            if (snapY == null) CanvasOps.equalGap(DesignGeometry.bounds(movable)!!.translate(dx, dy), others, horizontal = false, snap)?.let { dy += it }
+            val moved = DesignGeometry.bounds(movable)!!.translate(dx, dy)
+            spacings = CanvasOps.gaps(moved, others, horizontal = true) + CanvasOps.gaps(moved, others, horizontal = false)
+        } else spacings = emptyList()
         guides = shown
         val byId = movable.associateBy { it.id }
         updateElements(byId.keys, record = false) { e -> byId.getValue(e.id).let { s -> e.copy(x = s.x + dx, y = s.y + dy) } }
@@ -375,6 +424,7 @@ class DesignEditorState(initial: Design) {
 
     fun endGesture() {
         guides = emptyList()
+        spacings = emptyList()
         version++
     }
 

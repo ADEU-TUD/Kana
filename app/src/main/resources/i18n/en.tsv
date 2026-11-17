@@ -89,6 +89,8 @@
 (ohne Titel)	(untitled)
 (wie gemerkt)	(as remembered)
 (zusammengefügt)	(merged)
+*Problem melden* übernimmt den Bericht als Beschreibung. Die Bildschirmfotos kann eine Mail nicht von selbst mitnehmen – als ZIP speichern und anhängen.	*Report a problem* takes the report as its description. A mail cannot carry the screenshots by itself – save them as a ZIP and attach it.
+*Problem melden* übernimmt den Bericht als Beschreibung; dort per E-Mail oder als GitHub-Issue senden.	*Report a problem* takes the report as its description; send it there by e-mail or as a GitHub issue.
 + Code	+ Code
 + Neue Folie ▾	+ New slide ▾
 + Spalte	+ Column
@@ -127,11 +129,22 @@ Abbrechen (Strg+C)	Stop (Ctrl+C)
 Abgebrochen – nichts verschoben.	Cancelled – nothing moved.
 Abgebrochen – {0} Mails sind schon eingeordnet.	Cancelled – {0} mails are already sorted.
 Ablauf: {0}	Workflow: {0}
+Absatz eingefügt	Paragraph inserted
+Absätze verbunden	Paragraphs joined
+Absätze verschoben	Paragraphs moved
 Alle Einstellungen der App.	All settings of the app.
+Alle Prüfungen zurücksetzen?	Reset all checks?
+Alle Schritte passen – diese Pakete sind auf diesem Gerät geprüft.	All steps fit – these packages are checked on this device.
+Alle abhaken	Tick all
+Alle wiederherstellen	Restore all
+Alle: {0}	All: {0}
 Alles lässt sich später unter Einstellungen › Lora, › Werkzeuge und › Modelle auf diesem Gerät ändern. Downloads laufen im Hintergrund weiter.	Everything can be changed later under Settings › Lora, › Tools and › Models on this device. Downloads continue in the background.
+Alles zurücksetzen …	Reset everything …
 An diese Sitzungen:	To these sessions:
 An mehrere senden	Send to several
 Anderen Schlüssel	Another key
+Anhören	Listen
+Anonymisierung im Video „{0}“: {1} Gesicht(er) vor dem Export verpixelt.	Anonymisation in the video “{0}”: {1} face(s) pixelated before the export.
 Auf den Server legen …	Put it on the server …
 Auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Bis dahin laufen freie Anfragen über den Server bzw. gar nicht („Nur lokal“).	No language model is installed on this device yet (Settings › Models on this device). Until then free requests run on the server, or not at all (“Local only”).
 Auf diesem PC ist kein Sprachmodell installiert, und mit {0} GB Arbeitsspeicher wäre ein brauchbares Modell für Shell-Befehle zu langsam. Der TU-Server ist hier die bessere Wahl.	No language model is installed on this PC, and with {0} GB of memory a usable model for shell commands would be too slow. The TU server is the better choice here.
@@ -143,21 +156,45 @@ Ausgabe ausblenden	Hide output
 Ausgabe zeigen	Show output
 Bedenke:	Keep in mind:
 Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).	Commands and short tasks on this device, everything demanding on the university server (chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).
+Beheben	Fix
+Beim letzten Mal blieb etwas ungespeichert – etwa weil Lora abgestürzt ist oder geschlossen wurde.	Something was left unsaved last time – for example because Lora crashed or was closed.
 Bereich, Einstellung, Chat – oder sag, was du tun willst …	Area, setting, chat – or say what you want to do …
+Bericht mit Bildern als ZIP …	Report with pictures as ZIP …
+Bericht über Problem melden	Send report via Report a problem
+Bild anhängen …	Attach picture …
+Bild-in-Bild eingefügt	Picture-in-picture inserted
+Bild-in-Bild gelöscht	Picture-in-picture deleted
+Bild-in-Bild geändert	Picture-in-picture changed
+Bildschirmfoto	Screenshot
+Bildschirmfoto angehängt: {0}	Screenshot attached: {0}
+Bildschirmfoto in {0} Sekunden – jetzt zur Stelle gehen.	Screenshot in {0} seconds – go to the place now.
+Bildschirmfoto ist beim Schritt „{0}“.	The screenshot is with the step “{0}”.
 Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Lora antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.	So far {0} % without a server: {1} × instantly on the device (avg {2}), {3} × with the language model on this device (avg {4}), {5} × on the server (avg {6}). Measured until Lora answers or hands over; only numbers are counted, no content.
+Block	Block
+Clip eingefügt	Clip inserted
+Clip gelöscht	Clip deleted
+Clip geteilt	Clip split
+Clip geändert	Clip changed
+Clip {0} gekürzt	Clip {0} trimmed
+Clip {0} geändert	Clip {0} changed
+Clips umsortiert	Clips reordered
+Codeblock	Code block
 Dafür den Schlüssel des Uni-Servers eintragen (Einstellungen › Konto).	Enter the key of the university server for this (Settings › Account).
+Das Bildschirmfoto ist nicht gelungen.	The screenshot did not work.
 Das beantwortet das Modell auf diesem Gerät – ich gebe es weiter.	The model on this device will answer that – I am handing it over.
 Das geht hier: {0}.	That is done here: {0}.
 Das Modell auf diesem PC ({0}) ist klein – bei Shell-Befehlen liegt es öfter daneben. Der TU-Server schlägt zuverlässiger vor.	The model on this PC ({0}) is small – it gets shell commands wrong more often. The TU server proposes more reliably.
 Das Modell auf diesem PC ist für das Terminal zu langsam. {0} Der TU-Server antwortet in wenigen Sekunden und schlägt Shell-Befehle zuverlässiger vor.	The model on this PC is too slow for the terminal. {0} The TU server answers within a few seconds and proposes shell commands more reliably.
 Das Terminal ist geschlossen – bitte neu verbinden.	The terminal is closed – please connect again.
 Das Terminal wartet auf deine Eingabe (z. B. Passwort oder Ja/Nein) – tippe sie dort ein. Lora sieht sie nicht.	The terminal is waiting for your input (e.g. a password or yes/no) – type it there. Lora does not see it.
+Das soll passieren	What should happen
 Dateien auf dem Server	Files on the server
 Dateien aus dem Explorer hierher ziehen, um sie hochzuladen.	Drag files from the Explorer here to upload them.
 Dateien ausblenden	Hide files
 Dateien des Servers nicht erreichbar: {0}	Files of the server not reachable: {0}
 Dateien ersetzen?	Replace files?
 Dateien zum Hochladen wählen	Choose files to upload
+Datenschutz vor dem Export	Privacy before the export
 Dein PC ist stark genug: {0} Dann verlässt nichts den PC, auch keine Logs.	Your PC is strong enough: {0} Then nothing leaves the PC, not even logs.
 Dein Schlüssel liegt jetzt auf dem Server.	Your key is now on the server.
 Der Ordner wird mit allem darin gelöscht ({0} Einträge) – auf dem Server gibt es keinen Papierkorb.	The folder is deleted with everything in it ({0} entries) – there is no recycle bin on the server.
@@ -166,21 +203,138 @@ Die Datei wird auf dem Server gelöscht – dort gibt es keinen Papierkorb.	The 
 Die Dateien des Servers sind nicht erreichbar (SFTP ist dort vielleicht aus).	The files of the server cannot be reached (SFTP may be switched off there).
 Die Daten bleiben an der TU Dresden – kein externer Anbieter.	The data stays at TU Dresden – no external provider.
 Die Fragen vom ersten Start erneut stellen	Ask the questions from the first start again
+Die Gesichtserkennung fehlt – Gesichter nicht geprüft.	Face detection is missing – faces not checked.
 Die Pseudonymisierung findet Namen, Schulen und Orte zuverlässiger, bevor etwas an einen Server geht.	Pseudonymization finds names, schools and places more reliably before anything goes to a server.
+Die ZIP-Datei konnte nicht gespeichert werden.	The ZIP file could not be saved.
 Die Änderungen sind noch nicht auf dem Server gespeichert.	The changes are not saved on the server yet.
 Diese Vorlagen könnten passen:	These templates might fit:
 Diese Zeile wird in jede Sitzung eingetippt und sofort ausgeführt ({0}):	This line is typed into each session and run at once ({0}):
+Effekt bei Clip {0}	Effect on clip {0}
+Eigene Namen, einer je Zeile (z. B. die Teilnehmerliste)	Names of your own, one per line (e.g. the list of participants)
+Ein Klick geht zurück bis direkt nach diesem Schritt; Wiederholen (Strg+Y) holt die Schritte danach zurück.	A click goes back to right after this step; Redo (Ctrl+Y) brings the later steps back.
 Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell.	A small model on this device maps what you write to Lora or in Ctrl+K to an action of the app within milliseconds – offline, even with typos. When it is unsure it carries out nothing; Lora asks a language model as before.
 Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich.	A new key pair (Ed25519) is created on this device. The private key stays in the Lora folder and only your user account can read it; a passphrase protects it in addition.
 Ein paar kurze Fragen, dann geht es los.	A few short questions, then we can start.
+Eine Ebene nach hinten	Send backward
+Eine Ebene nach vorne	Bring forward
 Eine Zeile an mehrere Sitzungen	One line to several sessions
 Einstellung: {0}	Setting: {0}
 Einstellung: {0} → {1}	Setting: {0} → {1}
+Einstellungen geändert	Settings changed
+Elemente	Elements
 Empfehlung für diesen PC: {0}	Recommendation for this PC: {0}
+Ergebnisse, Notizen und Bildschirmfotos dieses Geräts werden gelöscht; alle Schritte sind wieder offen.	Results, notes and screenshots of this device are deleted; all steps are open again.
+Ersetzt: „{0}“ durch „{1}“	Replaced “{0}” with “{1}”
 Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vorschläge.	Load a model first (Settings › Local models), otherwise there are no proposals.
 Etwas anderes	Something else
 Farbe im Tab	Colour of the tab
 Feste Abläufe	Fixed workflows
+Folie duplizieren	Duplicate slide
+Folie eingefügt	Slide inserted
+Folie {0}: {1} geändert	Slide {0}: {1} changed
+Folien umsortiert	Slides reordered
+Format einfügen	Paste format
+Formatiert	Formatted
+Foto in {0} s …	Picture in {0} s …
+Für dieses Gerät gibt es gerade nichts zu prüfen.	There is nothing to check on this device right now.
+Für dieses Projekt nicht mehr prüfen	Do not check this project any more
+Für eine flüssige Vorschau entsteht im Hintergrund eine kleine Fassung jeder Datei: {0}. Bis dahin kann die Vorschau stocken.	For a smooth preview, a small version of each file is made in the background: {0}. Until then the preview may stutter.
+Gelöscht: „{0}“	Deleted: “{0}”
+Geschrieben: „{0}“	Typed: “{0}”
+Gesichter in {0} Clip(s), die nicht verpixelt sind	Faces in {0} clip(s) that are not pixelated
+Gruppieren	Group
+Hingehen	Go there
+Horizontal zentrieren	Center horizontally
+Im Ton habe ich keine Namen gefunden.	I found no names in the sound.
+In den Hintergrund	Send to back
+In den Vordergrund	Bring to front
+In/Out gesetzt	In/Out set
+Kein Clip hat ein Transkript – erst in der Transkript-Leiste transkribieren oder zuordnen.	No clip has a transcript – transcribe or assign one in the transcript panel first.
+Kein Clip hat ein Transkript – erst transkribieren, dann finde ich die Namen.	No clip has a transcript – transcribe first, then I will find the names.
+Keine Gesichter und Namen gefunden, die noch offen sind.	No open faces or names found.
+Keine Namen gefunden.	No names found.
+Lautstärke von Clip {0}	Volume of clip {0}
+Leerraum geändert	Spacing changed
+Leerzeichen eingefügt	Space inserted
+Leerzeichen gelöscht	Space deleted
+Links ausrichten	Align left
+Lora sucht Namen im Transkript der Clips – mit dem Namensschutz und deiner Liste. Jede Stelle wird im Export und in der Vorschau überpiept, stumm geschaltet oder die Stimme verfremdet; Untertitel und Text zeigen „[Name]“. Alles bleibt auf diesem Gerät.	Lora looks for names in the transcript of the clips – with the name protection and your list. Each place is beeped, muted or the voice disguised in the export and the preview; subtitles and text show “[Name]”. Everything stays on this device.
+Marker gelöscht	Marker deleted
+Marker gesetzt	Marker set
+Marker verschoben	Marker moved
+Medien geändert	Media changed
+Namen im Ton ({0}) …	Names in the sound ({0}) …
+Namen im Ton im Video „{0}“: {1} Stelle(n) gefunden.	Names in the sound of the video “{0}”: {1} place(s) found.
+Namen im Ton im Video „{0}“: {1} Stelle(n) {2} (Lora).	Names in the sound of the video “{0}”: {1} place(s) {2} (Lora).
+Namen im Ton im Video „{0}“: {1} Stelle(n) überpiept.	Names in the sound of the video “{0}”: {1} place(s) beeped.
+Namen im Ton schützen	Protect names in the sound
+Namen im Ton schützen …	Protect names in the sound …
+Namen in {0} Untertitel(n)	Names in {0} subtitle(s)
+Namen suchen	Find names
+Neu suchen	Search again
+Neue Folie danach	New slide after
+Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht.	Check new features on the device step by step: fits / does not fit, note, screenshot, report.
+Nichts offen auf diesem Gerät	Nothing open on this device
+Noch keine Schritte – jede Änderung erscheint hier.	No steps yet – every change appears here.
+Notiz (was war anders?)	Note (what was different?)
+Oben ausrichten	Align top
+PDF-Werkzeugkasten · {0} Änderung(en) nicht gespeichert	PDF toolbox · {0} change(s) not saved
+Passt nicht	Does not fit
+Piepen	Beep
+Prüfe Gesichter, Namen im Ton und in Untertiteln …	Checking faces, names in the sound and in subtitles …
+Prüfung beginnen	Start checking
+Prüfungen am Gerät	Checks on the device
+Rechts ausrichten	Align right
+Schützt {0} Stelle(n) mit Namen im Ton …	Protecting {0} place(s) with names in the sound …
+Seiteneinstellung	Page setting
+So geht's	How to do it
+Spalte eingefügt	Column inserted
+Spalte gelöscht	Column deleted
+Strg+G	Ctrl+G
+Strg+M	Ctrl+M
+Strg+Umschalt+C	Ctrl+Shift+C
+Strg+Umschalt+G	Ctrl+Shift+G
+Strg+Umschalt+↑	Ctrl+Shift+↑
+Strg+Umschalt+↓	Ctrl+Shift+↓
+Stumm	Mute
+Suche Gesichter und verpixle sie …	Finding and pixelating faces …
+Tab gelöscht	Tab deleted
+Tab hinzugefügt	Tab added
+Tabellenblatt gelöscht	Sheet deleted
+Tabellenblatt hinzugefügt	Sheet added
+Tabs umsortiert	Tabs reordered
+Titel eingefügt	Title inserted
+Titel gelöscht	Title deleted
+Titel geändert	Title changed
+Ton des Projekts	Project sound
+Ton eingefügt	Sound inserted
+Ton gelöscht	Sound deleted
+Ton geändert	Sound changed
+Trotzdem exportieren	Export anyway
+Umbenannt in „{0}“	Renamed to “{0}”
+Ungespeicherte Arbeit wiederherstellen?	Restore unsaved work?
+Unten ausrichten	Align bottom
+Untertitel eingefügt	Subtitle inserted
+Untertitel gelöscht	Subtitle deleted
+Untertitel geändert	Subtitle changed
+Verlauf	History
+Verlauf der Schritte	History of steps
+Verlauf der Schritte …	History of steps …
+Vertikal zentrieren	Center vertically
+Video „{0}“ trotz offener Datenschutz-Punkte exportiert: {1}	Video “{0}” exported despite open privacy points: {1}
+Vorführen ab hier	Present from here
+Vorher: {0}	Before: {0}
+Vorschau wird vorbereitet ({0})	Preparing preview ({0})
+Was in den letzten Paketen neu ist, wird hier Schritt für Schritt am Gerät geprüft: lesen, ausprobieren, dann *Passt* oder *Passt nicht* – mit Notiz und Bildschirmfoto. Am Ende geht ein Bericht über *Problem melden* hinaus.	What is new in the latest packages is checked here on the device, step by step: read, try it, then *Fits* or *Does not fit* – with a note and a screenshot. At the end a report goes out via *Report a problem*.
+Weiter prüfen	Continue checking
+Wie vor dem ersten Schritt	As before the first step
+Wieder offen	Open again
+Zeile eingefügt	Row inserted
+Zeile gelöscht	Row deleted
+Zelle {0} geleert	Cell {0} cleared
+Zelle {0}: „{1}“	Cell {0}: “{1}”
+Zuletzt: passt (Lora {0})	Last time: fits (Lora {0})
+Zuletzt: passt nicht (Lora {0})	Last time: does not fit (Lora {0})
 folgt dem Terminal	follows the terminal
 Frist in den Kalender	Deadline into the calendar
 Frühere Chats suchen	Search earlier chats
@@ -242,6 +396,7 @@ Name des Schlüssels	Name of the key
 Neu: Modelle für dieses Gerät	New: models for this device
 Neuen Schlüssel erzeugen	Create a new key
 Nicht gespeichert: {0}	Not saved: {0}
+nicht im Schnitt	not in the cut
 nicht ohne Rückfrage: {0}	not without asking: {0}
 Nichts geht an einen Server – dafür schlichtere, langsamere Antworten, kurze Texte, keine Websuche. Braucht ein Sprachmodell auf diesem Gerät.	Nothing goes to a server – in exchange plainer, slower answers, short texts, no web search. Needs a language model on this device.
 Nichts verlässt den PC – auch keine Ausgaben, Logs oder Ordnernamen.	Nothing leaves the PC – no output, logs or folder names either.
@@ -299,6 +454,10 @@ Wo Lora denkt, wenn sie im Server-Terminal Befehle vorschlägt. Externe Cloud-An
 Wo soll ich arbeiten?	Where should I work?
 Wo soll Lora im Server-Terminal denken?	Where should Lora think in the Server Terminal?
 Während Lora denkt, ist der PC ausgelastet (Lüfter, Akku).	While Lora thinks, the PC is busy (fan, battery).
+passt	fits
+passt nicht	does not fit
+vor {0} Std.	{0} h ago
+vor {0} s	{0} s ago
 z. B. Wie viel Speicher ist frei? · Deploy wie immer	e.g. How much space is free? · Deploy as usual
 Zeig die letzten Fehler im Log der Anwendung	Show the latest errors in the application log
 Zum Beispiel	For example
@@ -4749,7 +4908,7 @@ tippen	tap
 Tippen auf einen Abschnitt öffnet die Codes statt abzuspielen.	Tapping a section opens the codes instead of playing it.
 Tippen oder lange drücken: Abschnitt bearbeiten	Tap or long-press: edit section
 Tippen: ab diesem Wort abspielen · lange drücken (Rechtsklick): bearbeiten, teilen, kommentieren · F4 Abspielen/Anhalten, F3/F5 zurück/vor, F6 Abschnitt wiederholen, Strg+F Suchen	Tap: play from this word · long-press (right-click): edit, split, comment · F4 play/pause, F3/F5 back/forward, F6 repeat section, Ctrl+F search
-Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Strg hält das Einrasten an).	Tips: click selects, Shift+click selects several, dragging on the empty area selects everything inside the frame. Arrow keys move (with Shift 10 mm), Ctrl+D duplicates, Del deletes, Ctrl+Z undoes. Ctrl+mouse wheel zooms, the mouse wheel moves the view; when dragging, an element snaps to the page and other elements (Ctrl stops snapping).
+Tipps: Klick wählt aus, Umschalt+Klick mehrere, Ziehen auf der freien Fläche wählt alles im Rahmen. Pfeiltasten verschieben (mit Umschalt 10 mm), Strg+D verdoppelt, Entf löscht, Strg+Z macht rückgängig. Strg+Mausrad zoomt, das Mausrad schiebt die Ansicht; beim Ziehen rastet ein Element an Seite und anderen Elementen ein (Alt hält das Einrasten an, Strg+Ziehen kopiert); Rechtsklick zeigt, was mit dem Element geht.	Tips: click selects, Shift+click selects several, dragging on the empty area selects everything inside the frame. Arrow keys move (with Shift 10 mm), Ctrl+D duplicates, Del deletes, Ctrl+Z undoes. Ctrl+mouse wheel zooms, the mouse wheel moves the view; when dragging, an element snaps to the page and other elements (Alt stops snapping, Ctrl+drag copies); a right click shows what can be done with the element.
 Tippst du im Chat etwas wie „dunkles Design“, zeigt Lora darüber den passenden Ort der App.	If you type something like “dark design” in the chat, Lora shows the matching place in the app above it.
 Titel	Title
 Titel & Bauchbinde	Title & lower third
@@ -5539,6 +5698,7 @@ noch kein Bereich	no area yet
 zugeklappt	folded
 {0} % von {1}	{0} % of {1}
 {0} % · {1} Beiträge · {2} Wörter	{0} % · {1} turns · {2} words
+{0} (dieses Gerät)	{0} (this device)
 {0} ({1} Codes)	{0} ({1} codes)
 {0} (Änderungen)	{0} (changes)
 {0} Abbildung(en) ohne Alternativtext – oben beschreiben und neu erzeugen (auf dem Original).	{0} figure(s) without alternative text – describe them above and create again (on the original).
@@ -5548,6 +5708,16 @@ zugeklappt	folded
 {0} Abschnitte · {1}k Zeichen · 	{0} sections · {1}k characters · 
 {0} Abschnitte, identisch codiert: {1} %	{0} sections, coded identically: {1} %
 {0} Datei(en) hochgeladen.	{0} file(s) uploaded.
+{0} Name(n) im Ton ohne Piepen: {1}	{0} name(s) in the sound without a beep: {1}
+{0} Schritte offen – neue Funktionen Schritt für Schritt prüfen	{0} steps open – check new features step by step
+{0} Stelle(n) mit Namen im Ton {1} – Liste unter Transkript › Namen im Ton.	{0} place(s) with names in the sound {1} – list under Transcript › Names in the sound.
+{0} Stelle(n) · {1} geprüft	{0} place(s) · {1} checked
+{0} Zeilen eingefügt	{0} rows inserted
+{0} Zeilen gelöscht	{0} rows deleted
+{0} Zellen geändert ({1} …)	{0} cells changed ({1} …)
+{0} eingefügt	{0} inserted
+{0} entfernt	{0} removed
+{0} geändert	{0} changed
 {0} ist ein großes Modell.	{0} is a large model.
 {0} Mail(s) als gelesen markiert	{0} mail(s) marked as read
 {0} Mail(s) als ungelesen markiert	{0} mail(s) marked as unread
@@ -5573,6 +5743,7 @@ zugeklappt	folded
 {0} ist geladen und liest die Mails	{0} is loaded and reads the mails
 {0} laden ({1})	Download {0} ({1})
 {0} liest die Mails	{0} reads the mails
+{0} von {1} Schritten geprüft · {2} offen	{0} of {1} steps checked · {2} open
 {0} wird heruntergeladen … {1} %	Downloading {0} … {1} %
 {0} Zellen ohne überzählige Leerzeichen	{0} cells without extra spaces
 {0} abweichend	{0} differing
@@ -5718,6 +5889,7 @@ zugeklappt	folded
 {0} Zuordnung(en) auf diesem Gerät	{0} assignment(s) on this device
 {0} leere Zeilen entfernt	{0} empty rows removed
 {0} lässt sich nicht an andere Apps weitergeben.	{0} cannot be passed on to other apps.
+{0} · Schritt {1} von {2}	{0} · step {1} of {2}
 {0} · automatisch beim Start	{0} · automatically at startup
 {0} · eigene	{0} · own
 {0} · Neue Version {1} verfügbar	{0} · New version {1} available
@@ -5753,6 +5925,7 @@ zugeklappt	folded
 Ändern lässt es sich jederzeit unter Einstellungen › Lora › Server-Terminal.	You can change it any time under Settings › Lora › Server Terminal.
 Ändert Folie {0} …	Changing slide {0} …
 Ändert sich der Text, bleibt der Standardwert für Lora „{0}“ – zum Ändern löschen und neu wählen.	If the text changes, Lora's default stays “{0}” – to change it, delete it and choose again.
+Änderung	Change
 Änderung abgelehnt	Change rejected
 Änderung angenommen	Change accepted
 Änderungen auf	changes on
@@ -5765,6 +5938,7 @@ zugeklappt	folded
 Änderungen werden nachverfolgt	Changes are being tracked
 Öffentlicher Schlüssel – darf weitergegeben werden (z. B. an die Administration):	Public key – may be passed on (e.g. to the administrators):
 Öffnen: {0}	Open: {0}
+Übergang bei Clip {0}	Transition at clip {0}
 öffentlich · Namen bleiben	public · names stay
 Öffentliche Quellen nicht ersetzen	Don't replace public sources
 Öffne die zweite Datei als weiteren Tab (Ordner-Symbol oben).	Open the second file as another tab (folder icon at the top).
@@ -5825,6 +5999,7 @@ zugeklappt	folded
 Übersicht	Overview
 Überspringen	Skip
 Übertrage die angehängte Präsentation Folie für Folie in diese Präsentation – gleiche Reihenfolge, gleiche Inhalte, aber in die Folientypen der App (Titel, Abschnitt, Inhalt, zwei Spalten, Zitat); Notizen bleiben Notizen.	Transfer the attached presentation slide by slide into this presentation – same order, same content, but in the app's slide types (title, section, content, two columns, quote); notes stay notes.
+überpiept	beeped
 Σ Summe der Spalte darunter einfügen	Σ Insert sum of the column below
 – keine (Hauptcode) –	– none (main code) –
 „Als PDF speichern“ legt alle Seiten mit Texterkennung in Dateien › Scans ab – durchsuchbar und per Sync auch auf den anderen Geräten.	“Save as PDF” puts all pages with text recognition into Files › Scans – searchable and, through the sync, also on the other devices.

@@ -95,6 +95,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -379,6 +380,8 @@ internal class History(initial: VideoProject) {
     var version by mutableIntStateOf(0)
         private set
     private val back = ArrayDeque<VideoProject>()
+    /** When each state in [back] was left (Verlauf der Schritte, AP-134 b). */
+    private val backAt = ArrayDeque<Long>()
     private val forward = ArrayDeque<VideoProject>()
     private var lastKey: String? = null
     private var lastAt = 0L
@@ -390,20 +393,33 @@ internal class History(initial: VideoProject) {
         if (next == project) return
         val now = System.currentTimeMillis()
         if (record && !(key != null && key == lastKey && now - lastAt < 1500)) {
-            back.addLast(project); if (back.size > 200) back.removeFirst(); forward.clear()
+            push(project, now); forward.clear()
         }
         lastKey = key; lastAt = now
         project = next; version++
         canUndo = back.isNotEmpty(); canRedo = forward.isNotEmpty()
     }
 
+    private fun push(p: VideoProject, at: Long) {
+        back.addLast(p); backAt.addLast(at)
+        if (back.size > 200) { back.removeFirst(); backAt.removeFirstOrNull() }
+    }
+
     fun mark() {
-        back.addLast(project); if (back.size > 200) back.removeFirst(); forward.clear(); lastKey = null
+        push(project, System.currentTimeMillis()); forward.clear(); lastKey = null
         canUndo = true; canRedo = false
     }
 
-    fun undo() { back.removeLastOrNull()?.let { forward.addLast(project); project = it; version++ }; lastKey = null; canUndo = back.isNotEmpty(); canRedo = forward.isNotEmpty() }
-    fun redo() { forward.removeLastOrNull()?.let { back.addLast(project); project = it; version++ }; lastKey = null; canUndo = back.isNotEmpty(); canRedo = forward.isNotEmpty() }
+    fun undo() { back.removeLastOrNull()?.let { backAt.removeLastOrNull(); forward.addLast(project); project = it; version++ }; lastKey = null; canUndo = back.isNotEmpty(); canRedo = forward.isNotEmpty() }
+    fun redo() { forward.removeLastOrNull()?.let { push(project, System.currentTimeMillis()); project = it; version++ }; lastKey = null; canUndo = back.isNotEmpty(); canRedo = forward.isNotEmpty() }
+
+    /** Verlauf der Schritte (AP-134 b): what Rückgängig can take back, newest first, with names. */
+    fun history(): List<HistoryStep> = back.indices.reversed().map { i ->
+        HistoryStep(describeVideoStep(back[i], if (i == back.lastIndex) project else back[i + 1]), backAt.getOrElse(i) { 0L })
+    }
+
+    /** Goes [n] steps back at once (Wiederholen brings them back one by one). */
+    fun undoSteps(n: Int) = repeat(n.coerceAtMost(back.size)) { undo() }
 }
 
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
@@ -423,10 +439,13 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
         withContext(Dispatchers.IO) { VideoHub.store.save(h.project) }
         saved = h.version
     }
-    // Proxy files for a smooth preview, one after another in the background.
+    // Proxy files for a smooth preview, one after another in the background. First the Bildstreifen (AP-130, quick: key
+    // frames only) for the near pictures while dragging; again from each proxy once it is there.
     LaunchedEffect((h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).toSet()) {
         withContext(Dispatchers.IO) {
-            (h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).distinct().map { File(it) }.filter { it.isFile }.forEach { runCatching { Media.makeProxy(it) } }
+            val files = (h.project.clips.map { it.path } + h.project.layers.map { it.path } + h.project.media.map { it.path }).distinct().map { File(it) }.filter { it.isFile }
+            files.forEach { io.github.thepytales.llmhub.video.FrameStrips.ensure(it) }
+            files.forEach { runCatching { Media.makeProxy(it) }; io.github.thepytales.llmhub.video.FrameStrips.ensure(it) }
         }
     }
     val p = h.project
@@ -807,7 +826,14 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
         assignTranscript = false
         h.edit { it.copy(transcripts = it.transcripts + map.mapValues { e -> e.value.id }) }
     }
-    if (actions.export) ExportDialog(c, p, onDismiss = { actions.export = false; refocus() })
+    if (actions.export) ExportDialog(
+        c, p, onDismiss = { actions.export = false; refocus() },
+        onEdit = { f -> h.edit(f = f) },
+        onShow = { t -> player.seek(h.project, t) },
+        onNames = { actions.names = true },
+    )
+    // Namen im Ton schützen (AP-128).
+    if (actions.names) NameGuardDialog(c, h, player, onDismiss = { actions.names = false; refocus() })
     VideoActionDialogs(actions)
     if (keys) VideoShortcutsDialog { keys = false; runCatching { focus.requestFocus() } }
 }
@@ -830,6 +856,7 @@ private fun EditorHeader(
             tr("{0} × {1} · {2} fps · {3}", p.width, p.height, p.fps, clock(p.duration)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
         )
+        PreparingBadge(labelled = wide)
         SavedBadge(saved, labelled = wide)
         ToolGroup {
             TipIconButton(Icons.Outlined.VideoLibrary, tr(if (poolShown) "Medienpool einklappen" else "Medienpool zeigen"), { layout.togglePool(poolShown); onFocus() }, selected = poolShown)
@@ -862,6 +889,10 @@ private fun EditorHeader(
         ToolGroup {
             TipIconButton(Icons.AutoMirrored.Outlined.Undo, tr("Rückgängig") + " (Strg+Z)", h::undo, enabled = h.canUndo)
             TipIconButton(Icons.AutoMirrored.Outlined.Redo, tr("Wiederholen") + " (Strg+Y)", h::redo, enabled = h.canRedo)
+            // Verlauf der Schritte mit Sprung zurück (AP-134 b).
+            var historyOpen by remember { mutableStateOf(false) }
+            TipIconButton(Icons.Outlined.History, tr("Verlauf der Schritte"), { historyOpen = true }, enabled = h.canUndo)
+            if (historyOpen) HistoryDialog(h.history(), onJump = { n -> h.undoSteps(n) }, onDismiss = { historyOpen = false })
         }
         BarGap()
         ExportQueueChip()
@@ -1542,3 +1573,39 @@ internal fun Modifier.typing(): Modifier {
 
 // ── Export ──────────────────────────────────────────────────────────────────────────────────────────
 
+/** Name of a step of the Videoeditor from the project before and after it (AP-134 b). */
+internal fun describeVideoStep(a: VideoProject, b: VideoProject): String {
+    fun <T> count(x: List<T>, y: List<T>, added: String, removed: String, changed: String): String? = when {
+        y.size > x.size -> added
+        y.size < x.size -> removed
+        x != y -> changed
+        else -> null
+    }
+    if (b.clips.size == a.clips.size + 1 && kotlin.math.abs(b.duration - a.duration) < 0.05) return tr("Clip geteilt")
+    if (b.clips.size == a.clips.size && a.clips != b.clips) {
+        val i = a.clips.indices.first { a.clips[it] != b.clips[it] }
+        val x = a.clips[i]
+        val y = b.clips[i]
+        return when {
+            x.id != y.id -> tr("Clips umsortiert")
+            x.inSec != y.inSec || x.outSec != y.outSec -> tr("Clip {0} gekürzt", i + 1)
+            x.volume != y.volume || x.muted != y.muted -> tr("Lautstärke von Clip {0}", i + 1)
+            x.transition != y.transition || x.transitionSec != y.transitionSec -> tr("Übergang bei Clip {0}", i + 1)
+            x.fx != y.fx -> tr("Effekt bei Clip {0}", i + 1)
+            else -> tr("Clip {0} geändert", i + 1)
+        }
+    }
+    return count(a.clips, b.clips, tr("Clip eingefügt"), tr("Clip gelöscht"), tr("Clip geändert"))
+        ?: count(a.overlays, b.overlays, tr("Titel eingefügt"), tr("Titel gelöscht"), tr("Titel geändert"))
+        ?: count(a.audio, b.audio, tr("Ton eingefügt"), tr("Ton gelöscht"), tr("Ton geändert"))
+        ?: count(a.layers, b.layers, tr("Bild-in-Bild eingefügt"), tr("Bild-in-Bild gelöscht"), tr("Bild-in-Bild geändert"))
+        ?: count(a.subtitles, b.subtitles, tr("Untertitel eingefügt"), tr("Untertitel gelöscht"), tr("Untertitel geändert"))
+        ?: count(a.markers, b.markers, tr("Marker gesetzt"), tr("Marker gelöscht"), tr("Marker verschoben"))
+        ?: when {
+            a.title != b.title -> tr("Umbenannt in „{0}“", StepNames.short(b.title))
+            a.markIn != b.markIn || a.markOut != b.markOut -> tr("In/Out gesetzt")
+            a.sound != b.sound -> tr("Ton des Projekts")
+            a.media != b.media || a.bins != b.bins -> tr("Medien geändert")
+            else -> tr("Einstellungen geändert")
+        }
+}
