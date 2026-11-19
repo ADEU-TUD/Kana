@@ -77,7 +77,7 @@ Fairlight).
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Lora offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Lora selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Lora Postfach · AP-113 Lora Namensschutz Runde 3 · AP-114 Lora Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
 | **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Lora im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · ~~AP-133 Geführte Prüfung am Gerät~~ ☑ · ~~AP-134 Nichts geht verloren~~ ☑ · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Lora kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
-| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
+| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☑** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
 | **Neu (12.11.2026)** | **AP-122 Lora: neues Aussehen und lebendigere Animationen ☑** (Wunsch Hauptnutzer; am 13.11.2026 freigegeben, in der App, für 1.0.70) |
@@ -109,7 +109,7 @@ werden“ ([`WERKZEUG-ANALYSE.md`](WERKZEUG-ANALYSE.md), 85 Vorschläge, 79 übe
 APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfohlene Reihenfolge:
 **AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) ◐ → **AP-125 (f)** (Reste Dokument) ☑ → **AP-133** (Prüfung am Gerät) ☑ →
 **AP-134** (nichts geht verloren) ☑ → wie bisher **AP-126** ☑ (vorgezogen, 15./16.11.2026) → **APD-16 + AP-127** (AP-127 ☑) → **APD-17b + AP-130** (AP-130 ☑) → **AP-128** ☑ →
-**AP-129** → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
+**AP-129** ☑ → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
 im Hörsaal (gestrichen).
 
@@ -573,7 +573,7 @@ Tests mit Beispielton und -bild.
 - **Offen**: Namen, die die Regeln nicht kennen und nicht auf der Liste stehen, werden nicht gefunden (das
   Erkennungsmodell aus AP-67/AP-113 ist für Texte gebaut; im Ton später); Prüfung am Gerät.
 
-### AP-129 ☐ Video: was im Alltag fehlt · L (Wunsch Hauptnutzer 14.11.2026, D, in Stufen)
+### AP-129 ☑ Video: was im Alltag fehlt · L (Wunsch Hauptnutzer 14.11.2026, D, in Stufen)
 Für **Vorlesungsaufzeichnungen**, **Interviews/Gespräche**, **kurze Clips** und **Unterrichtsvideos**. Vieles gibt es
 schon (Übergänge, Bauchbinden, Kapitel, Rohschnitt nach Pausen und Füllwörtern, Ton synchronisieren, Lautheit).
 - **(a) Lückenliste** gegen Clipchamp, CapCut und DaVinci für diese vier Zwecke, mit Nutzen fürs Team.
@@ -581,6 +581,49 @@ schon (Übergänge, Bauchbinden, Kapitel, Rohschnitt nach Pausen und Füllwörte
   Hochformat/Quadrat mit Bildausschnitt, der der Person folgt; Untertitel-Stile für kurze Clips; Höhepunkte aus einer
   langen Aufnahme als Clip; Vorlagen für Titel und Abspann (TUD-Vorlagen unverändert).
 **Fertig, wenn**: die Lückenliste für die vier Zwecke nichts mit hohem Nutzen mehr als „fehlt“ führt.
+☑ *Stand 19.11.2026*: in der App (Windows, macOS, Linux); am Gerät zu prüfen (*Prüfungen am Gerät*, AP-129).
+- **(a) Lückenliste** [`video-luecken.md`](video-luecken.md) gegen Clipchamp, CapCut und DaVinci für Vorlesung,
+  Interview, kurzen Clip und Unterrichtsvideo; sechs Lücken mit hohem Nutzen, alle geschlossen. Präsentation → Lehrvideo
+  bleibt AP-141; offen mit mittlerem Nutzen: unscharfer Hintergrund, Stabilisieren, Formen im Bild, Untertitel
+  prüfen/übersetzen (AP-147, AP-140), Text-to-Speech (AP-141).
+- **Musik leiser beim Sprechen** (`video/Ducking.kt`): *Projekt › Ton*, leicht/mittel/stark (8/12/18 dB). Die Sprache
+  (Ton von V1, Bild-in-Bild, verknüpfter Ton) steuert einen Kompressor auf Musik und nicht verknüpftem Ton; mit einer
+  Kopie der Musik auf dem Zielpegel gemischt geht sie genau um die gewählten dB zurück, nicht weiter, und bleibt in
+  Pausen, wie sie war (Attack 20 ms, Release 400 ms). Export und Vorschau (gleicher Graph).
+- **Hochformat mit Ausschnitt, der der Person folgt** (`video/Reframe.kt`): *Projekt › Format* oder *Rohschnitt*,
+  9:16, 1:1, 4:5. Gesichtserkennung (AP-54) alle 0,5 s, Hauptgesicht = das größte, danach das nächstgelegene (keine
+  Sprünge zu Personen im Hintergrund), Glättung über 1,2 s und tote Zone (30 % des Ausschnitts) – der Ausschnitt steht,
+  solange die Person darin bleibt. Neues Feld `ClipFx.aspect`; das alte 9:16 von Hand (`vertical`) gilt weiter. Der
+  Ausschnitt kommt jetzt aus der vollen Auflösung (vorher wurde ein Querformat erst ins Hochformat eingepasst und dann
+  dreifach vergrößert). Aufnahmen, die schon schmal genug sind, bleiben unverändert; *Zurück ins Querformat*.
+- **Mehrkamera nach Sprecher** (`video/MultiCam.kt`): *Rohschnitt › Mehrkamera nach Sprecher …*; zweite Kamera aus
+  dem Medienpool oder einer Datei, über den Ton synchronisiert (AP-53), je Sprecher eine Kamera (Transkript mit
+  Sprechererkennung) oder *Nach Lautstärke der Mikrofone* (3 dB Abstand); Schnitt 0,15 s vor dem Sprecherwechsel,
+  kürzeste Einstellung 1,5–5 s (kurze Einwürfe lösen keinen Schnitt aus). Einstellungen der zweiten Kamera sind stumm und
+  bekommen den Ton der Hauptkamera verknüpft – er läuft ohne Sprung durch und bleibt beim Schneiden synchron.
+- **Untertitel-Stile** (`video/SubtitleStyles.kt`, `VideoTitles.styledSubtitleDesign`): *Projekt › Untertitel ›
+  Aussehen* – *Standard* (wie bisher), *Groß* (weiß mit schwarzer Kontur in der unteren Bildmitte), *Wort für Wort*
+  (bis drei Wörter, Satzzeichen beenden eine Gruppe, das gesprochene Wort gelb). Die Untertitel des Projekts bleiben, wie
+  sie sind (SRT/VTT unverändert); nur die Zeichnung in Vorschau und Export wechselt.
+- **Höhepunkte als Clip** (`video/Highlights.kt`): *Rohschnitt › Höhepunkte als Clip …*, 30 s bis 3 min, optional
+  „worauf achten“, Format wie das Projekt/9:16/1:1, Untertitel-Stil. Lora wählt ganze Abschnitte aus dem Transkript;
+  daraus wird ein **neues** Projekt „… – Höhepunkte“ (das lange bleibt unverändert) mit Untertiteln, Bildkorrektur und
+  Namensschutz der Quelle, auf Wunsch gleich mit Ausschnitt, der der Person folgt.
+- **Vorlagen für Titel und Abspann** (`video/VideoTemplates.kt`): *So entsteht dein Video › Titel und Untertitel › Vorlage …*, in den Eigenschaften eines Titels oder über Strg+K (ein Eintrag im Titel-Menü machte es zu hoch) –
+  Vorlesungsaufzeichnung, Interview (Bauchbinden mit den Namen der Sprecher:innen beim ersten Wort, nacheinander, nicht
+  über dem Titel), kurzer Clip (Einblendung statt Titel), Unterrichtsvideo. Das TUD-Design der Titel bleibt unverändert;
+  nochmal einsetzen ersetzt nur, was die Vorlage gesetzt hat.
+- **Lora-Aktionen** `video.duck`, `video.subtitle_style`, `video.template`, `video.reframe`, `video.highlights`.
+- **Tests** `ui/VideoEverydayTest` (10): Ducking-Graph und **im Export gemessen** (2-kHz-Musik beim Sprechen 12 dB
+  leiser, in der Pause wie vorher, ohne Ducking gleich laut, verknüpfter Ton zählt als Sprache); ruhige Führung des
+  Ausschnitts (eine Richtung, kein Zittern beim Nicken, Hintergrundperson nimmt ihn nicht), Projekt im Hochformat,
+  Graph schneidet in voller Höhe, **die Person steht in der Mitte des 9:16-Exports** (Testvideo, Testdetektor);
+  Mehrkamera nach Sprecher und nach Lautstärke, Ton der Hauptkamera verknüpft; Wort für Wort (Gruppen, Zeiten
+  lückenlos, gelbes Wort im Bild, ein Bild je Wort im Graphen); Höhepunkte (Auswahl, Länge, neues Projekt); Vorlagen;
+  der Vorlagen-Dialog mit Klicks.
+- **Offen**: Prüfung am Gerät mit echten Aufnahmen; die Vorschau des Mehrkamera-Schnitts als Raster beider Kameras
+  (wie DaVinci) gibt es nicht – der Schnitt entsteht aus Sprechern oder Lautstärke und lässt sich danach in der Zeitleiste
+  ändern.
 
 ### AP-130 ☑ Video: flüssige Vorschau · M (Wunsch Hauptnutzer 14.11.2026, D)
 **Befund**: Die Vorschau ruckelt (Hauptnutzer). **Vorgehen**: zuerst messen (Abspielen, Spulen, Abspielkopf ziehen,

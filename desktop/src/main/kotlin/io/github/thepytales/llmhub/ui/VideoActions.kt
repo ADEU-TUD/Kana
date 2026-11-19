@@ -44,6 +44,11 @@ internal class VideoActions(
     var export by mutableStateOf(false)
     /** Namen im Ton schützen is open (AP-128). */
     var names by mutableStateOf(false)
+    /** Video im Alltag (AP-129): Höhepunkte, Mehrkamera, Bildausschnitt, Vorlage – the dialogs that are open. */
+    var highlights by mutableStateOf(false)
+    var multicam by mutableStateOf(false)
+    var reframe by mutableStateOf(false)
+    var template by mutableStateOf(false)
 
     /** The playhead when a button is used: read then (the bar is not composed again while the video plays). */
     fun pos() = player.position.value
@@ -210,9 +215,13 @@ internal class VideoActions(
 
 /** The dialogs the actions open: which transcript, „Mit Lora kürzen“. */
 @Composable
-internal fun VideoActionDialogs(a: VideoActions) {
+internal fun VideoActionDialogs(a: VideoActions, selectedClip: String? = null) {
     a.pickTranscript?.let { purpose ->
         TranscriptPicker(a.c, a.h.project, onDismiss = { a.pickTranscript = null }) { map -> a.transcriptsChosen(purpose, map) }
     }
     if (a.loraCut) LoraCutDialog(a.c, a.h, onDismiss = { a.loraCut = false })
+    if (a.highlights) HighlightsDialog(a.c, a.h, onDismiss = { a.highlights = false })
+    if (a.multicam) MultiCamDialog(a.c, a.h, selectedClip, onDismiss = { a.multicam = false })
+    if (a.reframe) ReframeDialog(a.h, onDismiss = { a.reframe = false })
+    if (a.template) VideoTemplateDialog(a.c, a.h, onDismiss = { a.template = false })
 }

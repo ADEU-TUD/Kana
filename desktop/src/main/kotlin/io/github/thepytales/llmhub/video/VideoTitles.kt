@@ -89,6 +89,30 @@ object VideoTitles {
         return Design(id = "video-sub", title = text, format = "video", width = w, height = h, pages = listOf(DesignPage(background = "", elements = listOf(box, e))))
     }
 
+    /**
+     * A subtitle in the style of the project (AP-129): „Standard“ is [subtitleDesign]; „Groß“ and „Wort für Wort“ are
+     * large white text with a black outline (eight copies shifted around it) in the lower middle of the picture, above
+     * where phone apps put their buttons – „Wort für Wort“ with the spoken word coloured ([SubtitleStyles.HIGHLIGHT]).
+     */
+    fun styledSubtitleDesign(cue: String, width: Int, height: Int, raised: Boolean, style: String): Design {
+        val st = SubtitleStyles.of(style)
+        if (st == SubtitleStyles.STANDARD) return subtitleDesign(cue, width, height, raised)
+        val s = scale(width, height)
+        val w = width * MM
+        val h = height * MM
+        val side = minOf(px(120f, s), w / 12)
+        val size = pt(if (st == SubtitleStyles.WOERTER) 84f else 66f, s)
+        val boxH = px(if (st == SubtitleStyles.WOERTER) 260f else 300f, s)
+        // Lower middle: about two thirds down (portrait: a little higher, the apps' buttons sit at the bottom).
+        val y = h * (if (height > width) 0.62f else 0.66f) - boxH / 2 - if (raised) px(180f, s) else 0f
+        val rich = st == SubtitleStyles.WOERTER
+        fun box(dx: Float, dy: Float, color: String, t: String, r: Boolean) =
+            text(side + dx, y + dy, w - 2 * side, boxH, t, size, color, medium = true, align = "center", valign = "middle", lineHeight = 1.12f).copy(rich = r)
+        val o = px(4f, s)
+        val outline = listOf(-o to -o, 0f to -o, o to -o, -o to 0f, o to 0f, -o to o, 0f to o, o to o).map { (dx, dy) -> box(dx, dy, "#000000", SubtitleStyles.plain(cue), false) }
+        return Design(id = "video-sub", title = SubtitleStyles.plain(cue), format = "video", width = w, height = h, pages = listOf(DesignPage(background = "", elements = outline + box(0f, 0f, "#FFFFFF", cue, rich))))
+    }
+
     fun render(d: Design, width: Int): ImageBitmap = renderDesignPage(d, 0, width, transparent = true)
 
     fun png(d: Design, width: Int): ByteArray = render(d, width).pngBytes()

@@ -219,6 +219,8 @@ internal fun GuideCard(p: VideoProject, a: VideoActions, onSplit: () -> Unit, on
                                 GuideButton(Icons.Outlined.Title, tr("Titel"), { a.addTitle("titel") })
                                 GuideButton(null, tr("Name einblenden"), { a.addTitle("bauchbinde") })
                                 GuideButton(Icons.Outlined.Subtitles, tr("Untertitel …"), { a.pickTranscript = "subs" })
+                                // AP-129: title, the speakers' names and the credits in one go.
+                                GuideButton(null, tr("Vorlage …"), { a.template = true })
                             }
                             "sound" -> {
                                 GuideButton(Icons.Outlined.MusicNote, tr("Musik …"), { a.addAudio() })

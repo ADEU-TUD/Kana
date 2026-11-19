@@ -126,7 +126,7 @@ object VideoRender {
             val k = input++
             var vin = "[$k:v]"
             if (fx != null && fx.picture && mi?.hasVideo != false && !hidden("V1")) {
-                val (bw, bh) = VideoFx.workSize(mi, w, h)
+                val (bw, bh) = VideoFx.workSize(mi, w, h, fx.cropAspect)
                 graph += VideoFx.pictureLines(vin, "e$i", fx, VideoFx.span(c, s.head, s.length, still), bw, bh, fps, still)
                 vin = "[e$i]"
             }
@@ -186,6 +186,7 @@ object VideoRender {
             v = "vw"; a = "aw"
         }
         val mix = mutableListOf<String>()
+        val music = mutableListOf<String>()
         // Pictures on V2 …: from the lowest track up, each from its start (setpts) over what is below.
         p.layers.filter { !hidden("V${it.track}") && it.endSec > from + 1e-6 && it.startSec < to - 1e-6 && it.length > 0.04 }
             .sortedWith(compareBy({ it.track }, { it.startSec })).forEachIndexed { j, l ->
@@ -236,7 +237,8 @@ object VideoRender {
                 v = "vt$k"
             }
             // Subtitles burned in: one picture per cue, joined as one picture stream (concat list with durations).
-            val cues = p.subtitles.filter { it.endSec > it.startSec && it.endSec > from && it.startSec - from < len }.sortedBy { it.startSec }
+            // In the style of the project (AP-129): „Wort für Wort“ draws one picture per word.
+            val cues = SubtitleStyles.display(p).filter { it.endSec > it.startSec && it.endSec > from && it.startSec - from < len }.sortedBy { it.startSec }
             if (p.burnSubtitles && cues.isNotEmpty()) {
                 val blank = File(work, "leer.png").apply { writeBytes(VideoTitles.blank(w, h)) }
                 val list = StringBuilder("ffconcat version 1.0\n")
@@ -252,7 +254,7 @@ object VideoRender {
                     val end = minOf(cue.endSec - from, len)
                     if (end <= start) return@forEachIndexed
                     if (start - t > 0.02) entry(blank, start - t)
-                    val png = File(work, "untertitel-$k.png").apply { writeBytes(VideoTitles.png(VideoTitles.subtitleDesign(cue.text, w, h, p.subtitleRaised(cue)), w)) }
+                    val png = File(work, "untertitel-$k.png").apply { writeBytes(VideoTitles.png(VideoTitles.styledSubtitleDesign(cue.text, w, h, p.subtitleRaised(cue), p.subtitleStyle), w)) }
                     entry(png, end - start)
                     t = end
                 }
@@ -293,9 +295,14 @@ object VideoRender {
             val delay = Math.round(start * 1000)
             graph += if (tempo.isEmpty()) "${nameHead}volume=${f(m.volume.toDouble())},${fades}asetpts=PTS-STARTPTS,adelay=$delay|$delay[m$k]"
             else "${nameHead}volume=${f(m.volume.toDouble())},asetpts=PTS-STARTPTS,${tempo.joinToString(",")},asetpts=PTS-STARTPTS,${fades}adelay=$delay|$delay[m$k]"
-            mix += "m$k"
+            // Ducking (AP-129): sound not linked to a clip (music, a voice-over) goes under the speech.
+            if (p.sound.duck && m.linkedTo == null) music += "m$k" else mix += "m$k"
         }
-        if (mix.isNotEmpty()) {
+        if (music.isNotEmpty()) {
+            val (lines, out) = Ducking.lines(a, mix, music, p.sound.duckDb)
+            graph += lines
+            a = out
+        } else if (mix.isNotEmpty()) {
             graph += "[$a]" + mix.joinToString("") { "[$it]" } + "amix=inputs=${mix.size + 1}:duration=first:dropout_transition=0:normalize=0[amx]"
             a = "amx"
         }

@@ -416,6 +416,96 @@ object VideoLora {
                 change(p, tr("{0} Stelle(n) herausgeschnitten, jetzt {1}.", props.size, clock(result.duration))) { _ -> result }
             }
         },
+        // ── Video im Alltag (AP-129) ──
+        ToolAction(
+            "video.duck", ActionArea.VIDEO, trLater("Musik leiser beim Sprechen"),
+            "Schaltet Ducking ein oder aus: Musik und nicht verknüpfter Ton werden leiser, solange gesprochen wird (AP-129).",
+            listOf(ActionParam("an", "ja oder nein (Standard ja)", required = false), ActionParam("staerke", "leicht, mittel oder stark (Standard mittel)", required = false)),
+            risky = false, android = false,
+        ) { _, a ->
+            val p = need()
+            val on = a.s("an")?.trim()?.lowercase()?.let { it !in setOf("nein", "aus", "false", "0", "no", "off") } ?: true
+            val db = when (a.s("staerke")?.trim()?.lowercase()) { "leicht" -> 8f; "stark" -> 18f; else -> 12f }
+            ActionPlan("video.duck", if (on) tr("Musik wird beim Sprechen {0} dB leiser …", db.toInt()) else tr("Ducking aus …"), false) {
+                change(p, if (on) tr("Musik beim Sprechen {0} dB leiser.", db.toInt()) else tr("Ducking aus.")) { pp -> pp.copy(sound = pp.sound.copy(duck = on, duckDb = if (on) db else pp.sound.duckDb)) }
+            }
+        },
+        ToolAction(
+            "video.subtitle_style", ActionArea.VIDEO, trLater("Untertitel-Stil"),
+            "Setzt das Aussehen der Untertitel: standard (Kasten unten), gross (groß mit Kontur, für kurze Clips) oder woerter (Wort für Wort, gesprochenes Wort hervorgehoben) (AP-129).",
+            listOf(ActionParam("stil", "standard, gross oder woerter")), risky = false, android = false, remember = listOf("stil"),
+        ) { _, a ->
+            val p = need()
+            val raw = a.s("stil")?.trim()?.lowercase().orEmpty().replace("ö", "oe").replace("ß", "ss")
+            val style = when {
+                "wort" in raw || "woert" in raw -> SubtitleStyles.WOERTER
+                "gross" in raw || "groß" in raw -> SubtitleStyles.GROSS
+                else -> SubtitleStyles.STANDARD
+            }
+            val label = tr(SubtitleStyles.STYLES.first { it.first == style }.second)
+            ActionPlan("video.subtitle_style", tr("Untertitel im Stil „{0}“ …", label), false) {
+                change(p, tr("Untertitel jetzt „{0}“.", label)) { pp -> pp.copy(subtitleStyle = style, burnSubtitles = if (style != SubtitleStyles.STANDARD) true else pp.burnSubtitles) }
+            }
+        },
+        ToolAction(
+            "video.template", ActionArea.VIDEO, trLater("Vorlage für Titel und Abspann"),
+            "Setzt Titel, Bauchbinden der Sprecher und Abspann nach einer Vorlage im TUD-Design: vorlesung, interview, clip oder unterricht (AP-129).",
+            listOf(
+                ActionParam("vorlage", "vorlesung, interview, clip oder unterricht"), ActionParam("titel", "Titel oder Satz am Anfang"),
+                ActionParam("untertitel", "Zweite Zeile des Titels", required = false), ActionParam("abspann", "Text des Abspanns", required = false),
+            ), risky = false, android = false, remember = listOf("vorlage"),
+        ) { c, a ->
+            val p = need()
+            val t = VideoTemplates.template(a.s("vorlage")) ?: throw ActionFailed(tr("Welche Vorlage? vorlesung, interview, clip oder unterricht."))
+            val values = listOf("titel", "untertitel", "abspann").associateWith { a.s(it).orEmpty() }
+            val speakers = if (t.speakers) runCatching { VideoTemplates.speakers(TextCut.build(p, transcripts(c, p))) }.getOrDefault(emptyList()) else emptyList()
+            ActionPlan("video.template", tr("Vorlage „{0}“: {1} …", tr(t.label), VideoTemplates.describe(t, values, speakers.size)), false) {
+                change(p, tr("Vorlage „{0}“ eingesetzt.", tr(t.label))) { pp -> VideoTemplates.apply(pp, t, values, speakers) }
+            }
+        },
+        ToolAction(
+            "video.reframe", ActionArea.VIDEO, trLater("Hochformat mit Ausschnitt"),
+            "Stellt das Projekt auf Hochformat 9:16, Quadrat 1:1 oder 4:5 um; der Bildausschnitt folgt dem Gesicht der Person (Gesichtserkennung auf dem Gerät, AP-129).",
+            listOf(ActionParam("format", "9:16, 1:1 oder 4:5 (Standard 9:16)", required = false)), risky = false, android = false, remember = listOf("format"),
+        ) { _, a ->
+            val p = need()
+            if (p.clips.isEmpty()) throw ActionFailed(tr("Das Projekt hat noch keine Clips."))
+            val f = Reframe.format(a.s("format")?.replace("x", ":")?.replace("quadrat", "1:1", ignoreCase = true)?.replace("hoch", "9:16", ignoreCase = true))
+            ActionPlan("video.reframe", tr("Stellt auf {0} um, der Ausschnitt folgt der Person …", f.id), false) {
+                val keys = Reframe.scan(p, f, { Media.probe(it) })
+                val info = withContext(Dispatchers.IO) { p.clips.map { it.path }.distinct().associateWith { Media.probe(File(it)) } }
+                change(p, tr("Jetzt {0}: {1} Clip(s) folgen der Person.", f.id, keys.size)) { pp -> Reframe.apply(pp, f, keys) { cl -> info[cl.path]?.let { i -> if (i.height > 0) i.width.toDouble() / i.height else null } } }
+            }
+        },
+        ToolAction(
+            "video.highlights", ActionArea.VIDEO, trLater("Höhepunkte als Clip"),
+            "Wählt aus einer langen Aufnahme die stärksten Stellen und legt daraus ein neues kurzes Projekt an (30 s bis 3 min), auf Wunsch im Hochformat mit großen Untertiteln (AP-129).",
+            listOf(
+                ActionParam("sekunden", "Länge in Sekunden (Standard 60)", required = false), ActionParam("wunsch", "Worauf achten", required = false),
+                ActionParam("format", "wie, 9:16 oder 1:1 (Standard 9:16)", required = false),
+            ), risky = false, android = false, usesModel = true,
+        ) { c, a ->
+            val p = need()
+            if (ToolActions.model(c) == null) throw ActionFailed(tr("Dafür braucht es ein Modell – hier ist keines erlaubt oder kein API-Schlüssel da."))
+            val all = transcripts(c, p)
+            if (all.isEmpty()) throw ActionFailed(tr("Für die Höhepunkte braucht es ein Transkript – zuerst „Untertitel erzeugen“ oder transkribieren."))
+            val seconds = a.s("sekunden")?.filter { it.isDigit() }?.toIntOrNull()?.coerceIn(15, 300) ?: 60
+            val fmt = a.s("format")?.trim()?.lowercase().let { v -> if (v == null || v.isBlank()) Reframe.FORMATS.first() else if (v.startsWith("wie")) null else Reframe.format(v.replace("x", ":")) }
+            val chosen = runCatching { Highlights.pick(c, Highlights.passages(p, all), seconds, a.s("wunsch").orEmpty()) }.getOrElse { throw ActionFailed(it.message ?: it.javaClass.simpleName) }
+            val preview = chosen.map { (clock(it.start) + "–" + clock(it.end)) to it.text.take(70) }
+            ActionPlan("video.highlights", tr("Legt einen Clip aus {0} Stelle(n) an ({1}) …", chosen.size, clock(chosen.sumOf { it.length })), false, preview) {
+                var q = Highlights.project(p, chosen, all, fmt, if (fmt != null) SubtitleStyles.WOERTER else p.subtitleStyle)
+                if (fmt != null) {
+                    val keys = Reframe.scan(q, fmt, { Media.probe(it) })
+                    val info = withContext(Dispatchers.IO) { q.clips.map { it.path }.distinct().associateWith { Media.probe(File(it)) } }
+                    q = Reframe.apply(q, fmt, keys) { cl -> info[cl.path]?.let { i -> if (i.height > 0) i.width.toDouble() / i.height else null } }
+                }
+                val saved = withContext(Dispatchers.IO) { VideoHub.store.save(q) }
+                lastId = saved.id
+                openRequest.value = saved.id
+                ActionResult(tr("„{0}“ angelegt ({1}).", saved.title, clock(saved.duration)), undo = { withContext(Dispatchers.IO) { VideoHub.store.delete(saved.id) }; tr("Clip wieder entfernt.") })
+            }
+        },
         ToolAction(
             "video.export", ActionArea.VIDEO, trLater("Exportieren"), "Exportiert das Video als MP4 in Erstellt: Vorgabe opal (720p, klein), youtube (1080p) oder projekt.",
             listOf(ActionParam("vorgabe", "opal, youtube oder projekt", required = false)), risky = false, android = false, remember = listOf("vorgabe"),

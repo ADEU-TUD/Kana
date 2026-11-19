@@ -1700,6 +1700,26 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Vorher | Nachher | Startseite | Rechtsklick |
   | --- | --- | --- | --- |
   | ![Videoeditor vorher](docs/bilder/ap121-vorher.png) | ![Videoeditor nachher](docs/bilder/ap121-editor.png) | ![Startseite](docs/bilder/ap121-start.png) | ![Rechtsklick](docs/bilder/ap121-rechtsklick.png) |
+- **Videoeditor: was im Alltag fehlt** (AP-129; Lückenliste gegen Clipchamp, CapCut und DaVinci in
+  [`docs/video-luecken.md`](docs/video-luecken.md)) – für Vorlesungen, Interviews, kurze Clips und Unterrichtsvideos:
+  - **Musik leiser, wenn gesprochen wird** (*Projekt › Ton*, leicht/mittel/stark): Musik und nicht verknüpfter Ton gehen
+    unter der Sprache genau um 8, 12 oder 18 dB zurück und kommen in Pausen wieder (`video/Ducking.kt`).
+  - **Hochformat mit Ausschnitt, der der Person folgt** (*Projekt › Format* oder *Rohschnitt*): 9:16, 1:1 oder 4:5 aus
+    Querformat-Aufnahmen; die Gesichtserkennung auf dem PC findet die Person, der Ausschnitt folgt ihr ruhig (tote Zone,
+    Glättung) und schneidet aus der vollen Auflösung (`video/Reframe.kt`).
+  - **Mehrkamera nach Sprecher** (*Rohschnitt › Mehrkamera nach Sprecher …*): zweite Kamera über den Ton
+    synchronisieren, je Person eine Kamera wählen (Sprecher aus dem Transkript) oder nach Lautstärke der Mikrofone; der
+    Ton der Hauptkamera läuft durch, kurze Einwürfe lösen keinen Schnitt aus (`video/MultiCam.kt`).
+  - **Untertitel-Stile** (*Projekt › Untertitel › Aussehen*): *Standard*, *Groß* (mit Kontur in der unteren Bildmitte),
+    *Wort für Wort* (wenige Wörter, das gesprochene gelb) – in Vorschau und Export (`video/SubtitleStyles.kt`).
+  - **Höhepunkte als Clip** (*Rohschnitt › Höhepunkte als Clip …*): Lora wählt aus dem Transkript 30 s bis 3 min, daraus
+    entsteht ein neues Projekt, auf Wunsch gleich im Hochformat mit Wort-für-Wort-Untertiteln (`video/Highlights.kt`).
+  - **Vorlagen für Titel und Abspann** (*So entsteht dein Video › Titel und Untertitel › Vorlage …*, in den Eigenschaften eines Titels oder Strg+K): Vorlesung, Interview (Bauchbinden mit den Namen der
+    Sprecher:innen beim ersten Wort), kurzer Clip, Unterrichtsvideo – im TUD-Design, nochmal einsetzen ersetzt nur, was
+    die Vorlage gesetzt hat (`video/VideoTemplates.kt`).
+  - Lora-Aktionen *Musik leiser beim Sprechen*, *Untertitel-Stil*, *Vorlage für Titel und Abspann*, *Hochformat mit
+    Ausschnitt*, *Höhepunkte als Clip*. Test `VideoEverydayTest` (u. a. die Musik im Export gemessen 12 dB leiser beim
+    Sprechen, die Person in der Mitte des 9:16-Exports).
 - **Bildschirmaufnahme** (AP-56, *Videoeditor › Bildschirm aufnehmen*): ganzer Bildschirm, ein Fenster oder ein
   gezogener Bereich, dazu **Webcam**, **Mikrofon** und **Systemton** (über ein Aufnahmegerät wie „Stereomix“), Countdown,
   Mauszeiger und **Klicks als Ringe**. Ein ffmpeg-Prozess nimmt alles mit derselben Uhr auf, jede Quelle in eine eigene

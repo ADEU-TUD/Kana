@@ -7790,3 +7790,106 @@ Zeilen- und Seitenumbruch	Line and page breaks
 {0} Stellen unterscheiden sich.	{0} places differ.
 mitgeliefert	built in
 Strg+Alt+Leertaste	Ctrl+Alt+Space
+Musik leiser, wenn gesprochen wird	Lower the music when someone speaks
+Musik und Ton auf den Tonspuren, die nicht mit einem Clip verknüpft sind, werden beim Sprechen leiser und danach wieder lauter.	Music and sound on the audio tracks that are not linked to a clip get quieter while someone speaks and louder again afterwards.
+Groß und mit Kontur in der unteren Bildmitte – gut lesbar auf dem Handy ohne Ton.	Large and outlined in the lower middle of the picture – easy to read on a phone without sound.
+Wenige Wörter auf einmal, das gesprochene Wort hervorgehoben – wie in kurzen Clips üblich.	A few words at a time, the spoken word highlighted – as usual in short clips.
+Ruhig im Kasten am unteren Rand – für Vorlesungen und Lehrvideos.	Quietly in a box at the bottom – for lectures and teaching videos.
+Bildausschnitt folgt der Person	Frame follows the person
+Macht aus Querformat-Aufnahmen ein Video im Hochformat oder Quadrat. Der Ausschnitt folgt dem Gesicht der Person im Bild – ruhig wie mit einer Kamerafrau, nicht bei jedem Nicken. Alles auf diesem PC.	Turns landscape recordings into a portrait or square video. The frame follows the face of the person in the picture – calmly, like a camera operator, not with every nod. Everything on this PC.
+Ohne Gesichtserkennung bleibt der Ausschnitt in der Mitte; verschieben lässt er sich unter Effekte › Zoom und Schwenk.	Without face detection the frame stays in the middle; it can be moved under Effects › Zoom and pan.
+Jetzt {0}: {1} Clip(s) folgen der Person. Mit Strg+Z rückgängig.	Now {0}: {1} clip(s) follow the person. Undo with Ctrl+Z.
+Zurück ins Querformat	Back to landscape
+Höhepunkte als Clip	Highlights as a clip
+Dafür braucht ein Clip ein Transkript: unter Untertitel › Aus der Transkription eines zuordnen.	This needs a clip with a transcript: assign one under Subtitles › From the transcription.
+Lora liest das Transkript und wählt die stärksten Stellen. Daraus entsteht ein neues Projekt – dieses bleibt, wie es ist. Der Text geht an das Standardmodell, Namen pseudonymisiert.	Lora reads the transcript and picks the strongest passages. They become a new project – this one stays as it is. The text goes to the default model, names pseudonymized.
+Worauf achten? (optional)	What to look for? (optional)
+z. B. „das Beispiel mit dem Experiment“	e.g. “the example with the experiment”
+Wie das Projekt	Like the project
+„{0}“ angelegt ({1}).	“{0}” created ({1}).
+Clip erstellen	Create clip
+Die beiden Aufnahmen ließen sich nicht über den Ton synchronisieren – haben beide Kameras Ton?	The two recordings could not be synchronised by their sound – do both cameras have sound?
+Mehrkamera nach Sprecher	Multicam by speaker
+Zuerst die Aufnahme der Hauptkamera in die Zeitleiste legen.	First put the recording of the main camera on the timeline.
+Zwei Kameras filmen dasselbe Gespräch. Die App legt sie über den Ton übereinander und schneidet zu der Kamera, deren Person gerade spricht. Der Ton der Hauptkamera läuft durch.	Two cameras film the same conversation. The app lines them up by their sound and cuts to the camera whose person is speaking. The sound of the main camera runs through.
+Hauptkamera: {0}	Main camera: {0}
+Zweite Kamera	Second camera
+Zweite Kamera auswählen	Choose the second camera
+Datei wählen …	Choose file …
+Synchronisiere über den Ton …	Synchronising by the sound …
+Synchron: die zweite Kamera liegt {0} s versetzt.	In sync: the second camera is {0} s offset.
+Wann welche Kamera?	Which camera when?
+Nach Sprecher (Transkript)	By speaker (transcript)
+Nach Lautstärke der Mikrofone	By loudness of the microphones
+Hauptkamera	Main camera
+Jede Kamera steht bei der Person, die sie filmt: Ist ihr Mikrofon deutlich lauter, wird sie gezeigt.	Each camera stands by the person it films: when its microphone is clearly louder, it is shown.
+Ohne Transkript nur nach Lautstärke. Mit Sprechererkennung in der Transkription geht es nach Sprecher.	Without a transcript only by loudness. With speaker detection in the transcription it goes by speaker.
+Kürzeste Einstellung	Shortest shot
+Der Ton der Aufnahmen ließ sich nicht lesen.	The sound of the recordings could not be read.
+{0} Einstellungen, {1}× zur zweiten Kamera. Mit Strg+Z rückgängig.	{0} shots, {1}× to the second camera. Undo with Ctrl+Z.
+Vorlage für Titel und Abspann	Template for title and credits
+Im TUD-Design; alles lässt sich danach in der Zeitleiste ändern.	In the TUD design; everything can be changed on the timeline afterwards.
+Ohne Transkript mit Sprechererkennung gibt es keine Bauchbinden – sie lassen sich über Titel › Bauchbinde einzeln setzen.	Without a transcript with speaker detection there are no lower thirds – they can be set one by one under Title › Lower third.
+Bauchbinden für: {0}. Namen wie „Sprecher 2“ lassen sich danach ändern – oder vorher in der Transkription.	Lower thirds for: {0}. Names like “Speaker 2” can be changed afterwards – or before in the transcription.
+Vorlage „{0}“ eingesetzt. Mit Strg+Z rückgängig.	Template “{0}” inserted. Undo with Ctrl+Z.
+Einsetzen	Insert
+Bauchbinde	Lower third
+Abspann	Credits
+Vorlage für Titel und Abspann …	Template for title and credits …
+Höhepunkte als Clip …	Highlights as a clip …
+Mehrkamera nach Sprecher …	Multicam by speaker …
+Hochformat: Ausschnitt folgt der Person …	Portrait: frame follows the person …
+Musik leiser beim Sprechen	Lower the music while speaking
+Musik wird beim Sprechen {0} dB leiser …	Music gets {0} dB quieter while speaking …
+Ducking aus …	Ducking off …
+Musik beim Sprechen {0} dB leiser.	Music {0} dB quieter while speaking.
+Ducking aus.	Ducking off.
+Untertitel-Stil	Subtitle style
+Untertitel im Stil „{0}“ …	Subtitles in the style “{0}” …
+Untertitel jetzt „{0}“.	Subtitles now “{0}”.
+Welche Vorlage? vorlesung, interview, clip oder unterricht.	Which template? lecture, interview, clip or lesson.
+Vorlage „{0}“: {1} …	Template “{0}”: {1} …
+Vorlage „{0}“ eingesetzt.	Template “{0}” inserted.
+Hochformat mit Ausschnitt	Portrait with frame
+Stellt auf {0} um, der Ausschnitt folgt der Person …	Switches to {0}, the frame follows the person …
+Jetzt {0}: {1} Clip(s) folgen der Person.	Now {0}: {1} clip(s) follow the person.
+Für die Höhepunkte braucht es ein Transkript – zuerst „Untertitel erzeugen“ oder transkribieren.	The highlights need a transcript – first “Create subtitles” or transcribe.
+Legt einen Clip aus {0} Stelle(n) an ({1}) …	Creates a clip from {0} passage(s) ({1}) …
+Clip wieder entfernt.	Clip removed again.
+Wort für Wort	Word by word
+Hochformat 9:16 (Reels, Shorts, Story)	Portrait 9:16 (Reels, Shorts, Story)
+4:5 (Feed)	4:5 (feed)
+Der Mehrkamera-Schnitt geht nur mit Clips in normalem Tempo (ohne Standbild und rückwärts).	Multicam editing only works with clips at normal speed (no freeze frame, not reversed).
+Der Mehrkamera-Schnitt braucht ein Video, kein Bild.	Multicam editing needs a video, not a picture.
+Für die Höhepunkte braucht ein Clip ein Transkript – unter Untertitel › Aus der Transkription zuordnen.	The highlights need a clip with a transcript – assign one under Subtitles › From the transcription.
+{0} – Höhepunkte	{0} – Highlights
+Quadrat	Square
+Vorlesungsaufzeichnung	Lecture recording
+Titel mit Veranstaltung und Termin, Abspann mit Professur.	Title with course and date, credits with the chair.
+Veranstaltung / Thema	Course / topic
+Einführung in die Schulpädagogik	Introduction to school education
+Termin, Lehrende	Date, lecturer
+Vorlesung 3 · Prof. Muster	Lecture 3 · Prof. Muster
+Professur für … · TU Dresden	Chair of … · TU Dresden
+Interview / Gespräch	Interview / conversation
+Titel, Namen der Sprecher:innen als Bauchbinde beim ersten Wort (aus dem Transkript), Abspann.	Title, the speakers' names as lower thirds at their first words (from the transcript), credits.
+Lernen im Ganztag	Learning in all-day school
+Ein Gespräch mit …	A conversation with …
+Interview: … · TU Dresden	Interview: … · TU Dresden
+Kurzer Clip	Short clip
+Ein Satz am Anfang statt eines ganzen Titels, kurzer Abspann.	One sentence at the start instead of a whole title, short credits.
+Satz am Anfang	Sentence at the start
+Drei Tipps für gute Folien	Three tips for good slides
+Unterrichtsvideo	Teaching video
+Titel mit Fach und Klasse, Abspann mit Hinweis zur Einwilligung.	Title with subject and class, credits with a note on consent.
+Thema der Stunde	Topic of the lesson
+Brüche addieren	Adding fractions
+Fach, Klasse	Subject, class
+Mathematik · Klasse 6	Mathematics · Year 6
+Aufgenommen mit Einwilligung aller Beteiligten	Recorded with the consent of everyone involved
+Titel „{0}“	Title “{0}”
+{0} Bauchbinde(n)	{0} lower third(s)
+Vorlage …	Template …
+Leicht (−8 dB)	Light (−8 dB)
+Mittel (−12 dB)	Medium (−12 dB)
+Stark (−18 dB)	Strong (−18 dB)

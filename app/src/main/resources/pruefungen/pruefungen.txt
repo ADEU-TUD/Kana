@@ -190,6 +190,38 @@ vorher: Ein kurzes Unterrichtsvideo, in dem Namen fallen (transkribiert), und da
     sonst *Trotzdem exportieren*; das Protokoll nennt einen Export trotz offener Punkte.
   ort: video.export
 
+== AP-129 Video: was im Alltag fehlt
+geräte: windows
+vorher: Eine Querformat-Aufnahme mit einer Person (Handy oder Kamera), ein Musikstück, am besten ein Interview mit zwei
+  Kameras (transkribiert, mit Sprechererkennung) und das Videoeditor-Paket.
+- Musik leiser beim Sprechen
+  tun: Musik unter das Video legen, ohne Projekt-Auswahl rechts *Ton › Musik leiser, wenn gesprochen wird* einschalten,
+    abspielen und exportieren.
+  erwartet: Die Musik geht beim Sprechen deutlich zurück und kommt in Pausen sanft wieder, ohne Pumpen zwischen Wörtern.
+  ort: tool.video
+- Hochformat mit Ausschnitt
+  tun: *Projekt › Format › Hochformat: Ausschnitt folgt der Person …*, 9:16, *Umstellen*; abspielen.
+  erwartet: Das Video ist hochkant, die Person bleibt im Bild und der Ausschnitt bewegt sich ruhig mit ihr.
+  ort: tool.video
+- Mehrkamera nach Sprecher
+  tun: Hauptkamera in die Zeitleiste, zweite Kamera in den Medienpool; *Rohschnitt › Mehrkamera nach Sprecher …*, je
+    Person eine Kamera wählen, *Schneiden*.
+  erwartet: Bei jedem Sprecherwechsel kommt die passende Kamera; der Ton läuft ohne Sprung durch und ist lippensynchron.
+  ort: tool.video
+- Untertitel-Stile
+  tun: Untertitel aus der Transkription holen, *Projekt › Untertitel › Aussehen* auf *Groß* und *Wort für Wort* stellen.
+  erwartet: Groß: große weiße Schrift mit Kontur in der unteren Bildmitte; Wort für Wort: wenige Wörter, das
+    gesprochene gelb; im Export genauso.
+  ort: tool.video
+- Höhepunkte als Clip
+  tun: In einer langen transkribierten Aufnahme *Rohschnitt › Höhepunkte als Clip …*, 60 s, 9:16, *Clip erstellen*.
+  erwartet: Ein neues Projekt „… – Höhepunkte“ öffnet sich, etwa eine Minute lang, mit sinnvollen ganzen Aussagen.
+  ort: tool.video
+- Vorlage für Titel und Abspann
+  tun: Rechts *So entsteht dein Video › Titel und Untertitel › Vorlage …* (oder Strg+K „Vorlage“), *Interview / Gespräch*, Thema eintragen, *Einsetzen*.
+  erwartet: Titel am Anfang, Bauchbinden mit den Namen beim ersten Wort jeder Person, Abspann am Ende – im TUD-Design.
+  ort: tool.video
+
 == AP-130 Video: flüssige Vorschau
 geräte: windows
 vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten auf dem Office-PC.

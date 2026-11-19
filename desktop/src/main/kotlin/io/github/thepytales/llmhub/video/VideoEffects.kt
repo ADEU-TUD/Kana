@@ -53,16 +53,28 @@ data class ClipFx(
     val vertical: Boolean = false,
     val regions: List<Region> = emptyList(),
     val voice: Float = 0f,
+    /**
+     * Reframe (AP-129): width/height of the part of the picture that is shown, following the zoom keys – 0.5625 for
+     * 9:16, 1 for a square, 0.8 for 4:5. 0 = none (or 9:16 when [vertical] is on, as before AP-129).
+     */
+    val aspect: Float = 0f,
 ) {
+    /** Width/height of the reframed picture, 0.0 for none. */
+    val cropAspect: Double get() = when {
+        aspect > 0.05f -> aspect.coerceIn(0.2f, 5f).toDouble()
+        vertical -> 9.0 / 16
+        else -> 0.0
+    }
+
     val isNone: Boolean get() = this == ClipFx()
     val corrected: Boolean get() = abs(brightness) > 1e-3 || abs(contrast - 1f) > 1e-3 || abs(saturation - 1f) > 1e-3
     val balanced: Boolean get() = abs(gainR - 1f) > 1e-3 || abs(gainG - 1f) > 1e-3 || abs(gainB - 1f) > 1e-3
 
     /** Whether the picture needs the effect chain of the graph (anything but the sound). */
-    val picture: Boolean get() = abs(speed - 1.0) > 1e-6 || reverse || freeze || corrected || balanced || zoom.isNotEmpty() || vertical || regions.isNotEmpty()
+    val picture: Boolean get() = abs(speed - 1.0) > 1e-6 || reverse || freeze || corrected || balanced || zoom.isNotEmpty() || vertical || aspect > 0.05f || regions.isNotEmpty()
 
     /** The picture effects that a frozen frame inserted from this clip keeps (anonymisation must not get lost). */
-    fun forFreeze(): ClipFx = ClipFx(freeze = true, brightness = brightness, contrast = contrast, saturation = saturation, gainR = gainR, gainG = gainG, gainB = gainB, zoom = zoom, ease = ease, vertical = vertical, regions = regions)
+    fun forFreeze(): ClipFx = ClipFx(freeze = true, brightness = brightness, contrast = contrast, saturation = saturation, gainR = gainR, gainG = gainG, gainB = gainB, zoom = zoom, ease = ease, vertical = vertical, regions = regions, aspect = aspect)
 }
 
 /**
@@ -162,12 +174,21 @@ object VideoFx {
 
     // ── Picture ──
 
-    /** Size of the working picture: the source fitted into [w]×[h] (the size it has in the film). */
-    fun workSize(info: MediaInfo?, w: Int, h: Int): Pair<Int, Int> {
+    /**
+     * Size of the working picture: the source fitted into [w]×[h] (the size it has in the film). With a reframe of
+     * [ratio] (AP-129) the source is as high as the reframed picture will be in the frame – a landscape recording cut to
+     * 9:16 used to be fitted into the portrait frame first (608 lines of 1920) and then blown up three times.
+     */
+    fun workSize(info: MediaInfo?, w: Int, h: Int, ratio: Double = 0.0): Pair<Int, Int> {
         val sw = info?.width ?: 0
         val sh = info?.height ?: 0
         if (sw <= 0 || sh <= 0) return w to h
         val a = sw.toDouble() / sh
+        if (ratio > 0.01) {
+            val shownH = if (ratio <= w.toDouble() / h) h.toDouble() else w / ratio
+            val bh = even(shownH.roundToInt())
+            return even((bh * a).roundToInt()) to bh
+        }
         return if (a >= w.toDouble() / h) even(w) to even((w / a).roundToInt()) else even((h * a).roundToInt()) to even(h)
     }
 
@@ -248,13 +269,16 @@ object VideoFx {
         }
         // Zoom and pan (and the vertical reframe): the rectangle of the keys stretched over the picture.
         val chain = mutableListOf<String>()
-        if (fx.zoom.isNotEmpty() || fx.vertical) {
+        val ratio = fx.cropAspect
+        if (fx.zoom.isNotEmpty() || ratio > 0) {
             val keys = fx.zoom.ifEmpty { listOf(Key(0.0)) }
-            val vw = even((bh * 9.0 / 16).roundToInt()).coerceAtMost(bw)
+            // The reframed picture: as high as the working picture, as wide as the ratio asks (never wider than it).
+            val vw = even((bh * ratio).roundToInt()).coerceAtMost(bw)
+            val vh = if (ratio > 0 && bh * ratio > bw) even((bw / ratio).roundToInt()) else bh
             fun rect(k: Key): DoubleArray {
                 val z = k.w.coerceIn(0.05f, 1f).toDouble()
                 var rh = z * bh
-                var rw = if (fx.vertical) rh * 9 / 16 else z * bw
+                var rw = if (ratio > 0) rh * ratio else z * bw
                 if (rw > bw) { rh *= bw / rw; rw = bw.toDouble() }
                 val cx = (k.x * bw.toDouble()).coerceIn(rw / 2, bw - rw / 2)
                 val cy = (k.y * bh.toDouble()).coerceIn(rh / 2, bh - rh / 2)
@@ -270,7 +294,7 @@ object VideoFx {
                 val e = pts.map { expr(it, "(in/$fps)", fx.ease) }
                 chain += "perspective=x0='${e[0]}':y0='${e[1]}':x1='${e[2]}':y1='${e[1]}':x2='${e[0]}':y2='${e[3]}':x3='${e[2]}':y3='${e[3]}':eval=frame"
             }
-            chain += if (fx.vertical) "scale=$vw:$bh,setsar=1" else "scale=$bw:$bh,setsar=1"
+            chain += if (ratio > 0) "scale=$vw:$vh,setsar=1" else "scale=$bw:$bh,setsar=1"
         }
         if (fx.corrected) chain += "eq=brightness=${f(fx.brightness.coerceIn(-0.6f, 0.6f).toDouble())}:contrast=${f(fx.contrast.coerceIn(0.3f, 2.5f).toDouble())}:saturation=${f(fx.saturation.coerceIn(0f, 2.5f).toDouble())}"
         if (fx.balanced) chain += "colorchannelmixer=rr=${f(fx.gainR.coerceIn(0.5f, 2f).toDouble())}:gg=${f(fx.gainG.coerceIn(0.5f, 2f).toDouble())}:bb=${f(fx.gainB.coerceIn(0.5f, 2f).toDouble())}"
@@ -397,8 +421,10 @@ object VideoFx {
         fx.speed.takeIf { abs(it - 1.0) > 1e-6 }?.let { String.format(Locale.GERMANY, "%s×", if (it % 1.0 == 0.0) it.toInt().toString() else String.format(Locale.GERMANY, "%.2f", it).trimEnd('0')) },
         tr("rückwärts").takeIf { fx.reverse },
         tr("Standbild").takeIf { fx.freeze },
-        tr("Zoom").takeIf { fx.zoom.isNotEmpty() && !fx.vertical },
-        tr("Hochformat").takeIf { fx.vertical },
+        tr("Zoom").takeIf { fx.zoom.isNotEmpty() && fx.cropAspect <= 0.0 },
+        tr("Hochformat").takeIf { fx.cropAspect in 0.01..0.7 },
+        tr("Quadrat").takeIf { abs(fx.cropAspect - 1.0) < 0.01 },
+        tr("4:5").takeIf { abs(fx.cropAspect - 0.8) < 0.01 },
         tr("{0} Bereich(e)", fx.regions.size).takeIf { fx.regions.isNotEmpty() },
         tr("Bild korrigiert").takeIf { fx.corrected || fx.balanced },
         tr("Stimme verfremdet").takeIf { abs(fx.voice) > 0.01f },

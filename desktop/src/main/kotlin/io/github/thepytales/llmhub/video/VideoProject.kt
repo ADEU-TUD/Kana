@@ -173,6 +173,12 @@ data class AudioSettings(
     val denoise: String = "aus",
     /** Even loudness (EBU R128, -16 LUFS – usual for lecture videos and YouTube). */
     val normalize: Boolean = true,
+    /**
+     * Ducking (AP-129): music and other sound on A1 … that is not linked to a clip gets [duckDb] quieter while
+     * someone speaks (the sound of V1, of the pictures above and of linked sound).
+     */
+    val duck: Boolean = false,
+    val duckDb: Float = 12f,
 )
 
 /** Lock, mute and hide of one track ("V1", "V2" … for video, "A1" … for sound; AP-53). Mute on a video track mutes its sound. */
@@ -239,6 +245,8 @@ data class VideoProject(
     val nameList: String = "",
     /** Prüfliste vor dem Export (AP-128); false = switched off for this project. */
     val privacyCheck: Boolean = true,
+    /** How subtitles look (AP-129): "standard" (box at the bottom), "gross" (large, outlined), "woerter" (word by word). */
+    val subtitleStyle: String = "standard",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
 ) {
