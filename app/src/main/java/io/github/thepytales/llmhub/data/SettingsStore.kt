@@ -270,6 +270,8 @@ data class AppSettings(
     /** Only a verified token unlocks the GitHub options. */
     val hasGitHub get() = githubToken.isNotBlank() && githubUser.isNotBlank() ||
         githubAccounts.any { it.token.isNotBlank() && it.user.isNotBlank() }
+    /** Whether any GitHub token is entered at all (verified or not). */
+    val hasGitHubToken get() = githubToken.isNotBlank() || githubAccounts.any { it.token.isNotBlank() }
     /** Number of verified GitHub tokens (main token and further ones). */
     val githubTokenCount get() = (if (githubToken.isNotBlank() && githubUser.isNotBlank()) 1 else 0) +
         githubAccounts.count { it.token.isNotBlank() && it.user.isNotBlank() }
