@@ -59,6 +59,8 @@ data class ToolSelection(val github: Boolean, val documents: Boolean, val web: B
 class AgentRunner(private val c: AppContainer) {
     private val askUser = AskUserTool()
     private val excerptTools = ExcerptTools(c)
+    /** Chats already told that the GitHub token does not work (once per chat and app start). */
+    private val gitHubWarned: MutableSet<String> = java.util.concurrent.ConcurrentHashMap.newKeySet()
 
     fun environment(conv: Conversation): AgentEnvironment? = conv.envId?.let { c.environments.get(it) }
 
@@ -153,8 +155,10 @@ class AgentRunner(private val c: AppContainer) {
         val pdfs = start.thread().flatMap { it.files }.filter { it.path != null }.asReversed()
         val attached = start.thread().flatMap { it.files }.asReversed()
         var ctx = RepoContext(start.linkedRepos.toMutableList(), env, lastUser?.images.orEmpty(), pdfs, attached, start.folderId, start.id, startModel)
-        if ((tools?.github ?: start.githubEnabled) && !settings.hasGitHub) {
-            host.notice(tr("GitHub-Token fehlt oder ist ungültig – GitHub-Werkzeuge deaktiviert."))
+        // Without any token GitHub is simply off (the chat's GitHub chip says how to set it up) – no notice in every chat.
+        // A token that no longer works is said once per chat, not with every answer.
+        if ((tools?.github ?: start.githubEnabled) && !settings.hasGitHub && settings.hasGitHubToken && gitHubWarned.add(start.id)) {
+            host.notice(tr("GitHub-Token ist ungültig – GitHub-Werkzeuge deaktiviert."))
         }
         val withoutBranch = ctx.linked().filter { it.branch == null }
         if (withoutBranch.isNotEmpty() && settings.hasGitHub) {

@@ -289,10 +289,40 @@ class ControlsBehaviourTest {
         }
     }
 
+    /** Opening a tab and choosing it at once (second PDF in the PDF tool) crashed Material's scrollable tab row. */
+    @Test
+    fun tabRowSurvivesANewChosenTab() = ui {
+        val tabs = androidx.compose.runtime.mutableStateListOf("Erste.pdf")
+        var chosen by mutableStateOf(0)
+        show {
+            androidx.compose.foundation.layout.Column {
+                ScrollableTabRow(selectedTabIndex = chosen.coerceIn(0, tabs.lastIndex), edgePadding = 8.dp) {
+                    tabs.forEachIndexed { i, t -> androidx.compose.material3.Tab(selected = i == chosen, onClick = { chosen = i }, text = { androidx.compose.material3.Text(t) }) }
+                }
+                TabRow(selectedTabIndex = chosen.coerceIn(0, tabs.lastIndex)) {
+                    tabs.forEachIndexed { i, t -> androidx.compose.material3.Tab(selected = i == chosen, onClick = { chosen = i }, text = { androidx.compose.material3.Text(t + " ") }) }
+                }
+            }
+        }
+        repeat(3) { n ->
+            tabs += "Neu $n.pdf"
+            chosen = tabs.lastIndex
+            settle()
+        }
+        assertTrue(has("Neu 2.pdf"))
+        tabs.removeAt(0)
+        chosen = tabs.lastIndex
+        settle()
+        tabs.clear(); tabs += "Allein.pdf"
+        chosen = 0
+        settle()
+        assertTrue(has("Allein.pdf"))
+    }
+
     /** Screens use the app's parts (ui/Controls.kt, ui/Dialogs.kt): Material's directly would lose looks and keys. */
     @Test
     fun screensUseTheAppsControls() {
-        val names = "Button|OutlinedButton|TextButton|FilledTonalButton|IconButton|Icon|AlertDialog|OutlinedTextField|Switch|DropdownMenu"
+        val names = "Button|OutlinedButton|TextButton|FilledTonalButton|IconButton|Icon|AlertDialog|OutlinedTextField|Switch|DropdownMenu|ScrollableTabRow|TabRow"
         val direct = Regex(
             """^import androidx\.compose\.material3\.($names)$|androidx\.compose\.material3\.($names)\(|""" +
                 """^import androidx\.compose\.foundation\.(verticalScroll|lazy\.LazyColumn)$""",

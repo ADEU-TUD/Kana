@@ -36,6 +36,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.TabPosition
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.runtime.Composable
@@ -551,3 +553,38 @@ fun dangerMenuColors(): MenuItemColors {
     val red = MaterialTheme.colorScheme.error
     return MenuDefaults.itemColors(textColor = red, leadingIconColor = red, trailingIconColor = red)
 }
+
+/**
+ * Indicator under the chosen tab that draws nothing for a frame in which the tabs and the choice do not fit together.
+ * Material's own indicator of the scrollable row reads `tabPositions[selectedTabIndex]`: when a new tab is opened and
+ * chosen at once (second PDF in the PDF tool), it is drawn once more with the old positions before the row has measured
+ * the new tab – IndexOutOfBoundsException, the app closed.
+ */
+@Composable
+internal fun SafeTabIndicator(tabPositions: List<TabPosition>, selectedTabIndex: Int) {
+    val position = tabPositions.getOrNull(selectedTabIndex) ?: return
+    TabRowDefaults.SecondaryIndicator(with(TabRowDefaults) { Modifier.tabIndicatorOffset(position) })
+}
+
+/** Material's scrollable tab row with [SafeTabIndicator]: opening and closing tabs cannot crash it. */
+@Composable
+fun ScrollableTabRow(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier,
+    edgePadding: Dp = 52.dp,
+    tabs: @Composable () -> Unit,
+) = androidx.compose.material3.ScrollableTabRow(
+    selectedTabIndex = selectedTabIndex, modifier = modifier, edgePadding = edgePadding,
+    indicator = { positions -> SafeTabIndicator(positions, selectedTabIndex) }, tabs = tabs,
+)
+
+/** Material's tab row with [SafeTabIndicator]. */
+@Composable
+fun TabRow(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier,
+    tabs: @Composable () -> Unit,
+) = androidx.compose.material3.TabRow(
+    selectedTabIndex = selectedTabIndex, modifier = modifier,
+    indicator = { positions -> SafeTabIndicator(positions, selectedTabIndex) }, tabs = tabs,
+)
