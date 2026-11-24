@@ -113,6 +113,52 @@ APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfo
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
 im Hörsaal (gestrichen).
 
+**Vorrang ab 24.11.2026 (Hauptnutzer):** Zuerst **AP-155** (Umbenennung Lora → Kana), danach weiter wie oben.
+
+### AP-155 ☐ Umbenennung: Lora heißt jetzt Kana · L (Wunsch Hauptnutzer 24.11.2026, in Stufen)
+**Entscheidung des Hauptnutzers (24.11.2026):** Die App und die Figur heißen künftig **Kana** statt Lora. Das Repository
+heißt schon `ADEU-TUD/Kana` (GitHub leitet `ADEU-TUD/Lora` weiter), das Schwesterprojekt `Projekt-Kana-Education/Kana-Education`.
+Gründe: Lora ist in den Klassen 09/42 stark belegt und erinnert an das KI-Verfahren LoRA. Registerbefund Kana (DPMA,
+24.11.2026, Klassen 09/41/42, DE/EU/IR): keine reine Wortmarke „KANA“; nächste Treffer KANA BEACH (EM 002924397, Mode),
+Bildmarken „Kana & Friends“ (Restaurant), „Green Kana“ (EM 018082273, Cannabis/Medizin), KAENA, „dskana“. US-Marken
+(KANA Software/Verint, KANA LIVE) gelten nicht in DE. Die Freigabe durch das Justiziariat steht noch aus; sie hält die
+Arbeit nicht auf. Ablage: **ohne PR und ohne Merge**, nur auf dem Arbeits-Branch speichern; die Änderung kommt mit dem
+nächsten PR des Hauptnutzers nach `main`. **Kein Release**, solange der Hauptnutzer keines verlangt.
+
+**Grundregel: sichtbar umbenennen, technisch nichts brechen.** Wie bei AP-33 bleiben technische Namen, an denen
+Installationen, Updates oder gespeicherte Daten hängen: `ADEU LLM.exe`, Installationsordner, `%APPDATA%`-Ordner,
+Einstellungs-Schlüssel, Paketnamen (`io.github.thepytales.llmhub`, Android-`applicationId`), Signatur, das Update-Repo
+`ADEU-TUD/ADEU-Harness-Updater` (Name bleibt!). Der sichtbare Dateien-Ordner „Lora“ (siehe `LoraFiles`, `PhoneSync`)
+bekommt nur mit Migration einen neuen Namen (Stufe d). **TU-Dresden-CD bleibt unverändert** (CLAUDE.md): `docs/TudBrand.kt`,
+`DocStyle.TUD`, `creative/TudAssets.kt`, `data/BuiltInTemplates.kt`, `resources/tud/` nicht anfassen, auch wenn dort
+„Lora“ vorkommt.
+
+- **(a) Sichtbare Texte**: Oberfläche, Fenstertitel, Menüs, Dialoge, Tooltips, Hilfe, Touren, Startanimation, Logo-Text,
+  Benachrichtigungen, Android-`app_name`, Fehlermeldungen. Die Figur heißt **Kana** (weiblich: „Kana hilft …“).
+  Vorgehen: `grep -rnw Lora` (rund 3 700 Treffer in 361 Dateien, Stand 24.11.2026), nach Art trennen: Text für
+  Menschen → Kana; Bezeichner/Dateinamen/Schlüssel → Stufe c bzw. bleiben. Nicht blind ersetzen.
+- **(b) Persona und Modelle**: System-Prompts („Du bist Lora, der KI-Forschungsassistent …“, u. a. `MemoryTest`,
+  `ssh/ServerAssistant.kt`) auf Kana; Antwort auf „Wie heißt du?“ → Kana. Die Herleitung „benannt nach Low-Rank
+  Adaptation“ (README, Abschnitt Lora/Maskottchen) entfällt; neu: Kana, kurz und freundlich, passend zur runden Figur.
+  Erkennung von Anreden („Lora, …“, Sprachbefehle, Wecken per Name) auf **Kana** umstellen und **Lora als Alias** eine
+  Weile weiter verstehen.
+- **(c) Code-Bezeichner** (optional, nur wenn sauber prüfbar): `LoraFigure.kt`, `LoraUi.kt`, `LoraFace`, `LoraPanel…`,
+  Testnamen. Umbenennen ist intern ungefährlich, aber ein großer Diff; nur mit vollständigem `./gradlew test` und
+  Desktop-Build. Im Zweifel lassen und in *Ideen* notieren.
+- **(d) Dateien-Ordner „Lora“ → „Kana“ mit Migration**: beim ersten Start vorhandenen Ordner umbenennen bzw. übernehmen,
+  Handy-Abgleich (`PhoneSync`) und Scanner (`DocScanner`) auf beide Namen vorbereiten; Tests in `LoraFilesTest`,
+  `SyncRestsTest`, `PhoneSyncTest`, `DocScannerTest` anpassen. Ohne sichere Migration: Ordnername bleibt.
+- **(e) Doku**: README (Name, Figur, Slogan „Der freundliche Helfer …“ bleibt sinngemäß), `docs/ARBEITSPLAN.md`
+  (Übersicht, Grundsätze), `docs/DESIGN-ARBEITSPLAN.md`, CLAUDE.md (Hinweis: Lora heißt jetzt Kana), Links auf
+  `github.com/ADEU-TUD/Lora` → `ADEU-TUD/Kana`. Historische Einträge (erledigte APs, „Was ist neu“ alter Versionen)
+  bleiben, wie sie sind.
+- **(f) Prüfen**: `./gradlew test` vollständig, Desktop-Build; Vorher/Nachher-Bilder der wichtigsten Stellen (Start,
+  Kana-Panel, Über-Dialog) wie bei Design-Stufen; `grep -rnw Lora` danach nur noch in technischen Namen, TUD-Dateien,
+  Historie und Alias-Erkennung.
+
+**Für den nächsten Chat:** Auf dem Arbeits-Branch `claude/modest-heisenberg-9vcqk7` weiterarbeiten (dort liegt dieser
+Eintrag, `main` kennt ihn noch nicht), in Stufen committen und nur dorthin pushen. Status hier pflegen.
+
 ### AP-131 ◐ Server-Terminal ausbauen: Lora im Terminal, Dateien, Verbindungen, Tabs · M–L (Analyse S-01 bis S-03, Hauptnutzer zuerst, D)
 **Ziel**: Das Server-Terminal (AP-118) ersetzt PuTTY **und** WinSCP für den Alltag an den eigenen Servern.
 - **(a) Gespeicherte Verbindungen und SSH-Schlüssel** (S-02): Verbindungen mit Namen, Host, Nutzer, Port, Schlüssel
