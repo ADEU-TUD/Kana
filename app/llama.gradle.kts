@@ -58,12 +58,17 @@ val llamaServerAndroid by tasks.registering {
             val strip = ndk.resolve("toolchains/llvm/prebuilt").listFiles()!!.first().resolve("bin/llvm-strip").path
             for ((name, arch) in variants) {
                 val build = File(cache, "build-$arch")
+                // The app talks to the server's API only, without its web UI. llama.cpp downloads a prebuilt UI from
+                // Hugging Face by default; a newer one there fails its own check ("UI: missing required asset(s)",
+                // Release 1.0.78). Without it the server is built with no embedded UI; old downloaded files go too.
+                File(build, "tools/ui/dist").deleteRecursively()
                 val gen = if (ninja != null) arrayOf("-G", "Ninja", "-DCMAKE_MAKE_PROGRAM=$ninja") else arrayOf("-G", "Unix Makefiles")
                 run(src, cmake, "-S", ".", "-B", build.path, *gen,
                     "-DCMAKE_TOOLCHAIN_FILE=${ndk.resolve("build/cmake/android.toolchain.cmake")}",
                     "-DANDROID_ABI=arm64-v8a", "-DANDROID_PLATFORM=android-28", "-DANDROID_STL=c++_static",
                     "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SHARED_LIBS=OFF", "-DGGML_NATIVE=OFF", "-DGGML_OPENMP=OFF",
-                    "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DGGML_CPU_ARM_ARCH=$arch")
+                    "-DLLAMA_CURL=OFF", "-DLLAMA_BUILD_TESTS=OFF", "-DLLAMA_BUILD_EXAMPLES=OFF", "-DGGML_CPU_ARM_ARCH=$arch",
+                    "-DLLAMA_BUILD_UI=OFF", "-DLLAMA_USE_PREBUILT_UI=OFF")
                 run(src, cmake, "--build", build.path, "--target", "llama-server", "-j", Runtime.getRuntime().availableProcessors().toString())
                 val bin = File(build, "bin/llama-server")
                 val target = File(cache, name)
