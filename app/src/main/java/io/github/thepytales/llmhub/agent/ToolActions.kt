@@ -19,8 +19,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 /**
- * Lora handelt in Werkzeugen (AP-38). Every tool reports its actions here – name, description, parameters, risk and
- * platform –, like the map of the app (AppMap) for places. Lora gets as tools only the actions of the area that is open
+ * Kana handelt in Werkzeugen (AP-38). Every tool reports its actions here – name, description, parameters, risk and
+ * platform –, like the map of the app (AppMap) for places. Kana gets as tools only the actions of the area that is open
  * (short prompts, few tools). An action first makes a [ActionPlan]: the step line for the panel („Fügt 2 PDFs
  * zusammen …“) and, for everything that moves, deletes (Papierkorb) or overwrites, a preview „vorher → nachher“ that the
  * user confirms. Its [ActionResult] carries „Rückgängig“.
@@ -35,11 +35,11 @@ enum class ActionArea(val label: String) {
     /** Mail & Kalender (AP-69): sorting with the model on this device. */
     MAIL(trLater("Mail & Kalender"));
 
-    /** Key of the area for Lora's memory (AP-39: preferences per tool). */
+    /** Key of the area for Kana's memory (AP-39: preferences per tool). */
     val key: String get() = name.lowercase()
 
     companion object {
-        /** The area of a screen route, or null (Lora then only navigates). An open document is text, table or slides. */
+        /** The area of a screen route, or null (Kana then only navigates). An open document is text, table or slides. */
         fun of(route: String?): ActionArea? {
             val r = route.orEmpty().substringBefore('?')
             return when {
@@ -86,7 +86,7 @@ object LoraFocus {
 
     /**
      * The mails chosen in Mail & Kalender (AP-69): ids, how many and subjects, for actions on the device („diese 12
-     * Mails …“). Lora's prompt only gets how many – what is in the mails stays on the device (AP-68).
+     * Mails …“). Kana's prompt only gets how many – what is in the mails stays on the device (AP-68).
      */
     val mails = kotlinx.coroutines.flow.MutableStateFlow<io.github.thepytales.llmhub.data.MailSelection?>(null)
 }
@@ -118,7 +118,7 @@ object ActionHosts {
     var slides: EditorDocHost? = null
 }
 
-/** What the open document offers Lora (AP-38 Stufe c, AP-47). */
+/** What the open document offers Kana (AP-38 Stufe c, AP-47). */
 interface DocActions {
     /** Writes text from [prompt] at the cursor (visible, then Übernehmen · Neu · Verwerfen). */
     fun write(prompt: String)
@@ -179,7 +179,7 @@ class ToolAction(
     val android: Boolean = true,
     /** Sends content to a model (names after content, writing): the data protection level of the project counts. */
     val usesModel: Boolean = false,
-    /** Parameters whose choice Lora may offer to remember as a preference (AP-39), e.g. „nach“ of files.tidy. */
+    /** Parameters whose choice Kana may offer to remember as a preference (AP-39), e.g. „nach“ of files.tidy. */
     val remember: List<String> = emptyList(),
     val plan: suspend (AppContainer, JsonObject) -> ActionPlan,
 ) {
@@ -193,8 +193,8 @@ class ToolAction(
 }
 
 /**
- * Protokoll der Lora-Aktionen (AP-38): every planned, carried out, failed and undone action with time, shown under
- * Einstellungen › Lora; the last 400 lines stay in „lora-aktionen.log“ of the data folder.
+ * Protokoll der Kana-Aktionen (AP-38): every planned, carried out, failed and undone action with time, shown under
+ * Einstellungen › Kana; the last 400 lines stay in „lora-aktionen.log“ of the data folder.
  */
 object ActionLog {
     private const val MAX = 400
@@ -233,7 +233,7 @@ object ToolActions {
 
     val all: List<ToolAction> get() = BUILT_IN + OfficeActions.ALL + MoreActions.ALL + StyleActions.ALL + MailSorter.ACTIONS + synchronized(extra) { extra.toList() }
 
-    /** The actions Lora gets in [area] (PDF actions also in the Dateien tab, for chosen PDFs). */
+    /** The actions Kana gets in [area] (PDF actions also in the Dateien tab, for chosen PDFs). */
     fun forArea(area: ActionArea?, android: Boolean): List<ToolAction> {
         area ?: return emptyList()
         val areas = when (area) {
@@ -247,15 +247,15 @@ object ToolActions {
 
     fun byId(id: String): ToolAction? = all.firstOrNull { it.id == id }
 
-    /** Writes into the log what Lora did (with „Problem melden“ it reaches the developer). */
+    /** Writes into the log what Kana did (with „Problem melden“ it reaches the developer). */
     fun log(text: String) {
-        android.util.Log.i("Lora", "Lora-Aktion: $text")
+        android.util.Log.i("Kana", "Kana-Aktion: $text")
         ActionLog.add(text)
     }
 
-    // ── Datenschutz (AP-38): the level of the project Lora was called from, the vault, „Nur auf diesem Gerät“ ──
+    // ── Datenschutz (AP-38): the level of the project Kana was called from, the vault, „Nur auf diesem Gerät“ ──
 
-    /** The level that counts for Lora's actions now: the project's, at least „Nur TU Dresden“ from a Tresor chat. */
+    /** The level that counts for Kana's actions now: the project's, at least „Nur TU Dresden“ from a Tresor chat. */
     fun privacy(c: AppContainer): io.github.thepytales.llmhub.data.PrivacyLevel {
         val project = io.github.thepytales.llmhub.data.Privacy.level(c, io.github.thepytales.llmhub.ui.LoraHelper.folderId)
         val vault = c.drive.isVaultChat(io.github.thepytales.llmhub.ui.LoraHelper.chatId)
@@ -278,7 +278,7 @@ object ToolActions {
         io.github.thepytales.llmhub.data.PrivacyLevel.OPEN -> tr("Inhalte gehen an das gewählte Modell.")
     }
 
-    /** Files of the Tresor never reach Lora's actions. */
+    /** Files of the Tresor never reach Kana's actions. */
     internal fun allowed(c: AppContainer, f: File): Boolean = !f.absolutePath.replace('\\', '/').contains("/tresor-dateien/")
 
     private val PDF_IN_FILES = setOf("pdf.open", "pdf.merge", "pdf.compress", "pdf.convert", "pdf.split", "pdf.redact", "slides.from_paper")
@@ -287,7 +287,7 @@ object ToolActions {
 
     /**
      * The files named in [names] (comma separated; names or parts of names), else the ones in focus. Looks in the
-     * focus, the open folder and the Lora-Ordner. [ext] limits to a type ("pdf").
+     * focus, the open folder and the Kana-Ordner. [ext] limits to a type ("pdf").
      */
     internal fun files(c: AppContainer, names: String?, ext: String? = null): List<File> {
         fun ok(f: File) = f.isFile && (ext == null || f.extension.equals(ext, true)) && allowed(c, f)
@@ -309,7 +309,7 @@ object ToolActions {
 
     private val FOCUS_WORDS = setOf("diese", "dieses", "diese datei", "die datei", "markierte", "ausgewählte", "auswahl", "aktuelle", "das pdf", "dieses pdf")
 
-    /** The folder named [name] (relative to the Lora-Ordner or the open folder), created by [create]. */
+    /** The folder named [name] (relative to the Kana-Ordner or the open folder), created by [create]. */
     internal fun folder(c: AppContainer, name: String?, create: Boolean): File? {
         val n = name?.trim()?.trim('/', '\\')?.takeIf { it.isNotEmpty() } ?: return LoraFocus.folder
         File(n).takeIf { it.isAbsolute }?.let { return it.takeIf { d -> d.isDirectory || create && d.mkdirs() } }
@@ -325,7 +325,7 @@ object ToolActions {
         return LoraDrive.unique(dir, name)
     }
 
-    /** Rückgängig for files an action made: into the Papierkorb (Lora-Ordner) or deleted. */
+    /** Rückgängig for files an action made: into the Papierkorb (Kana-Ordner) or deleted. */
     internal fun removeMade(c: AppContainer, files: List<File>): String {
         val inside = files.filter { c.drive.inside(it) }
         if (inside.isNotEmpty()) c.drive.delete(inside)
@@ -460,7 +460,7 @@ object ToolActions {
                 }, open = dest)
             }
         },
-        // Passwortschutz (AP-98): Lora opens the window; the password is typed there and never reaches a model.
+        // Passwortschutz (AP-98): Kana opens the window; the password is typed there and never reaches a model.
         ToolAction(
             "files.password", ActionArea.FILES, trLater("Passwort setzen oder entfernen"),
             "Öffnet den Dialog, um für Word, Excel, PowerPoint, PDF oder ZIP ein Passwort zu setzen, zu ändern oder zu entfernen (AES-256). Das Passwort gibt die Nutzerin bzw. der Nutzer dort selbst ein.",
@@ -537,7 +537,7 @@ object ToolActions {
         },
         ToolAction(
             "files.move", ActionArea.FILES, trLater("Verschieben"), "Verschiebt Dateien in einen Ordner (wird bei Bedarf angelegt).",
-            listOf(ActionParam("dateien", "Namen, kommagetrennt (leer: die ausgewählten)", required = false), ActionParam("ordner", "Zielordner im Lora-Ordner, z. B. Lehre/WiSe 2026")),
+            listOf(ActionParam("dateien", "Namen, kommagetrennt (leer: die ausgewählten)", required = false), ActionParam("ordner", "Zielordner im Kana-Ordner, z. B. Lehre/WiSe 2026")),
             risky = true,
         ) { c, a ->
             val fs = files(c, a.s("dateien"))
@@ -574,8 +574,8 @@ object ToolActions {
         },
         ToolAction(
             "files.duplicates", ActionArea.FILES, trLater("Duplikate finden"),
-            "Findet doppelte Dateien (gleicher Inhalt) im offenen Ordner oder im ganzen Lora-Ordner und legt die Kopien in den Papierkorb.",
-            listOf(ActionParam("ordner", "Ordner (leer: der offene, sonst der ganze Lora-Ordner)", required = false)),
+            "Findet doppelte Dateien (gleicher Inhalt) im offenen Ordner oder im ganzen Kana-Ordner und legt die Kopien in den Papierkorb.",
+            listOf(ActionParam("ordner", "Ordner (leer: der offene, sonst der ganze Kana-Ordner)", required = false)),
             risky = true,
         ) { c, a ->
             val base = a.s("ordner")?.let { folder(c, it, false) } ?: LoraFocus.folder
@@ -764,7 +764,7 @@ object ToolActions {
                     if (!change(tr("Schwärzen")) { src, out -> PdfStage3.redact(src, PdfStage3.find(src, terms), out) }) throw ActionFailed(tr("Das hat nicht geklappt"))
                     ActionResult(tr("{0} Stellen geschwärzt – erst „Speichern“ im Werkzeugkasten ändert das Original.", hits.size), undo = { ActionHosts.undoOpenPdf?.invoke(); tr("Schwärzung zurückgenommen.") })
                 } else {
-                    // Not open in the werkzeugkasten (e.g. a step of a Lora-Ablauf): a new, redacted copy beside it.
+                    // Not open in the werkzeugkasten (e.g. a step of a Kana-Ablauf): a new, redacted copy beside it.
                     val out = beside(c, f, f.nameWithoutExtension + " " + tr("(geschwärzt)") + ".pdf")
                     withContext(Dispatchers.IO) { PdfStage3.redact(f, PdfStage3.find(f, terms), out) }
                     c.drive.changed()

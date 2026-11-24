@@ -119,7 +119,7 @@ internal val SHEET_STARTERS = listOf(
     "Zeitplan" to SheetEngine.markdown(listOf(listOf("Aufgabe", "Verantwortlich", "Beginn", "Ende", "Status")) + List(6) { List(5) { "" } }),
 ) + io.github.thepytales.llmhub.docs.SheetTemplates.ALL
 
-/** Creates a new document of [kind] (in [folder] of the Lora-Ordner, else the default storage folder) and returns it. */
+/** Creates a new document of [kind] (in [folder] of the Kana-Ordner, else the default storage folder) and returns it. */
 fun newLiveDoc(c: AppContainer, kind: DocKind, markdown: String? = null, title: String? = null, style: String? = null, folder: String? = null): LiveDoc {
     val t = title ?: kind.newTitle
     val md = markdown ?: when (kind) {

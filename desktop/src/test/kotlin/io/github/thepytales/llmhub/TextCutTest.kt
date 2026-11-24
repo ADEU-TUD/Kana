@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 
 /**
  * Textbasierter Schnitt (AP-55): the transcript as text on the timeline, deleting words cuts the video, paragraphs move
- * clips, fillers and pauses go with one click, Lora's proposals are parsed into passages.
+ * clips, fillers and pauses go with one click, Kana's proposals are parsed into passages.
  */
 class TextCutTest {
     private val path = "/videos/vortrag.mp4"

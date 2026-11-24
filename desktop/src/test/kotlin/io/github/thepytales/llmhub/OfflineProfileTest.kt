@@ -181,7 +181,7 @@ class OfflineProfileTest {
         val plain = ErrorHelp.explain(e)
         assertEquals(ErrorHelp.Fix.LOCAL_SETUP, plain.fix)
         assertEquals(e.message, plain.text, "Klartext bleibt, wie er ist")
-        // Lora without model and key: understands commands, says what is missing, no server.
+        // Kana without model and key: understands commands, says what is missing, no server.
         val reply = runBlocking { LoraAgent(c).ask("Schreib mir einen freundlichen Gruß an mein Team.") }
         assertTrue("Sprachmodell" in reply.text, reply.text)
         assertTrue(reply.steps.none { it is io.github.thepytales.llmhub.agent.LoraStep.Handoff }, "keine Übergabe an ein Server-Modell")
@@ -198,13 +198,13 @@ class OfflineProfileTest {
         runBlocking { c.agent.run(host) }
         assertEquals("Hallo, ich arbeite auf diesem Gerät.", host.conversation!!.thread().last().content)
         assertEquals(1, bodies.size)
-        // Lora herself (answers, tools): the language model here.
+        // Kana herself (answers, tools): the language model here.
         val reply = runBlocking { LoraAgent(c).ask("Schreib mir einen freundlichen Gruß an mein Team.") }
-        // Lora answers with the model here or hands over to a chat – then to the model here, not to the server.
+        // Kana answers with the model here or hands over to a chat – then to the model here, not to the server.
         val handoffs = reply.steps.filterIsInstance<io.github.thepytales.llmhub.agent.LoraStep.Handoff>()
-        assertTrue(bodies.size >= 2 || handoffs.isNotEmpty(), "Lora: ${reply.text}")
+        assertTrue(bodies.size >= 2 || handoffs.isNotEmpty(), "Kana: ${reply.text}")
         assertTrue(handoffs.all { it.model == model.modelId }, "Übergabe an ${handoffs.map { it.model }}")
-        // Dokumente (Lora schreibt mit), helpers of every area without a scope of their own.
+        // Dokumente (Kana schreibt mit), helpers of every area without a scope of their own.
         runBlocking {
             withContext(PlaceScope(Area.DOCS)) { c.llm.streamChat(c.settings.current.defaultModel, listOf(ChatMessage(role = "user", content = "Verbessere: Hallo")), null) { } }
             c.llm.streamChat(ModelCatalog.FAST_CHAT, listOf(ChatMessage(role = "user", content = "Titel?")), null) { }
@@ -212,7 +212,7 @@ class OfflineProfileTest {
         assertTrue(bodies.size >= 3)
         // New chats start with the model here.
         assertEquals(model.modelId, io.github.thepytales.llmhub.ui.newConversation(c).model)
-        assertNothingLeft("Chat, Lora, Dokumente")
+        assertNothingLeft("Chat, Kana, Dokumente")
     }
 
     @Test
@@ -224,7 +224,7 @@ class OfflineProfileTest {
         assertTrue(Places.allLocal(c))
         assertEquals("LOCAL", c.settings.current.loraPlace)
         assertEquals("LOCAL", c.transcription.settings.value.mode)
-        // Chat and Lora: on the device although a key is there.
+        // Chat and Kana: on the device although a key is there.
         val host = Host(chat())
         runBlocking { c.agent.run(host) }
         assertEquals(1, bodies.size)

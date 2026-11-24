@@ -74,7 +74,7 @@ fun BackupSection(c: AppContainer) {
             message = tr("Import fehlgeschlagen: {0}", e.message ?: e.javaClass.simpleName)
         }
     }
-    val fileName = "Lora-Sicherung-${LocalDate.now()}.zip"
+    val fileName = "Kana-Sicherung-${LocalDate.now()}.zip"
     SettingsCard(tr("Sicherung")) {
         SettingsHint(
             tr("Speichert Chats, Projekte, Vorlagen, geplante Aufgaben, Dokumente, Logos, Wissenssammlung, Gedächtnis, Adressbuch " +

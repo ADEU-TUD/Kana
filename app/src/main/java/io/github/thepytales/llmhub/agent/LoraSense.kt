@@ -11,15 +11,15 @@ import io.github.thepytales.llmhub.ui.tr
 import io.github.thepytales.llmhub.ui.trLater
 
 /**
- * What Lora notices on the device, without any request (AP-34, AP-35): where the user is and what fits there, next
+ * What Kana notices on the device, without any request (AP-34, AP-35): where the user is and what fits there, next
  * steps under an answer (a deadline for the calendar, a table for Excel …), a matching place of the app while typing,
  * and a readable line for the step the agent is working on. Pure functions, so they are easy to test.
  */
 object LoraSense {
 
     /**
-     * A wish to tap in Lora's panel: [target] (an id of the AppMap) opens that place right away; [inChat] sends [wish]
-     * as a message into the open chat; otherwise [wish] goes to Lora like a typed one.
+     * A wish to tap in Kana's panel: [target] (an id of the AppMap) opens that place right away; [inChat] sends [wish]
+     * as a message into the open chat; otherwise [wish] goes to Kana like a typed one.
      */
     data class Suggestion(val label: String, val wish: String, val target: String? = null, val inChat: Boolean = false)
 
@@ -48,7 +48,7 @@ object LoraSense {
     }
 
     /**
-     * Two or three wishes that fit the area of [route]; [inChat] = a chat with messages is open. Most of them Lora
+     * Two or three wishes that fit the area of [route]; [inChat] = a chat with messages is open. Most of them Kana
      * answers on the device (a place, the help), so a tap is instant.
      */
     /** Start page by role (AP-80): one or two suggestions per role, at most three. */
@@ -83,10 +83,10 @@ object LoraSense {
                 Suggestion(trLater("Namen schützen"), "Wie funktioniert die Pseudonymisierung?"),
             )
             r == "templates" || r == "creative" -> listOfNotNull(
-                // Erstellen (AP-24): on Windows Lora also designs.
+                // Erstellen (AP-24): on Windows Kana also designs.
                 Suggestion(trLater("Poster gestalten lassen"), "Gestalten", "mode.design").takeIf { !android && ChatModes.visible().any { it.id == ChatModes.DESIGN.id } },
                 Suggestion(trLater("Antwort an Studierende"), "Mail an Studierende", "template.b_mail_student"),
-                Suggestion(trLater("Vorlage Schritt für Schritt"), "Wie geht eine Vorlage mit Lora?"),
+                Suggestion(trLater("Vorlage Schritt für Schritt"), "Wie geht eine Vorlage mit Kana?"),
                 Suggestion(trLater("Eigene Vorlage"), "Wie lege ich eine eigene Vorlage an?").takeIf { android || ChatModes.visible().none { it.id == ChatModes.DESIGN.id } },
             )
             r == "literature" -> listOf(
@@ -108,12 +108,12 @@ object LoraSense {
                 Suggestion(trLater("Wie sicher ist der Tresor?"), "Wie funktioniert der Tresor?"),
                 Suggestion(trLater("Lokale Modelle"), "Modelle auf diesem Gerät", "area.local"),
             )
-            // Lora handelt in Dateien (AP-38): with a PDF chosen she opens it in the werkzeugkasten.
+            // Kana handelt in Dateien (AP-38): with a PDF chosen she opens it in the werkzeugkasten.
             r == "docs" || r == "files" -> listOfNotNull(
                 Suggestion(trLater("PDF bearbeiten"), "PDF bearbeiten").takeIf { LoraFocus.files.any { it.extension.equals("pdf", true) } },
                 Suggestion(trLater("Ordner aufräumen"), "Räum diesen Ordner auf"),
                 Suggestion(trLater("Duplikate finden"), "Finde Duplikate"),
-                Suggestion(trLater("Wo liegen meine Dateien?"), "Erklär mir den Lora-Ordner und wie ich ihn verschiebe"),
+                Suggestion(trLater("Wo liegen meine Dateien?"), "Erklär mir den Kana-Ordner und wie ich ihn verschiebe"),
             ).take(3)
             r.startsWith("doc/") -> listOf(
                 Suggestion(trLater("Änderungen nachverfolgen"), "Wie verfolge ich Änderungen im Dokument nach?"),
@@ -138,7 +138,7 @@ object LoraSense {
     /** A deadline found in an answer: what it is for and the day. */
     data class Deadline(val title: String, val date: LocalDate)
 
-    /** What Lora offers under an answer. */
+    /** What Kana offers under an answer. */
     sealed interface NextStep {
         data class Calendar(val deadlines: List<Deadline>) : NextStep
         data class Excel(val table: String) : NextStep

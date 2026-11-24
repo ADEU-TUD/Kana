@@ -6,7 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
- * Lora-Pakete teilen (AP-83): own commands (pinned, AP-75), own words (AP-78), own TU Vorlagen and house rules (AP-79)
+ * Kana-Pakete teilen (AP-83): own commands (pinned, AP-75), own words (AP-78), own TU Vorlagen and house rules (AP-79)
  * as **one file** in the format of the Wissenspakete, to import on another PC – with a preview of what comes in and what
  * would be replaced. Nothing personal goes along: no chats, no memory, no keys, no history beyond the pinned commands.
  * An imported pack appears under „Inhalte zum Nachladen“ and can be removed again (its templates go with it).
@@ -32,7 +32,7 @@ object LoraPackages {
         name: String, description: String, parts: Set<Part>,
         words: List<Term>, commands: List<LoraHistory.Entry>, templates: List<Template>, rules: List<HouseRule>,
     ): KnowledgePacks.Pack = KnowledgePacks.Pack(
-        id = idOf(name), title = name.trim().ifEmpty { tr("Lora-Paket") }, description = description.trim(),
+        id = idOf(name), title = name.trim().ifEmpty { tr("Kana-Paket") }, description = description.trim(),
         date = java.time.LocalDate.now().toString(), origin = "geteilt",
         entries = if (Part.WORDS in parts) words.map { it.copy(source = "", date = "") } else emptyList(),
         // Only the pinned commands with their name; the time they were sent stays here.
@@ -54,7 +54,7 @@ object LoraPackages {
     /** Reads a shared pack; it always counts as shared (its words need no source). */
     fun read(text: String): KnowledgePacks.Pack {
         val raw = runCatching { Json { ignoreUnknownKeys = true }.decodeFromString<KnowledgePacks.Pack>(text) }
-            .getOrElse { throw IllegalArgumentException(tr("Das ist keine Lora-Paket-Datei.")) }
+            .getOrElse { throw IllegalArgumentException(tr("Das ist keine Kana-Paket-Datei.")) }
         return KnowledgePacks.parse(json.encodeToString(raw.copy(origin = "geteilt", id = if (raw.id.startsWith("geteilt-")) raw.id else idOf(raw.title))))
     }
 

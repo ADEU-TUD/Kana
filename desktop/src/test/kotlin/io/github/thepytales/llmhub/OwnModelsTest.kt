@@ -28,7 +28,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Eigene Modelle aktualisieren (AP-117): the app tells the versions of Lora Namensschutz and Lora Befehle apart by
+ * Eigene Modelle aktualisieren (AP-117): the app tells the versions of Kana Namensschutz and Kana Befehle apart by
  * SHA-256 – an older version of the same or another size is recognized as older, keeps working until the download and
  * is replaced by the newest one afterwards; a download in several parts (for files over GitHub's 100 MB) is joined and
  * checked part by part, as a whole and unpacked.
@@ -64,7 +64,7 @@ class OwnModelsTest {
 
     /**
      * Three versions of a pretend model, newest first: the newest and the one before share name and size (a retraining
-     * with the same name, as the next Lora Befehle will be), the oldest has its own name and size (as 1.0.65).
+     * with the same name, as the next Kana Befehle will be), the oldest has its own name and size (as 1.0.65).
      */
     private class Pretend(url: String, val newBytes: ByteArray, val sameSize: ByteArray, val oldBytes: ByteArray, gz: ByteArray, parts: Int) {
         val gzBytes = gz

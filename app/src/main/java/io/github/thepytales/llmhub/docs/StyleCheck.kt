@@ -8,7 +8,7 @@ import io.github.thepytales.llmhub.ui.tr
  * Text aus Dateien: jede Fundstelle mit Ort („Absatz 4“, „Folie 2“) und, wo es automatisch geht, einem „Beheben“.
  *
  * **Hausstil**: die eigenen Regeln der Professur (Einstellungen › Dokumente & Logos › Hausstil, auch aus geteilten
- * Lora-Paketen) und die Schreibweise der TU Dresden („TU Dresden“ ohne Bindestrich) sowie Abkürzungen mit schmalem
+ * Kana-Paketen) und die Schreibweise der TU Dresden („TU Dresden“ ohne Bindestrich) sowie Abkürzungen mit schmalem
  * Abstand nach DIN 5008 („z. B.“). **Barrierefreiheit**: Überschriftenstruktur (eine Hauptüberschrift, keine
  * übersprungenen Ebenen, fett gesetzte Zeilen statt echter Überschriften), Alternativtexte von Bildern, verständliche
  * Linktexte, nackte Adressen, Tabellen mit Kopfzeile, Folien mit Titel, lange Zeilen in Großbuchstaben.
@@ -196,7 +196,7 @@ object StyleCheck {
         return sb.toString()
     }
 
-    /** One line per issue for Lora's card and the protocol. */
+    /** One line per issue for Kana's card and the protocol. */
     fun summary(issues: List<Issue>): String {
         if (issues.isEmpty()) return tr("Keine Funde – Hausstil und Barrierefreiheit sehen gut aus.")
         val house = issues.count { it.kind == Kind.HOUSE }

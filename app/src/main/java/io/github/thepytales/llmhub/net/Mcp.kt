@@ -144,7 +144,7 @@ class McpSession(private val transport: McpTransport, private val clientVersion:
         val result = request("initialize", buildJsonObject {
             put("protocolVersion", PROTOCOL)
             putJsonObject("capabilities") {}
-            putJsonObject("clientInfo") { put("name", "Lora"); put("version", clientVersion) }
+            putJsonObject("clientInfo") { put("name", "Kana"); put("version", clientVersion) }
         })
         (transport as? McpHttpTransport)?.protocolVersion = result["protocolVersion"]?.jsonPrimitive?.contentOrNull ?: PROTOCOL
         serverName = (result["serverInfo"] as? JsonObject)?.get("name")?.jsonPrimitive?.contentOrNull

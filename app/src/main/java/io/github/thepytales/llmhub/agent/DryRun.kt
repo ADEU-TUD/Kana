@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Probelauf (AP-77): „Was würde passieren, wenn …?“ – Lora plans the action as usual but only shows the preview: what
+ * Probelauf (AP-77): „Was würde passieren, wenn …?“ – Kana plans the action as usual but only shows the preview: what
  * would be moved, deleted or overwritten, how many files, what could not be taken back, and a piece of advice („Das
  * betrifft 214 Dateien – erst an einem Ordner ausprobieren?“). Every risky action shows the same notes on its preview.
  */
@@ -39,7 +39,7 @@ object DryRun {
     /** „ich alle PDFs verschieben würde“ → „alle PDFs verschieben“: the conditional words go, the wish stays. */
     private fun imperative(rest: String): String = rest
         .replace(Regex("(?i)\\s+(wurde|würde|wuerde|wurdest|würdest|would)$"), "")
-        .replace(Regex("(?i)^(ich|du|lora)\\s+"), "")
+        .replace(Regex("(?i)^(ich|du|kana|lora)\\s+"), "")
         .trim()
 
     /** Notes for the preview of [plan]: how many, what cannot be taken back, a piece of advice. */
@@ -51,7 +51,7 @@ object DryRun {
         if (trash > 0) out += tr("{0} davon in den Papierkorb – 30 Tage wiederherstellbar, danach endgültig weg.", trash)
         when {
             plan.irreversible != null -> out += plan.irreversible
-            action != null && action.id in IN_TOOL_UNDO -> out += tr("Lässt sich nicht über Lora zurücknehmen – nur im Werkzeug mit Strg+Z, solange es offen ist.")
+            action != null && action.id in IN_TOOL_UNDO -> out += tr("Lässt sich nicht über Kana zurücknehmen – nur im Werkzeug mit Strg+Z, solange es offen ist.")
             action != null && action.risky -> out += tr("Lässt sich danach mit „Rückgängig“ zurücknehmen (bis zum Neustart der App).")
         }
         advice(count)?.let { out += it }
@@ -65,7 +65,7 @@ object DryRun {
         else -> null
     }
 
-    /** Actions whose change only the tool itself takes back (its own Strg+Z), not Lora's „Rückgängig“. */
+    /** Actions whose change only the tool itself takes back (its own Strg+Z), not Kana's „Rückgängig“. */
     val IN_TOOL_UNDO = setOf(
         "pdf.delete_pages", "sheet.clean", "slides.delete", "video.delete_clip", "video.rough_cut", "video.shorten", "video.text_cut",
     )
@@ -82,7 +82,7 @@ object DryRun {
 }
 
 /**
- * The actions Lora carried out today (AP-77), newest first, with their „Rückgängig“ while the app runs. Before a restart
+ * The actions Kana carried out today (AP-77), newest first, with their „Rückgängig“ while the app runs. Before a restart
  * the undo closures are gone: such lines come from the protocol (AP-38) and say that they can no longer be taken back.
  */
 object DayJournal {
@@ -95,7 +95,7 @@ object DayJournal {
     private val _version = MutableStateFlow(0)
     val version: StateFlow<Int> = _version
 
-    /** An action of Lora was carried out. */
+    /** An action of Kana was carried out. */
     fun record(actionId: String, result: ActionResult, at: LocalDateTime = LocalDateTime.now()) = synchronized(entries) {
         entries.addFirst(Entry(at, actionId, result.text, result))
         while (entries.size > 200) entries.removeLast()

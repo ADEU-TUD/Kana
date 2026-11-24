@@ -88,7 +88,7 @@ quellen: ui/Mail*.kt agent/Mail*.kt agent/LoraMail.kt agent/OutlookTools.kt data
 quellen: net/Imap.kt files/MailText.kt desktop/ComOutlook.kt desktop/Com.kt
 tests: Mail*Test OutlookTest ComErrorsTest
 
-[lora] Lora: Befehle, Werkzeuge, Gedächtnis, Abläufe
+[lora] Kana: Befehle, Werkzeuge, Gedächtnis, Abläufe
 quellen: agent/** ui/Lora*.kt data/Lora*.kt data/Memory.kt data/CommandModel.kt data/Batches.kt data/Roles.kt ui/CommandPalette.kt
 quellen: ui/CommandModelPrompt.kt ui/Spotlight.kt ui/QuestionCard.kt ui/Approvals.kt ui/AgentProtocol.kt ui/EvidenceCard.kt
 quellen: ui/MemoryUi.kt ui/BatchScreen.kt ui/CheckDialogs.kt ui/FieldAssist*.kt /app/src/main/resources/befehle/**

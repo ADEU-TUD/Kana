@@ -111,7 +111,7 @@ class ControlsLookTest {
         setContent {
             LlmHubTheme(AppSettings(themeMode = mode)) {
                 Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp)) {
-                    Text("Lora", style = MaterialTheme.typography.headlineSmall)
+                    Text("Kana", style = MaterialTheme.typography.headlineSmall)
                 }
                 dialog()
             }

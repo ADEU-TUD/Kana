@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 
 /**
  * Befehlsmodell (AP-71, Stufe h): the tokenizer and the encoding of the app against the ones of the training, the
- * labels of the shipped model against the code, what Lora does with a recognized command – and, with BEFEHLE_MODELL
+ * labels of the shipped model against the code, what Kana does with a recognized command – and, with BEFEHLE_MODELL
  * (folder with lora-befehle-pytales.int8.onnx) and BEFEHLE_ORT (the ONNX Runtime library), the real model on the Messkorpus
  * as in the app.
  */
@@ -140,17 +140,17 @@ class CommandModelTest {
         assertTrue(LoraCommands.open(LoraCommands.target("ort:mode.literature", targets)!!, emptySet()).steps.single() is LoraStep.OpenMode)
         assertEquals("settings", LoraCommands.target("ort:area.settings", targets)?.route)
         assertNull(LoraCommands.target("ort:gibt.es.nicht", targets))
-        // A setting: asked before it changes; without a value Lora shows the option; already set: said so.
+        // A setting: asked before it changes; without a value Kana shows the option; already set: said so.
         val dark = LoraCommands.change("stell:theme", "mach dunkel", s, targets)!!.steps.single() as LoraStep.ChangeSetting
         assertEquals("DARK", dark.value)
         assertEquals("appearance.theme", (LoraCommands.change("stell:theme", "Helligkeit", s, targets)!!.steps.single() as LoraStep.Navigate).target.spot)
-        assertTrue(LoraCommands.change("stell:lora_place", "Lora gemischt", s, targets)!!.steps.isEmpty(), "steht schon auf Gemischt")
+        assertTrue(LoraCommands.change("stell:lora_place", "Kana gemischt", s, targets)!!.steps.isEmpty(), "steht schon auf Gemischt")
         assertEquals("LOCAL", (LoraCommands.change("stell:lora_place", "arbeite nur lokal", s, targets)!!.steps.single() as LoraStep.ChangeSetting).value)
         // Strg+K shows what would happen.
         assertNotNull(LoraCommands.describe("stell:theme", "mach dunkel", s, targets))
         assertNotNull(LoraCommands.describe("ort:area.files", "dateien", s, targets))
         assertNull(LoraCommands.describe("frei.einfach", "hallo", s, targets))
-        // Every setting Lora may change has its label, and every local action reads its values without failing.
+        // Every setting Kana may change has its label, and every local action reads its values without failing.
         LoraAgent.SETTINGS.forEach { st -> assertTrue(LoraCommands.catalog().any { it.label == LoraCommands.SET + st.id }) }
         LoraCommands.LOCAL_ACTIONS.forEach { id -> CommandSlots.args(id, "bitte") }
     }
@@ -189,19 +189,19 @@ class CommandModelTest {
                     }
                 }
                 times.sort()
-                report.append(score.report("App: Lora Befehle (Schwelle ${CommandModelInfo.THRESHOLD}), $section"))
+                report.append(score.report("App: Kana Befehle (Schwelle ${CommandModelInfo.THRESHOLD}), $section"))
                 report.appendLine("  Zeit je Wunsch: Median ${times[times.size / 2] / 1000.0} ms, 95 % unter ${times[times.size * 95 / 100] / 1000.0} ms")
                 report.appendLine("  Rückfrage (Untergrenze ${CommandModelInfo.CHOICE_BOUND}): richtig unter den Knöpfen $underButtons/$passed bisher weitergegebenen Befehlen, freie mit Knöpfen $freeAsked/${score.free}")
                 if (section == "entwicklung") score.errors.forEach { report.appendLine("    $it") }
                 if (section == "pruef") checks += {
                     // The goals of AP-71: at most 2 % carried out wrongly, at least 95 % of the free requests passed on,
-                    // at least 90 % of the commands hit by the model itself (reached with Lora Befehle of 10.11.2026).
+                    // at least 90 % of the commands hit by the model itself (reached with Kana Befehle of 10.11.2026).
                     assertTrue((score.wrong + score.freeWrong) * 100 <= score.total * 2, "Prüfteil: ${score.wrong + score.freeWrong}/${score.total} falsch ausgeführt")
                     assertTrue(score.freePassed * 100 >= score.free * 95, "Prüfteil: ${score.freePassed}/${score.free} freie Anfragen weitergegeben")
                     assertTrue(score.hit * 100 >= score.commands * 90, "Prüfteil: ${score.hit}/${score.commands} Befehle getroffen")
                     // AP-73: together at least 95 % of the commands are done at once or have the right action under the
                     // two buttons, at most 5 % of the free requests get buttons. (Until 1.0.65 the goal was 80 % of the
-                    // commands passed on; since Lora Befehle hits 95 % itself, only a few hard ones are passed on – 4 of
+                    // commands passed on; since Kana Befehle hits 95 % itself, only a few hard ones are passed on – 4 of
                     // 11 under the buttons on 10.11.2026 –, so the share of all commands is the measure now.)
                     assertTrue((score.hit + underButtons) * 100 >= score.commands * 95, "Prüfteil: ${score.hit} sofort + $underButtons mit Knöpfen von ${score.commands} Befehlen")
                     assertTrue(freeAsked * 100 <= score.free * 5, "Prüfteil: $freeAsked/${score.free} freie Anfragen mit Knöpfen")

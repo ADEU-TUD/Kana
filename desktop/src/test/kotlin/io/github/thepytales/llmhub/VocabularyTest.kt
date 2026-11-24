@@ -17,7 +17,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Eigene Wörter und Wissenspakete (AP-78), Lora-Pakete teilen (AP-83). */
+/** Eigene Wörter und Wissenspakete (AP-78), Kana-Pakete teilen (AP-83). */
 class VocabularyTest {
     private val mhb = Term("Modulhandbuch", "Beschreibung aller Module eines Studiengangs.", listOf("MHB"))
     private val zlsb = Term("ZLSB", "Zentrum für Lehrkräftebildung, Schul- und Berufsbildungsforschung", listOf("Zentrum für Lehrkräftebildung"), "Einrichtung", "https://tu-dresden.de/zlsb", "2026-11-10")

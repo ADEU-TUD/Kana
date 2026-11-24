@@ -187,7 +187,7 @@ class OutlookTools(private val c: AppContainer) : ToolProvider {
         else -> emptyList()
     }
 
-    private fun log(what: String, detail: String, ctx: RepoContext?, by: String = "Lora im Chat") {
+    private fun log(what: String, detail: String, ctx: RepoContext?, by: String = "Kana im Chat") {
         c.outlookLog.upsert(OutlookAction(what = what, detail = detail, by = by, chatId = ctx?.chatId))
         val all = c.outlookLog.current
         if (all.size > MAX_LOG) c.outlookLog.replaceAll(all.sortedByDescending { it.at }.take(MAX_LOG))
@@ -376,7 +376,7 @@ class OutlookTools(private val c: AppContainer) : ToolProvider {
         }
         APPLY_RULES -> {
             val dry = args.flag("dry_run") == true
-            val result = applyRules(c, b, (args.int("limit") ?: 200).coerceIn(1, 1000), dry, by = "Lora im Chat", chatId = ctx.chatId)
+            val result = applyRules(c, b, (args.int("limit") ?: 200).coerceIn(1, 1000), dry, by = "Kana im Chat", chatId = ctx.chatId)
             ToolOutput(result)
         }
         else -> ToolOutput("FEHLER: Unbekanntes Werkzeug $name")

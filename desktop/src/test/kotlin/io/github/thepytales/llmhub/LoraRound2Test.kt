@@ -35,7 +35,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Runde 2, „Jetzt“: Lora handelt in Tabellen, Folien und Video (AP-38), merkt sich Vorlieben nur nach Rückfrage
+ * Runde 2, „Jetzt“: Kana handelt in Tabellen, Folien und Video (AP-38), merkt sich Vorlieben nur nach Rückfrage
  * (AP-39), plant Abläufe über Werkzeuge (AP-40), hat Leuchtrahmen und Touren (AP-41) und benennt im Dateidialog um
  * (AP-42).
  */
@@ -130,7 +130,7 @@ class LoraRound2Test {
                 assertTrue(clean.risky && clean.preview.isNotEmpty())
                 clean.run()
                 assertEquals(3, SheetEngine.grid(sheet.md).size)
-                // Lora knows what to do with „sortiere nach Hausarbeit absteigend“ without a model.
+                // Kana knows what to do with „sortiere nach Hausarbeit absteigend“ without a model.
                 sheet.md = notes
                 val local = LoraAgent(c).localAction("Sortiere nach Hausarbeit absteigend", ActionArea.SHEET, android = false)
                 val plan = (local!!.steps.first() as LoraStep.Action).plan
@@ -198,7 +198,7 @@ class LoraRound2Test {
     @Test
     fun preferencesAreOnlyRememberedAfterAsking() = withContainer { c ->
         val tidy = ToolActions.byId("files.tidy")!!
-        // Lora asks after the user chose „nach Semester“ …
+        // Kana asks after the user chose „nach Semester“ …
         val offer = LoraPrefs.offerFor(c, tidy, args("nach" to "semester"))
         assertNotNull(offer)
         assertEquals("files", offer.tool)
@@ -218,7 +218,7 @@ class LoraRound2Test {
         assertEquals("video", LoraPrefs.guessTool("Videos für OPAL in 720p"))
         assertEquals("literature", LoraPrefs.guessTool("Literaturverzeichnis in APA 7"))
         assertNull(LoraPrefs.fromWish(c, "Wie spät ist es?"))
-        // Preferences are memory entries (category Vorlieben) and go into Lora's prompt.
+        // Preferences are memory entries (category Vorlieben) and go into Kana's prompt.
         assertEquals(MemoryCategory.PREFERENCES.name, LoraPrefs.all(c).single().category)
         assertTrue(LoraPrefs.promptLine(c)!!.contains("Semester"))
         assertEquals(1, LoraPrefs.forgetAll(c).size)
@@ -320,7 +320,7 @@ class LoraRound2Test {
         assertEquals("files", LoraTours.find("Tour durch Dateien", "chat")?.id)
         withContainer { c ->
             val reply = LoraAgent(c).localTour("Zeig mir, wie das geht", android = false)
-            // On the chat there is no tour: Lora names the tools that have one.
+            // On the chat there is no tour: Kana names the tools that have one.
             assertNotNull(reply)
             assertTrue(reply.steps.isEmpty() || reply.steps.single() is LoraStep.Tour)
             LoraTours.markSeen(c, "pdf")

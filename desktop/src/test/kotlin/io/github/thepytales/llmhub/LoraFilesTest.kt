@@ -35,7 +35,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** AP-16: der Lora-Ordner (Dateien wie Google Drive), echte Office-Dateien, Änderungen, Kommentare, Formeln, freie Folien. */
+/** AP-16: der Kana-Ordner (Dateien wie Google Drive), echte Office-Dateien, Änderungen, Kommentare, Formeln, freie Folien. */
 class LoraFilesTest {
     private val base = Files.createTempDirectory("lora-ordner").toFile()
     private val c by lazy {
@@ -51,7 +51,7 @@ class LoraFilesTest {
     private fun zipText(f: File, entry: String): String = ZipFile(f).use { z -> z.getEntry(entry)?.let { z.getInputStream(it).readBytes().toString(Charsets.UTF_8) }.orEmpty() }
     private fun zipText(b: ByteArray, entry: String): String = File(base, "tmp-${System.nanoTime()}.zip").also { it.writeBytes(b) }.let { zipText(it, entry) }
 
-    // ── Lora-Ordner ───────────────────────────────────────────────────────────────────────────────────────
+    // ── Kana-Ordner ───────────────────────────────────────────────────────────────────────────────────────
 
     @Test
     fun fixedFoldersUploadsOnceAndTheTresorStaysOut() {

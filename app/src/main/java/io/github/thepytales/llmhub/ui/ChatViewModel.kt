@@ -43,7 +43,7 @@ import java.io.File
 /** Creates a new, not yet saved conversation with the configured defaults. */
 fun newConversation(c: AppContainer, model: String? = null): Conversation {
     val s = c.settings.current
-    // Wo Lora arbeitet (AP-112): where the chat works on this device, a new chat starts with the model here.
+    // Wo Kana arbeitet (AP-112): where the chat works on this device, a new chat starts with the model here.
     val wanted = model ?: io.github.thepytales.llmhub.data.Places.chatModel(c, s.defaultModel)
     val available = c.models.state.value.liveIds
     val chosen = if (available == null || wanted in available || io.github.thepytales.llmhub.data.Privacy.isLocal(wanted)) wanted
@@ -253,7 +253,7 @@ class ChatViewModel(
         val conv = _conversation.value ?: return
         if (isRunning || (text.isBlank() && images.isEmpty() && files.isEmpty())) return
         val isFirst = conv.messages.none { it.role == "user" }
-        // Lora-Ordner (AP-16): attachments move into „Hochgeladen“ – not those of a Tresor chat.
+        // Kana-Ordner (AP-16): attachments move into „Hochgeladen“ – not those of a Tresor chat.
         @Suppress("NAME_SHADOWING") val files = files.map { f ->
             if (!c.drive.isStaged(f.stored)) f
             else if (conv.vault) f.copy(stored = null).also { runCatching { File(f.stored!!).delete() } }
@@ -270,10 +270,10 @@ class ChatViewModel(
             )
         }
         persist()
-        // Lora-Ordner (AP-16): the pictures of the message go into „Hochgeladen“ (with their chat).
+        // Kana-Ordner (AP-16): the pictures of the message go into „Hochgeladen“ (with their chat).
         if (images.isNotEmpty() && !conv.vault) viewModelScope.launch(Dispatchers.IO) { images.forEach { url -> runCatching { c.drive.keepImage(url, conv.id) } } }
         connectMentionedRepo(text)
-        // Wo Lora arbeitet (AP-112): a chat with a server model continues with the model on this device where the chat
+        // Wo Kana arbeitet (AP-112): a chat with a server model continues with the model on this device where the chat
         // works here (Alles auf diesem Gerät, no key, or the Uni-Server gone) – the chat itself stays as it is.
         if (!io.github.thepytales.llmhub.agent.MailAccess.locked(conv)) {
             val here = io.github.thepytales.llmhub.data.Places.chatModel(c, conv.model)
@@ -496,7 +496,7 @@ class ChatViewModel(
         val project = !(_conversation.value?.let { Privacy.level(c, it) } ?: Privacy.level(c, null as String?)).allowsUniServer
         // „Nur lokal“ (AP-71): speech stays on the device too, when a recognition model is there (AP-111).
         val onlyLocal = c.settings.current.loraPlace == "LOCAL"
-        // Wo Lora arbeitet (AP-112): with „Gemischt“ or „Lokal“ for Spracheingabe the device comes first.
+        // Wo Kana arbeitet (AP-112): with „Gemischt“ or „Lokal“ for Spracheingabe the device comes first.
         if (!project && !onlyLocal) return io.github.thepytales.llmhub.data.Places.recognize(c, file).first
         return if (project || onlyLocal) {
             // Data protection level "Nur auf diesem Gerät" or „Nur lokal“: recognized on the device.

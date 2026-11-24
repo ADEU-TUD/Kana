@@ -57,7 +57,7 @@ object Autostart {
                 else -> if (on) {
                     linuxEntry.parentFile.mkdirs()
                     linuxEntry.writeText(
-                        "[Desktop Entry]\nType=Application\nName=Lora\nExec=\"${exe ?: return}\" $FLAG\nX-GNOME-Autostart-enabled=true\nTerminal=false\n",
+                        "[Desktop Entry]\nType=Application\nName=Kana\nExec=\"${exe ?: return}\" $FLAG\nX-GNOME-Autostart-enabled=true\nTerminal=false\n",
                     )
                 } else linuxEntry.delete()
             }

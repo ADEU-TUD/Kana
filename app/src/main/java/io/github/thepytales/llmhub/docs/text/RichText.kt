@@ -27,13 +27,13 @@ data class CharFormat(
     val size: Int? = null,
     val font: String? = null,
     val link: String? = null,
-    /** Lora is writing this right now (AP-47): shown highlighted until it is taken or discarded. */
+    /** Kana is writing this right now (AP-47): shown highlighted until it is taken or discarded. */
     val ai: Boolean = false,
     /** Suggestion [ins] > 0: inserted by suggestion number [ins]; [del] > 0: deleted by suggestion number [del]. */
     val ins: Int = 0,
     val del: Int = 0,
 ) {
-    /** The format as stored (without Lora's marks). */
+    /** The format as stored (without Kana's marks). */
     val stored: CharFormat get() = if (!ai && ins == 0 && del == 0) this else copy(ai = false, ins = 0, del = 0)
 
     companion object {
@@ -246,7 +246,7 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
             removedEnd = pre
         }
         val fmt = typing ?: chars.getOrNull(pre - 1)?.takeIf { pre > 0 && text[pre - 1] != '\n' } ?: chars.getOrNull(pre)?.takeIf { pre < text.length && text[pre] != '\n' } ?: CharFormat.PLAIN
-        // Links do not grow at their end; Lora's marks never pass on to what the user types.
+        // Links do not grow at their end; Kana's marks never pass on to what the user types.
         val typed = (if (typing == null && fmt.link != null && (pre >= text.length || chars.getOrNull(pre)?.link != fmt.link)) fmt.copy(link = null) else fmt)
             .let { if (typing == null) it.stored else it }
         val newChars = ArrayList<CharFormat>(newText.length)
@@ -354,13 +354,13 @@ class RichText(val text: String, val chars: List<CharFormat>, val paras: List<Pa
         return RichText(r.text, r.chars.map { if (it.ins == n || it.del == n) it.copy(ins = 0, del = 0) else it }, r.paras)
     }
 
-    /** Takes what Lora wrote (her highlight goes away). */
+    /** Takes what Kana wrote (her highlight goes away). */
     fun keepAi(): RichText = RichText(text, chars.map { if (it.ai) it.copy(ai = false) else it }, paras)
 
     companion object {
         fun empty() = RichText("", emptyList(), listOf(ParaFormat()))
 
-        /** The running text of a piece of Markdown (Lora's answer, pasted text); [mark] applies to every character. */
+        /** The running text of a piece of Markdown (Kana's answer, pasted text); [mark] applies to every character. */
         fun ofMarkdown(markdown: String, mark: (CharFormat) -> CharFormat = { it }): RichText {
             val blocks = io.github.thepytales.llmhub.docs.DocBlocks.split(markdown).filter(::isFlowBlock)
             val r = if (blocks.isEmpty()) RichText(markdown.trim().replace('\n', ' '), List(markdown.trim().length) { CharFormat.PLAIN }, listOf(ParaFormat())) else fromBlocks(blocks)

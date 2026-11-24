@@ -4,7 +4,7 @@ import android.content.Context
 import io.github.thepytales.llmhub.data.AppSettings
 
 /**
- * Windows version of the background sync of the phone (AP-63): nothing to plan – the PCs sync the Lora-Ordner with the
+ * Windows version of the background sync of the phone (AP-63): nothing to plan – the PCs sync the Kana-Ordner with the
  * cloud service's own client (AP-12), the app only waits for it.
  */
 object BackgroundSync {

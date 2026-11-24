@@ -18,8 +18,8 @@ import java.io.File
 /** Where the pages of the Dokumenten-Scanner (AP-62) come from: a button with icon and what it starts. */
 class ScanSource(val label: String, val icon: ImageVector, val start: () -> Unit)
 
-/** Windows: the scanner over WIA or pictures; the phone scans in its Lora app and the sync brings the PDF here. */
-val SCAN_HINT: String get() = tr("Handy als Scanner: In Lora auf dem Handy › Dateien › + › Scannen – das PDF kommt über den Sync in den Ordner „Scans“.")
+/** Windows: the scanner over WIA or pictures; the phone scans in its Kana app and the sync brings the PDF here. */
+val SCAN_HINT: String get() = tr("Handy als Scanner: In Kana auf dem Handy › Dateien › + › Scannen – das PDF kommt über den Sync in den Ordner „Scans“.")
 
 /** Folder for the pages of a scan. */
 fun scanWorkDir(context: android.content.Context): File = File(context.cacheDir, "scan").apply { mkdirs() }

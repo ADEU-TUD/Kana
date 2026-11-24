@@ -187,14 +187,14 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
     if (crash == null) UpdatePrompt(c)
     // The recognition model of the pseudonymization, offered once (AP-67).
     if (crash == null) PiiModelPrompt(c)
-    // AP-71: the command model for Lora and Strg+K, offered the same way.
+    // AP-71: the command model for Kana and Strg+K, offered the same way.
     if (crash == null) CommandModelPrompt(c)
     if (crash == null) ModelsIntroDialog(c)
-    // Lora (AP-07, AP-34): answers wishes, leads to places, and the two questions of the first start.
+    // Kana (AP-07, AP-34): answers wishes, leads to places, and the two questions of the first start.
     LoraHelperHost(c) { r ->
         runCatching { if (r == "chat" || r.startsWith("chat?")) nav.openChat(r) else nav.navigate(r) { launchSingleTop = true } }
     }
-    // Where the user is, so Lora's suggestions fit the screen ("settings/{section}" with its section filled in).
+    // Where the user is, so Kana's suggestions fit the screen ("settings/{section}" with its section filled in).
     LaunchedEffect(entry) {
         val e = entry ?: return@LaunchedEffect
         LoraHelper.route.value = (e.destination.route ?: "chat").replace(Regex("\\{(\\w+)\\}")) { m -> e.arguments?.getString(m.groupValues[1]).orEmpty() }
@@ -236,7 +236,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         }
     }
 
-    /** Widths of the side menu and Lora's panel on tablets; the lines beside them can be dragged (PanelResizer). */
+    /** Widths of the side menu and Kana's panel on tablets; the lines beside them can be dragged (PanelResizer). */
     val widths = remember { PanelWidths.of(c) }
     val menu: @Composable () -> Unit = {
         AppDrawer(
@@ -301,8 +301,8 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
                 TaskEditScreen(c, back.arguments?.getString("id") ?: "new", onBack = { nav.back(back) })
             }
             composable("usage") { back -> UsageScreen(c, onBack = { nav.back(back) }) }
-            // Wo Lora arbeitet: Alles lokal einrichten (AP-112).
-            // Lora einrichten Schritt für Schritt (AP-120).
+            // Wo Kana arbeitet: Alles lokal einrichten (AP-112).
+            // Kana einrichten Schritt für Schritt (AP-120).
             composable("setup") { back ->
                 SetupScreen(c, onBack = { nav.back(back) }, onNavigate = { nav.go(back, it) })
             }
@@ -388,7 +388,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
                 // The line beside the side menu: drag for wider or narrower, double tap resets.
                 PanelResizer(widths.menu, panelLeft = true, label = tr("Breite der Seitenleiste ändern"))
                 Box(Modifier.weight(1f).fillMaxHeight()) { screens() }
-                // The browser beside the chat (AP-63) and Lora's panel beside the app on tablets.
+                // The browser beside the chat (AP-63) and Kana's panel beside the app on tablets.
                 PhoneBrowserPanel(c)
                 LoraSidePanel(c)
             }
@@ -402,7 +402,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
             PhoneBrowserOverlay(c)
             LoraSheet(c)
         }
-        // Lora flying from her panel to the place she leads to.
+        // Kana flying from her panel to the place she leads to.
         LoraFlightLayer()
         // Touren (AP-41): the offer on the first visit of a tool and the step card.
         LoraTourLayer(c)
@@ -458,7 +458,7 @@ private fun CrashDialog(report: String, onDismiss: () -> Unit) {
     val clipboard = LocalClipboardManager.current
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(tr("Lora ist abgestürzt")) },
+        title = { Text(tr("Kana ist abgestürzt")) },
         text = {
             Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
                 Text(

@@ -27,7 +27,7 @@ class BrowserLiveTest {
         }
         val server = com.sun.net.httpserver.HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0).apply {
             createContext("/paper") { ex ->
-                val html = """<html><head><title>Testseite Lora</title><meta name="citation_doi" content="10.1234/abc.5678"></head>
+                val html = """<html><head><title>Testseite Kana</title><meta name="citation_doi" content="10.1234/abc.5678"></head>
                     <body><h1>Hallo aus dem Browser</h1><p>Unterrichtsqualität und Klassenführung.</p></body></html>""".toByteArray()
                 ex.responseHeaders.add("Content-Type", "text/html; charset=utf-8")
                 ex.sendResponseHeaders(200, html.size.toLong())
@@ -50,7 +50,7 @@ class BrowserLiveTest {
             assertTrue(client != null, "Browser startet: ${WebEngine.state.value}")
             assertTrue(WebEngine.installed, "einmal eingerichtet")
             val browser = WebEngine.open(url)!!
-            val frame = JFrame("Lora Browser-Test")
+            val frame = JFrame("Kana Browser-Test")
             SwingUtilities.invokeAndWait {
                 frame.contentPane.add(browser.uiComponent, BorderLayout.CENTER)
                 frame.setSize(800, 600)
@@ -64,7 +64,7 @@ class BrowserLiveTest {
             assertTrue(text?.contains("Hallo aus dem Browser") == true, "Text: $text")
             val page = WebPage(url, titles.lastOrNull().orEmpty(), text.orEmpty(), html.orEmpty())
             assertEquals("10.1234/abc.5678", page.doi)
-            assertTrue("Testseite Lora" in titles, "Titel: $titles")
+            assertTrue("Testseite Kana" in titles, "Titel: $titles")
             browser.close(true)
             SwingUtilities.invokeAndWait { frame.dispose() }
         }

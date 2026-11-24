@@ -257,7 +257,7 @@ object NextcloudLogin {
 
     suspend fun start(http: OkHttpClient, server: String): Start = withContext(Dispatchers.IO) {
         val base = WebDavClient.serverBase(server)
-        val req = Request.Builder().url("$base/index.php/login/v2").header("User-Agent", "Lora (TU Dresden)")
+        val req = Request.Builder().url("$base/index.php/login/v2").header("User-Agent", "Kana (TU Dresden)")
             .post(ByteArray(0).toRequestBody(null)).build()
         http.newCall(req).execute().use { resp ->
             if (!resp.isSuccessful) throw IOException(

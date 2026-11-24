@@ -54,14 +54,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Lora in the chat and on the start page: the card while the agent works keeps its height whatever the step says,
+ * Kana in the chat and on the start page: the card while the agent works keeps its height whatever the step says,
  * and pictures of both (build/lora-*.png) for a look at the layout on phones.
  */
 @OptIn(ExperimentalTestApi::class)
 class LoraUiTest {
     private fun ui(width: Int, height: Int, block: SkikoComposeUiTest.() -> Unit) =
         runSkikoComposeUiTest(Size(width * 2f, height * 2f), Density(2f)) {
-            // Lora moves on every frame; the clock only moves when the test says so.
+            // Kana moves on every frame; the clock only moves when the test says so.
             mainClock.autoAdvance = false
             block()
         }
@@ -83,7 +83,7 @@ class LoraUiTest {
                 }
             }
         }
-        // With Lora and without (Lora ausblenden): each variant keeps one height whatever the step says.
+        // With Kana and without (Kana ausblenden): each variant keeps one height whatever the step says.
         for (h in listOf(false, true)) {
             val heights = mutableMapOf<String, Int>()
             for (w in listOf(360.dp, 412.dp)) for (s in listOf(null, "Denkt nach …", "Websuche …", "Ordner durchsuchen – ein sehr langer Schritt, der nie in eine Zeile passt …"))
@@ -97,7 +97,7 @@ class LoraUiTest {
                     repeat(20) { mainClock.advanceTimeByFrame() }
                     heights["$w/$s/$n/$o"] = onNodeWithTag("card").fetchSemanticsNode().size.height
                 }
-            assertEquals(1, heights.values.toSet().size, "Karte immer gleich hoch (Lora ausgeblendet: $h): $heights")
+            assertEquals(1, heights.values.toSet().size, "Karte immer gleich hoch (Kana ausgeblendet: $h): $heights")
         }
     }
 

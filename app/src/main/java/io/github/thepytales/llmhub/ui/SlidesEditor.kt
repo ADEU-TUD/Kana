@@ -193,7 +193,7 @@ fun SlidesBody(
     var suggest by remember { mutableStateOf<Int?>(null) }
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     fun set(list: List<SlideDeck.Slide>) = onMarkdown(SlideDeck.markdown(list))
-    // Lora in der Präsentation (AP-38 Stufe c): her actions read and replace the slides.
+    // Kana in der Präsentation (AP-38 Stufe c): her actions read and replace the slides.
     val latestMarkdown = androidx.compose.runtime.rememberUpdatedState(markdown)
     val latestSet = androidx.compose.runtime.rememberUpdatedState(onMarkdown)
     androidx.compose.runtime.DisposableEffect(doc.id) {

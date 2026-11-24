@@ -6,7 +6,7 @@ import java.text.Normalizer
 
 /**
  * Big tools that can be switched on under Einstellungen › Werkzeuge (AP-02). New tools start switched off, so the app
- * does not get crowded; switched-on ones appear in the side menu under „Mehr“ and on the start page, and Lora
+ * does not get crowded; switched-on ones appear in the side menu under „Mehr“ and on the start page, and Kana
  * suggests a tool when a request fits it ([suggestFor]). [planned] tools are listed but cannot be switched on yet.
  */
 enum class AppTool(
@@ -68,7 +68,7 @@ enum class AppTool(
     ),
     SERVER(
         "server", trLater("Server-Terminal"),
-        trLater("Webserver über SSH pflegen wie mit PuTTY: gespeicherte Sitzungen mit Schlüssel oder Passwort, Prüfung des Server-Fingerabdrucks, und Lora schlägt Schritte mit Erklärung vor (Symfony aktualisieren, Apache neu laden, Zertifikat erneuern) – jeder Schritt erst nach deiner Zustimmung, mit Protokoll. Passwörter gehen nie an ein Modell."),
+        trLater("Webserver über SSH pflegen wie mit PuTTY: gespeicherte Sitzungen mit Schlüssel oder Passwort, Prüfung des Server-Fingerabdrucks, und Kana schlägt Schritte mit Erklärung vor (Symfony aktualisieren, Apache neu laden, Zertifikat erneuern) – jeder Schritt erst nach deiner Zustimmung, mit Protokoll. Passwörter gehen nie an ein Modell."),
         "server", listOf(
             "ssh", "putty", "webserver", "server-terminal", "serverkonfiguration", "auf dem server", "deployment", "deployen", "composer install",
             "asset-map", "certbot", "zertifikat erneuern", "apache neu", "symfony cache", "cache:clear", "known_hosts",
@@ -89,7 +89,7 @@ enum class AppTool(
             .replace("ß", "ss")
 
         /**
-         * A tool that fits [text] (a request or the name of an attached file) and is not switched on yet – for Lora's
+         * A tool that fits [text] (a request or the name of an attached file) and is not switched on yet – for Kana's
          * hint „Für PDFs gibt es den PDF-Werkzeugkasten – einschalten?“. Null when nothing fits.
          */
         fun suggestFor(text: String, enabled: Set<String>, android: Boolean, tools: List<AppTool> = available(android)): AppTool? {

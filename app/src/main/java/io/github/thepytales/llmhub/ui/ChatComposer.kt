@@ -389,7 +389,7 @@ fun PlusSheet(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
         )
-        if (onFolder != null) SheetRow(Icons.Outlined.FolderOpen, tr("Ordner"), tr("Ganzen Ordner anhängen – Lora darf darin lesen oder auch schreiben"), { pick(onFolder) })
+        if (onFolder != null) SheetRow(Icons.Outlined.FolderOpen, tr("Ordner"), tr("Ganzen Ordner anhängen – Kana darf darin lesen oder auch schreiben"), { pick(onFolder) })
         SheetRow(Icons.Outlined.ContentPaste, tr("Aus der Zwischenablage"), tr("Screenshot oder kopiertes Bild anhängen"), { pick(onClipboard) })
         SheetRow(Icons.Outlined.Apps, tr("Aus der App"), tr("Transkript, Dokument, Literaturliste oder erzeugtes Bild"), { pick(onFromApp) })
         if (onNextcloud != null) SheetRow(Icons.Outlined.Cloud, tr("Aus Nextcloud"), tr("Dateien aus deiner Nextcloud anhängen"), { pick(onNextcloud) })

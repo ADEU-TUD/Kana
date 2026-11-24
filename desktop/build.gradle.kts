@@ -49,9 +49,9 @@ val macSignIdentity = env("MAC_SIGN_IDENTITY")?.removePrefix("Developer ID Appli
 /** Info.plist texts for the permission prompts of macOS (without them macOS ends the app on first use). */
 val MAC_PLIST_KEYS = """
     <key>NSMicrophoneUsageDescription</key>
-    <string>Lora braucht das Mikrofon für die Spracheingabe und für Aufnahmen, die transkribiert werden sollen.</string>
+    <string>Kana braucht das Mikrofon für die Spracheingabe und für Aufnahmen, die transkribiert werden sollen.</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>Lora steuert andere Programme nur auf Wunsch, z. B. Outlook oder Mail für Mails und Termine.</string>
+    <string>Kana steuert andere Programme nur auf Wunsch, z. B. Outlook oder Mail für Mails und Termine.</string>
 """.trimIndent()
 
 /** Same version scheme as the APK: 1.0.<build number>. */
@@ -151,7 +151,7 @@ val buildConfig by tasks.registering {
 
 kotlin {
     // Server-Terminal (AP-118): JediTerm 3.76 is built with Kotlin 2.4, whose module metadata the 2.0.21 compiler
-    // refuses to read. Lora only uses JediTerm's Java API (JediTermWidget, TtyConnector); ServerTerminalTest checks
+    // refuses to read. Kana only uses JediTerm's Java API (JediTermWidget, TtyConnector); ServerTerminalTest checks
     // that JediTerm's bytecode only calls what the app's Kotlin standard library has.
     compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
     sourceSets.main {
@@ -198,7 +198,7 @@ compose.desktop {
             appResourcesRootDir.set(layout.buildDirectory.dir("speech/desktop"))
             // AppImage: the portable app folder of createDistributable (Windows: ADEU LLM.exe + runtime, see
             // .github/scripts/windows-portable.ps1; macOS: ADEU LLM.app; Linux: ADEU LLM/bin/ADEU LLM) – the technical
-            // name stays, the app is called Lora (Brand.kt). Dmg and Deb only exist on their own OS (packageDmg on
+            // name stays, the app is called Kana (Brand.kt). Dmg and Deb only exist on their own OS (packageDmg on
             // macOS, packageDeb on Linux with dpkg-deb and fakeroot). On macOS Compose rejects AppImage while
             // configuring („Unexpected target format for MacOS: AppImage“, release 1.0.48), so only Dmg there –
             // createDistributable builds ADEU LLM.app without it.
@@ -206,7 +206,7 @@ compose.desktop {
             else targetFormats(TargetFormat.AppImage, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "ADEU LLM"
             packageVersion = appVersion
-            description = "Lora – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden"
+            description = "Kana – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden"
             vendor = "thepytales"
             copyright = "Inoffiziell, nicht mit der Universität verbunden."
             // java.sql: used by some libraries; jdk.crypto.ec / jdk.charsets: TLS and windows-1252 text files;
@@ -223,12 +223,12 @@ compose.desktop {
                 // Without console window; errors go to log.txt in the data folder.
                 console = false
             }
-            // AP-31: Apple Silicon (macos-15 runner). ADEU LLM.app keeps the technical name, menu bar and Dock say Lora.
+            // AP-31: Apple Silicon (macos-15 runner). ADEU LLM.app keeps the technical name, menu bar and Dock say Kana.
             macOS {
                 iconFile.set(project.file("icons/app.icns"))
                 bundleID = "de.tu-dresden.adeu.lora"
-                packageName = "Lora"
-                dockName = "Lora"
+                packageName = "Kana"
+                dockName = "Kana"
                 appCategory = "public.app-category.productivity"
                 // Chromium of the browser (JCEF 152) needs macOS 12.
                 minimumSystemVersion = "12.0"

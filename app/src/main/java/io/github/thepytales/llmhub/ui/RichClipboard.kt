@@ -13,7 +13,7 @@ internal object RichClipboard {
     private fun manager(c: AppContainer) = c.appContext.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
 
     fun copy(c: AppContainer, html: String, plain: String, @Suppress("UNUSED_PARAMETER") rtf: String? = null): Boolean = runCatching {
-        manager(c)?.setPrimaryClip(ClipData.newHtmlText("Lora", plain, html)) ?: return false
+        manager(c)?.setPrimaryClip(ClipData.newHtmlText("Kana", plain, html)) ?: return false
         true
     }.getOrDefault(false)
 

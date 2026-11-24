@@ -5,9 +5,9 @@ import java.io.File
 import java.util.zip.GZIPInputStream
 
 /**
- * Eigene Modelle aktualisieren (AP-117): one version („Fassung“) of Lora Namensschutz or Lora Befehle, recognized on the
+ * Eigene Modelle aktualisieren (AP-117): one version („Fassung“) of Kana Namensschutz or Kana Befehle, recognized on the
  * device by the SHA-256 of the unpacked file – not by its name and size, so a retrained model with the same name or the
- * same size is still told apart. Each version brings what the app needs to run it: threshold (and for Lora Befehle the
+ * same size is still told apart. Each version brings what the app needs to run it: threshold (and for Kana Befehle the
  * bound of the question with two buttons), labels and vocabulary as resources of the app.
  */
 data class ModelVersion(
@@ -18,7 +18,7 @@ data class ModelVersion(
     val size: Long,
     val sha256: String,
     val threshold: Float,
-    /** Lora Befehle: probability of the two likeliest commands from which Lora asks (AP-73); 0 for Lora Namensschutz. */
+    /** Kana Befehle: probability of the two likeliest commands from which Kana asks (AP-73); 0 for Kana Namensschutz. */
     val bound: Float = 0f,
     /** Resource with the labels (JSON list) and the WordPiece vocabulary of this version. */
     val labels: String,

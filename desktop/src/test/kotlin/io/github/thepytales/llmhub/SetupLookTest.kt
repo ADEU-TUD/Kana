@@ -39,7 +39,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Lora einrichten Schritt für Schritt (AP-120) and „lokal / TU-Server / Cloud“ (AP-119) as pictures
+ * Kana einrichten Schritt für Schritt (AP-120) and „lokal / TU-Server / Cloud“ (AP-119) as pictures
  * (build/screenshots/einrichten-*.png), at the width of a Windows window and of a phone.
  */
 @OptIn(ExperimentalTestApi::class)
@@ -88,7 +88,7 @@ class SetupLookTest {
     fun everyStepAtTheWidthOfAWindow() = ui {
         c.settings.update { it.copy(apiKey = "", providers = emptyList(), roles = "", loraIntroDone = false) }
         step(SetupPage.WELCOME)
-        assertTrue(has("Hallo, ich bin Lora!") && has("Los geht’s") && has("Später"))
+        assertTrue(has("Hallo, ich bin Kana!") && has("Los geht’s") && has("Später"))
         step(SetupPage.ROLES)
         assertTrue(has("Lehre") && has("Verwaltung"))
         step(SetupPage.PLACE)

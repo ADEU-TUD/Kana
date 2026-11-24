@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 /**
  * Fehlermeldungen in Klartext (AP-74): the 30 most frequent errors (from the error log, the tests and the HTTP codes of
- * the Uni-Server) each get a sentence and a button, and no raw exception reaches the chat or Lora's panel.
+ * the Uni-Server) each get a sentence and a button, and no raw exception reaches the chat or Kana's panel.
  */
 class ErrorHelpTest {
     /** Error → expected catalog id and button (null = no button needed). */
@@ -102,7 +102,7 @@ class ErrorHelpTest {
         val card = chat.substringAfter("fun ErrorCard(").substringBefore("\n}\n")
         assertTrue("ErrorHelp.explain(text)" in card && "Text(plain.text" in card, "Die Fehlerkarte im Chat zeigt den Klartext")
         val lora = File(ui, "LoraHelper.kt").readText()
-        assertFalse(Regex(""""failed:" \+ \(?e\.message""").containsMatchIn(lora), "Loras Karten zeigen keine rohe Exception")
+        assertFalse(Regex(""""failed:" \+ \(?e\.message""").containsMatchIn(lora), "Kanas Karten zeigen keine rohe Exception")
         assertFalse(Regex("""getOrElse \{ tr\("Rückgängig ging nicht: \{0}", it\.message""").containsMatchIn(lora))
         assertTrue("ErrorHelp.explain(e)" in lora)
         val notices = File(ui, "Notices.kt").readText()

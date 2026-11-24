@@ -550,7 +550,7 @@ object Diagrams {
     @Volatile
     var raster: ((Diagram) -> ByteArray?)? = null
 
-    // ── Editing helpers (editor and Lora) ─────────────────────────────────────────────────────────────
+    // ── Editing helpers (editor and Kana) ─────────────────────────────────────────────────────────────
 
     /** A new id not used in [d]. */
     fun newId(d: Diagram): String { var k = d.nodes.size + 1; while (d.nodes.any { it.id == "n$k" }) k++; return "n$k" }

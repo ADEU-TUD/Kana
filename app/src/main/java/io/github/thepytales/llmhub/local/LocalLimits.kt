@@ -76,9 +76,9 @@ data class LocalLimits(
 
         /** The hint when an answer takes longer than [LocalLimits.answerMs]; in the Postfach no server model may help. */
         fun tooSlow(mailbox: Boolean): String = if (mailbox) {
-            tr("Das dauert auf diesem Gerät zu lange – Lora hat angehalten. Eine kürzere Frage stellen (z. B. nur ungelesene Mails von heute) oder das Postfach am PC fragen?")
+            tr("Das dauert auf diesem Gerät zu lange – Kana hat angehalten. Eine kürzere Frage stellen (z. B. nur ungelesene Mails von heute) oder das Postfach am PC fragen?")
         } else {
-            tr("Das dauert auf diesem Gerät zu lange – Lora hat angehalten. Ein Server-Modell wählen oder eine kürzere Frage stellen?")
+            tr("Das dauert auf diesem Gerät zu lange – Kana hat angehalten. Ein Server-Modell wählen oder eine kürzere Frage stellen?")
         }
 
         /** The note in the last request when the steps are used up: answer now with what is there. */
@@ -122,8 +122,8 @@ enum class Heat {
         }
 
         /** Hints for the chat. */
-        fun waitNote(): String = tr("Das Gerät ist warm – Lora macht eine Pause zum Abkühlen")
-        fun stopNote(): String = tr("Das Gerät wird zu warm – Lora hat angehalten, damit es nicht überhitzt. In ein paar Minuten noch einmal versuchen oder eine kürzere Frage stellen.")
+        fun waitNote(): String = tr("Das Gerät ist warm – Kana macht eine Pause zum Abkühlen")
+        fun stopNote(): String = tr("Das Gerät wird zu warm – Kana hat angehalten, damit es nicht überhitzt. In ein paar Minuten noch einmal versuchen oder eine kürzere Frage stellen.")
     }
 }
 

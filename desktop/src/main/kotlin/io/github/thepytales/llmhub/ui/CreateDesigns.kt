@@ -53,7 +53,7 @@ private val DATE = SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY)
 
 /**
  * „Erstellen“ on Windows (AP-24): above the TU Vorlagen the design templates (poster, flyer, social media …) – each to
- * design yourself or to hand to Lora – and „Meine Designs“. A design opens in the [DesignEditor] (route design/<id>).
+ * design yourself or to hand to Kana – and „Meine Designs“. A design opens in the [DesignEditor] (route design/<id>).
  */
 internal fun LazyListScope.designSection(c: AppContainer) {
     item(key = "design-templates") { DesignTemplatesRow(c) }
@@ -92,7 +92,7 @@ private fun DesignTemplatesRow(c: AppContainer) {
         ChatHandoff.open.value = ""
     }
     Column {
-        SectionHead(tr("Gestalten"), tr("Poster, Flyer, Aushänge, Social Media und mehr im TUD-Design – selbst gestalten oder Lora machen lassen.")) {
+        SectionHead(tr("Gestalten"), tr("Poster, Flyer, Aushänge, Social Media und mehr im TUD-Design – selbst gestalten oder Kana machen lassen.")) {
             TextButton(onClick = { posterFromPaper() }) { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Poster aus einem Paper")) }
         }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -135,7 +135,7 @@ private fun TemplateCard(c: AppContainer, t: DesignTemplate) {
                     ChatHandoff.open.value = ""
                 },
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
-            ) { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(14.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Lora machen lassen"), style = MaterialTheme.typography.labelMedium) }
+            ) { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(14.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Kana machen lassen"), style = MaterialTheme.typography.labelMedium) }
         }
     }
 }

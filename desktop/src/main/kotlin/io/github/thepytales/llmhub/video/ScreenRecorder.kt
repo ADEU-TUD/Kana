@@ -410,7 +410,7 @@ object ScreenRecorder {
         fun click(x: Float, y: Float) { synchronized(clicks) { clicks += Click(seconds, x, y) } }
     }
 
-    /** Folder of a new recording: „Aufnahmen/<Datum Uhrzeit>“ in the Lora-Ordner. */
+    /** Folder of a new recording: „Aufnahmen/<Datum Uhrzeit>“ in the Kana-Ordner. */
     fun folder(root: File, now: Long = System.currentTimeMillis()): File =
         File(File(root, "Aufnahmen"), SimpleDateFormat("yyyy-MM-dd HH-mm-ss", Locale.GERMANY).format(Date(now)))
 }

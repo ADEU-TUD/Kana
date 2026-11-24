@@ -9,7 +9,7 @@ import java.util.Locale
  * OpenDocument (LibreOffice) as a source (AP-90): .odt into the document editor (via [OdfText]: headings, lists,
  * tables, bold, italic), .ods into the sheet – one tab per table with values, dates and formulas (OpenFormula
  * „of:=SUM([.A1:.A3])“ becomes „=SUM(A1:A3)“) – and .odp into slides (title, text, notes). Used by [OfficeImport],
- * so opening, converting (Word, Excel, PowerPoint, PDF, Markdown …) and reading for Lora all work.
+ * so opening, converting (Word, Excel, PowerPoint, PDF, Markdown …) and reading for Kana all work.
  */
 object OdfImport {
     private const val MAX_ROWS = 20_000

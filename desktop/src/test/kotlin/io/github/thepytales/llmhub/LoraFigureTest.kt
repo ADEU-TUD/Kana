@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Lora, the mascot: the director plays every activity, follows hints, and every moment draws inside the canvas. */
+/** Kana, the mascot: the director plays every activity, follows hints, and every moment draws inside the canvas. */
 class LoraFigureTest {
     private val light = LoraColors(
         body = Color(0xFF5B4FE9), visor = Color.White, eye = Color(0xFF1B1B1F), line = Color(0xFF5F6368),
@@ -168,11 +168,11 @@ class LoraFigureTest {
         sheet(dark, "build/lora-dark.png")
     }
 
-    /** Some of Lora is painted, nothing touches the border of the canvas. */
+    /** Some of Kana is painted, nothing touches the border of the canvas. */
     private fun check(img: BufferedImage, what: String) {
         var painted = 0
         for (x in 0 until img.width step 3) for (y in 0 until img.height step 3) if ((img.getRGB(x, y) ushr 24) != 0) painted++
-        assertTrue(painted > 100, "Lora gezeichnet: $what")
+        assertTrue(painted > 100, "Kana gezeichnet: $what")
         for (x in 0 until img.width) for (y in listOf(0, img.height - 1)) assertTrue((img.getRGB(x, y) ushr 24) == 0, "bleibt im Bild (oben/unten): $what")
         for (y in 0 until img.height) for (x in listOf(0, img.width - 1)) assertTrue((img.getRGB(x, y) ushr 24) == 0, "bleibt im Bild (links/rechts): $what")
     }

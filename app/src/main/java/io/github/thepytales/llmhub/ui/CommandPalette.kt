@@ -66,7 +66,7 @@ val APP_COMMANDS: List<Command> get() = listOf(
     Command(trLater("Verbrauch"), "usage", trLater("Bereiche"), "kosten token bewertungen statistik"),
     Command(trLater("Einstellungen"), "settings", trLater("Einstellungen"), "optionen"),
     // AP-120: the whole setup step by step (first start, again at any time).
-    Command(trLater("Lora einrichten"), "setup", trLater("Einstellungen"), "einrichtung einrichten assistent erster start schritt für schritt neu einrichten schlüssel werkzeuge aussehen"),
+    Command(trLater("Kana einrichten"), "setup", trLater("Einstellungen"), "einrichtung einrichten assistent erster start schritt für schritt neu einrichten schlüssel werkzeuge aussehen"),
     // AP-112: the setup step by step is its own screen, not a settings page.
     Command(trLater("Alles lokal einrichten"), "local-setup", trLater("Einstellungen"), "offline einrichten assistent modelle laden ohne schlüssel alles lokal"),
 ) + io.github.thepytales.llmhub.agent.ChatModes.visible().map { m ->
@@ -80,8 +80,8 @@ val SETTINGS_INDEX = listOf(
     Command(trLater("GitHub"), "settings/github", trLater("Einstellungen"), "repository token code"),
     Command(trLater("Chat & Werkzeuge"), "settings/chat", trLater("Einstellungen"), "standardmodell werkzeuge freigaben websuche denken"),
     Command(trLater("Werkzeuge"), "settings/tools", trLater("Einstellungen"), "werkzeuge einschalten ausschalten pdf tresor seitenleiste mehr reihenfolge"),
-    Command(trLater("Wo Lora arbeitet"), "settings/places", trLater("Einstellungen"), "lokal offline ohne internet ohne server ohne api schlüssel gerät alles lokal gemischt profil einrichtung"),
-    Command(trLater("Lora"), "settings/lora", trLater("Einstellungen"), "lora maskottchen ausblenden navigator helfer animation hinweise"),
+    Command(trLater("Wo Kana arbeitet"), "settings/places", trLater("Einstellungen"), "lokal offline ohne internet ohne server ohne api schlüssel gerät alles lokal gemischt profil einrichtung"),
+    Command(trLater("Kana"), "settings/lora", trLater("Einstellungen"), "lora maskottchen ausblenden navigator helfer animation hinweise kana"),
     Command(trLater("Datenschutz"), "settings/privacy", trLater("Einstellungen"), "pseudonymisierung namen eigene begriffe"),
     Command(trLater("Gedächtnis"), "settings/memory", trLater("Einstellungen"), "erinnerungen merken"),
     Command(trLater("Wissenssammlung"), "settings/knowledge", trLater("Einstellungen"), "pdf wissen dokumente durchsuchen"),
@@ -131,7 +131,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
         } else onNavigate(route)
     }
     // Befehle auf dem Gerät (AP-71): what the command model makes of the typed words – shown as the first entry when it
-    // is sure, carried out by Lora on the device (settings and risky actions still ask first).
+    // is sure, carried out by Kana on the device (settings and risky actions still ask first).
     val targets = remember { io.github.thepytales.llmhub.data.AppMap.build(io.github.thepytales.llmhub.data.TemplateLibrary.all(c.templates.items.value), IS_ANDROID) }
     val command = remember(query) {
         val q = query.trim()
@@ -139,7 +139,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
             ?.takeIf { it.sure && !it.free }
             ?.let { io.github.thepytales.llmhub.agent.LoraCommands.describe(it.label, q, c.settings.current, targets) }
     }
-    // Lora-Verlauf (AP-75): Pfeil hoch holt die letzten Wünsche, angeheftete Befehle stehen unter ihrem Namen.
+    // Kana-Verlauf (AP-75): Pfeil hoch holt die letzten Wünsche, angeheftete Befehle stehen unter ihrem Namen.
     val historyVersion by io.github.thepytales.llmhub.data.LoraHistory.version.collectAsStateWithLifecycle()
     val history = remember(historyVersion) { if (c.settings.current.loraHistory) io.github.thepytales.llmhub.data.LoraHistory.recent(c) else emptyList() }
     val pinned = remember(query, historyVersion) { io.github.thepytales.llmhub.data.LoraHistory.search(c, query).take(8) }
@@ -152,7 +152,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
         return true
     }
     fun first() {
-        // A wish fetched with Pfeil hoch goes to Lora again („Nochmal“), a pinned command by its name too.
+        // A wish fetched with Pfeil hoch goes to Kana again („Nochmal“), a pinned command by its name too.
         if (historyAt >= 0) { LoraHelper.open(query.trim()); onDismiss(); return }
         pinned.firstOrNull()?.takeIf { query.isNotBlank() && commands.none { tr(it.title).equals(query.trim(), true) } }?.let { LoraHelper.open(it.text); onDismiss(); return }
         commands.firstOrNull()?.let { go(it.route); onDismiss() }
@@ -180,7 +180,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                 )
                 if (historyAt >= 0) {
                     Text(
-                        tr("Zuletzt {0} von {1} · Enter: nochmal an Lora · Pfeil runter: weiter", historyAt + 1, history.size),
+                        tr("Zuletzt {0} von {1} · Enter: nochmal an Kana · Pfeil runter: weiter", historyAt + 1, history.size),
                         style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp, top = 4.dp),
                     )
@@ -192,14 +192,14 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                     if (pinned.isNotEmpty()) {
                         item(key = "g_pinned") { PaletteHeading(tr("Eigene Befehle")) }
                         pinned.forEach { e ->
-                            item(key = "pin_" + e.text) { PaletteRow(e.name!!, tr("Lora")) { LoraHelper.open(e.text); onDismiss() } }
+                            item(key = "pin_" + e.text) { PaletteRow(e.name!!, tr("Kana")) { LoraHelper.open(e.text); onDismiss() } }
                         }
                     }
-                    // Lora fragen (AP-07): the typed wish goes to Lora, who finds the place or hands it to a chat.
+                    // Kana fragen (AP-07): the typed wish goes to Kana, who finds the place or hands it to a chat.
                     item(key = "lora") {
                         PaletteRow(
-                            if (query.isBlank()) tr("Lora fragen") else tr("Lora fragen") + ": „" + query.trim() + "“",
-                            "Lora",
+                            if (query.isBlank()) tr("Kana fragen") else tr("Kana fragen") + ": „" + query.trim() + "“",
+                            "Kana",
                         ) { LoraHelper.open(query.trim()); onDismiss() }
                     }
                     // Touren (AP-41): „Tour …“, „Zeig mir, wie …“ – or the whole list when nothing is typed yet.
@@ -210,7 +210,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                     if (tours.isNotEmpty()) {
                         item(key = "g_tours") { PaletteHeading(tr("Touren")) }
                         tours.forEach { t ->
-                            item(key = "tour_" + t.id) { PaletteRow(tr("Tour: {0}", tr(t.title)), tr("Lora zeigt es")) { onDismiss(); LoraTours.start(t, onNavigate) } }
+                            item(key = "tour_" + t.id) { PaletteRow(tr("Tour: {0}", tr(t.title)), tr("Kana zeigt es")) { onDismiss(); LoraTours.start(t, onNavigate) } }
                         }
                     }
                     var lastGroup: String? = null
@@ -263,7 +263,7 @@ fun ShortcutsDialog(onDismiss: () -> Unit) {
         tr("Strg+K") to tr("Befehlspalette: Bereiche, Einstellungen, Chats"),
         tr("Strg+N") to tr("Neuer Chat"),
         tr("Strg+B") to tr("Seitenleiste ein/aus (im Text: fett)"),
-        tr("Strg+L") to tr("Lora öffnen und schließen"),
+        tr("Strg+L") to tr("Kana öffnen und schließen"),
         tr("Strg+Umschalt+L") to tr("Literatur"),
         tr("Strg+D") to tr("Dateien (in Folien und Gestalten: duplizieren)"),
         tr("Strg+T") to tr("Transkription"),

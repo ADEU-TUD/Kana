@@ -36,8 +36,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Einstellungen › Lora › „Eigene Wörter“ (AP-78): Abkürzungen und Namen der Professur mit Erklärung und anderen
- * Schreibweisen. Lora, Strg+K, die Dateisuche und die Sprachmodelle nutzen sie.
+ * Einstellungen › Kana › „Eigene Wörter“ (AP-78): Abkürzungen und Namen der Professur mit Erklärung und anderen
+ * Schreibweisen. Kana, Strg+K, die Dateisuche und die Sprachmodelle nutzen sie.
  */
 @Composable
 fun OwnWordsSettings(c: AppContainer) {
@@ -46,7 +46,7 @@ fun OwnWordsSettings(c: AppContainer) {
     var editing by remember { mutableStateOf<Term?>(null) }
     var adding by remember { mutableStateOf(false) }
     Section(tr("Eigene Wörter")) {
-        HintText(tr("Abkürzungen und Namen, die Lora kennen soll – z. B. „MHB“ für Modulhandbuch oder Projektnamen. Lora versteht sie in Befehlen, die Dateisuche findet über sie, und Chats bekommen die passende Erklärung mit, wenn ein Wort vorkommt."))
+        HintText(tr("Abkürzungen und Namen, die Kana kennen soll – z. B. „MHB“ für Modulhandbuch oder Projektnamen. Kana versteht sie in Befehlen, die Dateisuche findet über sie, und Chats bekommen die passende Erklärung mit, wenn ein Wort vorkommt."))
         if (words.isEmpty()) HintText(tr("Noch keine eigenen Wörter."))
         words.forEach { t ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -89,7 +89,7 @@ private fun TermDialog(term: Term?, onDismiss: () -> Unit, onSave: (Term) -> Uni
 /**
  * Einstellungen › Inhalte zum Nachladen (AP-78 c): everything the app can load afterwards, in plain words – what it is
  * for, how big it is, Laden/Aktualisieren/Löschen – the command model, the recognition model, language models, speech
- * recognition, the video editor and the Wissenspakete (also the shared Lora-Pakete of AP-83).
+ * recognition, the video editor and the Wissenspakete (also the shared Kana-Pakete of AP-83).
  */
 @Composable
 fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
@@ -100,9 +100,9 @@ fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
     val scope = rememberCoroutineScope()
     val loading by KnowledgePacks.loading.collectAsState()
     HintText(tr("Was sich zur App dazuladen lässt – nur, wer es braucht. Alles lässt sich hier auch wieder löschen."))
-    Section(tr("Modelle für Lora")) {
+    Section(tr("Modelle für Kana")) {
         ContentRow(
-            CommandModelInfo.NAME, tr("Lora erkennt offline und in Millisekunden, was du meinst."), tr("{0} MB", CommandModelInfo.MEGABYTES),
+            CommandModelInfo.NAME, tr("Kana erkennt offline und in Millisekunden, was du meinst."), tr("{0} MB", CommandModelInfo.MEGABYTES),
             installed = command.installed || command.old, progress = command.progress,
             onLoad = c.commandModel::install.takeIf { c.commandModel.available }, onDelete = c.commandModel::delete, update = command.old,
         )
@@ -115,7 +115,7 @@ fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
         if (DESKTOP) ContentLink(tr("Videoeditor-Paket"), tr("Genaue Videoangaben, bessere Rauschminderung, Gesichter verpixeln – etwa 40 MB."), tr("Öffnen")) { onNavigate("settings/tools") }
     }
     Section(tr("Wissenspakete")) {
-        HintText(tr("Kleine Datenbanken, die Lora die Sprache eines Bereichs beibringen – jede Angabe mit Quelle und Stand. Lora erklärt Begriffe daraus („Was ist das ZLSB?“) und gibt sie Chats als Kontext mit."))
+        HintText(tr("Kleine Datenbanken, die Kana die Sprache eines Bereichs beibringen – jede Angabe mit Quelle und Stand. Kana erklärt Begriffe daraus („Was ist das ZLSB?“) und gibt sie Chats als Kontext mit."))
         KnowledgePacks.CATALOG.forEach { o ->
             val have = packs.firstOrNull { it.id == o.id }
             ContentRow(
@@ -130,7 +130,7 @@ fun DownloadsSection(c: AppContainer, onNavigate: (String) -> Unit) {
         }
         packs.filter { it.origin == "geteilt" }.forEach { p ->
             ContentRow(
-                p.title, p.description.ifBlank { tr("Geteiltes Lora-Paket") } + " " + tr("Importiert: {0} Wörter, {1} Befehle, {2} Vorlagen, {3} Hausstil-Regeln.", p.entries.size, p.commands.size, p.templates.size, p.houseRules.size),
+                p.title, p.description.ifBlank { tr("Geteiltes Kana-Paket") } + " " + tr("Importiert: {0} Wörter, {1} Befehle, {2} Vorlagen, {3} Hausstil-Regeln.", p.entries.size, p.commands.size, p.templates.size, p.houseRules.size),
                 "", installed = true, progress = null, onLoad = null, onDelete = { LoraPackages.remove(c, p.id) },
             )
         }
@@ -168,7 +168,7 @@ private fun ContentLink(title: String, text: String, action: String, onClick: ()
 }
 
 /**
- * Einstellungen › Lora › „Lora-Paket teilen“ (AP-83): eigene Befehle, Wörter, Vorlagen und Hausstil als eine Datei
+ * Einstellungen › Kana › „Kana-Paket teilen“ (AP-83): eigene Befehle, Wörter, Vorlagen und Hausstil als eine Datei
  * exportieren; eine Datei aus dem Team mit Vorschau importieren; importierte Pakete wieder entfernen.
  */
 @Composable
@@ -182,7 +182,7 @@ fun LoraPackagesSettings(c: AppContainer) {
         val text = withContext(Dispatchers.IO) { input.bufferedReader().readText() }
         runCatching { LoraPackages.preview(c, text) }.onSuccess { preview = it }.onFailure { Notices.error(it) }
     }
-    Section(tr("Lora-Paket teilen")) {
+    Section(tr("Kana-Paket teilen")) {
         HintText(tr("Eigene Befehle, eigene Wörter, eigene TU Vorlagen und Hausstil-Regeln als eine Datei – zum Weitergeben im Team. Chats, Gedächtnis, Verlauf und Schlüssel bleiben draußen."))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = { exporting = true }) { Text(tr("Exportieren …")) }
@@ -250,12 +250,12 @@ private fun ExportPackDialog(c: AppContainer, onDone: () -> Unit) {
         LoraPackages.Part.HOUSE to tr("Hausstil-Regeln"),
     )
     val export = rememberFileExport("application/json", onDone = { ok ->
-        if (ok) Notices.info(tr("Lora-Paket gespeichert.")) else Notices.error(tr("Speichern fehlgeschlagen."))
+        if (ok) Notices.info(tr("Kana-Paket gespeichert.")) else Notices.error(tr("Speichern fehlgeschlagen."))
         onDone()
     }) { out -> out.write(LoraPackages.export(LoraPackages.build(c, name, description, parts.toSet())).toByteArray(Charsets.UTF_8)) }
     AlertDialog(
         onDismissRequest = onDone,
-        title = { Text(tr("Lora-Paket exportieren")) },
+        title = { Text(tr("Kana-Paket exportieren")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 OutlinedTextField(name, { name = it }, singleLine = true, label = { Text(tr("Name des Pakets")) }, modifier = Modifier.fillMaxWidth())
@@ -277,7 +277,7 @@ private fun ExportPackDialog(c: AppContainer, onDone: () -> Unit) {
 
 /**
  * Einstellungen › Dokumente & Logos › „Hausstil“ (AP-79): eigene Regeln der Professur – was so nicht stehen soll, wie
- * es stattdessen heißt und warum („Lehrer“ → „Lehrkräfte“, Gendern). Lora prüft Dokumente, Folien und Dateien danach.
+ * es stattdessen heißt und warum („Lehrer“ → „Lehrkräfte“, Gendern). Kana prüft Dokumente, Folien und Dateien danach.
  */
 @Composable
 fun HouseStyleSettings(c: AppContainer) {
@@ -287,7 +287,7 @@ fun HouseStyleSettings(c: AppContainer) {
     var preferred by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     Section(tr("Hausstil")) {
-        HintText(tr("Eigene Schreibweisen der Professur – z. B. Gendern („Lehrer“ → „Lehrkräfte“) oder feste Begriffe. „Hausstil und Barrierefreiheit prüfen“ (Lora im Dokument, in Folien und bei Dateien) meldet jede Fundstelle und behebt sie auf Wunsch. Die Schreibweise der TU Dresden und Abkürzungen nach DIN 5008 prüft Lora immer."))
+        HintText(tr("Eigene Schreibweisen der Professur – z. B. Gendern („Lehrer“ → „Lehrkräfte“) oder feste Begriffe. „Hausstil und Barrierefreiheit prüfen“ (Kana im Dokument, in Folien und bei Dateien) meldet jede Fundstelle und behebt sie auf Wunsch. Die Schreibweise der TU Dresden und Abkürzungen nach DIN 5008 prüft Kana immer."))
         rules.forEach { r ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
@@ -312,7 +312,7 @@ fun HouseStyleSettings(c: AppContainer) {
 }
 
 /**
- * Einstellungen › Lora › „Wofür nutzt du Lora?“ (AP-80): die Rollen vom ersten Start. Eine neue Rolle schaltet ihre
+ * Einstellungen › Kana › „Wofür nutzt du Kana?“ (AP-80): die Rollen vom ersten Start. Eine neue Rolle schaltet ihre
  * Werkzeuge ein (nie aus), stellt ihre TU Vorlagen nach oben und empfiehlt Inhalte zum Nachladen.
  */
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
@@ -327,8 +327,8 @@ fun RolesSettings(c: AppContainer) {
     }
     val scope = rememberCoroutineScope()
     val loading by KnowledgePacks.loading.collectAsState()
-    Section(tr("Wofür nutzt du Lora?")) {
-        HintText(tr("Danach richten sich die vorgeschlagenen Werkzeuge, die Reihenfolge der TU Vorlagen, Loras Vorschläge und empfohlene Inhalte zum Nachladen."))
+    Section(tr("Wofür nutzt du Kana?")) {
+        HintText(tr("Danach richten sich die vorgeschlagenen Werkzeuge, die Reihenfolge der TU Vorlagen, Kanas Vorschläge und empfohlene Inhalte zum Nachladen."))
         androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             io.github.thepytales.llmhub.data.Role.entries.forEach { r ->
                 FilterChip(

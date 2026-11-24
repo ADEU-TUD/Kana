@@ -224,7 +224,7 @@ class SyncRestsTest {
             v.save(Conversation(id = "v1", title = "Geheim", model = "m", messages = listOf(ChatMessage(role = "user", content = "Klarname Müller"))))
             File(data, SyncGuard.VAULT_CONFLICTS).mkdirs()
             File(data, SyncGuard.VAULT_CONFLICTS + "/v1 (Konflikt Handy).bin").writeText("alt")
-            // The PC's Lora-Ordner in the Nextcloud.
+            // The PC's Kana-Ordner in the Nextcloud.
             cloud.put("/Lora/.lora/folders.json", "[]".toByteArray())
             val sync = PhoneSync({ cloud.dav }, data, File(data, "Lora").apply { mkdirs() }, SyncGuard.Me("Handy", "h1"))
             val r = sync.run("/Lora")

@@ -200,8 +200,8 @@ class PageLayoutTest {
         val even = files["word/footer3.xml"]!!.toString(Charsets.UTF_8)
         assertTrue(" PAGE " in even && " NUMPAGES " in even, even)
         assertTrue("Gerade Seite" in files["word/header3.xml"]!!.toString(Charsets.UTF_8))
-        // As a document from Word (not from Lora) it comes back with the same page setup.
-        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Lora</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
+        // As a document from Word (not from Kana) it comes back with the same page setup.
+        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Kana</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
         val out = ByteArrayOutputStream()
         ZipOutputStream(out).use { z -> files.forEach { (n, b) -> z.putNextEntry(ZipEntry(n)); z.write(b); z.closeEntry() } }
         val s = DocMarkup.pageSetup(OfficeImport.docx(out.toByteArray()))

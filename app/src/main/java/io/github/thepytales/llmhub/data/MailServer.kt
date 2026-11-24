@@ -345,7 +345,7 @@ class ImapBridge(
     override fun freeBusy(people: List<String>, day: Long, slotMinutes: Int): List<BusyTimes> = throw OutlookException(noCalendar)
     override fun show(id: String) = throw OutlookException(tr("Über den Mailserver gibt es kein Outlook zum Öffnen – die Mail bzw. der Entwurf liegt im Postfach (z. B. in Outlook im Web)."))
 
-    // ── AP-69 b/c: Lora sortiert selbst ──
+    // ── AP-69 b/c: Kana sortiert selbst ──
 
     /** SEARCH SINCE/BEFORE (whole days on the server), then exactly [from]–[until] by the arrival time. */
     override fun mailsInRange(folderId: String?, from: Long, until: Long?, limit: Int): List<MailHeader> = session { c ->
@@ -537,7 +537,7 @@ class ImapBridge(
                 "MIME-Version: 1.0",
                 "Content-Type: text/plain; charset=UTF-8",
                 "Content-Transfer-Encoding: base64",
-                "X-Mailer: Lora (Entwurf, nicht gesendet)",
+                "X-Mailer: Kana (Entwurf, nicht gesendet)",
             )
             val encoded = Base64.getMimeEncoder(76, "\r\n".toByteArray()).encodeToString(body.replace("\r\n", "\n").replace("\n", "\r\n").toByteArray(Charsets.UTF_8))
             return (lines.joinToString("\r\n") + "\r\n\r\n" + encoded + "\r\n").toByteArray(Charsets.UTF_8)

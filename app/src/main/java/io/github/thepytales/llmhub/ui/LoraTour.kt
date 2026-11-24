@@ -70,7 +70,7 @@ object LoraTours {
         ),
         LoraTour(
             "files", "files", trLater("Dateien"), listOf(
-                TourStep("files.places", trLater("Links liegen deine Orte: Lora-Ordner, Hochgeladen, Erstellt, Markiert und der Papierkorb.")),
+                TourStep("files.places", trLater("Links liegen deine Orte: Kana-Ordner, Hochgeladen, Erstellt, Markiert und der Papierkorb.")),
                 TourStep("files.search", trLater("Die Suche findet Dateien nach Namen, Schlagwörtern und Inhalt.")),
                 TourStep("files.new", trLater("Mit dem Plus legst du Ordner, Dokumente, Tabellen und Präsentationen an oder lädst Dateien hoch.")),
                 TourStep("files.sort", trLater("Hier sortierst du nach Name, Datum oder Größe.")),
@@ -167,7 +167,7 @@ object LoraTours {
 
     private fun seen(text: String) = text.lines().map { it.trim() }.filter { it.isNotEmpty() }.toSet()
 
-    /** On the first visit of a tool with a tour: offer it (once, when tours are on and Lora may appear). */
+    /** On the first visit of a tool with a tour: offer it (once, when tours are on and Kana may appear). */
     fun onRoute(c: AppContainer, route: String, android: Boolean) {
         val s = c.settings.current
         if (!s.loraTours || !LoraHelper.available(s) || active.value != null) return
@@ -207,7 +207,7 @@ fun tourCardPosition(target: Rect?, card: IntSize, area: IntSize, margin: Float,
 
 /**
  * The tour layer over the app (AP-41): the offer on the first visit of a tool and the card of the running tour
- * (step x of y, text, Zurück · Überspringen · Weiter). Lora flies to each place only when movements are allowed. The
+ * (step x of y, text, Zurück · Überspringen · Weiter). Kana flies to each place only when movements are allowed. The
  * card of a step sits beside its place, never over it (AP-70: in the video editor it covered the clips).
  */
 @Composable

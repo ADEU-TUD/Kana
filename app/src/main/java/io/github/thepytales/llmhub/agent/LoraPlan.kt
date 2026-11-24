@@ -49,7 +49,7 @@ data class FlowStep(
 }
 
 /**
- * Ein Ablauf über Werkzeuge (AP-40): Lora plans first („Aus dieser Aufnahme: transkribieren, Untertitel, kürzen,
+ * Ein Ablauf über Werkzeuge (AP-40): Kana plans first („Aus dieser Aufnahme: transkribieren, Untertitel, kürzen,
  * Handout als Word“), shows the plan as a card (steps, tools, estimated time, data protection) with Los · Ändern ·
  * Abbrechen, then carries out the steps with the actions of AP-38. Stored in „lora-ablaeufe.json“, so a running one
  * carries on after a restart of the app.
@@ -78,7 +78,7 @@ data class LoraFlow(
     }
 }
 
-/** Plans, stores and runs Lora's Abläufe (AP-40); the panel shows them (ui/LoraHelper, FlowCard). */
+/** Plans, stores and runs Kana's Abläufe (AP-40); the panel shows them (ui/LoraHelper, FlowCard). */
 object LoraFlows {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val jobs = ConcurrentHashMap<String, Job>()
@@ -229,7 +229,7 @@ object LoraFlows {
                 ToolActions.log("Ablauf fertig: ${flow.wish.take(80)}")
                 if (System.currentTimeMillis() - began > 20_000 || !io.github.thepytales.llmhub.ui.LoraHelper.isOpen.value) {
                     io.github.thepytales.llmhub.tasks.Notifier.batchFinished(
-                        c.appContext, tr("Lora: Ablauf fertig"),
+                        c.appContext, tr("Kana: Ablauf fertig"),
                         tr("{0} Schritte erledigt – die Ergebnisse liegen in Erstellt.", flow.steps.count { it.status == FlowStep.DONE }),
                     )
                 }
@@ -325,7 +325,7 @@ object LoraFlows {
         }
     }
 
-    /** Wishes with several steps („…, dann …, danach …“) – then Lora gets the planning tool and the action catalog. */
+    /** Wishes with several steps („…, dann …, danach …“) – then Kana gets the planning tool and the action catalog. */
     private val MULTI = Regex("(\\bdann\\b|danach|anschliessend|anschließend|zum schluss|am ende|als nachstes|ablauf|schritt|\\bplan)")
 
     fun looksMultiStep(wish: String): Boolean {

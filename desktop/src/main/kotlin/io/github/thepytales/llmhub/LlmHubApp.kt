@@ -56,7 +56,7 @@ object CrashLog {
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             runCatching {
                 file.writeText(
-                    "Lora ${BuildConfig.VERSION_NAME} · ${System.getProperty("os.name")} ${System.getProperty("os.version")} · " +
+                    "Kana ${BuildConfig.VERSION_NAME} · ${System.getProperty("os.name")} ${System.getProperty("os.version")} · " +
                         "Java ${System.getProperty("java.version")}\n\n" + error.stackTraceToString()
                 )
             }
@@ -82,7 +82,7 @@ object LlmHubApp {
 
     fun start() {
         CrashLog.install(context)
-        // Lora im Videoeditor (AP-38 Stufe d): her actions are there before an Ablauf carries on after the start.
+        // Kana im Videoeditor (AP-38 Stufe d): her actions are there before an Ablauf carries on after the start.
         io.github.thepytales.llmhub.video.VideoLora.register()
         container = AppContainer(context)
         runCatching { TaskScheduler.scheduleAll(context) }.onFailure { AppLog.e("Aufgaben planen", it) }

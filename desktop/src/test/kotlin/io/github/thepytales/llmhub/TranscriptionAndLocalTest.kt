@@ -104,7 +104,7 @@ class TranscriptionAndLocalTest {
     @Test
     fun localModelIdsAreKnownToTheCatalog() {
         val info = io.github.thepytales.llmhub.data.ModelCatalog.info("local/gemma-4-e4b")
-        assertEquals("Gemma 4 E4B – Lora Edition", info.displayName)
+        assertEquals("Gemma 4 E4B – Kana Edition", info.displayName)
         assertTrue(io.github.thepytales.llmhub.data.Privacy.isLocal(info.id))
     }
 }

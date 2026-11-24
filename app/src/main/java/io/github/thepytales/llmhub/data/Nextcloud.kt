@@ -15,7 +15,7 @@ import java.net.URLEncoder
 /**
  * Nextcloud fest eingebaut (AP-22): the app's way into the Nextcloud of Einstellungen › Verbindungen – browse, open and
  * attach files, save results there. Shared by Android and Windows (WebDAV over OkHttp); Android's sync of the
- * Lora-Ordner (AP-28) can build on it.
+ * Kana-Ordner (AP-28) can build on it.
  */
 class NextcloudService(private val c: AppContainer) {
     val configured: Boolean get() = c.settings.current.hasNextcloud
@@ -44,7 +44,7 @@ class NextcloudService(private val c: AppContainer) {
         return FileText.read(path.substringAfterLast('/'), bytes)
     }
 
-    /** Copies [path] into the Lora-Ordner („Hochgeladen“) to open it in the app; returns the copy. */
+    /** Copies [path] into the Kana-Ordner („Hochgeladen“) to open it in the app; returns the copy. */
     suspend fun import(path: String, chatId: String? = null): File? = withContext(Dispatchers.IO) {
         val bytes = client().download(path)
         c.drive.keepUpload(path.substringAfterLast('/'), bytes, chatId)

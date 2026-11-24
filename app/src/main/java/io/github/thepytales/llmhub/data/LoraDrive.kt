@@ -20,18 +20,18 @@ import java.util.Locale
 import java.util.UUID
 
 /*
- * Der Lora-Ordner (AP-16 Stufe 0): the files the user sees, like a Google Drive on the PC. Two fixed folders –
+ * Der Kana-Ordner (AP-16 Stufe 0): the files the user sees, like a Google Drive on the PC. Two fixed folders –
  * „Hochgeladen“ (a copy of every file put into the app) and „Erstellt“ (everything made in a chat) – and the user's own
  * folders; the editor's documents live there as real .docx/.xlsx/.pptx/.md files (docs/DocFiles). Files can be moved,
  * renamed and deleted (into the Papierkorb, 30 days); a file moved out of „Erstellt“ keeps its chat, because the chats
  * keep the old path and [resolve] finds the file again.
  */
 
-/** A file the app put into the Lora-Ordner or moved there: where it is now and where it was. */
+/** A file the app put into the Kana-Ordner or moved there: where it is now and where it was. */
 @Serializable
 data class DriveEntry(
     val id: String = UUID.randomUUID().toString().take(12),
-    /** Path inside the Lora-Ordner with „/“. */
+    /** Path inside the Kana-Ordner with „/“. */
     val path: String,
     /** „upload“, „created“ or „moved“. */
     val origin: String = "moved",
@@ -44,7 +44,7 @@ data class DriveEntry(
     val addedAt: Long = System.currentTimeMillis(),
 )
 
-/** Something in the Papierkorb of the Lora-Ordner. */
+/** Something in the Papierkorb of the Kana-Ordner. */
 @Serializable
 data class TrashEntry(
     val id: String = UUID.randomUUID().toString().take(12),
@@ -83,7 +83,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         runCatching { onChanged?.invoke() }
     }
 
-    /** Earlier places of the Lora-Ordner (moved as a whole): paths below them are found again below [root]. */
+    /** Earlier places of the Kana-Ordner (moved as a whole): paths below them are found again below [root]. */
     private val formerRoots: List<String> = runCatching {
         val known = if (rootsFile.isFile) rootsFile.readLines().filter { it.isNotBlank() } else emptyList()
         val last = known.lastOrNull()
@@ -100,7 +100,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
 
     // ── Paths ─────────────────────────────────────────────────────────────────────────────────────────────
 
-    /** Path of [f] inside the Lora-Ordner with „/“, null if it is outside. */
+    /** Path of [f] inside the Kana-Ordner with „/“, null if it is outside. */
     fun rel(f: File): String? {
         val r = root.absoluteFile.normalize().path
         val p = f.absoluteFile.normalize().path
@@ -116,7 +116,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
     fun fileOf(rel: String): File = if (rel.isEmpty()) root else File(root, rel)
 
     /**
-     * The file a chat or document points to by [path], also after it was moved in the Dateien tab, the Lora-Ordner was
+     * The file a chat or document points to by [path], also after it was moved in the Dateien tab, the Kana-Ordner was
      * moved as a whole, or the file came over from before AP-16 (documents/, attachments/).
      */
     fun resolve(path: String): File {
@@ -143,7 +143,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
 
     fun visible(f: File) = !f.name.startsWith(".") && !f.name.startsWith("~$") && !f.name.endsWith(".tmp")
 
-    /** All files in the Lora-Ordner (for Zuletzt, Markiert, search), newest first. */
+    /** All files in the Kana-Ordner (for Zuletzt, Markiert, search), newest first. */
     fun allFiles(max: Int = 5000): List<File> {
         val out = mutableListOf<File>()
         fun go(d: File, depth: Int) {
@@ -157,7 +157,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         return out.sortedByDescending { it.lastModified() }
     }
 
-    /** All folders of the Lora-Ordner (for „Verschieben nach …“), as paths with „/“. */
+    /** All folders of the Kana-Ordner (for „Verschieben nach …“), as paths with „/“. */
     fun allFolders(): List<String> {
         val out = mutableListOf("")
         fun go(d: File, depth: Int) {
@@ -171,7 +171,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         return out
     }
 
-    /** Key of a file for Schlagwörter and stars (relative inside the Lora-Ordner, so it survives moving the folder). */
+    /** Key of a file for Schlagwörter and stars (relative inside the Kana-Ordner, so it survives moving the folder). */
     fun metaKey(f: File): String = rel(f)?.let { "lora:$it" } ?: "file:${f.absolutePath}"
 
     fun starred(f: File): Boolean = c.fileLibrary.meta.get(metaKey(f))?.starred == true
@@ -200,7 +200,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         entries.upsert(DriveEntry(path = rel(target)!!, origin = "upload", chatId = chatId, sha = sha, oldPaths = listOfNotNull(oldPath)))
         changed()
         target
-    }.logFailure("Upload im Lora-Ordner ablegen").getOrNull()
+    }.logFailure("Upload im Kana-Ordner ablegen").getOrNull()
 
     private val staging = File(files, "hochladen-wartet")
 
@@ -238,7 +238,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         entries.upsert(DriveEntry(path = rel(target)!!, origin = "upload", chatId = chatId, sha = sha, oldPaths = listOf(path)))
         changed()
         target
-    }.logFailure("Upload im Lora-Ordner ablegen").getOrNull()
+    }.logFailure("Upload im Kana-Ordner ablegen").getOrNull()
 
     /** Drops attachments that were never sent (or belonged to the Tresor). */
     fun purgeStaged(olderThanMs: Long = DAY) {
@@ -246,7 +246,7 @@ class LoraDrive(private val c: AppContainer, context: Context) {
         staging.listFiles().orEmpty().filter { it.lastModified() < limit }.forEach { it.delete() }
     }
 
-    /** Files made in a Tresor chat (AP-10) stay inside the app, never in the visible Lora-Ordner. */
+    /** Files made in a Tresor chat (AP-10) stay inside the app, never in the visible Kana-Ordner. */
     private val vaultFiles = File(files, "tresor-dateien")
 
     /** Whether [chatId] is a chat of the Tresor. */

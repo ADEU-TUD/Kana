@@ -226,5 +226,5 @@ fun FlowState.pieceKey(c: io.github.thepytales.llmhub.AppContainer, t: FlowSeg.T
 
 private val ARROWS = setOf(Key.DirectionUp, Key.DirectionDown, Key.DirectionLeft, Key.DirectionRight, Key.MoveHome, Key.MoveEnd, Key.PageUp, Key.PageDown)
 
-/** A rich piece of [t] in [range] (for tests and Lora). */
+/** A rich piece of [t] in [range] (for tests and Kana). */
 internal fun pieceOf(t: FlowSeg.Text, range: IntRange): RichText = t.rich.slice(range.first, range.last + 1)

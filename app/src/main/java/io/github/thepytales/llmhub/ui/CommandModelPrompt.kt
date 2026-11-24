@@ -33,10 +33,10 @@ import io.github.thepytales.llmhub.local.LocalCatalog
 import io.github.thepytales.llmhub.local.LocalModel
 
 /**
- * Offers Lora Befehle, the command model (AP-71), once per start of the app: when Lora is first asked or Einstellungen ›
- * Lora is opened, while it is not downloaded. „Laden“, „Später“ (asks again at the next start) or „Nicht mehr fragen“
+ * Offers Kana Befehle, the command model (AP-71), once per start of the app: when Kana is first asked or Einstellungen ›
+ * Kana is opened, while it is not downloaded. „Laden“, „Später“ (asks again at the next start) or „Nicht mehr fragen“
  * (the download stays in the settings). Who still has the model of 1.0.65 gets the new version offered as an update.
- * Waits while the popup of Lora Namensschutz (AP-67) is open.
+ * Waits while the popup of Kana Namensschutz (AP-67) is open.
  */
 @Composable
 fun CommandModelPrompt(c: AppContainer) {
@@ -50,13 +50,13 @@ fun CommandModelPrompt(c: AppContainer) {
     AlertDialog(
         onDismissRequest = ::close,
         icon = { Icon(Icons.Outlined.Bolt, contentDescription = null) },
-        title = { Text(if (update) tr("Neue Version von {0}", CommandModelInfo.NAME) else tr("Lora versteht Befehle sofort")) },
+        title = { Text(if (update) tr("Neue Version von {0}", CommandModelInfo.NAME) else tr("Kana versteht Befehle sofort")) },
         text = {
             Text(
                 if (update) tr("Es gibt eine bessere Version von {0} ({1} MB): Sie erkennt mehr Befehle selbst, auch umgangssprachlich und " +
                     "auf Englisch, und führt weiter nichts aus, wenn sie unsicher ist. Bis du sie lädst, arbeitet die bisherige Version " +
                     "weiter. Dabei verlässt nichts das Gerät.", CommandModelInfo.NAME, CommandModelInfo.MEGABYTES)
-                else tr("Lora kann {0} laden ({1} MB), ein kleines Modell nur für Befehle. Damit erkennt sie auf diesem Gerät in " +
+                else tr("Kana kann {0} laden ({1} MB), ein kleines Modell nur für Befehle. Damit erkennt sie auf diesem Gerät in " +
                     "Millisekunden, was du meinst – einen Bereich öffnen, eine Einstellung umstellen, ein PDF zusammenfügen –, auch ohne " +
                     "Internet und mit Tippfehlern. Ist sie unsicher, fragt sie wie bisher ein Sprachmodell. Dabei verlässt nichts das Gerät.",
                     CommandModelInfo.NAME, CommandModelInfo.MEGABYTES),
@@ -75,15 +75,15 @@ fun CommandModelPrompt(c: AppContainer) {
     )
 }
 
-/** The choice of the first start (AP-71, AP-112): the profile „Alles auf diesem Gerät“ instead of only „Nur lokal“ for Lora. */
+/** The choice of the first start (AP-71, AP-112): the profile „Alles auf diesem Gerät“ instead of only „Nur lokal“ for Kana. */
 val INTRO_PLACES = listOf("MIXED" to trLater("Gemischt (empfohlen)"), "LOCAL" to trLater("Alles auf diesem Gerät"), "SERVER" to trLater("Nur Server"))
 
-/** The three ways Lora may work (AP-71) with their names. */
+/** The three ways Kana may work (AP-71) with their names. */
 val LORA_PLACES = listOf("MIXED" to trLater("Gemischt (empfohlen)"), "LOCAL" to trLater("Nur lokal"), "SERVER" to trLater("Nur Server"))
 
 /**
- * Einstellungen › Lora › „Wo Lora arbeitet“ (AP-71): the mixed mode with a plain explanation of what each choice costs,
- * the command model (download, switch, model card) and how often and how fast Lora answered where.
+ * Einstellungen › Kana › „Wo Kana arbeitet“ (AP-71): the mixed mode with a plain explanation of what each choice costs,
+ * the command model (download, switch, model card) and how often and how fast Kana answered where.
  */
 @Composable
 fun LoraPlaceSettings(c: AppContainer) {
@@ -93,15 +93,15 @@ fun LoraPlaceSettings(c: AppContainer) {
     var card by remember { mutableStateOf(false) }
     var ways by remember { mutableStateOf(LoraWays.read(c)) }
     LaunchedEffect(Unit) { c.commandModel.offerIfNeeded() }
-    Section(tr("Wo Lora arbeitet")) {
+    Section(tr("Wo Kana arbeitet")) {
         Spot("lora.place") {
             Segmented(LORA_PLACES.map { it.first to tr(it.second) }, ModelRouter.Mode.of(s.loraPlace).name, { m -> c.settings.update { it.copy(loraPlace = m) } })
         }
         HintText(
             when (ModelRouter.Mode.of(s.loraPlace)) {
-                ModelRouter.Mode.MIXED -> tr("Lora entscheidet je Anfrage: Befehle erkennt sie sofort auf diesem Gerät. Kurze, einfache Aufgaben (umformulieren, kurz erklären, eine kurze Nachricht) beantwortet ein Sprachmodell auf diesem Gerät, wenn eines installiert ist und die Hardware reicht. Alles andere – lange Dokumente, Analysen, Bilder, Websuche, mehrere Schritte – läuft wie bisher über den Server.")
-                ModelRouter.Mode.LOCAL -> tr("Nichts geht an einen Server: Lora nutzt nur Lora Befehle und ein Sprachmodell auf diesem Gerät. Das kostet: Die Antworten sind schlichter und öfter ungenau, lange Texte passen nicht hinein (etwa 10 bis 25 Seiten statt ganzer Bücher), eine Antwort braucht ohne Grafikkarte oft eine halbe Minute oder länger, und Websuche, Bilder verstehen und lange Werkzeugketten fehlen oder sind unzuverlässig. Sinnvoll für vertrauliche Arbeit oder ohne Internet.")
-                ModelRouter.Mode.SERVER -> tr("Sprachmodelle laufen nur auf dem Server, auch für kurze Aufgaben – am genauesten, aber jede Anfrage braucht Internet und geht (pseudonymisiert) hinaus. Befehle erkennt Lora weiter auf diesem Gerät, solange Lora Befehle eingeschaltet ist.")
+                ModelRouter.Mode.MIXED -> tr("Kana entscheidet je Anfrage: Befehle erkennt sie sofort auf diesem Gerät. Kurze, einfache Aufgaben (umformulieren, kurz erklären, eine kurze Nachricht) beantwortet ein Sprachmodell auf diesem Gerät, wenn eines installiert ist und die Hardware reicht. Alles andere – lange Dokumente, Analysen, Bilder, Websuche, mehrere Schritte – läuft wie bisher über den Server.")
+                ModelRouter.Mode.LOCAL -> tr("Nichts geht an einen Server: Kana nutzt nur Kana Befehle und ein Sprachmodell auf diesem Gerät. Das kostet: Die Antworten sind schlichter und öfter ungenau, lange Texte passen nicht hinein (etwa 10 bis 25 Seiten statt ganzer Bücher), eine Antwort braucht ohne Grafikkarte oft eine halbe Minute oder länger, und Websuche, Bilder verstehen und lange Werkzeugketten fehlen oder sind unzuverlässig. Sinnvoll für vertrauliche Arbeit oder ohne Internet.")
+                ModelRouter.Mode.SERVER -> tr("Sprachmodelle laufen nur auf dem Server, auch für kurze Aufgaben – am genauesten, aber jede Anfrage braucht Internet und geht (pseudonymisiert) hinaus. Befehle erkennt Kana weiter auf diesem Gerät, solange Kana Befehle eingeschaltet ist.")
             },
         )
         if (ModelRouter.Mode.of(s.loraPlace) != ModelRouter.Mode.SERVER && local.installed.isEmpty()) {
@@ -110,13 +110,13 @@ fun LoraPlaceSettings(c: AppContainer) {
         HintText(tr("Immer gilt: Ins Postfach schaut nur ein Modell auf diesem Gerät, Projekte „Nur auf diesem Gerät“ und der Tresor behalten ihre Regeln, und vor jeder Server-Anfrage werden Namen ersetzt, wenn die Pseudonymisierung an ist."))
         ToggleRow(
             tr("{0}: Befehle auf dem Gerät verstehen (empfohlen)", CommandModelInfo.NAME),
-            tr("Ein kleines Modell auf diesem Gerät ordnet, was du Lora oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Lora fragt wie bisher ein Sprachmodell."),
+            tr("Ein kleines Modell auf diesem Gerät ordnet, was du Kana oder in Strg+K schreibst, in Millisekunden einer Aktion der App zu – offline, auch mit Tippfehlern. Ist es unsicher, führt es nichts aus, sondern Kana fragt wie bisher ein Sprachmodell."),
             s.commandModel,
         ) { v -> c.settings.update { it.copy(commandModel = v) } }
         Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
             val progress = st.progress
             when {
-                !c.commandModel.available -> SettingsHint(tr("Für diese Version gibt es noch kein {0} zum Laden – Lora arbeitet wie bisher.", CommandModelInfo.NAME))
+                !c.commandModel.available -> SettingsHint(tr("Für diese Version gibt es noch kein {0} zum Laden – Kana arbeitet wie bisher.", CommandModelInfo.NAME))
                 progress != null -> {
                     LinearProgressIndicator(progress = { progress.toFloat() }, modifier = Modifier.fillMaxWidth())
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -144,15 +144,15 @@ fun LoraPlaceSettings(c: AppContainer) {
             }
             st.message?.let { SettingsHint(it) }
         }
-        // How often and how fast Lora answered where – numbers only, kept on this device.
+        // How often and how fast Kana answered where – numbers only, kept on this device.
         val device = ways[LoraWays.Way.DEVICE] ?: LoraWays.Sum()
         val onDevice = ways[LoraWays.Way.LOCAL] ?: LoraWays.Sum()
         val server = ways[LoraWays.Way.SERVER] ?: LoraWays.Sum()
         val share = LoraWays.localShare(ways)
-        if (share == null) HintText(tr("Sobald du Lora etwas gefragt hast, steht hier, wie oft und wie schnell sie auf diesem Gerät statt über den Server geantwortet hat."))
+        if (share == null) HintText(tr("Sobald du Kana etwas gefragt hast, steht hier, wie oft und wie schnell sie auf diesem Gerät statt über den Server geantwortet hat."))
         else {
             HintText(
-                tr("Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Lora antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.",
+                tr("Bisher {0} % ohne Server: {1} × sofort auf dem Gerät (Ø {2}), {3} × mit dem Sprachmodell auf diesem Gerät (Ø {4}), {5} × über den Server (Ø {6}). Gemessen wird, bis Kana antwortet oder weitergibt; gezählt werden nur Zahlen, keine Inhalte.",
                     share, device.count, duration(device.average), onDevice.count, duration(onDevice.average), server.count, duration(server.average)),
             )
             TextButton(onClick = { LoraWays.clear(c); ways = emptyMap() }) { Text(tr("Zähler zurücksetzen")) }
@@ -174,7 +174,7 @@ internal fun duration(millis: Long): String = if (millis < 1000) "$millis ms" el
 
 /**
  * Erster Start (AP-71): what the user ticks under „Welche Modelle sollen auf dieses Gerät?“ – the two small helper
- * models, a language model that fits the hardware, and where Lora works. [apply] starts the downloads.
+ * models, a language model that fits the hardware, and where Kana works. [apply] starts the downloads.
  */
 class IntroModelChoice(private val c: AppContainer) {
     /** Offered only while it is not there yet. */
@@ -224,7 +224,7 @@ class IntroModelChoice(private val c: AppContainer) {
 
 /**
  * Erster Start: „Welche Modelle sollen auf dieses Gerät?“ – one line per purpose with a short explanation and the size,
- * the language models that fit this hardware, and where Lora works. Everything can be changed later in the settings.
+ * the language models that fit this hardware, and where Kana works. Everything can be changed later in the settings.
  */
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
@@ -245,7 +245,7 @@ fun IntroModels(c: AppContainer, choice: IntroModelChoice) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         if (choice.offerCommand) ModelLine(
             tr("{0}: Befehle verstehen ({1} MB)", CommandModelInfo.NAME, CommandModelInfo.MEGABYTES),
-            tr("Lora erkennt sofort und offline, was du meinst – Bereich öffnen, Einstellung umstellen, PDF zusammenfügen."),
+            tr("Kana erkennt sofort und offline, was du meinst – Bereich öffnen, Einstellung umstellen, PDF zusammenfügen."),
             choice.command,
         ) { choice.command = it }
         if (choice.offerPii) ModelLine(
@@ -265,7 +265,7 @@ fun IntroModels(c: AppContainer, choice: IntroModelChoice) {
         }
         if (choice.offerBench) ModelLine(
             tr("Gerät kurz messen (≈ 20 s)"),
-            tr("Lora misst Speicher und Tempo dieses Geräts und sagt dann für jedes Modell vorher, wie schnell es hier schreibt und liest. Nichts verlässt das Gerät; mit einem gewählten Sprachmodell erst nach dessen Download."),
+            tr("Kana misst Speicher und Tempo dieses Geräts und sagt dann für jedes Modell vorher, wie schnell es hier schreibt und liest. Nichts verlässt das Gerät; mit einem gewählten Sprachmodell erst nach dessen Download."),
             choice.bench,
         ) { choice.bench = it }
         if (suggested.isEmpty() && local.installed.isEmpty()) HintText(tr("Sprachmodelle für dieses Gerät findest du später unter Einstellungen › Modelle auf diesem Gerät."))
@@ -288,12 +288,12 @@ fun IntroModels(c: AppContainer, choice: IntroModelChoice) {
     }
     HintText(
         when (ModelRouter.Mode.of(choice.place)) {
-            ModelRouter.Mode.MIXED -> tr("Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Lora: GLM-5.3 Flash).")
-            ModelRouter.Mode.LOCAL -> tr("Alles auf diesem Gerät: Lora, Chats, Postfach, Suche, Sprache und Bilder verstehen laufen hier, ohne API-Schlüssel. Internet nur für Web, Literatur, Nextcloud und Updates; Bilder erzeugen geht nur über API. Die Antworten sind schlichter und langsamer als mit dem Server. Nach „Fertig“ führt die Einrichtung Schritt für Schritt durch die Downloads.")
+            ModelRouter.Mode.MIXED -> tr("Befehle und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server (Chat: DeepSeek V4.1 Flash, Kana: GLM-5.3 Flash).")
+            ModelRouter.Mode.LOCAL -> tr("Alles auf diesem Gerät: Kana, Chats, Postfach, Suche, Sprache und Bilder verstehen laufen hier, ohne API-Schlüssel. Internet nur für Web, Literatur, Nextcloud und Updates; Bilder erzeugen geht nur über API. Die Antworten sind schlichter und langsamer als mit dem Server. Nach „Fertig“ führt die Einrichtung Schritt für Schritt durch die Downloads.")
             ModelRouter.Mode.SERVER -> tr("Sprachmodelle nur über den Uni-Server – am genauesten, braucht immer Internet.")
         },
     )
-    if (!hasKey) HintText(tr("Noch kein API-Schlüssel: Lora arbeitet ganz auf diesem Gerät. Einen Schlüssel für den Uni-Server oder einen anderen Anbieter kannst du jederzeit unter Einstellungen › API-Zugang eintragen."))
+    if (!hasKey) HintText(tr("Noch kein API-Schlüssel: Kana arbeitet ganz auf diesem Gerät. Einen Schlüssel für den Uni-Server oder einen anderen Anbieter kannst du jederzeit unter Einstellungen › API-Zugang eintragen."))
 }
 
 @Composable
@@ -312,14 +312,14 @@ private var modelsIntroLater by mutableStateOf(false)
 
 /**
  * „Neu: Modelle für dieses Gerät“ (AP-71) – once for everyone who set the app up before the question existed: the same
- * choice as at the first start (command model, recognition model, a language model that fits, where Lora works), so
+ * choice as at the first start (command model, recognition model, a language model that fits, where Kana works), so
  * they see what is new and decide. „Später“ asks again at the next start, „Nicht mehr fragen“ never; new users answer
- * it in Lora's first-start dialog instead.
+ * it in Kana's first-start dialog instead.
  */
 @Composable
 fun ModelsIntroDialog(c: AppContainer) {
     val s by c.settings.settings.collectAsState()
-    // New users with a key get the question in Lora's first-start dialog (LoraIntroDialog), which sets the flag.
+    // New users with a key get the question in Kana's first-start dialog (LoraIntroDialog), which sets the flag.
     val firstStartAsks = !s.loraIntroDone && !s.hideLora
     if (s.modelsIntroDone || modelsIntroLater || firstStartAsks) return
     val choice = remember { IntroModelChoice(c) }
@@ -333,7 +333,7 @@ fun ModelsIntroDialog(c: AppContainer) {
         title = { Text(tr("Neu: Modelle für dieses Gerät")) },
         text = {
             Column(Modifier.heightIn(max = 460.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(tr("Lora kann jetzt mehr auf diesem Gerät erledigen – schneller, offline und ohne dass etwas hinausgeht. Such aus, was du möchtest; alles lässt sich später unter Einstellungen › Lora und › Modelle auf diesem Gerät ändern."), style = MaterialTheme.typography.bodyMedium)
+                Text(tr("Kana kann jetzt mehr auf diesem Gerät erledigen – schneller, offline und ohne dass etwas hinausgeht. Such aus, was du möchtest; alles lässt sich später unter Einstellungen › Kana und › Modelle auf diesem Gerät ändern."), style = MaterialTheme.typography.bodyMedium)
                 IntroModels(c, choice)
             }
         },

@@ -57,7 +57,7 @@ import kotlin.test.assertTrue
 
 /**
  * Postfach nur mit lokalem Modell (AP-68): no mail tool reaches a model of the Uni server or an API provider – not in a
- * chat with the tool switched on, not through Lora, Abläufe, batches or scheduled tasks; a handoff carries only the
+ * chat with the tool switched on, not through Kana, Abläufe, batches or scheduled tasks; a handoff carries only the
  * checked text; the Postfach chat takes no model outside the device.
  */
 class MailLocalOnlyTest {
@@ -206,7 +206,7 @@ class MailLocalOnlyTest {
 
     @Test
     fun loraLeadsToThePostfachButReadsNoMails() {
-        // Lora's own tools reach no mailbox.
+        // Kana's own tools reach no mailbox.
         assertTrue((LoraAgent.TOOLS + LoraMail.TOOL).none { MailAccess.isMailTool(it.name) })
         // A clear mail task is taken on the device – carried out by the model on this device in a Postfach chat.
         val reply = assertNotNull(LoraMail.fromWish(c, "Fass mir bitte die Mails von gestern zusammen", null))
@@ -219,11 +219,11 @@ class MailLocalOnlyTest {
         assertFalse(opened.send)
         assertNull(opened.model)
         assertEquals(MailAccess.NEEDS_MODEL, result.text)
-        // Lora's model only hears that it runs on the device – no mail content, no result.
+        // Kana's model only hears that it runs on the device – no mail content, no result.
         val (output, toolStep) = LoraAgent(c).runTool("postfach_auftrag", JsonObject(mapOf("auftrag" to JsonPrimitive("Was ist wichtig?"))), emptyList())
         assertEquals(LoraMail.TOOL_OUTPUT, output)
         assertTrue(toolStep is LoraStep.Action)
-        // Wishes about other things stay Lora's.
+        // Wishes about other things stay Kana's.
         assertNull(LoraMail.fromWish(c, "Mach das Design dunkel", null))
     }
 
@@ -266,7 +266,7 @@ class MailLocalOnlyTest {
         assertFalse("[M1]" in prepared || "D1" in prepared, prepared)
         assertFalse("a.kaltenbach@example.org" in prepared || "Kaltenbach" in prepared, "pseudonymisiert: $prepared")
         assertTrue(prepared.startsWith("Formuliere daraus eine kurze Notiz.") && "Gutachten bis 15.11." in prepared, prepared)
-        // Lora's handoff from a Postfach chat takes the answer of the local model – on the card to check first.
+        // Kana's handoff from a Postfach chat takes the answer of the local model – on the card to check first.
         val conv = touched()
         c.chats.save(conv)
         val review = MailHandoff.offer(c, assertNotNull(MailHandoff.lastLocalAnswer(conv)), conv.id)

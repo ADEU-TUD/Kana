@@ -28,7 +28,7 @@ object SelfTest {
         "settings", "settings/api", "settings/github", "settings/chat", "settings/appearance", "settings/voice",
         "settings/documents", "settings/windows", "settings/privacy", "settings/memory", "settings/knowledge", "settings/backup",
         "settings/transcription", "settings/updates", "local-models", "transcripts",
-        // AP-07 to AP-11: Lora, tools, vault, PDF toolbox.
+        // AP-07 to AP-11: Kana, tools, vault, PDF toolbox.
         "settings/lora", "settings/tools", "vault", "pdf",
         // AP-12, AP-17.
         "settings/sync", "games",
@@ -72,7 +72,7 @@ object SelfTest {
             previous?.uncaughtException(t, e)
         }
         try {
-            line("Lora ${BuildConfig.VERSION_NAME} · ${System.getProperty("os.name")} · Java ${System.getProperty("java.version")}")
+            line("Kana ${BuildConfig.VERSION_NAME} · ${System.getProperty("os.name")} · Java ${System.getProperty("java.version")}")
             delay(3000)
             shot(window, dir, "00-chat")
             routes.forEachIndexed { i, route ->

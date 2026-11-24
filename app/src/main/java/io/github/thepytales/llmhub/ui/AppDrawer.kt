@@ -283,7 +283,7 @@ fun AppDrawer(
                     a in DrawerArea.ALWAYS -> null
                     else -> { {
                         c.settings.update { it.copy(drawerHidden = hideDrawerArea(it.drawerHidden, a, true)) }
-                        Notices.undo("„${tr(a.label)}“ " + tr("ausgeblendet – über Strg+K und Lora weiter erreichbar"), restore = {
+                        Notices.undo("„${tr(a.label)}“ " + tr("ausgeblendet – über Strg+K und Kana weiter erreichbar"), restore = {
                             c.settings.update { it.copy(drawerHidden = hideDrawerArea(it.drawerHidden, a, false)) }
                         })
                     } }
@@ -561,7 +561,7 @@ internal fun DrawerArea.icon(): ImageVector = when (this) {
 private fun AreaRow(area: DrawerArea, onTop: Boolean, badge: Int, onOpen: () -> Unit, onMove: () -> Unit, onHide: (() -> Unit)?) {
     var menu by remember { mutableStateOf(false) }
     Box {
-        // Lora flies here and lets the entry glow when she leads to this area (AP-36).
+        // Kana flies here and lets the entry glow when she leads to this area (AP-36).
         Spot("drawer.${area.route}") {
             NavRow(
                 area.icon(), area.label, badge = badge, badgeText = if (area == DrawerArea.TRANSCRIPTS) tr("läuft") else tr("neu"),

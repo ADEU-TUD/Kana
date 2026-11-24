@@ -691,8 +691,8 @@ internal class ReadingActions(
 )
 
 /**
- * The open mail: subject, sender, recipients, time, attachments (open, or keep in the Lora-Ordner), the text; above
- * it gelesen/ungelesen, verschieben, *In Outlook öffnen* and an answer with Lora (a draft, never sent).
+ * The open mail: subject, sender, recipients, time, attachments (open, or keep in the Kana-Ordner), the text; above
+ * it gelesen/ungelesen, verschieben, *In Outlook öffnen* and an answer with Kana (a draft, never sent).
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -709,7 +709,7 @@ internal fun ReadingPane(header: MailHeader, body: MailBody?, problem: String?, 
             TextButton(onClick = { actions.answer(header) }) {
                 Icon(Icons.Outlined.EditNote, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(4.dp))
-                Text(tr("Antwort mit Lora"))
+                Text(tr("Antwort mit Kana"))
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
@@ -767,7 +767,7 @@ private fun AttachmentChip(name: String, onOpen: () -> Unit, onKeep: () -> Unit)
         }
         DropdownMenu(menu, { menu = false }) {
             DropdownMenuItem(text = { Text(tr("Öffnen")) }, leadingIcon = { Icon(Icons.Outlined.OpenInNew, null) }, onClick = { menu = false; onOpen() })
-            DropdownMenuItem(text = { Text(tr("In den Lora-Ordner speichern")) }, leadingIcon = { Icon(Icons.Outlined.Folder, null) }, onClick = { menu = false; onKeep() })
+            DropdownMenuItem(text = { Text(tr("In den Kana-Ordner speichern")) }, leadingIcon = { Icon(Icons.Outlined.Folder, null) }, onClick = { menu = false; onKeep() })
         }
     }
 }
@@ -796,7 +796,7 @@ internal fun SelectionPane(chosen: List<MailHeader>, actions: MailListActions, m
             }
             TextButton(onClick = actions.clear) { Text(tr("Auswahl aufheben")) }
         }
-        HintText(tr("Lora kennt diese Auswahl – im Lora-Panel genügt „diese Mails“. Was in den Mails steht, liest nur ein Modell auf diesem Gerät."))
+        HintText(tr("Kana kennt diese Auswahl – im Kana-Panel genügt „diese Mails“. Was in den Mails steht, liest nur ein Modell auf diesem Gerät."))
     }
 }
 

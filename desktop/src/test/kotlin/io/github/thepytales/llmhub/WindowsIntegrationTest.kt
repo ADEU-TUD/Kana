@@ -45,7 +45,7 @@ class WindowsIntegrationTest {
         assertTrue(keys.all { it.path.startsWith("Software\\Classes\\") }, keys.toString())
         val open = keys.first { it.path.endsWith("*\\shell\\Lora.Open\\command") }.values.getValue("")
         assertEquals("\"${exe.absolutePath}\" --open \"%1\"", open)
-        assertEquals("Lora fragen", keys.first { it.path.endsWith("*\\shell\\Lora.Ask") }.values.getValue(""))
+        assertEquals("Kana fragen", keys.first { it.path.endsWith("*\\shell\\Lora.Ask") }.values.getValue(""))
         assertTrue(keys.any { it.path.endsWith("Directory\\shell\\Lora.Ask\\command") && "--ask-folder" in it.values.getValue("") })
     }
 
@@ -57,7 +57,7 @@ class WindowsIntegrationTest {
         assertEquals(ShellArgs.Kind.ASK_FOLDER, ShellArgs.parse(listOf("--minimized", "--ask-folder", "\"D:\\Projekt\""))?.kind)
         assertNull(ShellArgs.parse(listOf("--open")))
         assertNull(ShellArgs.fromLine("show"))
-        // Where „Mit Lora öffnen“ takes a file.
+        // Where „Mit Kana öffnen“ takes a file.
         assertEquals(listOf("pdf", "doc", "doc", "video", "chat", "chat"), listOf("a.pdf", "b.docx", "c.xlsx", "d.mp4", "e.mp3", "f.zip").map { shellTarget(File(it)) })
     }
 
@@ -76,12 +76,12 @@ class WindowsIntegrationTest {
         val f = File(drive.root, "Alt.txt").apply { writeText("weg") }
         val trashed = mutableListOf<File>()
         LoraDrive.systemTrash = { file -> trashed += file; file.delete() }
-        // Off (the default): the Lora-Papierkorb as before.
+        // Off (the default): the Kana-Papierkorb as before.
         val inApp = drive.delete(listOf(f))
         assertEquals(1, inApp.size)
         assertTrue(trashed.isEmpty())
         drive.restore(inApp.single())
-        // On: Windows takes it; nothing in the Lora-Papierkorb.
+        // On: Windows takes it; nothing in the Kana-Papierkorb.
         c.settings.update { it.copy(systemTrash = true) }
         drive.systemTrashed = emptyList()
         val none = drive.delete(listOf(File(drive.root, "Alt.txt")))
@@ -119,12 +119,12 @@ class WindowsIntegrationTest {
         OfficeHandoff.onSaved = null
     }
 
-    /** Fertig, wenn: Eine Datei aus dem Explorer lässt sich per Kontextmenü in Lora fragen und per Ziehen in den Lora-Ordner legen. */
+    /** Fertig, wenn: Eine Datei aus dem Explorer lässt sich per Kontextmenü in Kana fragen und per Ziehen in den Kana-Ordner legen. */
     @Test
     fun fileFromTheExplorerIsAskedAndDroppedIntoTheLoraOrdner(): Unit = runBlocking {
         val outside = File(base, "Explorer").apply { mkdirs() }
         val note = File(outside, "Protokoll.txt").apply { writeText("Sitzung am 3. November: Budget für 2027 beschlossen.") }
-        // Rechtsklick › „Lora fragen“: a new chat with the file in the input field.
+        // Rechtsklick › „Kana fragen“: a new chat with the file in the input field.
         ChatHandoff.pending.value = null
         handleShellRequest(c, assertNotNull(ShellArgs.parse(listOf("--ask", note.absolutePath))))
         val content = assertNotNull(ChatHandoff.pending.value)
@@ -132,12 +132,12 @@ class WindowsIntegrationTest {
         assertTrue("Budget für 2027" in content.files.single().text)
         assertEquals("", ChatHandoff.open.value)
         ChatHandoff.pending.value = null; ChatHandoff.open.value = null
-        // „Mit Lora öffnen“ on a PDF: the PDF-Werkzeugkasten.
+        // „Mit Kana öffnen“ on a PDF: the PDF-Werkzeugkasten.
         val pdf = File(outside, "Antrag.pdf").apply { writeBytes(org.apache.pdfbox.pdmodel.PDDocument().use { d -> d.addPage(org.apache.pdfbox.pdmodel.PDPage()); java.io.ByteArrayOutputStream().also { d.save(it) }.toByteArray() }) }
         handleShellRequest(c, ShellArgs.Request(ShellArgs.Kind.OPEN, pdf))
         assertEquals(pdf.absolutePath, PdfHandoff.request.value?.path)
         PdfHandoff.request.value = null
-        // Dragged from the Explorer into the open folder of Dateien: a copy lands in the Lora-Ordner.
+        // Dragged from the Explorer into the open folder of Dateien: a copy lands in the Kana-Ordner.
         val target = File(c.drive.root, "Sitzungen").apply { mkdirs() }
         val copied = c.drive.copy(listOf(note), target)
         assertEquals(listOf("Protokoll.txt"), copied.map { it.name })

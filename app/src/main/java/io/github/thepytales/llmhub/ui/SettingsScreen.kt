@@ -94,7 +94,7 @@ internal fun SwitchRow(title: String, subtitle: String, checked: Boolean, spot: 
 fun SettingsScreen(c: AppContainer, section: String?, onBack: () -> Unit, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = { TopAppBar(navigationIcon = { BackButton(onBack) }, title = { Text(settingsTitle(section)) }) },
-        // Lora schläft unten rechts – ein Tipp weckt sie (AP-07).
+        // Kana schläft unten rechts – ein Tipp weckt sie (AP-07).
         floatingActionButton = { LoraHelperButton(c) },
     ) { pad ->
         ReadableColumn(pad) {
@@ -125,7 +125,7 @@ fun SettingsScreen(c: AppContainer, section: String?, onBack: () -> Unit, onNavi
                 "downloads" -> DownloadsSection(c, onNavigate)
                 else -> if (!PlatformSettingsSection(c, section)) SettingsOverview(c, onNavigate, deviceItem = platformSettingsItem())
             }
-            // Room for the sleeping Lora at the bottom right, so she covers no entry.
+            // Room for the sleeping Kana at the bottom right, so she covers no entry.
             Spacer(Modifier.size(LORA_BUTTON_ROOM))
         }
     }
@@ -281,7 +281,7 @@ private fun ChatSection(c: AppContainer) {
         ) { v -> c.settings.update { it.copy(autoModel = v) } }
         // Browser neben dem Chat auf Android (AP-63); Windows has the switch under Einstellungen › Windows.
         if (IS_ANDROID) SwitchRow(
-            tr("Links in Lora öffnen"),
+            tr("Links in Kana öffnen"),
             tr("Links aus Chat, Literatur und Dokumenten öffnen sich in einem einfachen Browser in der App – mit Frage zur Seite, Zusammenfassung und Übernahme in Literatur oder Wissenssammlung. Aus: im normalen Browser."),
             s.browserPanel,
             spot = "chat.browser",
@@ -342,7 +342,7 @@ private fun ChatSection(c: AppContainer) {
             spot = "chat.collapse",
             title = tr("Arbeitsschritte einklappen"),
             subtitle =
-            tr("Gedankengang und Werkzeugschritte bleiben eingeklappt. Solange der Agent arbeitet, zeigt Lora, das Maskottchen der " +
+            tr("Gedankengang und Werkzeugschritte bleiben eingeklappt. Solange der Agent arbeitet, zeigt Kana, das Maskottchen der " +
                 "App, den aktuellen Schritt; die Zahl daneben klappt alle Schritte jederzeit auf."),
             checked = s.collapseSteps,
         ) { v -> c.settings.update { it.copy(collapseSteps = v) } }
@@ -447,7 +447,7 @@ private fun VoiceSection(c: AppContainer) {
             Text(tr("Das Tempo gilt für die {0}.", DEVICE_VOICE), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         OutlinedButton(onClick = {
-            c.speaker.toggle("preview", tr("Hallo! So klinge ich, wenn ich dir Antworten vorlese. Viel Spaß mit Lora."))
+            c.speaker.toggle("preview", tr("Hallo! So klinge ich, wenn ich dir Antworten vorlese. Viel Spaß mit Kana."))
         }) {
             Icon(if (playing == "preview") Icons.Outlined.Stop else Icons.Outlined.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.size(6.dp))

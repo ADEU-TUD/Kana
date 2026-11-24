@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.github.thepytales.llmhub.AppContainer
 
 /**
- * A width the user drags (side menu, Lora's panel, browser beside the chat), remembered between starts (ui_state); also
+ * A width the user drags (side menu, Kana's panel, browser beside the chat), remembered between starts (ui_state); also
  * a height (the timeline of the video editor, AP-70). [limit] is the share of the window the layout allows, so the
  * screen in the middle keeps its room on small windows.
  */
@@ -105,7 +105,7 @@ private val HANDLE_WIDTH = 10.dp
 /**
  * The line between the side menu, the screen and the panels at the right (desktop and tablets): a fine line with a
  * small grip in the middle; while the pointer is on it or it is dragged, both turn into the brand colour. Dragging
- * changes [width] – [panelLeft]: the panel lies left of the line (side menu), else right of it (Lora, browser) – and a
+ * changes [width] – [panelLeft]: the panel lies left of the line (side menu), else right of it (Kana, browser) – and a
  * double click puts the width back. The strip has the background of the app, so there is no light gap between the
  * panels; its line sits at the edge of the panel. A [vertical] resizer lies between areas one above the other (the
  * timeline of the video editor, AP-70): [width] is then a height, and [panelLeft] means the panel lies above the line.

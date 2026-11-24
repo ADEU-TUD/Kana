@@ -1,8 +1,8 @@
-# Lora – Downloads und automatische Updates
+# Kana – Downloads und automatische Updates
 
-**Lora – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden.**
+**Kana – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden.**
 
-Hier liegen **nur die fertigen Versionen** von Lora (bis Version 1.0.43 „ADEU LLM“) für Windows, macOS, Linux und
+Hier liegen **nur die fertigen Versionen** von Kana (bis Version 1.0.43 „ADEU LLM“) für Windows, macOS, Linux und
 Android – kein Quellcode. Die Apps holen sich neue Versionen von hier selbst. Die Dateien und der Programmordner tragen
 aus technischen Gründen weiter den alten Namen (`ADEU-LLM-…`, `ADEU LLM.exe`, `ADEU LLM.app`), damit Updates und
 vorhandene Daten weiter funktionieren.
@@ -22,7 +22,7 @@ Ein GitHub-Konto ist nicht nötig.
 
 ### macOS
 
-Für Macs mit **Apple-Chip** (M1, M2, M3, M4 …) ab macOS 12 – auf älteren Macs mit Intel-Prozessor läuft Lora nicht.
+Für Macs mit **Apple-Chip** (M1, M2, M3, M4 …) ab macOS 12 – auf älteren Macs mit Intel-Prozessor läuft Kana nicht.
 Welcher Chip drin ist, steht im Apple-Menü (oben links) unter *Über diesen Mac*.
 
 1. `ADEU-LLM-x.y.z-macOS.dmg` herunterladen und doppelklicken.
@@ -30,7 +30,7 @@ Welcher Chip drin ist, steht im Apple-Menü (oben links) unter *Über diesen Mac
    in der Seitenleiste des Finders das Laufwerk „ADEU LLM“ auswerfen.
    *Ohne Administratorrechte:* die App stattdessen in den Ordner „Programme“ im eigenen Benutzerordner ziehen (im
    Finder *Gehe zu › Benutzerordner*, dort den Ordner „Programme“ anlegen, falls es ihn noch nicht gibt).
-3. Lora aus dem Ordner „Programme“ starten (nicht direkt aus dem DMG – sonst funktionieren die Updates nicht).
+3. Kana aus dem Ordner „Programme“ starten (nicht direkt aus dem DMG – sonst funktionieren die Updates nicht).
 
 **Beim ersten Start warnt macOS**, solange die App nicht bei Apple hinterlegt (notarisiert) ist:
 
@@ -43,8 +43,8 @@ Welcher Chip drin ist, steht im Apple-Menü (oben links) unter *Über diesen Mac
 Das ist nur einmal nötig. Meldet macOS stattdessen, die App sei „beschädigt“, hilft im Programm *Terminal*:
 `xattr -dr com.apple.quarantine "/Applications/ADEU LLM.app"` (bzw. der Pfad, in den die App gezogen wurde).
 
-Beim ersten Diktat fragt macOS, ob Lora das **Mikrofon** benutzen darf – *Erlauben* wählen.
-Für die **Transkription von Audio- und Videodateien** und den **Videoeditor** braucht Lora zusätzlich das freie
+Beim ersten Diktat fragt macOS, ob Kana das **Mikrofon** benutzen darf – *Erlauben* wählen.
+Für die **Transkription von Audio- und Videodateien** und den **Videoeditor** braucht Kana zusätzlich das freie
 Programm ffmpeg. Am einfachsten über [Homebrew](https://brew.sh): im Terminal `brew install ffmpeg`.
 
 ### Linux
@@ -60,11 +60,11 @@ Für 64-Bit-Linux (x86-64), getestet unter Ubuntu 24.04 (ältere Systeme wie Ubu
   ```
   Nur so funktionieren die automatischen Updates – der Ordner muss dem eigenen Benutzer gehören.
 - **Als Paket (Debian, Ubuntu, Mint …):** `ADEU-LLM-x.y.z-Linux.deb` herunterladen und mit
-  `sudo apt install ./ADEU-LLM-x.y.z-Linux.deb` installieren. Lora steht danach im Startmenü unter *Büro*
+  `sudo apt install ./ADEU-LLM-x.y.z-Linux.deb` installieren. Kana steht danach im Startmenü unter *Büro*
   (als „ADEU LLM“). Weil das Paket dem System gehört, aktualisiert es sich nicht selbst: Für Updates die neue
   `.deb` genauso installieren. Entfernen mit `sudo apt remove adeu-llm`.
 
-Für die **Transkription von Audio- und Videodateien** und den **Videoeditor** braucht Lora zusätzlich ffmpeg:
+Für die **Transkription von Audio- und Videodateien** und den **Videoeditor** braucht Kana zusätzlich ffmpeg:
 `sudo apt install ffmpeg`.
 
 ## Updates
@@ -73,10 +73,10 @@ Gibt es eine neue Version, fragt die App **beim Start**:
 
 > **Neue Version verfügbar** – *Jetzt aktualisieren* / *Später*
 
-- **Windows:** *Jetzt aktualisieren* lädt die neue Version, Lora startet kurz neu – fertig. Chats, Einstellungen
+- **Windows:** *Jetzt aktualisieren* lädt die neue Version, Kana startet kurz neu – fertig. Chats, Einstellungen
   und der API-Key bleiben erhalten, Verknüpfungen auf dem Desktop und in der Taskleiste funktionieren weiter.
 - **macOS und Linux:** genauso – *Jetzt aktualisieren* lädt die neue Version, ersetzt die App an ihrem Platz und
-  startet Lora neu; Chats und Einstellungen bleiben erhalten. Liegt die App in einem Ordner, in den der eigene
+  startet Kana neu; Chats und Einstellungen bleiben erhalten. Liegt die App in einem Ordner, in den der eigene
   Benutzer nicht schreiben darf (z. B. das Linux-Paket `.deb` oder ein von der IT verwalteter Mac), sagt die App das
   und verweist auf diese Seite.
 - **Android:** Nach dem Herunterladen fragt Android noch einmal – einfach *Aktualisieren* tippen. Beim allerersten
@@ -90,7 +90,7 @@ installieren, danach geht es automatisch.
 
 ## Für die Pflege
 
-Der Code liegt im Repository `ADEU-TUD/Lora` (bis 11.11.2026 `ADEU-TUD/ADEU-Harness`). **Hier nichts von Hand ändern** –
+Der Code liegt im Repository `ADEU-TUD/Kana` (bis 24.11.2026 `ADEU-TUD/Kana`, bis 11.11.2026 `ADEU-TUD/ADEU-Harness`). **Hier nichts von Hand ändern** –
 Releases und diese README kommen von dort (Quelle der README: `.github/updater/README.md`).
 
 **Neue Version veröffentlichen** (ausführlich: README im Code-Repo, *Neue Version veröffentlichen*):
@@ -132,7 +132,7 @@ dieses Repository **öffentlich** bleiben.
 }
 ```
 
-Jede Plattform steht nur drin, wenn ihre Datei zum Release gehört (`macos` und `linux` seit Lora für macOS/Linux).
+Jede Plattform steht nur drin, wenn ihre Datei zum Release gehört (`macos` und `linux` seit Kana für macOS/Linux).
 Erweiterungen (`extensions`) richtet die Windows-App unter `%LOCALAPPDATA%\ADEU LLM\tools\<id>` ein, sobald sie
 gebraucht werden; eine höhere `version` aktualisiert sie mit der nächsten Update-Prüfung.
 

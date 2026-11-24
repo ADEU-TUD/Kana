@@ -80,7 +80,7 @@ class CommandSlotsTest {
         assertNull(value("theme", "Helligkeit"))
         assertEquals("1.3", value("text_size", "Schrift größer", now = "1.15"))
         assertEquals("1.0", value("text_size", "Schrift kleiner", now = "1.15"))
-        assertEquals("LOCAL", value("lora_place", "Lora soll nichts mehr an den Server schicken"))
+        assertEquals("LOCAL", value("lora_place", "Kana soll nichts mehr an den Server schicken"))
         assertEquals("SERVER", value("lora_place", "nur Server"))
         assertEquals("false", value("web", "keine Websuche mehr"))
     }

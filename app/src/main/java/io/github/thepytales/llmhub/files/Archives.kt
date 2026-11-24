@@ -22,7 +22,7 @@ import java.io.InputStream
  * Archiv-Werkzeug (AP-99): ZIP (also with password and in parts), 7z, TAR, TAR.GZ/TGZ, TAR.BZ2/TAR.XZ and a lone GZ
  * open like folders – list, search, take single files out without unpacking everything – and folders or files are
  * packed into a ZIP with a chosen strength, an AES-256 password (AP-98) and, for mail, split into parts („Teile“: the
- * .zip with .z01, .z02 …, which 7-Zip, WinRAR and Lora put back together). Paths that would land outside the target
+ * .zip with .z01, .z02 …, which 7-Zip, WinRAR and Kana put back together). Paths that would land outside the target
  * folder („../“) are refused.
  */
 object Archives {
@@ -191,7 +191,7 @@ object Archives {
                 GzipCompressorInputStream(BufferedInputStream(file.inputStream())).use { input -> target.outputStream().use { input.copyTo(it) } }
                 out += target
             }
-            null -> error(tr("„{0}“ ist kein Archiv, das Lora öffnen kann.", file.name))
+            null -> error(tr("„{0}“ ist kein Archiv, das Kana öffnen kann.", file.name))
             else -> tar(file) { input ->
                 var i = 0
                 while (true) {

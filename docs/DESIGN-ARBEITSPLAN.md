@@ -1,4 +1,4 @@
-# Design-Arbeitsplan Lora (APD)
+# Design-Arbeitsplan Kana (bis 1.0.77 „Lora“, APD)
 
 Stand: 14.11.2026 (neu aus der Werkzeug-Analyse: **APD-18 Barrierefreiheit der App**, **APD-19 Hilfe zur aktuellen Ansicht** unter *Später*) · 14.11.2026 (neu: **Editoren wie Google Docs und Word** – APD-15 Dokument-Editor, APD-16 Folien/Gestalten/Whiteboard,
 APD-17 Videoeditor; Wunsch des Hauptnutzers, nur die Editoren; die Funktionen dazu stehen im allgemeinen Arbeitsplan als
@@ -35,14 +35,14 @@ uneinheitlich, wirkt unfertig), **gering** (Feinschliff).
 | --- | --- |
 | Anspruch | **Es muss super aussehen und gut bedienbar sein** (Hauptnutzer, 13.11.2026). Die App sieht **seriös und modern** aus – klar, aufgeräumt, hochwertig, passend für Forschung, Lehre und Verwaltung an der TU Dresden. „Geht so“ reicht nicht: Viele Bereiche wirken noch **unübersichtlich oder langweilig** – genau das wird gesucht und behoben. Kein Effekt um seiner selbst willen. |
 | Ein Gesamtprodukt | Ein **rundes Gesamtprodukt mit einheitlichem Stil**: dieselbe Formensprache (Ecken, Karten, Schatten, Abstände), dieselbe Bildsprache (Symbole, Illustrationen), dieselben Muster für Seitenköpfe, Listen, Karten, leere Zustände und Hinweise – in jedem Bereich, vom Chat bis zum Videoeditor. Wer einen Bereich kennt, kennt alle. |
-| Lora als Maßstab | Lora wurde mit AP-122 neu gezeichnet (Volumen, weiches Licht, lebendige Bewegung). **Die Figur selbst ist bewusst poppig und soll es bleiben.** Die Oberfläche wird auf **dasselbe Qualitätsniveau** gehoben, soll aber **nicht so aussehen wie Lora**: kein Comic- oder Pop-Stil für die App, sondern eine ruhige, seriöse, moderne Oberfläche, vor der Lora als farbige Figur zur Geltung kommt. Lora erscheint dort, wo sie hilft (Einrichtung, leere Zustände, Erfolg, Hilfe), und nicht überall. |
+| Kana als Maßstab | Kana wurde mit AP-122 neu gezeichnet (Volumen, weiches Licht, lebendige Bewegung). **Die Figur selbst ist bewusst poppig und soll es bleiben.** Die Oberfläche wird auf **dasselbe Qualitätsniveau** gehoben, soll aber **nicht so aussehen wie Kana**: kein Comic- oder Pop-Stil für die App, sondern eine ruhige, seriöse, moderne Oberfläche, vor der Kana als farbige Figur zur Geltung kommt. Kana erscheint dort, wo sie hilft (Einrichtung, leere Zustände, Erfolg, Hilfe), und nicht überall. |
 | **TU Dresden: Corporate Design unveränderlich** | Die **Vorlagen im Corporate Design der TU Dresden sind zu jeder Zeit unveränderlich** und gehören nicht zum Design-Arbeitsplan: was die App im TUD-Stil **erzeugt** – TU Vorlagen, Briefe mit Anschriftfeld, Dokumente, Folien, Poster und Designs im Stil „TU Dresden“ –, mit Farben, Hausschrift Noto Sans, Logo, Satzspiegel und Aufbau aus dem offiziellen CD-Paket. Im Code: `docs/TudBrand.kt`, `DocStyle.TUD` in `docs/DocTheme.kt`, `creative/TudAssets.kt`, die eingebauten Vorlagen (`data/BuiltInTemplates.kt`), Logos und Schrift in `resources/tud/`. **Veränderbar** ist nur die App drumherum: die Oberfläche, mit der man Vorlagen auswählt, bearbeitet und erstellt (Listen, Editoren, Leisten, Dialoge, Vorschauen). Der App-Stil „TU Dresden“ (`AppStyle.TUD`) darf als Oberfläche verbessert werden, nimmt die CD-Farben aber unverändert. Ein Design-Paket, das eine dieser Vorlagen oder ihre Ausgabe ändern würde, ist falsch geschnitten. |
 | Priorität | **Nutzerfreundlichkeit vor Schmuck.** Eine Änderung zählt, wenn etwas schneller gefunden, klarer verstanden oder mit weniger Schritten erledigt wird; Verschönerung folgt daraus. |
 | Ein Baukasten | Bildschirme bauen aus gemeinsamen Bausteinen: `ui/Controls.kt` (Knöpfe, Symbol-Knöpfe mit Tooltip, Felder, Schalter, Menüs), `ui/Dialogs.kt` (Dialoge mit Hauptknopf, Enter/Esc), `ui/NoticeBar.kt` (Hinweise), `ui/Scrollbars.kt` (Bildlaufleisten), `ui/Design.kt` (Karten, Gruppenüberschriften, Marken, Segmente), `ui/Theme.kt` (`ChatLook` je Stil), `ui/Chips.kt`, `ui/TextI18n.kt`. Fehlt ein Baustein, kommt er dorthin – keine Einzellösung in einem Bildschirm. |
 | Alle Stile | Jede Änderung gilt für alle 8 Stile (ADEU, TU Dresden, Office, Hoher Kontrast, Claude, Material You, ChatGPT, Gemini), hell und dunkel; Hoher Kontrast bleibt WCAG AAA, sonst mindestens AA (Text 4,5 : 1, Bedienelemente 3 : 1). |
 | Plattformen | Windows-PC ist die Hauptplattform (1366 × 768 bei 150 % muss gehen); Android zieht mit (schmale Bildschirme, große Schrift, Touch). |
-| Wege bleiben | Keine Einfach-/Expertenansicht (Grundsatz *Übersichtlichkeit* im allgemeinen Arbeitsplan). Strg+K, Loras Orte (Spots) und Leuchtrahmen (AP-41) finden alles weiter; Tests dafür bleiben grün. |
-| Lora | Animationen respektieren *Ruhigere Bewegungen*; Lora bleibt seriös (Grundsatz *Lora*). |
+| Wege bleiben | Keine Einfach-/Expertenansicht (Grundsatz *Übersichtlichkeit* im allgemeinen Arbeitsplan). Strg+K, Kanas Orte (Spots) und Leuchtrahmen (AP-41) finden alles weiter; Tests dafür bleiben grün. |
+| Kana | Animationen respektieren *Ruhigere Bewegungen*; Kana bleibt seriös (Grundsatz *Kana*). |
 | Sprache | Klartext aus Sicht der Nutzer:innen, einheitliche Begriffe; jede neue Beschriftung auch in `i18n/en.tsv`. |
 | Freigabe | Jede Stufe zeigt **Vorher/Nachher-Bilder** aus Tests (Muster: `ui/ControlsLookTest`, `ui/BedienungReviewTest`; „vorher“ auf dem Stand von `main` in einem eigenen Arbeitsverzeichnis rendern) auf einer Vergleichsseite (Artefakt). Erst nach der Freigabe des Hauptnutzers PR und Merge. |
 
@@ -73,7 +73,7 @@ Gilt als Abnahme jedes Pakets. Je Bildschirm:
     Touch-Ziele mindestens 48 dp (Android).
 12. **Eindruck** – Wirkt der Bildschirm seriös, modern, hochwertig und fertig? Ist er **übersichtlich** (Gruppierung,
     wenig gleichzeitig, klarer Einstieg) oder überladen? Ist er **ansprechend** oder **langweilig** (graue Listen,
-    Textwüsten, keine visuellen Anker, alles gleich laut)? Passt er zum Rest der App, und steht Lora davor gut da (ohne dass die App selbst poppig wird)? Was würde eine
+    Textwüsten, keine visuellen Anker, alles gleich laut)? Passt er zum Rest der App, und steht Kana davor gut da (ohne dass die App selbst poppig wird)? Was würde eine
     Designerin als Erstes ändern?
 
 ---
@@ -120,12 +120,12 @@ Export), damit der Hauptnutzer das Vorbild entscheidet:
   „Ton“, „Text“), Eigenschaften nur für das Gewählte, Export oben rechts.
 - **B – DaVinci, nur leichter**: Aufbau wie heute (Medienpool, Vorschau, Eigenschaften, Zeitleiste mit V1/V2/A1), aber
   aufgeräumt: eine Leiste über der Zeitleiste, Werkzeuge mit Wort, Schrittkarte schmaler, klare Gruppen.
-- Beide behalten alle Tasten und Loras Aktionen; beide gehen bei 1366 × 768 und auf großen Monitoren.
+- Beide behalten alle Tasten und Kanas Aktionen; beide gehen bei 1366 × 768 und auf großen Monitoren.
 **Fertig, wenn**: der Hauptnutzer eine Richtung (oder eine Mischung) gewählt hat; die Wahl steht hier und im
 allgemeinen Arbeitsplan unter *Grundsätze › Umfang der Werkzeuge*.
 ☑ *14.11.2026*: Vergleichsseite als Artefakt („Videoeditor-Richtung wählen“). **Entscheidung des Hauptnutzers: „A mit B“**
 – Aufbau wie A (Clipchamp/CapCut), dazu aus B: Spurnamen, Sperren und Stummschalten erscheinen beim Überfahren einer Reihe;
-genaue Zahlen für Beginn und Dauer unter den Schiebereglern; eine Mehrkamera-Ansicht für Interviews; alle Tasten, Loras
+genaue Zahlen für Beginn und Dauer unter den Schiebereglern; eine Mehrkamera-Ansicht für Interviews; alle Tasten, Kanas
 Aktionen und der Schnitt im Transkript bleiben. Grundlage für APD-17b.
 
 ### APD-15 ◐ Dokument-Editor aufgeräumt wie Google Docs · M (Wunsch Hauptnutzer 14.11.2026)
@@ -135,7 +135,7 @@ Formatleiste); die Formatleiste wird rechts abgeschnitten (Listen, Einzug, Forma
 Waagerecht-Scrollen erreichbar); „Mit KI schreiben“ schwebt über dem Text; die Gliederung nimmt mit Erklärtext ein
 Viertel der Breite.
 **Ziel**: Kopf wie Google Docs: kompakt, ruhig, alles erreichbar, möglichst viel Seite.
-- **Kopf in zwei Zeilen**: oben Zurück, Titel (Klick = umbenennen), *Gespeichert*-Zustand, rechts Kommentare, Lora und
+- **Kopf in zwei Zeilen**: oben Zurück, Titel (Klick = umbenennen), *Gespeichert*-Zustand, rechts Kommentare, Kana und
   *Teilen/Exportieren* als Hauptknopf; darunter direkt am Titel die Menüs *Datei · Bearbeiten · Ansicht · Einfügen ·
   Format · Extras* in kleiner Schrift (wie Docs). Kein Rückgängig im Kopf, nur in der Formatleiste.
 - **Formatleiste in einer Zeile**, Gruppen in fester Reihenfolge wie Docs; was nicht passt, wandert in ein „⋯“-Menü
@@ -143,8 +143,8 @@ Viertel der Breite.
   ausblenden“).
 - **Reiter (Tabs)** nur zeigen, wenn es mehr als einen gibt; sonst in der Gliederung „Tab hinzufügen“ (wie Docs).
 - **Gliederung** schmal, ohne Erklärtext (Tooltip statt Satz), per Symbol links oben ein-/ausklappbar; Zustand bleibt.
-- **Lora/KI**: kein schwebendes Feld über dem Text; Lora über das ✨ im Kopf, Strg+J und im leeren Absatz ein dezenter
-  Hinweis „Strg+J: Lora schreiben lassen“ (wie Docs „Hilf mir schreiben“).
+- **Kana/KI**: kein schwebendes Feld über dem Text; Kana über das ✨ im Kopf, Strg+J und im leeren Absatz ein dezenter
+  Hinweis „Strg+J: Kana schreiben lassen“ (wie Docs „Hilf mir schreiben“).
 - **Statusleiste unten** (wie Word): Seite x von y, Wörter (Klick: Wortzahl-Dialog mit Zeichen), Sprache,
   Nachverfolgen an/aus, Zoom-Regler mit *Seitenbreite*.
 - **Gemischte Bildschirme**: kleine Fenster – Leiste rückt in „⋯“, Lineal schmal; große – Seite mittig mit
@@ -154,7 +154,7 @@ Viertel der Breite.
 Vorher/Nachher-Bilder (klein, Full HD, groß; hell, dunkel, Hoher Kontrast) auf der Vergleichsseite; `FlowEditorUiTest`
 und die Tests von Strg+K/Spots grün.
 ◐ *Stand 14.11.2026 (Stufe 1, vom Hauptnutzer freigegeben: „Passt“)*: Kopf wie Docs (`FlowDocHeader` in `ui/DocsEditor.kt`: Zurück,
-Dokument-Symbol, Titel zum Umbenennen mit Status, Menüs darunter, rechts Kommentare, Lora, *Exportieren*); *Datei* enthält
+Dokument-Symbol, Titel zum Umbenennen mit Status, Menüs darunter, rechts Kommentare, Kana, *Exportieren*); *Datei* enthält
 alles aus dem bisherigen „⋮“ (`FlowFileMenu`, `DocFileActions`); Reiterzeile erst ab zwei Tabs, *Einfügen › Tab*;
 Formatleiste über die ganze Breite (`FlowHost.menus`/`toolbar`: der Editor gibt Menüs und Leiste an das Fenster), Gruppen
 wie Docs mit „⋯“ statt Abschneiden (`OverflowBar`), Ausrichtung als ein Knopf, Symbole 34 dp (`LocalToolIconSize`);
@@ -202,7 +202,7 @@ Beschriftungen und Kontraste (erweitert `AccessibilityTest`); Vorher/Nachher-Bil
 
 ### APD-19 ☐ Hilfe zur aktuellen Ansicht · S–M (Analyse Q-14)
 **Ziel**: „?“ in jedem Werkzeug öffnet eine kurze, bebilderte Hilfe genau zu dieser Ansicht (offline, auch Englisch) mit
-den wichtigsten Handgriffen und Tasten und bietet die passende Tour (AP-41) an; Lora kann auf die Hilfe verweisen.
+den wichtigsten Handgriffen und Tasten und bietet die passende Tour (AP-41) an; Kana kann auf die Hilfe verweisen.
 **Prüfmaßstab**: jede Werkzeug-Ansicht hat eine Hilfe (Test), Bilder aus den Tests; Vorher/Nachher-Bilder.
 
 ## Ideen

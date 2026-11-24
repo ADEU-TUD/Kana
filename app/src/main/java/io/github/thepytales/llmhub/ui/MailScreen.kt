@@ -101,7 +101,7 @@ internal fun newMailChat(text: String, send: Boolean) {
     ChatHandoff.open.value = ""
 }
 
-/** The two tabs: the mailbox like a mail program, and connection, Lora, appointments, rules and protocol. */
+/** The two tabs: the mailbox like a mail program, and connection, Kana, appointments, rules and protocol. */
 private enum class MailTab(val label: String) { MAILS(trLater("Mails")), OVERVIEW(trLater("Übersicht")) }
 
 /** Rückgängig of the mail view works also after leaving the screen (the banner is the app's). */
@@ -118,7 +118,7 @@ private fun logByHand(c: AppContainer, what: String, detail: String) {
  * Mail & Kalender (AP-13, AP-27, AP-69): the mailbox like a mail program – folder tree, mail list in pages with search
  * and filters, reading pane – in three columns on wide windows, two on tablets and one after the other on phones;
  * mails are chosen, dragged into folders, marked read or unread, folders created and renamed, all with Rückgängig and
- * in the protocol. „Übersicht“ keeps the connection, starts for Lora, the appointments, the sorting rules and the
+ * in the protocol. „Übersicht“ keeps the connection, starts for Kana, the appointments, the sorting rules and the
  * protocol. Nothing is deleted or sent.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,7 +133,7 @@ fun MailScreen(c: AppContainer, onBack: () -> Unit) {
 
     LaunchedEffect(attempt) {
         if (bridge == null) {
-            state = OutlookState.Problem(tr("Noch kein Postfach verbunden. Unter Windows arbeitet Lora mit dem klassischen Outlook; sonst – und auf dem Handy – unter Einstellungen › Verbindungen › „Mail über den Server“ den Mailserver eintragen."))
+            state = OutlookState.Problem(tr("Noch kein Postfach verbunden. Unter Windows arbeitet Kana mit dem klassischen Outlook; sonst – und auf dem Handy – unter Einstellungen › Verbindungen › „Mail über den Server“ den Mailserver eintragen."))
             return@LaunchedEffect
         }
         state = OutlookState.Connecting
@@ -227,7 +227,7 @@ private fun MailBoxView(c: AppContainer, model: MailBoxModel, agenda: List<Calen
         val q = filter.query(id)
         if (q != s.query) model.search(q)
     }
-    // Lora's panel knows the choice („diese 12 Mails …“): ids, how many and subjects – never the text.
+    // Kana's panel knows the choice („diese 12 Mails …“): ids, how many and subjects – never the text.
     LaunchedEffect(s.selected) { LoraFocus.mails.value = model.selection() }
     DisposableEffect(Unit) { onDispose { LoraFocus.mails.value = null } }
     // Like Outlook: a mail counts as read once the reading pane moves on from it.
@@ -274,7 +274,7 @@ private fun MailBoxView(c: AppContainer, model: MailBoxModel, agenda: List<Calen
                 runCatching {
                     val f = model.saveAttachment(m.id, i, File(c.appContext.cacheDir, "mail-anhaenge/" + UUID.randomUUID().toString().take(8)))
                     withContext(Dispatchers.IO) { c.drive.keepUpload(f.name, f.readBytes()) } ?: error(tr("Speichern ging nicht."))
-                }.onSuccess { Notices.info(tr("„{0}“ liegt jetzt im Lora-Ordner (Hochgeladen).", it.name)) }
+                }.onSuccess { Notices.info(tr("„{0}“ liegt jetzt im Kana-Ordner (Hochgeladen).", it.name)) }
                     .onFailure { Notices.error(tr("„{0}“ ließ sich nicht speichern: {1}", name, Outlook.explain(it))) }
             }
         },
@@ -308,7 +308,7 @@ private fun MailBoxView(c: AppContainer, model: MailBoxModel, agenda: List<Calen
             }
         }
         MailFilterBar(filter, onChange = { filter = it })
-        // Cards above the list: a local model is needed (AP-68), Lora's sort runs (AP-69b), problems of the mailbox.
+        // Cards above the list: a local model is needed (AP-68), Kana's sort runs (AP-69b), problems of the mailbox.
         MailNotices {
             if (localModel == null) Box(Modifier.padding(horizontal = 10.dp, vertical = 4.dp)) { MailLocalModelCard(c) }
             Box(Modifier.padding(horizontal = 10.dp)) { OpenMailSorts(c) }
@@ -394,7 +394,7 @@ private fun OpenMail(model: MailBoxModel, header: MailHeader, actions: ReadingAc
 }
 
 /**
- * Übersicht: the connection, starts for Lora (what is important, sort, deadlines, free times, answer), today's and
+ * Übersicht: the connection, starts for Kana (what is important, sort, deadlines, free times, answer), today's and
  * tomorrow's appointments, the fixed sorting rules with „Anwenden“ (shows first what would move) and the protocol of
  * every change the app made in Outlook.
  */
@@ -421,7 +421,7 @@ private fun MailOverview(c: AppContainer, bridge: OutlookBridge?, state: Outlook
             item {
                 AppCard {
                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(tr("Mit Lora"), style = MaterialTheme.typography.titleSmall)
+                        Text(tr("Mit Kana"), style = MaterialTheme.typography.titleSmall)
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             MAIL_STARTS.forEach { s ->
                                 AssistChip(
@@ -432,7 +432,7 @@ private fun MailOverview(c: AppContainer, bridge: OutlookBridge?, state: Outlook
                                 )
                             }
                         }
-                        HintText(tr("Lora löscht nie etwas und sendet nie: Antworten landen als Entwurf in Outlook, Einladungen öffnen sich dort zum Prüfen und Senden. Vor dem Verschieben fragt die App nach."))
+                        HintText(tr("Kana löscht nie etwas und sendet nie: Antworten landen als Entwurf in Outlook, Einladungen öffnen sich dort zum Prüfen und Senden. Vor dem Verschieben fragt die App nach."))
                     }
                 }
             }
@@ -470,7 +470,7 @@ private fun MailOverview(c: AppContainer, bridge: OutlookBridge?, state: Outlook
                             }
                         }
                         if (rules.isEmpty()) {
-                            HintText(tr("Noch keine Regeln. Lege eine an oder bitte Lora: „Schlag mir Regeln zum Sortieren vor“. Regeln wirken nur, wenn du sie hier anwendest."))
+                            HintText(tr("Noch keine Regeln. Lege eine an oder bitte Kana: „Schlag mir Regeln zum Sortieren vor“. Regeln wirken nur, wenn du sie hier anwendest."))
                         }
                         rules.forEach { r ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -556,7 +556,7 @@ private fun StatusCard(state: OutlookState, onRetry: () -> Unit) {
     AppCard {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             LoraFigure(
-                Modifier.size(104.dp, 104.dp / LORA_ASPECT), label = tr("Lora sortiert Briefe"),
+                Modifier.size(104.dp, 104.dp / LORA_ASPECT), label = tr("Kana sortiert Briefe"),
                 director = rememberLoraDirector(listOf(LoraAction.MAIL, LoraAction.FOLDER, LoraAction.CALENDAR), LoraAction.MAIL),
             )
             Spacer(Modifier.width(12.dp))

@@ -11,9 +11,9 @@ class SpeechStreamTest {
     fun firstSentenceComesAloneThenLargerParts() {
         val s = SpeechStream(max = 40)
         assertNull(s.next("Hallo, ich bin", false))
-        assertEquals("Hallo, ich bin Lora.", s.next("Hallo, ich bin Lora. Heute ist", false))
-        assertNull(s.next("Hallo, ich bin Lora. Heute ist", false))
-        val full = "Hallo, ich bin Lora. Heute ist Montag. Es regnet. Morgen wird es sonnig und warm."
+        assertEquals("Hallo, ich bin Kana.", s.next("Hallo, ich bin Kana. Heute ist", false))
+        assertNull(s.next("Hallo, ich bin Kana. Heute ist", false))
+        val full = "Hallo, ich bin Kana. Heute ist Montag. Es regnet. Morgen wird es sonnig und warm."
         assertEquals("Heute ist Montag. Es regnet.", s.next(full, false))
         assertEquals("Morgen wird es sonnig und warm.", s.next(full, true))
         assertNull(s.next(full, true))

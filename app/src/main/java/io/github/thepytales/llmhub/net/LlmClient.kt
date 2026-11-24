@@ -140,7 +140,7 @@ class LlmClient(private val settings: SettingsStore, private val usage: UsageSto
     internal var heatCheckMs = 5_000L
 
     /**
-     * Wo Lora arbeitet (AP-112): the model a chat request of an area goes to – a server model, or the one on this device
+     * Wo Kana arbeitet (AP-112): the model a chat request of an area goes to – a server model, or the one on this device
      * where the area must stay here (set by the app container: Places.route; throws OnDeviceOnly with a plain message).
      */
     var placeRoute: ((Area, String, Boolean) -> String)? = null
@@ -268,7 +268,7 @@ class LlmClient(private val settings: SettingsStore, private val usage: UsageSto
         thinking: ThinkingLevel? = null,
         onUpdate: (StreamUpdate) -> Unit,
     ): ChatResult {
-        // Wo Lora arbeitet (AP-112): where the area must stay on this device, the request goes to the model here –
+        // Wo Kana arbeitet (AP-112): where the area must stay on this device, the request goes to the model here –
         // nothing reaches a server without being asked for (Alles auf diesem Gerät, or no API key at all).
         @Suppress("NAME_SHADOWING")
         val model = placeRoute?.invoke(area(), model, messages.any { it.images.isNotEmpty() }) ?: model

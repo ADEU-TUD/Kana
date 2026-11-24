@@ -14,8 +14,8 @@ import java.io.File
 
 /**
  * State and rules of one Server-Terminal session (AP-118, one tab since AP-131 c), without UI: the saved sessions, the
- * connection, Lora's steps and the protocol. The rule that matters: a step runs only through [run] or [runInTerminal]
- * for exactly that step – after the user's click –, never several at once and never on its own. After a step Lora may
+ * connection, Kana's steps and the protocol. The rule that matters: a step runs only through [run] or [runInTerminal]
+ * for exactly that step – after the user's click –, never several at once and never on its own. After a step Kana may
  * look at the result and say what came out or propose the next step (AP-131 d) – which again waits for a click.
  */
 class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null) {
@@ -36,9 +36,9 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         val note: String = "",
         /** What the last request to a model on a server contained (after masking) – shown on request. */
         val sent: String? = null,
-        /** The user's wish when the steps come from Lora – she looks at the results and goes on (AP-131 d). */
+        /** The user's wish when the steps come from Kana – she looks at the results and goes on (AP-131 d). */
         val goal: String? = null,
-        /** How often Lora went on by herself for [goal]; she stops after [MAX_ROUNDS]. */
+        /** How often Kana went on by herself for [goal]; she stops after [MAX_ROUNDS]. */
         val rounds: Int = 0,
         /** The command running in the terminal waits for typed input (password, yes/no) – the user answers there. */
         val waitsForInput: Boolean = false,
@@ -51,7 +51,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
 
     var connection: SshConnection? = null
         private set
-    /** The open terminal of this session (JediTerm's connector) – Lora types her approved commands here. */
+    /** The open terminal of this session (JediTerm's connector) – Kana types her approved commands here. */
     var tty: SshTty? = null
         private set
     /** Files of the server over SFTP (AP-131 b), opened on first use. */
@@ -122,7 +122,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         lastJob?.cancel()
     }
 
-    /** The terminal of this session opened (AP-131 d): Lora can type here; it starts in the application folder. */
+    /** The terminal of this session opened (AP-131 d): Kana can type here; it starts in the application folder. */
     fun attach(t: SshTty) {
         tty = t
         t.tap.onChunk = {
@@ -149,7 +149,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
 
     private fun logFile(event: String) { log?.write(event) }
 
-    /** The folder the terminal is in – from the prompt (`user@host:/var/www/app$`) or the end of Lora's last command. */
+    /** The folder the terminal is in – from the prompt (`user@host:/var/www/app$`) or the end of Kana's last command. */
     fun terminalFolder(): String? = tty?.tap?.let { it.promptFolder() ?: it.cwd }
 
     /** Puts the steps of [flow] up for approval – nothing runs yet. */
@@ -171,18 +171,18 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         log?.write("Vorgeschlagen: $title", "${step.risk.name.lowercase()}: ${step.command}")
     }
 
-    /** Lora proposes steps for [wish] (model on this device preferred, see [ServerAssistant]). */
+    /** Kana proposes steps for [wish] (model on this device preferred, see [ServerAssistant]). */
     suspend fun propose(wish: String, recent: String = "") {
         val p = _state.value.profile ?: return
         val a = assistant ?: return
-        _state.update { it.copy(busy = tr("Lora überlegt …"), error = null) }
+        _state.update { it.copy(busy = tr("Kana überlegt …"), error = null) }
         try {
             val done = _state.value.steps.filter { it.state != StepState.OPEN }
-            // Without an output of its own: what the last step printed (a failed step is what Lora should look at).
+            // Without an output of its own: what the last step printed (a failed step is what Kana should look at).
             val seen = recent.ifBlank { done.lastOrNull { it.state == StepState.FAILED }?.output ?: done.lastOrNull()?.output.orEmpty() }
             val r = a.propose(wish, p, seen, done, secrets(), screen = tty?.tap?.screen(1500).orEmpty())
             _state.update { it.copy(busy = null, steps = r.steps, flowTitle = wish.trim(), note = r.note, sent = r.sent.takeUnless { a.where().onDevice }, goal = wish.trim(), rounds = 0) }
-            log?.write("Lora schlägt vor ($wish)", r.steps.joinToString("\n") { "${it.risk.name.lowercase()}: ${it.command}" })
+            log?.write("Kana schlägt vor ($wish)", r.steps.joinToString("\n") { "${it.risk.name.lowercase()}: ${it.command}" })
         } catch (e: Exception) {
             _state.update { it.copy(busy = null, error = e.message ?: e.javaClass.simpleName) }
         }
@@ -211,7 +211,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
     }
 
     /**
-     * Runs exactly step [index] **in the open terminal** after the user's click (AP-131 d): Lora types the command and
+     * Runs exactly step [index] **in the open terminal** after the user's click (AP-131 d): Kana types the command and
      * presses Enter – the user sees it there, `cd` stays, and a password or a question is answered in the terminal. The
      * end, exit code and output come from [TerminalTap]. Returns false (and says why) when it cannot type now.
      */
@@ -219,7 +219,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         val t = tty ?: return false
         val step = runnable(index) ?: return false
         if (t.tap.fullScreen) {
-            _state.update { it.copy(error = tr("Im Terminal läuft gerade ein Programm mit ganzem Fenster (z. B. vim, less oder top). Beende es zuerst – dann trägt Lora den Befehl ein.")) }
+            _state.update { it.copy(error = tr("Im Terminal läuft gerade ein Programm mit ganzem Fenster (z. B. vim, less oder top). Beende es zuerst – dann trägt Kana den Befehl ein.")) }
             return false
         }
         if (!t.isConnected) {
@@ -230,7 +230,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         _state.update { it.copy(error = null, waitsForInput = false) }
         log?.write("Zugestimmt, im Terminal ausgeführt: ${step.command}")
         t.tap.watch { f -> finishInTerminal(index, f.exitCode, f.output) }
-        // Ctrl+U first: whatever was half typed on the prompt line must not run together with Lora's command.
+        // Ctrl+U first: whatever was half typed on the prompt line must not run together with Kana's command.
         val ok = runCatching { t.write("\u0015" + TerminalTap.line(step.command) + "\r") }.isSuccess
         if (!ok) {
             t.tap.stopWatching()
@@ -269,7 +269,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
     }
 
     /**
-     * After a step of Lora's proposal: when it failed or was the last one, Lora looks at the outputs and either says
+     * After a step of Kana's proposal: when it failed or was the last one, Kana looks at the outputs and either says
      * what came out or proposes the next steps (each again with a click). Fixed flows do not go on by themselves.
      */
     private fun afterStep(index: Int) {
@@ -283,7 +283,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
         val more = s.steps.any { it.state == StepState.OPEN }
         if (step.state != StepState.FAILED && more) return
         if (s.rounds >= MAX_ROUNDS) {
-            _state.update { it.copy(note = tr("Lora hält hier an – sag ihr, wie es weitergehen soll.")) }
+            _state.update { it.copy(note = tr("Kana hält hier an – sag ihr, wie es weitergehen soll.")) }
             return
         }
         lastJob = scope.launch { followUp(a, goal) }
@@ -291,18 +291,18 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
 
     private suspend fun followUp(a: ServerHelper, goal: String) {
         val p = _state.value.profile ?: return
-        _state.update { it.copy(busy = tr("Lora sieht sich das Ergebnis an …")) }
+        _state.update { it.copy(busy = tr("Kana sieht sich das Ergebnis an …")) }
         try {
             val done = _state.value.steps.filter { it.state != StepState.OPEN }
             val r = a.propose(goal, p, "", done, secrets(), screen = tty?.tap?.screen(1500).orEmpty(), followUp = true)
             _state.update { it.copy(busy = null, steps = done + r.steps, note = r.note, rounds = it.rounds + 1, sent = r.sent.takeUnless { a.where().onDevice }) }
-            log?.write("Lora zum Ergebnis ($goal)", (listOf(r.note) + r.steps.map { "${it.risk.name.lowercase()}: ${it.command}" }).joinToString("\n"))
+            log?.write("Kana zum Ergebnis ($goal)", (listOf(r.note) + r.steps.map { "${it.risk.name.lowercase()}: ${it.command}" }).joinToString("\n"))
         } catch (e: Exception) {
             _state.update { it.copy(busy = null, error = e.message ?: e.javaClass.simpleName) }
         }
     }
 
-    /** Waits until Lora's look at the last result is done (tests; the screen just follows [state]). */
+    /** Waits until Kana's look at the last result is done (tests; the screen just follows [state]). */
     suspend fun awaitLora() { lastJob?.join() }
 
     fun skip(index: Int) {
@@ -369,7 +369,7 @@ class ServerTerminal(val dir: File, private val assistant: ServerHelper? = null)
     fun readLog(): String = log?.read().orEmpty()
 
     companion object {
-        /** How often Lora goes on by herself for one wish before she asks the user. */
+        /** How often Kana goes on by herself for one wish before she asks the user. */
         const val MAX_ROUNDS = 5
     }
 }

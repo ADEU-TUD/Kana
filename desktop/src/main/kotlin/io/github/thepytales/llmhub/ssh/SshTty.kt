@@ -9,7 +9,7 @@ import java.util.EnumSet
 
 /**
  * Connects JediTerm to the SSH shell (AP-118): what the server prints goes to the terminal, keys go to the server.
- * [tap] reads along what the server prints (AP-131 d: Lora notices when her command ended), never what is typed.
+ * [tap] reads along what the server prints (AP-131 d: Kana notices when her command ended), never what is typed.
  */
 class SshTty(private val channel: ChannelShell, private val title: String, val tap: TerminalTap = TerminalTap()) : TtyConnector {
     private val reader = InputStreamReader(channel.invertedOut, Charsets.UTF_8)

@@ -9,9 +9,9 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
- * Lora-Verlauf mit „Nochmal“ (AP-75): the last wishes sent to Lora (from her panel or Strg+K), newest first – to repeat,
- * change before sending or pin. A pinned wish gets a name and appears in Strg+K under it (the first step to own Lora
- * commands). Only on this device, can be switched off (Einstellungen › Lora), nothing from the Tresor.
+ * Kana-Verlauf mit „Nochmal“ (AP-75): the last wishes sent to Kana (from her panel or Strg+K), newest first – to repeat,
+ * change before sending or pin. A pinned wish gets a name and appears in Strg+K under it (the first step to own Kana
+ * commands). Only on this device, can be switched off (Einstellungen › Kana), nothing from the Tresor.
  */
 object LoraHistory {
     @Serializable

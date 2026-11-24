@@ -49,8 +49,8 @@ fun DeliveryStatus(c: AppContainer) {
             if (Autostart.supported) {
                 StatusLine(
                     autostart,
-                    if (autostart) tr("Lora startet mit Windows – Aufgaben laufen auch, wenn du die App nicht geöffnet hast.")
-                    else tr("Aufgaben laufen nur, wenn Lora gestartet wurde. Verpasste Termine werden beim nächsten Start nachgeholt."),
+                    if (autostart) tr("Kana startet mit Windows – Aufgaben laufen auch, wenn du die App nicht geöffnet hast.")
+                    else tr("Aufgaben laufen nur, wenn Kana gestartet wurde. Verpasste Termine werden beim nächsten Start nachgeholt."),
                 )
                 if (!autostart) {
                     OutlinedButton(onClick = {

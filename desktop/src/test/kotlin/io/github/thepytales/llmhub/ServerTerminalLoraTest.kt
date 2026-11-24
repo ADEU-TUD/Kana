@@ -40,7 +40,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * AP-131 against an SSH/SFTP server embedded in the test: Lora types an approved command into the terminal (a shell that
+ * AP-131 against an SSH/SFTP server embedded in the test: Kana types an approved command into the terminal (a shell that
  * behaves like bash), knows when it ended and what it printed, waits for a password typed by the user, looks at the
  * result and answers or goes on – each further command again only after approval; files over SFTP (list, up- and
  * download, cancel, rename, edit and save, delete); a new Ed25519 key goes into authorized_keys and logs in; two
@@ -82,7 +82,7 @@ class ServerTerminalLoraTest {
 
     private fun profile(id: String = "p1") = SshProfile(id = id, name = "Testserver $id", host = "127.0.0.1", port = server.port, user = user, auth = SshAuth.PASSWORD, workDir = "/var/www/app")
 
-    /** Lora as a stand-in: answers from a list and keeps every request exactly as it would leave the device. */
+    /** Kana as a stand-in: answers from a list and keeps every request exactly as it would leave the device. */
     private class FakeLora(vararg answers: String) : ServerHelper {
         val answers = ArrayDeque(answers.toList())
         val asked = mutableListOf<Pair<Boolean, String>>()
@@ -185,11 +185,11 @@ class ServerTerminalLoraTest {
 
         t.propose("Wie viel Speicherplatz ist frei?")
         val s = t.state.value
-        assertEquals("Ich sehe nach, wie viel Platz frei ist.", s.note, "Lora sagt kurz, was sie vorhat")
+        assertEquals("Ich sehe nach, wie viel Platz frei ist.", s.note, "Kana sagt kurz, was sie vorhat")
         assertEquals("df -h /", s.steps.single().command)
         assertEquals(before, lines.size, "Vorschlagen tippt nichts ein")
         val asked = lora.asked.single().second
-        assertTrue("Terminal zuletzt" in asked && "deploy@web:<app-ordner>$" in asked, "Lora sieht das Terminal – Ordner pseudonymisiert:\n$asked")
+        assertTrue("Terminal zuletzt" in asked && "deploy@web:<app-ordner>$" in asked, "Kana sieht das Terminal – Ordner pseudonymisiert:\n$asked")
 
         assertTrue(t.runInTerminal(0), t.state.value.error ?: "")
         waitFor { t.state.value.steps[0].state == StepState.DONE }
@@ -202,12 +202,12 @@ class ServerTerminalLoraTest {
 
         t.awaitLora()
         val after = t.state.value
-        assertEquals("Auf / sind noch 12 GB von 50 GB frei (76 % belegt).", after.note, "Lora sagt, was herauskam")
-        assertTrue(lora.asked.last().first && "12G" in lora.asked.last().second, "Lora bekommt die Ausgabe zum Auswerten")
+        assertEquals("Auf / sind noch 12 GB von 50 GB frei (76 % belegt).", after.note, "Kana sagt, was herauskam")
+        assertTrue(lora.asked.last().first && "12G" in lora.asked.last().second, "Kana bekommt die Ausgabe zum Auswerten")
         assertEquals(1, after.steps.size, "nichts Neues, nichts ausgeführt")
         assertEquals(1, lines.count { it.first == 1 && it.second.startsWith("df") })
         val log = t.readLog()
-        assertTrue("Zugestimmt, im Terminal ausgeführt: df -h /" in log && "Ende mit Exit 0: df -h /" in log && "Lora zum Ergebnis" in log, log)
+        assertTrue("Zugestimmt, im Terminal ausgeführt: df -h /" in log && "Ende mit Exit 0: df -h /" in log && "Kana zum Ergebnis" in log, log)
         tty.close(); t.disconnect()
     }
 
@@ -225,7 +225,7 @@ class ServerTerminalLoraTest {
         assertEquals(1, t.state.value.steps[0].exitCode)
         t.awaitLora()
         val s = t.state.value
-        assertEquals(listOf("false", "echo repariert"), s.steps.map { it.command }, "der veraltete zweite Schritt fällt weg, Loras neuer kommt dazu")
+        assertEquals(listOf("false", "echo repariert"), s.steps.map { it.command }, "der veraltete zweite Schritt fällt weg, Kanas neuer kommt dazu")
         assertEquals(StepState.OPEN, s.steps[1].state, "nichts läuft ohne Klick")
         assertTrue(lines.none { "echo" in it.second }, "weder der veraltete noch der neue Schritt wurde eingetippt")
         assertTrue(t.runInTerminal(1))
@@ -254,7 +254,7 @@ class ServerTerminalLoraTest {
         t.awaitLora()
         assertEquals("ok", t.state.value.steps[0].output.lines().last(), "Farben entfernt")
         val everything = t.readLog() + lora.asked.joinToString { it.second } + t.state.value.steps.joinToString { it.output } + tty.tap.screen(10_000)
-        assertFalse(sudoPassword in everything, "das getippte Passwort sieht weder Lora noch das Protokoll")
+        assertFalse(sudoPassword in everything, "das getippte Passwort sieht weder Kana noch das Protokoll")
         tty.close(); t.disconnect()
     }
 
@@ -265,7 +265,7 @@ class ServerTerminalLoraTest {
         val tty = connected(t)
         t.propose("Warte")
         tty.tap.feed("\u001B[?1049h")
-        assertFalse(t.runInTerminal(0), "vim, less, top: Lora tippt nicht hinein")
+        assertFalse(t.runInTerminal(0), "vim, less, top: Kana tippt nicht hinein")
         assertTrue("vim" in t.state.value.error.orEmpty())
         tty.tap.feed("\u001B[?1049l")
         assertTrue(t.runInTerminal(0))
@@ -395,7 +395,7 @@ class ServerTerminalLoraTest {
         assertEquals(1, auth.readLines().count { it == k.publicLine })
         if (bash.canExecute()) assertEquals("rw-------", ServerFiles.permissions(Files.getAttribute(auth.toPath(), "unix:mode") as Int))
 
-        // The session offers the step; after it ran, Lora offers to log in with the key, and that works.
+        // The session offers the step; after it ran, Kana offers to log in with the key, and that works.
         val t = ServerTerminal(sshDir)
         val tty = connected(t)
         t.offer("Schlüssel auf den Server legen", SshKeys.installStep(k.publicLine), keyFile = k.privateKey.absolutePath)
@@ -428,7 +428,7 @@ class ServerTerminalLoraTest {
 
         a.propose("Etwas in A")
         assertEquals("Nur hier.", a.state.value.note)
-        assertTrue(b.state.value.steps.isEmpty(), "Lora hilft nur in der Sitzung, in der gefragt wurde")
+        assertTrue(b.state.value.steps.isEmpty(), "Kana hilft nur in der Sitzung, in der gefragt wurde")
 
         assertEquals(1, ws.broadcast("echo an-einen", listOf(b)), "nur die gewählte Sitzung")
         waitFor { lines.any { it.second == "echo an-einen" } }

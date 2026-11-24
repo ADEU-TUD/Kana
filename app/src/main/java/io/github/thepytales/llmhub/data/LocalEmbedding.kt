@@ -18,12 +18,12 @@ import kotlin.math.sqrt
  * Suche nach Bedeutung auf dem Gerät (AP-107): the embedding model the Wissenssammlung uses without the server.
  *
  * Chosen on the Entwicklungsteil of tools/suche/messkorpus (tools/suche/README.md): multilingual-e5-small by Microsoft
- * (intfloat, MIT licence), the int8 ONNX file of the original repository, unchanged – „Lora Edition“ only means chosen,
- * measured and set up for Lora by us. It comes from Hugging Face at a fixed commit and is checked by SHA-256, like Lora
+ * (intfloat, MIT licence), the int8 ONNX file of the original repository, unchanged – „Kana Edition“ only means chosen,
+ * measured and set up for Kana by us. It comes from Hugging Face at a fixed commit and is checked by SHA-256, like Kana
  * Namensschutz; it runs on the ONNX Runtime the app ships for sherpa-onnx.
  */
 object LocalEmbeddingInfo {
-    const val NAME = "multilingual-e5-small – Lora Edition"
+    const val NAME = "multilingual-e5-small – Kana Edition"
     /** What [KnowledgeDoc.embeddedWith] says for passages embedded on this device. */
     const val ID = "local/multilingual-e5-small"
     const val REPO = "intfloat/multilingual-e5-small"

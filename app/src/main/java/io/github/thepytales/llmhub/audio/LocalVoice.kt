@@ -25,7 +25,7 @@ import java.io.File
  * fixed commit, each checked by SHA-256.
  */
 object LocalVoiceInfo {
-    const val NAME = "Piper Thorsten – Lora Edition"
+    const val NAME = "Piper Thorsten – Kana Edition"
     const val REPO = "csukuangfj/vits-piper-de_DE-thorsten-medium"
     const val COMMIT = "da8bed7888b27d17e1aa8fbd53e6703ab939583a"
     const val MODEL = "de_DE-thorsten-medium.onnx"

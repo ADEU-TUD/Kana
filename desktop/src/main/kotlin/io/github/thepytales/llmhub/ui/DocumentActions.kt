@@ -41,7 +41,7 @@ object ShareDoc {
 
 val SAVE_AS_LABEL: String get() = tr("Speichern unter …")
 
-/** "Speichern unter": copies the file to a place the user picks (Documents\Lora by default). */
+/** "Speichern unter": copies the file to a place the user picks (the Kana-Ordner by default). */
 @Suppress("UNUSED_PARAMETER")
 @Composable
 fun rememberSaveAs(mime: String): (File) -> Unit {

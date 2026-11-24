@@ -31,7 +31,7 @@ import io.github.thepytales.llmhub.data.DesignTemplates
 import io.github.thepytales.llmhub.data.FileAttachment
 
 /**
- * „Erstellen“ (AP-24): at the top of the area one field for every wish – Lora makes it, from a letter to a poster.
+ * „Erstellen“ (AP-24): at the top of the area one field for every wish – Kana makes it, from a letter to a poster.
  * Wishes about designs (poster, flyer, social media …) start the Gestalten mode on Windows; files can be attached
  * („Poster aus meinem Paper“).
  */
@@ -80,11 +80,11 @@ fun CreateWithLora(c: AppContainer, modifier: Modifier = Modifier) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = pick) { Icon(Icons.Outlined.AttachFile, contentDescription = tr("Datei anhängen")) }
                 Text(
-                    tr("Lora erledigt es im Chat – oder unten eine Vorlage wählen."),
+                    tr("Kana erledigt es im Chat – oder unten eine Vorlage wählen."),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f),
                 )
                 Button(onClick = ::go, enabled = text.isNotBlank()) {
-                    Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp)); Spacer(Modifier.size(6.dp)); Text(tr("Lora machen lassen"))
+                    Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp)); Spacer(Modifier.size(6.dp)); Text(tr("Kana machen lassen"))
                 }
             }
         }

@@ -16,7 +16,7 @@ object CommandSlots {
     private val SIZES = listOf("0.9", "1.0", "1.15", "1.3")
 
     /**
-     * The value of [setting] the wish asks for, or null when it names none („Schriftgröße“ – then Lora shows the option).
+     * The value of [setting] the wish asks for, or null when it names none („Schriftgröße“ – then Kana shows the option).
      * [current] is the value now: „größer“ and „kleiner“ go one step from there.
      */
     fun settingValue(setting: LoraSetting, wish: String, current: String? = null): String? {

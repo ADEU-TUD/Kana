@@ -126,9 +126,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * Lora, the helper at the core of the app (AP-07, AP-34). [open] from anywhere: Strg+L, the „Frag Lora“ button in the
- * chat's top bar, a tap on Lora on the start page, Strg+K › „Lora fragen“, the sleeping Lora in the settings and other areas,
- * a long press on Lora in the chat. On wide screens she works in a panel beside the app that stays open while she
+ * Kana, the helper at the core of the app (AP-07, AP-34). [open] from anywhere: Strg+L, the „Frag Kana“ button in the
+ * chat's top bar, a tap on Kana on the start page, Strg+K › „Kana fragen“, the sleeping Kana in the settings and other areas,
+ * a long press on Kana in the chat. On wide screens she works in a panel beside the app that stays open while she
  * leads somewhere; on phones she comes up from the bottom. The conversation stays until „Neu beginnen“.
  */
 object LoraHelper {
@@ -138,13 +138,13 @@ object LoraHelper {
     /** The panel is open. */
     val isOpen = MutableStateFlow(false)
 
-    /** Project of the chat Lora was called from (its privacy level counts). */
+    /** Project of the chat Kana was called from (its privacy level counts). */
     var folderId: String? = null
 
     /** Route of the screen the user is on (for the suggestions that fit it); set by the app's navigation. */
     val route = MutableStateFlow("chat")
 
-    /** The open chat has messages (then Lora offers to summarize it …). */
+    /** The open chat has messages (then Kana offers to summarize it …). */
     @Volatile
     var chatHasMessages: Boolean = false
 
@@ -155,11 +155,11 @@ object LoraHelper {
     internal val turns = mutableStateListOf<LoraTurn>()
     internal var busy by mutableStateOf(false)
 
-    /** Lora's answer while it is still coming in. */
+    /** Kana's answer while it is still coming in. */
     internal var partial by mutableStateOf("")
     internal var job: Job? = null
 
-    /** How Lora reacts to her last answer (points the way, nods, shrugs, scratches her head); [moodTick] counts. */
+    /** How Kana reacts to her last answer (points the way, nods, shrugs, scratches her head); [moodTick] counts. */
     internal var mood by mutableStateOf<LoraAction?>(null)
     internal var moodTick by mutableStateOf(0)
 
@@ -183,27 +183,27 @@ object LoraHelper {
         partial = ""
     }
 
-    /** Stops the answer Lora is working on. */
+    /** Stops the answer Kana is working on. */
     fun cancel() {
         job?.cancel()
     }
 
-    /** Where Lora's helper appears: only with Lora „überall“. */
+    /** Where Kana's helper appears: only with Kana „überall“. */
     fun visible(s: io.github.thepytales.llmhub.data.AppSettings) = s.loraMode == "EVERYWHERE" && !s.hideLora
 
-    /** Lora can be asked at all (also with Lora „nur im Chat“ – then without the figures elsewhere). */
+    /** Kana can be asked at all (also with Kana „nur im Chat“ – then without the figures elsewhere). */
     fun available(s: io.github.thepytales.llmhub.data.AppSettings) = s.loraMode != "OFF" && !s.hideLora
 }
 
-/** One wish and Lora's answer; [state] remembers per step what the user decided (done, declined, undone). */
-/** One wish and Lora's reply; [asked] is the wish itself when [wish] shows a button that was tapped (AP-73). */
+/** One wish and Kana's answer; [state] remembers per step what the user decided (done, declined, undone). */
+/** One wish and Kana's reply; [asked] is the wish itself when [wish] shows a button that was tapped (AP-73). */
 internal class LoraTurn(val wish: String, val asked: String = wish) {
     var reply by mutableStateOf<LoraReply?>(null)
     /** What was open when the wish was sent (AP-72: a correction is kept for this area). */
     val area: String = io.github.thepytales.llmhub.agent.ActionArea.of(LoraHelper.route.value)?.key ?: "app"
     val state = mutableStateMapOf<Int, String>()
 
-    /** Results of Lora's actions (AP-38) by step, with their Rückgängig. */
+    /** Results of Kana's actions (AP-38) by step, with their Rückgängig. */
     val results = mutableStateMapOf<Int, io.github.thepytales.llmhub.agent.ActionResult>()
 }
 
@@ -243,7 +243,7 @@ internal fun openActionFile(f: java.io.File, go: (String) -> Unit) {
 }
 
 /**
- * Hosts Lora: answers the wishes (also while the panel is closed), and the two questions of the first start. [go]
+ * Hosts Kana: answers the wishes (also while the panel is closed), and the two questions of the first start. [go]
  * opens a route: "chat…" routes as a chat, everything else as a screen. The panel itself is [LoraSidePanel] (wide)
  * or [LoraSheet] (narrow), placed by the app's layout.
  */
@@ -263,14 +263,14 @@ fun LoraHelperHost(c: AppContainer, go: (String) -> Unit) {
             sendToLora(c, agent, scope, w, go)
         }
     }
-    // An Chat übergeben from the Postfach (AP-68): the card to check the text first, for the button and for Lora.
+    // An Chat übergeben from the Postfach (AP-68): the card to check the text first, for the button and for Kana.
     MailHandoffHost(c, go)
     // Rückfall (AP-112): the Uni-Server is gone for good – work on this device or with another key.
     UniFallbackDialog(c, go)
-    // Who switched Lora off before is not asked again.
+    // Who switched Kana off before is not asked again.
     val panelOpen by LoraHelper.isOpen.collectAsStateWithLifecycle()
     // AP-112: also without an API key – the first start then offers „Alles auf diesem Gerät“.
-    // Lora einrichten Schritt für Schritt (AP-120): the first start opens the setup as a window; the earlier questions
+    // Kana einrichten Schritt für Schritt (AP-120): the first start opens the setup as a window; the earlier questions
     // (AP-80 roles, AP-71 models, AP-112 place) are steps of it now.
     if (!s.loraIntroDone && !s.hideLora && !panelOpen) SetupWizardDialog(c, go)
 }
@@ -286,7 +286,7 @@ internal object LoraHost {
 private fun sendToLora(c: AppContainer, agent: LoraAgent, scope: CoroutineScope, text: String, go: (String) -> Unit) {
     val wish = text.trim()
     if (wish.isEmpty()) return
-    // Lora-Verlauf (AP-75): the wish is kept for Pfeil hoch, „Zuletzt“ and „Nochmal“ – not from the Tresor.
+    // Kana-Verlauf (AP-75): the wish is kept for Pfeil hoch, „Zuletzt“ and „Nochmal“ – not from the Tresor.
     if (!LoraHelper.busy) io.github.thepytales.llmhub.data.LoraHistory.record(c, wish, c.drive.isVaultChat(LoraHelper.chatId))
     runTurn(wish, scope, go) { history -> agent.ask(wish, history, LoraHelper.folderId, IS_ANDROID) { LoraHelper.partial = it } }
 }
@@ -303,7 +303,7 @@ private fun chooseInLora(agent: LoraAgent, scope: CoroutineScope, step: LoraStep
     }
 }
 
-/** One turn with Lora: [wish] as the user's line, then the reply of [answer] with its steps. */
+/** One turn with Kana: [wish] as the user's line, then the reply of [answer] with its steps. */
 private fun runTurn(wish: String, scope: CoroutineScope, go: (String) -> Unit, asked: String = wish, answer: suspend (history: List<Pair<String, String>>) -> LoraReply) {
     if (LoraHelper.busy) return
     val turn = LoraTurn(wish, asked)
@@ -316,14 +316,14 @@ private fun runTurn(wish: String, scope: CoroutineScope, go: (String) -> Unit, a
             val reply = runCatching { answer(history) }
                 .getOrElse { e ->
                     if (e is kotlinx.coroutines.CancellationException) throw e
-                    io.github.thepytales.llmhub.ErrorLog.record("Lora", e)
+                    io.github.thepytales.llmhub.ErrorLog.record("Kana", e)
                     val plain = ErrorHelp.explain(e)
                     LoraReply(tr("Das hat nicht geklappt: {0}", plain.text), fix = plain.fix?.takeIf { it.route != null })
                 }
             turn.reply = reply
             LoraHelper.mood = moodFor(reply)
             LoraHelper.moodTick++
-            // Lora's safe actions run at once (AP-38); risky ones wait for „Ausführen“ in their card.
+            // Kana's safe actions run at once (AP-38); risky ones wait for „Ausführen“ in their card.
             reply.steps.forEachIndexed { i, st -> if (st is LoraStep.Action && !st.plan.risky && !st.dry) runLoraAction(scope, turn, i, st, go) }
             // Leading somewhere, opening and handing over happen right away; settings, tools and the calendar wait for „Ja“.
             val first = reply.steps.singleOrNull()
@@ -340,7 +340,7 @@ private fun runTurn(wish: String, scope: CoroutineScope, go: (String) -> Unit, a
     }
 }
 
-/** Lora's reaction to an answer: she points the way, nods, shrugs when she found nothing, scratches her head on trouble. */
+/** Kana's reaction to an answer: she points the way, nods, shrugs when she found nothing, scratches her head on trouble. */
 internal fun moodFor(reply: LoraReply): LoraAction = when {
     listOf("Ich erreiche gerade kein Modell", "Das hat nicht geklappt").any { reply.text.startsWith(it) || reply.text.startsWith(tr(it)) } -> LoraAction.SCRATCH
     reply.steps.any { it is LoraStep.Navigate || it is LoraStep.OpenMode || it is LoraStep.OpenChat || it is LoraStep.Handoff } -> LoraAction.POINT
@@ -349,7 +349,7 @@ internal fun moodFor(reply: LoraReply): LoraAction = when {
     else -> LoraAction.NOD
 }
 
-/** Whether Lora's panel is docked beside the app (wide windows) – then she stays open while leading somewhere. */
+/** Whether Kana's panel is docked beside the app (wide windows) – then she stays open while leading somewhere. */
 internal object LoraLayout {
     @Volatile
     var docked: Boolean = false
@@ -379,14 +379,14 @@ internal fun runLoraStep(step: LoraStep, go: (String) -> Unit): Boolean = when (
 }
 
 /**
- * Hands a question to a new chat (AP-33): the request is the message, what Lora already found out goes along as
- * hidden instructions, and a card above the message says that Lora handed it over – with model and reason.
+ * Hands a question to a new chat (AP-33): the request is the message, what Kana already found out goes along as
+ * hidden instructions, and a card above the message says that Kana handed it over – with model and reason.
  */
 private fun handOver(step: LoraStep.Handoff, go: (String) -> Unit) {
     val c = io.github.thepytales.llmhub.App.container
     val review = c.settings.current.loraHandoffReview
     val instructions = step.summary.takeIf { it.isNotBlank() && it != step.request }?.let {
-        "Kontext aus dem Gespräch mit Lora, der Helferin der App (nicht vom Nutzer getippt, nicht wörtlich wiederholen): $it"
+        "Kontext aus dem Gespräch mit Kana, der Helferin der App (nicht vom Nutzer getippt, nicht wörtlich wiederholen): $it"
     }
     val line = ModelCatalog.info(step.model).displayName + (step.reason.takeIf { it.isNotBlank() }?.let { " · $it" } ?: "")
     ChatHandoff.pending.value = ChatHandoff.Content(
@@ -396,7 +396,7 @@ private fun handOver(step: LoraStep.Handoff, go: (String) -> Unit) {
     go(chatRoute(model = step.model))
 }
 
-/** Opens a place of the app map: a screen (with the glowing frame), a mode or a TU Vorlage – Lora flies there. */
+/** Opens a place of the app map: a screen (with the glowing frame), a mode or a TU Vorlage – Kana flies there. */
 internal fun openTarget(t: AppTarget, go: (String) -> Unit, text: String = "") {
     when {
         t.route.startsWith(MODE_ROUTE) -> {
@@ -420,7 +420,7 @@ internal fun openTarget(t: AppTarget, go: (String) -> Unit, text: String = "") {
 // ── The panel ────────────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Lora's panel beside the app (wide windows): slides in from the right, the app gets narrower instead of covered. Its
+ * Kana's panel beside the app (wide windows): slides in from the right, the app gets narrower instead of covered. Its
  * width can be dragged at the line on its left (320–640 dp, remembered; double-click resets).
  */
 @Composable
@@ -430,7 +430,7 @@ fun LoraSidePanel(c: AppContainer) {
     LoraLayout.docked = true
     AnimatedVisibility(open, enter = expandHorizontally(tween(260)) + fadeIn(tween(260)), exit = shrinkHorizontally(tween(220)) + fadeOut(tween(180))) {
         Row(Modifier.fillMaxHeight()) {
-            PanelResizer(width, panelLeft = false, label = tr("Breite von Loras Bereich ändern"))
+            PanelResizer(width, panelLeft = false, label = tr("Breite von Kanas Bereich ändern"))
             Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.width(width.value).fillMaxHeight()) {
                 LoraPanel(c, compact = false)
             }
@@ -438,7 +438,7 @@ fun LoraSidePanel(c: AppContainer) {
     }
 }
 
-/** Lora's panel on narrow screens: comes up from the bottom over a light veil; a tap on the veil closes it. */
+/** Kana's panel on narrow screens: comes up from the bottom over a light veil; a tap on the veil closes it. */
 @Composable
 fun BoxScope.LoraSheet(c: AppContainer) {
     val open by LoraHelper.isOpen.collectAsStateWithLifecycle()
@@ -480,7 +480,7 @@ fun BoxScope.LoraSheet(c: AppContainer) {
 }
 
 @OptIn(ExperimentalLayoutApi::class)
-/** Lora's panel in a window of its own (AP-84, PC): the same conversation as beside the app. */
+/** Kana's panel in a window of its own (AP-84, PC): the same conversation as beside the app. */
 @Composable
 fun LoraWindowPanel(c: AppContainer) = LoraPanel(c, compact = false)
 
@@ -491,7 +491,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
     val turns = LoraHelper.turns
     val busy = LoraHelper.busy
     var input by remember { mutableStateOf("") }
-    // Lora-Verlauf (AP-75): Pfeil hoch/runter blättert durch die letzten Wünsche, solange kein eigener Text im Feld steht.
+    // Kana-Verlauf (AP-75): Pfeil hoch/runter blättert durch die letzten Wünsche, solange kein eigener Text im Feld steht.
     val historyVersion by io.github.thepytales.llmhub.data.LoraHistory.version.collectAsStateWithLifecycle()
     val history = remember(historyVersion, s.loraHistory) { if (s.loraHistory) io.github.thepytales.llmhub.data.LoraHistory.recent(c) else emptyList() }
     var historyAt by remember { mutableStateOf(-1) }
@@ -511,7 +511,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
     val suggestions = remember(route, s.enabledTools, LoraHelper.chatHasMessages, s.roles) {
         LoraSense.suggestions(route, LoraHelper.chatHasMessages, s.enabledToolIds, IS_ANDROID, io.github.thepytales.llmhub.data.Role.parse(s.roles))
     }
-    // Lora knows the mails chosen in Mail & Kalender (AP-69): „Mail & Kalender · 12 Mails ausgewählt“.
+    // Kana knows the mails chosen in Mail & Kalender (AP-69): „Mail & Kalender · 12 Mails ausgewählt“.
     val chosenMails by io.github.thepytales.llmhub.agent.LoraFocus.mails.collectAsStateWithLifecycle()
     val place = tr(LoraSense.place(route)) + (chosenMails?.count?.takeIf { it > 0 && route.startsWith("mail") }?.let { " · " + tr("{0} Mails ausgewählt", it) } ?: "")
 
@@ -527,7 +527,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
         if (sg.inChat && chat != null) {
             // About the open chat: the wish goes in there as a message.
             LoraHelper.turns += LoraTurn(sg.label).apply { reply = LoraReply(tr("Ich schreibe es in den Chat.")); state[0] = "done" }
-            ChatHandoff.pending.value = ChatHandoff.Content(sg.wish, emptyList(), send = true, chatId = chat, handoff = tr("aus Loras Vorschlägen"))
+            ChatHandoff.pending.value = ChatHandoff.Content(sg.wish, emptyList(), send = true, chatId = chat, handoff = tr("aus Kanas Vorschlägen"))
             LoraFlight.start(LoraFlight.Landing.CHAT)
             // The suggestions about a chat only appear while it is open, so there is nowhere to go.
             if (!LoraHelper.route.value.startsWith("chat")) LoraHost.go(chatRoute(chat))
@@ -539,7 +539,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
             send(sg.wish)
             return
         }
-        // A fixed place: Lora answers at once, without searching.
+        // A fixed place: Kana answers at once, without searching.
         val step = if (target.kind == MapKind.MODE || target.kind == MapKind.TEMPLATE) LoraStep.OpenMode(target) else LoraStep.Navigate(target)
         val turn = LoraTurn(sg.label).apply {
             reply = LoraReply(if (step is LoraStep.OpenMode) tr("Ich öffne „{0}“.", target.title) else tr("Hier ist es: {0}.", tr(target.path)), listOf(step))
@@ -581,7 +581,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
                 val shown = turns.flatMap { t -> t.reply?.steps.orEmpty().filterIsInstance<LoraStep.Plan>().map { it.flowId } }.toSet()
                 OpenFlows(c, shown, LoraHost.go)
             }
-            // Lora's sort runs (AP-69) that wait or work without a card here, e.g. after a restart or from a scheduled task.
+            // Kana's sort runs (AP-69) that wait or work without a card here, e.g. after a restart or from a scheduled task.
             item(key = "mailsorts") {
                 val shown = turns.flatMap { t -> t.reply?.steps.orEmpty().filterIsInstance<LoraStep.MailSort>().map { it.runId } }.toSet()
                 OpenMailSorts(c, shown)
@@ -622,7 +622,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
             OutlinedTextField(
                 value = input,
                 onValueChange = { input = it; historyAt = -1 },
-                placeholder = { Text(tr("Frag Lora …")) },
+                placeholder = { Text(tr("Frag Kana …")) },
                 maxLines = 4,
                 shape = RoundedCornerShape(22.dp),
                 colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant),
@@ -648,7 +648,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
                         recording = false
                         val file = recorder.stop()
                         if (file != null) scope.launch {
-                            // Wo Lora arbeitet (AP-112): on this device first, the Uni-Server only where Spracheingabe may use it.
+                            // Wo Kana arbeitet (AP-112): on this device first, the Uni-Server only where Spracheingabe may use it.
                             val result = runCatching { io.github.thepytales.llmhub.data.Places.recognize(c, file).first }
                             val text = result.getOrNull().orEmpty()
                             result.exceptionOrNull()?.let { e -> if (e is kotlinx.coroutines.CancellationException) throw e; Notices.error(e) }
@@ -667,7 +667,7 @@ private fun LoraPanel(c: AppContainer, compact: Boolean) {
         }
         if (!compact && DESKTOP) {
             Text(
-                tr("Strg+L öffnet und schließt Lora"),
+                tr("Strg+L öffnet und schließt Kana"),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 8.dp),
@@ -690,15 +690,15 @@ private fun PanelHeader(status: String, busy: Boolean, canReset: Boolean, onRese
         ) {
             val director = rememberLoraDirector(sequence = listOf(LoraAction.LOOK, LoraAction.IDLE), start = LoraAction.WAVE, minDwellMs = 400)
             LaunchedEffect(busy, LoraHelper.moodTick) { director.play(if (busy) LoraAction.SEARCH else LoraHelper.mood ?: LoraAction.WAVE) }
-            LoraFigure(Modifier.size(60.dp, 42.dp), label = tr("Lora"), director = director, hint = if (busy) listOf(LoraAction.SEARCH, LoraAction.BINOCULARS) else emptyList(), hintEvery = 1)
+            LoraFigure(Modifier.size(60.dp, 42.dp), label = tr("Kana"), director = director, hint = if (busy) listOf(LoraAction.SEARCH, LoraAction.BINOCULARS) else emptyList(), hintEvery = 1)
         }
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text("Lora", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text("Kana", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(status, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         if (canReset) IconButton(onClick = onReset) { Icon(Icons.Outlined.RestartAlt, contentDescription = tr("Neu beginnen")) }
-        // Mehrere Fenster (AP-84, PC): Lora in a window of her own.
+        // Mehrere Fenster (AP-84, PC): Kana in a window of her own.
         WindowHooks.openLora?.let { open -> IconButton(onClick = open) { Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = tr("In eigenem Fenster öffnen")) } }
         IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = tr("Schließen")) }
     }
@@ -708,7 +708,7 @@ private fun PanelHeader(status: String, busy: Boolean, canReset: Boolean, onRese
 private fun Welcome(name: String, place: String, suggestions: List<LoraSense.Suggestion>, onSuggest: (LoraSense.Suggestion) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            (if (name.isNotBlank()) tr("Hallo") + " ${name.trim()}! " else tr("Hallo! ")) + tr("Ich bin Lora."),
+            (if (name.isNotBlank()) tr("Hallo") + " ${name.trim()}! " else tr("Hallo! ")) + tr("Ich bin Kana."),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
@@ -753,7 +753,7 @@ private fun WishBubble(text: String) {
     }
 }
 
-/** Lora's side of the conversation: her small figure, then the content. */
+/** Kana's side of the conversation: her small figure, then the content. */
 @Composable
 private fun LoraSays(content: @Composable () -> Unit) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -763,7 +763,7 @@ private fun LoraSays(content: @Composable () -> Unit) {
     }
 }
 
-/** Three dots that rise in turn while Lora thinks. */
+/** Three dots that rise in turn while Kana thinks. */
 @Composable
 internal fun TypingDots() {
     val t = rememberInfiniteTransition(label = "dots")
@@ -798,7 +798,7 @@ private fun SuggestionPill(label: String, enabled: Boolean, onClick: () -> Unit)
     }
 }
 
-// ── Lora's answers: text and cards ─────────────────────────────────────────────────────────────────────────
+// ── Kana's answers: text and cards ─────────────────────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -906,7 +906,7 @@ private fun ReplyBlock(c: AppContainer, turn: LoraTurn, reply: LoraReply, onAnsw
 }
 
 /**
- * Lora lernt aus Korrekturen (AP-72): „Rückgängig“ right after Lora carried out a command she recognized on the device –
+ * Kana lernt aus Korrekturen (AP-72): „Rückgängig“ right after Kana carried out a command she recognized on the device –
  * next time she does not carry it out for this wish without asking.
  */
 private fun learnUndone(c: AppContainer, turn: LoraTurn) {
@@ -915,7 +915,7 @@ private fun learnUndone(c: AppContainer, turn: LoraTurn) {
 }
 
 /**
- * A tap on one of the places Lora listed (AP-72): that place was meant – unless it is what Lora had already understood.
+ * A tap on one of the places Kana listed (AP-72): that place was meant – unless it is what Kana had already understood.
  * Only places the command model knows are kept (they are carried out the same way next time).
  */
 private fun learnTap(c: AppContainer, turn: LoraTurn, t: io.github.thepytales.llmhub.data.AppTarget) {
@@ -946,7 +946,7 @@ private fun ChoiceButtons(step: LoraStep.Choose, chosen: String?, enabled: Boole
 }
 
 /**
- * An action of Lora in a tool (AP-38): the step line while it runs, the preview (vorher → nachher) with „Ausführen“
+ * An action of Kana in a tool (AP-38): the step line while it runs, the preview (vorher → nachher) with „Ausführen“
  * for risky ones, then the result with „Rückgängig“ and „Öffnen“.
  */
 @Composable
@@ -1016,7 +1016,7 @@ private fun ActionCard(turn: LoraTurn, i: Int, step: LoraStep.Action, go: (Strin
     }
 }
 
-/** One or more settings Lora wants to change: before → after, „Umstellen“, then „Rückgängig“. */
+/** One or more settings Kana wants to change: before → after, „Umstellen“, then „Rückgängig“. */
 @Composable
 private fun SettingsCard(c: AppContainer, turn: LoraTurn, changes: List<Pair<Int, LoraStep.ChangeSetting>>) {
     val key = changes.first().first
@@ -1083,7 +1083,7 @@ private fun kindIcon(kind: MapKind): ImageVector = when (kind) {
     MapKind.TOOL -> Icons.Outlined.Construction
 }
 
-/** The frame of Lora's result cards: hairline border, icon in a tinted circle, title and line, then [actions]. */
+/** The frame of Kana's result cards: hairline border, icon in a tinted circle, title and line, then [actions]. */
 @Composable
 internal fun ResultCard(
     icon: ImageVector, title: String, subtitle: String?, onClick: (() -> Unit)? = null, dense: Boolean = false,
@@ -1139,8 +1139,8 @@ internal fun relativeDay(millis: Long): String {
 // ── Entry points ──────────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Sleeping Lora at the bottom right of an area (settings, TU Vorlagen …): a tap wakes her – the panel opens. Only
- * with Lora „überall“. Screens leave [LORA_BUTTON_ROOM] free at the end of their lists, so she covers nothing.
+ * Sleeping Kana at the bottom right of an area (settings, TU Vorlagen …): a tap wakes her – the panel opens. Only
+ * with Kana „überall“. Screens leave [LORA_BUTTON_ROOM] free at the end of their lists, so she covers nothing.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -1164,37 +1164,37 @@ fun LoraHelperButton(c: AppContainer, modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .background(look.brand.copy(alpha = if (hovered) 0.16f else 0.08f))
-                .semantics { contentDescription = tr("Lora fragen") }
+                .semantics { contentDescription = tr("Kana fragen") }
                 .hoverable(interaction)
                 .combinedClickable(
                     interactionSource = interaction,
                     indication = null,
-                    onClickLabel = tr("Lora fragen"),
+                    onClickLabel = tr("Kana fragen"),
                     onClick = { LoraHelper.open() },
                 ),
             contentAlignment = Alignment.Center,
         ) {
             // Centred with room on every side: the head stays clear of the round edge, the z's rise inside it.
-            LoraFace(Modifier.size(LORA_BUTTON_FACE), label = tr("Lora schläft – antippen zum Fragen"), director = director, fps = 20)
+            LoraFace(Modifier.size(LORA_BUTTON_FACE), label = tr("Kana schläft – antippen zum Fragen"), director = director, fps = 20)
         }
     }
 }
 
-/** Size of the sleeping Lora in the corner: a round button as big as a floating action button, with her close-up. */
+/** Size of the sleeping Kana in the corner: a round button as big as a floating action button, with her close-up. */
 private val LORA_BUTTON_SIZE = 62.dp
 
 /** Her close-up in that button: about three quarters of it, so a ring of the button's colour stays around her. */
 private val LORA_BUTTON_FACE = 46.dp
 
-/** Room screens leave at the end of their lists for the sleeping Lora (so she covers no entry). */
+/** Room screens leave at the end of their lists for the sleeping Kana (so she covers no entry). */
 val LORA_BUTTON_ROOM = 96.dp
 
-/** Height of the „Frag Lora“ pill and of Lora's face in it. */
+/** Height of the „Frag Kana“ pill and of Kana's face in it. */
 private val LORA_PILL_HEIGHT = 42.dp
 private val LORA_PILL_FACE = 34.dp
 
 /**
- * Lora in the chat's top bar (Strg+L opens and closes her panel): her close-up in a tinted pill with „Frag Lora“, so
+ * Kana in the chat's top bar (Strg+L opens and closes her panel): her close-up in a tinted pill with „Frag Kana“, so
  * she is easy to find; [compact] (narrow windows with a chat title) shows only the round face.
  */
 @Composable
@@ -1205,7 +1205,7 @@ fun LoraTopBarButton(c: AppContainer, folderId: String? = null, compact: Boolean
     val look = LocalChatLook.current
     // Waves hello once, then is just there: looks around, follows the pointer with her eyes, blinks.
     val director = rememberLoraDirector(sequence = listOf(LoraAction.IDLE, LoraAction.LOOK), start = LoraAction.WAVE)
-    val label = tr("Lora fragen") + if (DESKTOP) " (Strg+L)" else ""
+    val label = tr("Kana fragen") + if (DESKTOP) " (Strg+L)" else ""
     Surface(
         onClick = { if (LoraHelper.isOpen.value) LoraHelper.close() else LoraHelper.open(folderId = folderId) },
         shape = RoundedCornerShape(50),
@@ -1222,47 +1222,47 @@ fun LoraTopBarButton(c: AppContainer, folderId: String? = null, compact: Boolean
             LoraFace(Modifier.size(LORA_PILL_FACE), label = label, director = director, fps = 20)
             if (!compact) {
                 Spacer(Modifier.width(6.dp))
-                Text(tr("Frag Lora"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface, maxLines = 1)
+                Text(tr("Frag Kana"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface, maxLines = 1)
             }
         }
     }
 }
 
-/** Where Lora appears (Einstellungen › Lora, first start). */
+/** Where Kana appears (Einstellungen › Kana, first start). */
 val LORA_MODES = listOf("EVERYWHERE" to trLater("Überall"), "CHAT" to trLater("Nur im Chat"), "OFF" to trLater("Aus"))
 
 /**
- * Einstellungen › Lora (AP-07, AP-33–35): where Lora appears, her model, how she hands over and helps in the chat,
+ * Einstellungen › Kana (AP-07, AP-33–35): where Kana appears, her model, how she hands over and helps in the chat,
  * calmer movements and one-time hints.
  */
 @Composable
 fun LoraSettings(c: AppContainer) {
     val s by c.settings.settings.collectAsStateWithLifecycle()
-    Section(tr("Wo Lora erscheint")) {
+    Section(tr("Wo Kana erscheint")) {
         Spot("lora.mode") {
             Segmented(LORA_MODES.map { it.first to tr(it.second) }, s.loraMode, { m -> c.settings.update { it.copy(loraMode = m, hideLora = m == "OFF") } })
         }
         HintText(
             when (s.loraMode) {
-                "CHAT" -> tr("Lora arbeitet nur im Chat mit. Ihr Panel öffnest du weiter mit Strg+L, über den Knopf oben im Chat oder Strg+K › „Lora fragen“.")
-                "OFF" -> tr("Lora erscheint nirgends – weder auf der Startseite noch im Chat oder im Sprachmodus; dort steht dann das Symbol der App. Die Ideen auf der Startseite bleiben.")
-                else -> tr("Lora ist auf der Startseite, im Chat und schläft unten rechts in den Einstellungen und weiteren Bereichen – ein Tipp weckt sie. Strg+L öffnet ihr Panel überall.")
+                "CHAT" -> tr("Kana arbeitet nur im Chat mit. Ihr Panel öffnest du weiter mit Strg+L, über den Knopf oben im Chat oder Strg+K › „Kana fragen“.")
+                "OFF" -> tr("Kana erscheint nirgends – weder auf der Startseite noch im Chat oder im Sprachmodus; dort steht dann das Symbol der App. Die Ideen auf der Startseite bleiben.")
+                else -> tr("Kana ist auf der Startseite, im Chat und schläft unten rechts in den Einstellungen und weiteren Bereichen – ein Tipp weckt sie. Strg+L öffnet ihr Panel überall.")
             },
         )
     }
-    // AP-80: what Lora is used for (from the first start), changeable here.
+    // AP-80: what Kana is used for (from the first start), changeable here.
     RolesSettings(c)
-    // AP-71: mixed mode, command model, how often Lora answered on this device.
+    // AP-71: mixed mode, command model, how often Kana answered on this device.
     LoraPlaceSettings(c)
-    // AP-72: what Lora learned from corrections – visible, deletable, exportable.
+    // AP-72: what Kana learned from corrections – visible, deletable, exportable.
     LoraCorrectionsSettings(c)
     LoraHistorySettings(c)
     // AP-78: own words of the Professur; AP-83: share commands, words, templates and house rules as one file.
     OwnWordsSettings(c)
     LoraPackagesSettings(c)
-    Section(tr("Lora als Helferin")) {
+    Section(tr("Kana als Helferin")) {
         HintText(
-            tr("Lora findet Einstellungen, öffnet Modi und TU Vorlagen, schlägt Werkzeuge vor, sucht frühere Chats, trägt Fristen in den Kalender ein und gibt Fachfragen an einen Chat weiter. Einfache Wünsche löst sie auf dem Gerät, ohne Anfrage; nur für echte Gespräche fragt sie ein Modell. Sie läuft nur auf Abruf und liest nie im Hintergrund mit. In Projekten „Nur auf diesem Gerät“ sucht sie nur lokal."),
+            tr("Kana findet Einstellungen, öffnet Modi und TU Vorlagen, schlägt Werkzeuge vor, sucht frühere Chats, trägt Fristen in den Kalender ein und gibt Fachfragen an einen Chat weiter. Einfache Wünsche löst sie auf dem Gerät, ohne Anfrage; nur für echte Gespräche fragt sie ein Modell. Sie läuft nur auf Abruf und liest nie im Hintergrund mit. In Projekten „Nur auf diesem Gerät“ sucht sie nur lokal."),
         )
         val models by c.models.state.collectAsStateWithLifecycle()
         val options = (listOf(ModelCatalog.FAST_CHAT) + models.ofType(io.github.thepytales.llmhub.data.ModelType.CHAT).map { it.id }).distinct()
@@ -1282,32 +1282,32 @@ fun LoraSettings(c: AppContainer) {
             options = handoffOptions.map(::handoffLabel),
             onSelect = { label -> handoffOptions.firstOrNull { handoffLabel(it) == label }?.let { id -> c.settings.update { it.copy(loraHandoffModel = id) } } },
         )
-        HintText(tr("Empfohlen: DeepSeek V4.1 Flash. Fragen, die Lora an einen Chat gibt, beantwortet dieses Modell. Nur in Sonderfällen – Programmieren, sehr schwierige Analysen, riesige Textmengen – wählt Lora selbst ein anderes und nennt den Grund auf der Karte im Chat. In Projekten mit strenger Datenschutzstufe gilt ein dort erlaubtes Modell."))
-        SwitchRow(tr("Übergaben erst zeigen"), tr("Fragen, die Lora an einen Chat gibt, landen zuerst im Eingabefeld – du sendest selbst."), s.loraHandoffReview, spot = "lora.handoffReview") { v ->
+        HintText(tr("Empfohlen: DeepSeek V4.1 Flash. Fragen, die Kana an einen Chat gibt, beantwortet dieses Modell. Nur in Sonderfällen – Programmieren, sehr schwierige Analysen, riesige Textmengen – wählt Kana selbst ein anderes und nennt den Grund auf der Karte im Chat. In Projekten mit strenger Datenschutzstufe gilt ein dort erlaubtes Modell."))
+        SwitchRow(tr("Übergaben erst zeigen"), tr("Fragen, die Kana an einen Chat gibt, landen zuerst im Eingabefeld – du sendest selbst."), s.loraHandoffReview, spot = "lora.handoffReview") { v ->
             c.settings.update { it.copy(loraHandoffReview = v) }
         }
-        SwitchRow(tr("Nächste Schritte unter Antworten"), tr("Lora bietet unter der letzten Antwort an, Fristen in den Kalender zu übernehmen, Tabellen als Excel zu speichern oder Literatur zu übernehmen – erkannt auf dem Gerät."), s.loraNextSteps, spot = "lora.nextSteps") { v ->
+        SwitchRow(tr("Nächste Schritte unter Antworten"), tr("Kana bietet unter der letzten Antwort an, Fristen in den Kalender zu übernehmen, Tabellen als Excel zu speichern oder Literatur zu übernehmen – erkannt auf dem Gerät."), s.loraNextSteps, spot = "lora.nextSteps") { v ->
             c.settings.update { it.copy(loraNextSteps = v) }
         }
-        SwitchRow(tr("KI-Nutzungsnachweis vorschlagen"), tr("Geht es in einem Chat um eine Arbeit (Hausarbeit, Masterarbeit, Paper, Antrag …) und hat die KI dafür Text geschrieben, bietet Lora einmal an, einen KI-Nutzungsnachweis zu erstellen. Im Chat-Menü ist er immer erreichbar."), s.aiUseHint, spot = "lora.aiUse") { v ->
+        SwitchRow(tr("KI-Nutzungsnachweis vorschlagen"), tr("Geht es in einem Chat um eine Arbeit (Hausarbeit, Masterarbeit, Paper, Antrag …) und hat die KI dafür Text geschrieben, bietet Kana einmal an, einen KI-Nutzungsnachweis zu erstellen. Im Chat-Menü ist er immer erreichbar."), s.aiUseHint, spot = "lora.aiUse") { v ->
             c.settings.update { it.copy(aiUseHint = v) }
         }
-        SwitchRow(tr("Hinweise beim Tippen"), tr("Tippst du im Chat etwas wie „dunkles Design“, zeigt Lora darüber den passenden Ort der App."), s.loraTyping, spot = "lora.typing") { v ->
+        SwitchRow(tr("Hinweise beim Tippen"), tr("Tippst du im Chat etwas wie „dunkles Design“, zeigt Kana darüber den passenden Ort der App."), s.loraTyping, spot = "lora.typing") { v ->
             c.settings.update { it.copy(loraTyping = v) }
         }
-        OutlinedButton(onClick = { LoraHelper.open() }) { Text(tr("Lora jetzt fragen")) }
+        OutlinedButton(onClick = { LoraHelper.open() }) { Text(tr("Kana jetzt fragen")) }
     }
     Section(tr("Verhalten")) {
-        SwitchRow(tr("Ruhigere Bewegungen"), tr("Lora läuft, tanzt, fliegt und dreht sich nicht – sie liest, schreibt und denkt nur."), s.loraCalm, spot = "lora.calm") { v ->
+        SwitchRow(tr("Ruhigere Bewegungen"), tr("Kana läuft, tanzt, fliegt und dreht sich nicht – sie liest, schreibt und denkt nur."), s.loraCalm, spot = "lora.calm") { v ->
             c.settings.update { it.copy(loraCalm = v) }
         }
-        SwitchRow(tr("Hinweise erlaubt"), tr("Lora darf einmal je Bereich auf etwas hinweisen, z. B. dass es für PDFs ein Werkzeug gibt. Sie unterbricht nie."), s.loraHints, spot = "lora.hints") { v ->
+        SwitchRow(tr("Hinweise erlaubt"), tr("Kana darf einmal je Bereich auf etwas hinweisen, z. B. dass es für PDFs ein Werkzeug gibt. Sie unterbricht nie."), s.loraHints, spot = "lora.hints") { v ->
             c.settings.update { it.copy(loraHints = v) }
         }
-        TextButton(onClick = { LoraHost.go("setup") }) { Text(tr("Lora Schritt für Schritt einrichten")) }
+        TextButton(onClick = { LoraHost.go("setup") }) { Text(tr("Kana Schritt für Schritt einrichten")) }
     }
-    // AP-131 e: where Lora thinks in the Server-Terminal (desktop only, when the tool is on).
+    // AP-131 e: where Kana thinks in the Server-Terminal (desktop only, when the tool is on).
     PlatformLoraSettings(c)
-    // AP-39, AP-41, AP-38: what Lora knows, tours, the protocol of her actions.
+    // AP-39, AP-41, AP-38: what Kana knows, tours, the protocol of her actions.
     LoraMemorySection(c)
 }

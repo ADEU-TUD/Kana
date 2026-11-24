@@ -2,7 +2,7 @@ package io.github.thepytales.llmhub.ssh
 
 import io.github.thepytales.llmhub.ui.trLater
 
-/** How much a step can change on the server (AP-118). The higher of Lora's and the app's own assessment counts. */
+/** How much a step can change on the server (AP-118). The higher of Kana's and the app's own assessment counts. */
 enum class Risk(val label: String) {
     READ(trLater("liest nur")),
     CHANGE(trLater("ändert")),
@@ -13,7 +13,7 @@ enum class Risk(val label: String) {
 enum class StepState { OPEN, RUNNING, DONE, FAILED, SKIPPED }
 
 /**
- * One step Lora proposes (AP-118): the command, what it does, what to watch out for, and how risky it is. Nothing runs
+ * One step Kana proposes (AP-118): the command, what it does, what to watch out for, and how risky it is. Nothing runs
  * without the user's click on *Ausführen* for exactly this step.
  */
 data class ServerStep(
@@ -25,7 +25,7 @@ data class ServerStep(
     val exitCode: Int? = null,
     val output: String = "",
 ) {
-    /** Lora's risk can only make a step more careful, never less (an `rm -rf` stays riskant). */
+    /** Kana's risk can only make a step more careful, never less (an `rm -rf` stays riskant). */
     fun withLoraRisk(lora: Risk?): ServerStep = if (lora != null && lora > risk) copy(risk = lora) else this
 }
 

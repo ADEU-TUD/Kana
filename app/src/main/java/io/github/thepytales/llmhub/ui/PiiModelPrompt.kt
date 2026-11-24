@@ -23,7 +23,7 @@ import io.github.thepytales.llmhub.AppContainer
 import io.github.thepytales.llmhub.data.PiiModelInfo
 
 /**
- * Offers Lora Namensschutz, the recognition model of the pseudonymization (AP-67), once per start of the app: when
+ * Offers Kana Namensschutz, the recognition model of the pseudonymization (AP-67), once per start of the app: when
  * messages are first pseudonymized or Einstellungen › Datenschutz is opened, while it is not downloaded. „Laden“,
  * „Später“ (asks again at the next start) or „Nicht mehr fragen“ (the download stays in the settings). Who still has the
  * model of 1.0.65 gets the new version offered as an update; the old one keeps working until then.
@@ -43,7 +43,7 @@ fun PiiModelPrompt(c: AppContainer) {
                 if (update) tr("Es gibt eine bessere Version von {0} ({1} MB): Sie lässt zitierte Autor:innen, öffentliche Personen und " +
                     "Literaturangaben öfter stehen und findet private Namen weiter zuverlässig. Bis du sie lädst, arbeitet die bisherige " +
                     "Version weiter. Alles läuft nur auf diesem Gerät.", PiiModelInfo.NAME, PiiModelInfo.MEGABYTES)
-                else tr("Lora kann für die Pseudonymisierung {0} laden ({1} MB), ein kleines Modell nur für diese Aufgabe. Es findet Namen, " +
+                else tr("Kana kann für die Pseudonymisierung {0} laden ({1} MB), ein kleines Modell nur für diese Aufgabe. Es findet Namen, " +
                     "Schulen, Kitas und Orte auch ohne Anrede oder bekannte Vornamen und lässt zitierte Autor:innen und öffentliche " +
                     "Personen eher stehen – in unseren Tests 98 % statt 78 % der privaten Angaben. Es läuft nur auf diesem Gerät, " +
                     "nichts verlässt es dabei.", PiiModelInfo.NAME, PiiModelInfo.MEGABYTES),
@@ -62,7 +62,7 @@ fun PiiModelPrompt(c: AppContainer) {
     )
 }
 
-/** Einstellungen › Datenschutz: Lora Namensschutz – download (or the update), progress, switch, model card, delete. */
+/** Einstellungen › Datenschutz: Kana Namensschutz – download (or the update), progress, switch, model card, delete. */
 @Composable
 fun PiiModelSettings(c: AppContainer) {
     val s by c.settings.settings.collectAsState()

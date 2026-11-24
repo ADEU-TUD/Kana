@@ -141,7 +141,7 @@ object PdfStage3 {
     }
 
     private fun clear(doc: PDDocument) {
-        doc.documentInformation = PDDocumentInformation().apply { producer = "Lora" }
+        doc.documentInformation = PDDocumentInformation().apply { producer = "Kana" }
         doc.documentCatalog.metadata = null
     }
 
@@ -301,7 +301,7 @@ object PdfStage3 {
             val info = doc.documentInformation
             val t = info.title?.takeIf { it.isNotBlank() } ?: title
             info.title = t
-            info.producer = "Lora"
+            info.producer = "Kana"
             val now = Calendar.getInstance()
             if (info.creationDate == null) info.creationDate = now
             info.modificationDate = now
@@ -335,8 +335,8 @@ object PdfStage3 {
 <x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"><pdfaid:part>2</pdfaid:part><pdfaid:conformance>B</pdfaid:conformance></rdf:Description>
 <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:format>application/pdf</dc:format><dc:title><rdf:Alt><rdf:li xml:lang="x-default">${esc(title)}</rdf:li></rdf:Alt></dc:title>${if (author.isNotBlank()) "<dc:creator><rdf:Seq><rdf:li>${esc(author)}</rdf:li></rdf:Seq></dc:creator>" else ""}</rdf:Description>
-<rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/"><xmp:CreateDate>${f.format(created.time)}</xmp:CreateDate><xmp:ModifyDate>${f.format(modified.time)}</xmp:ModifyDate><xmp:CreatorTool>Lora</xmp:CreatorTool></rdf:Description>
-<rdf:Description rdf:about="" xmlns:pdf="http://ns.adobe.com/pdf/1.3/"><pdf:Producer>Lora</pdf:Producer></rdf:Description>
+<rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/"><xmp:CreateDate>${f.format(created.time)}</xmp:CreateDate><xmp:ModifyDate>${f.format(modified.time)}</xmp:ModifyDate><xmp:CreatorTool>Kana</xmp:CreatorTool></rdf:Description>
+<rdf:Description rdf:about="" xmlns:pdf="http://ns.adobe.com/pdf/1.3/"><pdf:Producer>Kana</pdf:Producer></rdf:Description>
 </rdf:RDF></x:xmpmeta>
 <?xpacket end="w"?>""".toByteArray(Charsets.UTF_8)
     }

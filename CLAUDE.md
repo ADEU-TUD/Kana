@@ -1,5 +1,9 @@
 # Hinweise für KI-Assistenten
 
+- **Name: Die App und ihre Figur heißen seit 1.0.78 „Kana“** (bis 1.0.77 „Lora“, AP-155). Sichtbare Texte immer „Kana“
+  (`Brand.NAME`); „Lora“ nur noch in technischen Namen (Klassen wie `LoraFigure`, Einstellungs-Schlüssel, Dateien-Ordner
+  in der Cloud `/Lora`, Android-Ordner, Registry-Schlüssel `Lora.Open`, Modelldateien `lora-*-pytales`, Marker in
+  Dateien), in der Historie und als Alias (`Brand.OLD_NAME`: Anrede „Lora, …“, eigene Dateien von früher).
 - **Neue Version / Update veröffentlichen:** README › *Neue Version veröffentlichen (Kurzanleitung, auch für
   KI-Assistenten)*. Die Versionsnummer immer ausdrücklich angeben (letzte Version + 1), „Was ist neu“ kurz und
   verständlich.

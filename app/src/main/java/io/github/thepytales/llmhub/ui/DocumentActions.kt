@@ -138,7 +138,7 @@ object ShareDoc {
 val SAVE_AS_LABEL: String get() = tr("Speichern")
 
 /**
- * "Speichern": first a folder of the Lora-Ordner (AP-64 – the Android dialog does not reach the app's own folder, which
+ * "Speichern": first a folder of the Kana-Ordner (AP-64 – the Android dialog does not reach the app's own folder, which
  * is synced with the PC), „Anderswo …“ opens the system dialog; the file is copied there.
  */
 @Composable

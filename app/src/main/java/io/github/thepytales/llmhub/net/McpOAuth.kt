@@ -95,7 +95,7 @@ object McpOAuth {
     /** Registers the app as an OAuth client (RFC 7591); the client id and maybe a secret. */
     private suspend fun register(http: OkHttpClient, endpoint: String, redirect: String): Pair<String, String?> = withContext(Dispatchers.IO) {
         val body = buildJsonObject {
-            put("client_name", "Lora (TU Dresden)")
+            put("client_name", "Kana (TU Dresden)")
             putJsonArray("redirect_uris") { add(kotlinx.serialization.json.JsonPrimitive(redirect)) }
             putJsonArray("grant_types") { add(kotlinx.serialization.json.JsonPrimitive("authorization_code")); add(kotlinx.serialization.json.JsonPrimitive("refresh_token")) }
             putJsonArray("response_types") { add(kotlinx.serialization.json.JsonPrimitive("code")) }
@@ -189,9 +189,9 @@ object McpOAuth {
                     return@use
                 }
                 val ok = query["code"] != null && query["state"] == state
-                val html = if (ok) "<h2>Angemeldet</h2><p>Du kannst dieses Fenster schließen und zu Lora zurückkehren.</p>"
+                val html = if (ok) "<h2>Angemeldet</h2><p>Du kannst dieses Fenster schließen und zu Kana zurückkehren.</p>"
                 else "<h2>Anmeldung nicht abgeschlossen</h2><p>${query["error_description"] ?: query["error"] ?: "Unbekannte Antwort"}</p>"
-                val page = "<!DOCTYPE html><html lang=\"de\"><meta charset=\"utf-8\"><title>Lora</title><body style=\"font-family:sans-serif;margin:3em\">$html</body></html>"
+                val page = "<!DOCTYPE html><html lang=\"de\"><meta charset=\"utf-8\"><title>Kana</title><body style=\"font-family:sans-serif;margin:3em\">$html</body></html>"
                 val bytes = page.toByteArray(Charsets.UTF_8)
                 client.getOutputStream().write(("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: ${bytes.size}\r\nConnection: close\r\n\r\n").toByteArray() + bytes)
                 client.getOutputStream().flush()

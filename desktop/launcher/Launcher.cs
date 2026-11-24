@@ -1,4 +1,4 @@
-// Single-file start program for the portable Windows version of Lora (technical name ADEU LLM: folders and exe stay).
+// Single-file start program for the portable Windows version of Kana (technical name ADEU LLM: folders and exe stay).
 //
 // The app (Java runtime included) is embedded as app.zip. On the first start of a version it is unpacked
 // to %LOCALAPPDATA%\ADEU LLM\app\<version> – no admin rights, no installation – and then started.
@@ -14,9 +14,9 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Lora")]
-[assembly: AssemblyProduct("Lora")]
-[assembly: AssemblyDescription("Lora – Der freundliche Helfer für Forschung, Lehre und Verwaltung an der TU Dresden")]
+[assembly: AssemblyTitle("Kana")]
+[assembly: AssemblyProduct("Kana")]
+[assembly: AssemblyDescription("Kana – Der freundliche Helfer für Forschung, Lehre und Verwaltung an der TU Dresden")]
 [assembly: AssemblyVersion("@VERSION@")]
 [assembly: AssemblyFileVersion("@VERSION@")]
 
@@ -41,9 +41,9 @@ static class Launcher
                 if (error != null)
                 {
                     MessageBox.Show(
-                        "Lora konnte nicht vorbereitet werden:\n\n" + error.Message +
+                        "Kana konnte nicht vorbereitet werden:\n\n" + error.Message +
                         "\n\nAlternative: die ZIP-Version herunterladen, entpacken und \"ADEU LLM.exe\" starten.",
-                        "Lora", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "Kana", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 1;
                 }
             }
@@ -56,7 +56,7 @@ static class Launcher
         }
         catch (Exception e)
         {
-            MessageBox.Show("Lora konnte nicht gestartet werden:\n\n" + e.Message, "Lora",
+            MessageBox.Show("Kana konnte nicht gestartet werden:\n\n" + e.Message, "Kana",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
@@ -68,7 +68,7 @@ static class Launcher
         Exception error = null;
         Application.EnableVisualStyles();
         var form = new Form();
-        form.Text = "Lora";
+        form.Text = "Kana";
         form.FormBorderStyle = FormBorderStyle.FixedDialog;
         form.StartPosition = FormStartPosition.CenterScreen;
         form.ClientSize = new Size(380, 96);
@@ -78,7 +78,7 @@ static class Launcher
         form.ShowInTaskbar = true;
         try { form.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location); } catch (Exception) { }
         var label = new Label();
-        label.Text = "Lora " + Version + " wird beim ersten Start vorbereitet …";
+        label.Text = "Kana " + Version + " wird beim ersten Start vorbereitet …";
         label.SetBounds(16, 18, 348, 22);
         var bar = new ProgressBar();
         bar.SetBounds(16, 50, 348, 22);

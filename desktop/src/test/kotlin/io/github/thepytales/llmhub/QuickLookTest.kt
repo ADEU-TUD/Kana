@@ -34,7 +34,7 @@ class QuickLookTest {
         assertEquals("#Lehre", map["Schlagwörter"])
         assertEquals("Dateien › Erstellt › Briefe", map["Ort"])
         assertTrue("Leer" !in map, "leere Angaben fallen weg")
-        // Outside the Lora-Ordner: the real folder.
+        // Outside the Kana-Ordner: the real folder.
         val other = File(base, "anderswo.txt").apply { writeText("x") }
         assertEquals(base.absoluteFile.normalize().path, FileDetails.rows(other, "Text", root).first { it.label == "Ort" }.value)
         // A folder counts its entries.

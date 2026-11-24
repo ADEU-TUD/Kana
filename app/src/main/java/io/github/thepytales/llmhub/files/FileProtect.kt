@@ -82,7 +82,7 @@ object FileProtect {
         }
     }
 
-    /** The plain bytes of a protected Office file, to open it in Lora's editor (nothing is written to disk). */
+    /** The plain bytes of a protected Office file, to open it in Kana's editor (nothing is written to disk). */
     fun openOffice(file: File, password: String): ByteArray = OfficeCrypto.decrypt(file.readBytes(), password)
 
     /** Replaces [original] by [made] (after the work is done), keeping the original's name. */

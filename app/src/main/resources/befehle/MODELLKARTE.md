@@ -1,9 +1,9 @@
-# Modellkarte: Lora Befehle (Befehlsmodell für Lora, AP-71)
+# Modellkarte: Kana Befehle (Befehlsmodell für Kana, AP-71) – bis 1.0.77 „Lora Befehle“
 
 Stand: 10.11.2026 · Datei `lora-befehle-pytales.int8.onnx` (bis 1.0.65: „Befehlsmodell“, `befehle-modell.int8.onnx`)
 
 ## Was es tut
-Ordnet einen kurzen Wunsch an Lora oder Strg+K einer von 178 Aktionen der App zu – Bereich oder Werkzeug öffnen,
+Ordnet einen kurzen Wunsch an Kana oder Strg+K einer von 178 Aktionen der App zu – Bereich oder Werkzeug öffnen,
 Modus starten, Einstellung zeigen oder umstellen, TU Vorlage, Aktion im offenen Werkzeug, Tour, frühere Chats, Frist –
 oder erkennt eine **freie Anfrage** (einfach bzw. komplex), die wie bisher an ein Sprachmodell geht. Es läuft nur auf dem
 Gerät. Werte (an/aus, Seiten, Spalte, Dateiname …) liest die App danach mit Regeln aus dem Wunsch.
@@ -11,9 +11,9 @@ Ist die Sicherheit kleiner als die Schwelle, führt die App nichts aus, sondern 
 
 ## Herkunft
 - **Basismodell**: `distilbert/distilbert-base-german-cased` (Version `6f96562de9886779ce7d48810dff8f5c4afb6d0b`) von Hugging Face (DistilBERT nach Sanh, Debut, Chaumond und Wolf, 2019), Lizenz **Apache-2.0**.
-  Lora Befehle ist eine abgeleitete Arbeit: Das Basismodell wurde **von uns feinabgestimmt und verändert**. Lora Befehle ist kein
+  Kana Befehle ist eine abgeleitete Arbeit: Das Basismodell wurde **von uns feinabgestimmt und verändert**. Kana Befehle ist kein
   Produkt der Urheber des Basismodells; sie haben es weder geprüft noch gebilligt.
-- **Lizenz von Lora Befehle**: Bedingungen von PyTales in `License.md` im Repository ADEU-TUD/Lora (kostenlos nutzbar;
+- **Lizenz von Kana Befehle**: Bedingungen von PyTales in `License.md` im Repository ADEU-TUD/Kana (kostenlos nutzbar;
   Änderungen und Weiterverbreitung nur mit Genehmigung). Das Basismodell bleibt unter seiner eigenen Lizenz (unten).
 - **Feintuning**: Satz-Klassifikation, 33640 erfundene Trainingswünsche, beste Epoche
   4 von 5. Eingabe: was offen ist (ein Wort) und der Wunsch in Kleinbuchstaben.
@@ -46,8 +46,8 @@ weitergegeben. Die Schwelle wurde auf dem Entwicklungsteil gewählt (`schwelle.j
 distilbert-base-german-cased (Hugging Face: distilbert/distilbert-base-german-cased, Version 6f96562de9886779ce7d48810dff8f5c4afb6d0b)
 Urheber: Hugging Face (DistilBERT nach Sanh, Debut, Chaumond und Wolf, 2019). Lizenz: Apache License, Version 2.0.
 
-Lora Befehle ist eine abgeleitete Arbeit: Das Basismodell wurde von uns feinabgestimmt und verändert (Feintuning auf
-erfundenen Wünschen mit tools/befehle, eigener Satz-Kopf, Export als ONNX int8). Lora Befehle ist kein Produkt von
+Kana Befehle ist eine abgeleitete Arbeit: Das Basismodell wurde von uns feinabgestimmt und verändert (Feintuning auf
+erfundenen Wünschen mit tools/befehle, eigener Satz-Kopf, Export als ONNX int8). Kana Befehle ist kein Produkt von
 Hugging Face; die Urheber des Basismodells haben es weder geprüft noch gebilligt.
 
 

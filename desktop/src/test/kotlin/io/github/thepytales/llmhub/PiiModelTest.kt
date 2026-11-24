@@ -107,7 +107,7 @@ class PiiModelTest {
                     val p = pseudonymizer().apply { model = { t -> val t0 = System.nanoTime(); recognizer.hits(t).also { ms += (System.nanoTime() - t0) / 1_000_000 } } }
                     score.add(s, PseudonymCorpus.replacedWords(s.text, p.mask(s.text)))
                 }
-                report.append(score.report("App: Regeln + Lora Namensschutz, $section"))
+                report.append(score.report("App: Regeln + Kana Namensschutz, $section"))
                 if (section == "entwicklung") {
                     report.appendLine("  übersehen:"); score.missed.forEach { report.appendLine("    $it") }
                     report.appendLine("  fälschlich ersetzt:"); score.falseAlarms.forEach { report.appendLine("    $it") }

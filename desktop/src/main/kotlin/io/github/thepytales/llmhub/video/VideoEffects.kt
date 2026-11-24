@@ -392,7 +392,7 @@ object VideoFx {
         }
     }
 
-    /** A short line of what [fx] does, for the timeline and Lora („2× · rückwärts · 3 Bereiche“). */
+    /** A short line of what [fx] does, for the timeline and Kana („2× · rückwärts · 3 Bereiche“). */
     fun summary(fx: ClipFx): String = listOfNotNull(
         fx.speed.takeIf { abs(it - 1.0) > 1e-6 }?.let { String.format(Locale.GERMANY, "%s×", if (it % 1.0 == 0.0) it.toInt().toString() else String.format(Locale.GERMANY, "%.2f", it).trimEnd('0')) },
         tr("rückwärts").takeIf { fx.reverse },

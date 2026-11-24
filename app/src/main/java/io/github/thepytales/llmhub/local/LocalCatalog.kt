@@ -81,8 +81,8 @@ data class Projector(val repo: String, val commit: String, val file: String, val
 
 /**
  * A language model for this device: one GGUF file from Hugging Face at a fixed commit, checked by SHA-256. Curated
- * models of others are called „<original name> – Lora Edition“ (AP-106): chosen, quantized or taken over, measured and
- * set up for Lora by us – weights unchanged, base model, authors and licence as in the original ([card]).
+ * models of others are called „<original name> – Kana Edition“ (AP-106): chosen, quantized or taken over, measured and
+ * set up for Kana by us – weights unchanged, base model, authors and licence as in the original ([card]).
  */
 data class LocalModel(
     val id: String,
@@ -129,8 +129,8 @@ data class LocalModel(
 ) {
     val modelId get() = Privacy.LOCAL_PREFIX + id
     val url get() = "https://huggingface.co/$repo/resolve/$commit/$file?download=true"
-    /** The name without „– Lora Edition“. */
-    val original get() = name.substringBefore(" – Lora Edition")
+    /** The name without „– Kana Edition“. */
+    val original get() = name.substringBefore(" – Kana Edition")
 }
 
 /** How well a model fits this device. */
@@ -154,7 +154,7 @@ object LocalCatalog {
 
     val models = listOf(
         LocalModel(
-            "qwen3.5-0.8b", trLater("Qwen 3.5 0.8B – Lora Edition"), "Qwen",
+            "qwen3.5-0.8b", trLater("Qwen 3.5 0.8B – Kana Edition"), "Qwen",
             trLater("Winzig – für Handys und Rechner mit 8 GB, wenn nichts anderes schnell genug ist. Kurze Antworten, Umformulieren."),
             "unsloth/Qwen3.5-0.8B-GGUF", "6ab461498e2023f6e3c1baea90a8f0fe38ab64d0", "Qwen3.5-0.8B-Q8_0.gguf",
             811_843_840L, "0ad885ffd4bb022fc4f0d33a3308fa108ef8613159d3b3a67e23abca056b7a6c", 1.6, 8192, true, 0.8,
@@ -162,7 +162,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-0.8B-GGUF", "6ab461498e2023f6e3c1baea90a8f0fe38ab64d0", "mmproj-F16.gguf", 204_987_232L, "56e4c6cfe73b0c82e3e82bc518d7591997e61d81f723fc41a586f4fa69ea2453"),
         ),
         LocalModel(
-            "qwen3.5-2b", trLater("Qwen 3.5 2B – Lora Edition"), "Qwen",
+            "qwen3.5-2b", trLater("Qwen 3.5 2B – Kana Edition"), "Qwen",
             trLater("Sehr klein und schnell – für ältere Handys und Laptops mit 8 GB. Kurze Texte, Umformulieren, Zusammenfassen."),
             "unsloth/Qwen3.5-2B-GGUF", "f6d5376be1edb4d416d56da11e5397a961aca8ae", "Qwen3.5-2B-Q4_K_M.gguf",
             1_280_835_840L, "aaf42c8b7c3cab2bf3d69c355048d4a0ee9973d48f16c731c0520ee914699223", 2.4, 8192, true, 2.0,
@@ -170,7 +170,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-2B-GGUF", "f6d5376be1edb4d416d56da11e5397a961aca8ae", "mmproj-F16.gguf", 668_227_264L, "7035e9cb8d7c6a9681d07eef9a364783e86ea4cd73faab2eabb4f43a101830c7"),
         ),
         LocalModel(
-            "gemma-4-e2b", trLater("Gemma 4 E2B – Lora Edition"), "Gemma",
+            "gemma-4-e2b", trLater("Gemma 4 E2B – Kana Edition"), "Gemma",
             trLater("Kleines Modell von Google mit gutem Deutsch – Handys und Laptops ohne Grafikkarte."),
             "ggml-org/gemma-4-E2B-it-GGUF", "6938c58e698502037401a5f19f6905f2fb2f7dee", "gemma-4-E2B-it-Q4_0.gguf",
             2_841_481_184L, "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52", 4.0, 8192, true, 2.0, 5.1,
@@ -178,7 +178,7 @@ object LocalCatalog {
             projector = Projector("ggml-org/gemma-4-E2B-it-GGUF", "6938c58e698502037401a5f19f6905f2fb2f7dee", "mmproj-gemma-4-E2B-it-Q8_0.gguf", 557_368_064L, "9406f99c16d68cda4f1f0552192dcc99021ea1fc6d2fd50b1dc3ccf30d04b292"),
         ),
         LocalModel(
-            "qwen3.5-4b", trLater("Qwen 3.5 4B – Lora Edition"), "Qwen",
+            "qwen3.5-4b", trLater("Qwen 3.5 4B – Kana Edition"), "Qwen",
             trLater("Kompakt und vielseitig: strukturiert gut, nutzt Werkzeuge (Dokumente, Rechnen). Für Laptops mit 16 GB."),
             "unsloth/Qwen3.5-4B-GGUF", "e87f176479d0855a907a41277aca2f8ee7a09523", "Qwen3.5-4B-Q4_K_M.gguf",
             2_740_937_888L, "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4", 4.2, 8192, true, 4.0,
@@ -186,7 +186,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-4B-GGUF", "e87f176479d0855a907a41277aca2f8ee7a09523", "mmproj-F16.gguf", 672_423_616L, "cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864"),
         ),
         LocalModel(
-            "qwen3.5-4b-q8", trLater("Qwen 3.5 4B (genauer) – Lora Edition"), "Qwen",
+            "qwen3.5-4b-q8", trLater("Qwen 3.5 4B (genauer) – Kana Edition"), "Qwen",
             trLater("Dasselbe Modell mit feinerer Quantisierung (8 Bit) – etwas genauer, braucht mehr Speicher. Für Grafikkarten ab 6 GB und Macs."),
             "unsloth/Qwen3.5-4B-GGUF", "e87f176479d0855a907a41277aca2f8ee7a09523", "Qwen3.5-4B-Q8_0.gguf",
             4_482_403_488L, "10cc391b403021dd11c614679d2fd92f611c3681d29e29651b717316965d61e1", 5.9, 16384, true, 4.0,
@@ -194,7 +194,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-4B-GGUF", "e87f176479d0855a907a41277aca2f8ee7a09523", "mmproj-F16.gguf", 672_423_616L, "cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864"),
         ),
         LocalModel(
-            "gemma-4-e4b", trLater("Gemma 4 E4B – Lora Edition"), "Gemma",
+            "gemma-4-e4b", trLater("Gemma 4 E4B – Kana Edition"), "Gemma",
             trLater("Beste Sprachqualität ohne Grafikkarte: Briefe, Gutachten, Feedback. Für PCs mit 16 GB und neue Handys."),
             "ggml-org/gemma-4-E4B-it-GGUF", "a69f018d7678a2b9f5e705f8903d6fb29b9b25dc", "gemma-4-E4B-it-Q4_0.gguf",
             4_590_807_392L, "a555b900214b477d8880e7832e0b8925e139b0159640036b09fe472b6f2097f2", 6.0, 8192, true, 4.0, 8.0,
@@ -202,14 +202,14 @@ object LocalCatalog {
             projector = Projector("ggml-org/gemma-4-E4B-it-GGUF", "a69f018d7678a2b9f5e705f8903d6fb29b9b25dc", "mmproj-gemma-4-E4B-it-Q8_0.gguf", 559_874_816L, "197f49a93027f9843772bd24a6a9e0be2a32a788de5a3def330e9c585d86edd1"),
         ),
         LocalModel(
-            "qwen2.5-coder-7b", trLater("Qwen 2.5 Coder 7B – Lora Edition"), "Qwen",
+            "qwen2.5-coder-7b", trLater("Qwen 2.5 Coder 7B – Kana Edition"), "Qwen",
             trLater("Spezialist fürs Programmieren (Python, R, JavaScript, SQL, LaTeX) – für Grafikkarten ab 8 GB und schnelle PCs."),
             "unsloth/Qwen2.5-Coder-7B-Instruct-GGUF", "0ecf11859560b2bf42e703207f9371186d02245f", "Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf",
             4_683_073_504L, "9a961bb225cb2b9fd84b2297df0d53089895c049d7d9dc5f5f8aebbcd3247872", 6.0, 16384, true, 7.6,
             purposes = setOf(Purpose.CODE), quality = 7.0, base = "Qwen/Qwen2.5-Coder-7B-Instruct", authors = QWEN, kvKb = 57.0, maxContext = 32_768,
         ),
         LocalModel(
-            "qwen3.5-9b", trLater("Qwen 3.5 9B – Lora Edition"), "Qwen",
+            "qwen3.5-9b", trLater("Qwen 3.5 9B – Kana Edition"), "Qwen",
             trLater("Deutlich stärker beim Denken und Auswerten – mit Grafikkarte (8 GB) oder 24 GB Arbeitsspeicher."),
             "unsloth/Qwen3.5-9B-GGUF", "3885219b6810b007914f3a7950a8d1b469d598a5", "Qwen3.5-9B-Q4_K_M.gguf",
             5_680_522_464L, "03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8", 7.2, 16384, true, 9.0,
@@ -217,7 +217,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-9B-GGUF", "3885219b6810b007914f3a7950a8d1b469d598a5", "mmproj-F16.gguf", 918_166_080L, "f70dc3509053962b0d0d3ee8a7eacebf5d60aa560cad78254ae8698516ae029f"),
         ),
         LocalModel(
-            "qwen3.5-9b-q8", trLater("Qwen 3.5 9B (genauer) – Lora Edition"), "Qwen",
+            "qwen3.5-9b-q8", trLater("Qwen 3.5 9B (genauer) – Kana Edition"), "Qwen",
             trLater("Qwen 3.5 9B mit 8 Bit statt 4 – genauer bei Zahlen und Fakten. Für Grafikkarten ab 12 GB und Macs ab 24 GB."),
             "unsloth/Qwen3.5-9B-GGUF", "3885219b6810b007914f3a7950a8d1b469d598a5", "Qwen3.5-9B-Q8_0.gguf",
             9_527_502_048L, "809626574d0cb43d4becfa56169980da2bb448f2299270f7be443cb89d0a6ae4", 11.2, 16384, true, 9.0,
@@ -225,7 +225,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.5-9B-GGUF", "3885219b6810b007914f3a7950a8d1b469d598a5", "mmproj-F16.gguf", 918_166_080L, "f70dc3509053962b0d0d3ee8a7eacebf5d60aa560cad78254ae8698516ae029f"),
         ),
         LocalModel(
-            "gemma-4-12b", trLater("Gemma 4 12B – Lora Edition"), "Gemma",
+            "gemma-4-12b", trLater("Gemma 4 12B – Kana Edition"), "Gemma",
             trLater("Sehr gutes Deutsch und lange Texte – für Grafikkarten ab 10 GB oder PCs mit 32 GB."),
             "ggml-org/gemma-4-12B-it-GGUF", "a29b2a6b584a5bdcb672ccdcda99ea9faeacc51a", "gemma-4-12B-it-Q4_0.gguf",
             7_219_673_216L, "3712b9bd32cae83a22f67ee7a4466d8d7a4f21646ac8a07d19bf9418e8767a70", 9.5, 16384, true, 12.0,
@@ -233,14 +233,14 @@ object LocalCatalog {
             projector = Projector("ggml-org/gemma-4-12B-it-GGUF", "a29b2a6b584a5bdcb672ccdcda99ea9faeacc51a", "mmproj-gemma-4-12B-it-Q8_0.gguf", 158_987_616L, "59e62255435dda870e2d1de97cc031330b31a898bac12b38a182cecff9cd3738"),
         ),
         LocalModel(
-            "qwen2.5-coder-14b", trLater("Qwen 2.5 Coder 14B – Lora Edition"), "Qwen",
+            "qwen2.5-coder-14b", trLater("Qwen 2.5 Coder 14B – Kana Edition"), "Qwen",
             trLater("Stärkerer Programmier-Spezialist – für Grafikkarten ab 12 GB und Macs ab 24 GB."),
             "unsloth/Qwen2.5-Coder-14B-Instruct-GGUF", "388f3f20271ef903bb2dbe7d8236158903e7edb3", "Qwen2.5-Coder-14B-Instruct-Q4_K_M.gguf",
             8_988_110_240L, "13dec282d3ac9a87896248d5f69187102fad7c56315c553d2fab5403121702fe", 10.8, 16384, true, 14.7,
             purposes = setOf(Purpose.CODE), quality = 14.0, base = "Qwen/Qwen2.5-Coder-14B-Instruct", authors = QWEN, kvKb = 196.0, maxContext = 32_768,
         ),
         LocalModel(
-            "gemma-4-26b-a4b", trLater("Gemma 4 26B A4B – Lora Edition"), "Gemma",
+            "gemma-4-26b-a4b", trLater("Gemma 4 26B A4B – Kana Edition"), "Gemma",
             trLater("Großes Expertenmodell, rechnet aber nur mit 4 Mrd. Parametern – schnell auf Gaming-PCs (16 GB Grafik) oder mit 32 GB RAM."),
             "ggml-org/gemma-4-26B-A4B-it-GGUF", "9cf8c8db0f83fb4582f15381f8fb1a7c1b0b9ca2", "gemma-4-26B-A4B-it-Q4_0.gguf",
             14_618_145_824L, "d208665ab1cd3a69f7a9a4bc59430e8448c8093d9b06334f566ac59d6d504a03", 17.0, 16384, true, 4.0, 26.0,
@@ -248,7 +248,7 @@ object LocalCatalog {
             projector = Projector("ggml-org/gemma-4-26B-A4B-it-GGUF", "9cf8c8db0f83fb4582f15381f8fb1a7c1b0b9ca2", "mmproj-gemma-4-26B-A4B-it-Q8_0.gguf", 806_408_320L, "cc4e855736da450bf1e162d8cccfe0ad685727d0c9e04ef7dd8d884f3121039b"),
         ),
         LocalModel(
-            "qwen3.6-27b", trLater("Qwen 3.6 27B – Lora Edition"), "Qwen",
+            "qwen3.6-27b", trLater("Qwen 3.6 27B – Kana Edition"), "Qwen",
             trLater("Großes dichtes Modell, sehr gründlich – für Grafikkarten mit 24 GB und Macs ab 32 GB; ohne Grafikkarte zu langsam."),
             "unsloth/Qwen3.6-27B-GGUF", "82d411acf4a06cfb8d9b073a5211bf410bfc29bf", "Qwen3.6-27B-Q4_K_M.gguf",
             16_817_244_384L, "5ed60d0af4650a854b1755bd392f9aef4872643dc25a254bc68043fa638392a0", 19.5, 16384, true, 27.0,
@@ -256,7 +256,7 @@ object LocalCatalog {
             projector = Projector("unsloth/Qwen3.6-27B-GGUF", "82d411acf4a06cfb8d9b073a5211bf410bfc29bf", "mmproj-F16.gguf", 927_607_360L, "eacf610d1ee4bd5ed0197a0777dd8f4fceb8eefa27009067c7d496cb68fbde45"),
         ),
         LocalModel(
-            "gemma-4-31b", trLater("Gemma 4 31B – Lora Edition"), "Gemma",
+            "gemma-4-31b", trLater("Gemma 4 31B – Kana Edition"), "Gemma",
             trLater("Das stärkste Gemma für Texte – für Grafikkarten mit 24 GB und Macs ab 32 GB."),
             "unsloth/gemma-4-31B-it-GGUF", "c1ac76e99d5513b141e8adde7288b85c3f9c32ec", "gemma-4-31B-it-Q4_K_M.gguf",
             18_323_733_440L, "38bd64c852c4b460434cc7162fa9bdcf242faf86502581a754cb72956bb17f84", 21.5, 16384, true, 31.0,
@@ -264,14 +264,14 @@ object LocalCatalog {
             projector = Projector("unsloth/gemma-4-31B-it-GGUF", "c1ac76e99d5513b141e8adde7288b85c3f9c32ec", "mmproj-F16.gguf", 1_198_957_024L, "6edcca228213c28d3567a35d22f849eea52d8360875093851959adf5d2f270eb"),
         ),
         LocalModel(
-            "qwen3-coder-30b-a3b", trLater("Qwen 3 Coder 30B A3B – Lora Edition"), "Qwen",
+            "qwen3-coder-30b-a3b", trLater("Qwen 3 Coder 30B A3B – Kana Edition"), "Qwen",
             trLater("Der stärkste Programmier-Spezialist, rechnet nur mit 3 Mrd. Parametern – Grafikkarten mit 24 GB, Macs ab 32 GB, PCs ab 48 GB."),
             "unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF", "b17cb02dd882d5b6ab62fc777ad2995f19668350", "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf",
             18_556_689_568L, "fadc3e5f8d42bf7e894a785b05082e47daee4df26680389817e2093056f088ad", 20.5, 16384, true, 3.3, 30.5,
             purposes = setOf(Purpose.CODE), quality = 20.0, base = "Qwen/Qwen3-Coder-30B-A3B-Instruct", authors = QWEN, kvKb = 98.0, maxContext = 131_072,
         ),
         LocalModel(
-            "qwen3.6-35b-a3b", trLater("Qwen 3.6 35B A3B – Lora Edition"), "Qwen",
+            "qwen3.6-35b-a3b", trLater("Qwen 3.6 35B A3B – Kana Edition"), "Qwen",
             trLater("Das stärkste Modell für High-End-PCs (24 GB Grafik oder 48 GB RAM) – nah an den Server-Modellen."),
             "ggml-org/Qwen3.6-35B-A3B-GGUF", "7878dc9a905c7c9379e5e8d6a1aa9affdd6839c5", "Qwen3.6-35B-A3B-Q4_K_M.gguf",
             20_419_565_568L, "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7", 21.5, 16384, true, 3.0, 35.0,
@@ -391,13 +391,13 @@ object LocalCatalog {
     }
 
     /**
-     * Modellkarte (AP-106): what „Lora Edition“ means, original, authors, licence and source – shown in the app and
+     * Modellkarte (AP-106): what „Kana Edition“ means, original, authors, licence and source – shown in the app and
      * written into docs/MODELLKATALOG.md.
      */
     fun card(m: LocalModel): String = buildString {
         appendLine(m.name)
         appendLine()
-        appendLine(io.github.thepytales.llmhub.ui.tr("„Lora Edition“ heißt: von uns ausgewählt, als fertige Datei übernommen, auf Geräten gemessen und für Lora eingestellt (Kontextlänge, Vorlage). Die Gewichte sind unverändert. Basismodell, Urheber und Lizenz sind die des Originals; die Urheber haben Lora weder geprüft noch gebilligt."))
+        appendLine(io.github.thepytales.llmhub.ui.tr("„Kana Edition“ heißt: von uns ausgewählt, als fertige Datei übernommen, auf Geräten gemessen und für Kana eingestellt (Kontextlänge, Vorlage). Die Gewichte sind unverändert. Basismodell, Urheber und Lizenz sind die des Originals; die Urheber haben Kana weder geprüft noch gebilligt."))
         appendLine()
         appendLine(io.github.thepytales.llmhub.ui.tr("Original: {0} ({1})", m.original, m.base.ifBlank { "–" }))
         appendLine(io.github.thepytales.llmhub.ui.tr("Urheber: {0}", m.authors.ifBlank { "–" }))

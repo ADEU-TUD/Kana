@@ -303,7 +303,7 @@ internal val VIDEO_SHORTCUT_GROUPS: List<Pair<String, List<Pair<String, String>>
     ),
 )
 
-/** All keys in one list (Lora's help and the tests read it). */
+/** All keys in one list (Kana's help and the tests read it). */
 internal val VIDEO_SHORTCUTS: List<Pair<String, String>> = VIDEO_SHORTCUT_GROUPS.flatMap { it.second }
 
 @Composable

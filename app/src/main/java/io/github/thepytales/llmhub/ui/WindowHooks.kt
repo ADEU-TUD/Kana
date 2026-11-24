@@ -1,7 +1,7 @@
 package io.github.thepytales.llmhub.ui
 
 /**
- * Lora in mehreren Fenstern (AP-84, nur am PC): what the menus offer as „In neuem Fenster öffnen“. Set by the desktop
+ * Kana in mehreren Fenstern (AP-84, nur am PC): what the menus offer as „In neuem Fenster öffnen“. Set by the desktop
  * app (ExtraWindows); null on Android, where the entries do not appear.
  */
 object WindowHooks {
@@ -11,7 +11,7 @@ object WindowHooks {
     /** Opens document [id] in a window of its own. */
     @Volatile var openDoc: ((id: String, title: String) -> Unit)? = null
 
-    /** Lora's panel as a window of its own. */
+    /** Kana's panel as a window of its own. */
     @Volatile var openLora: (() -> Unit)? = null
 
     /** Whether chat [id] is open in a window of its own (the main window then shows a note instead of a second input). */

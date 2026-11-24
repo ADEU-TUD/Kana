@@ -128,7 +128,7 @@ import java.text.DateFormat
 import java.util.Date
 
 /**
- * Lora-Dateidialog (AP-42): Öffnen, Speichern unter und Ordnerwahl im Stil der App statt der alten AWT-/Swing-Dialoge.
+ * Kana-Dateidialog (AP-42): Öffnen, Speichern unter und Ordnerwahl im Stil der App statt der alten AWT-/Swing-Dialoge.
  * The callers of DesktopActions.pickFiles/pickFolder/pickSaveFile wait on a background thread ([show]); the dialog
  * itself is a window of the app ([LoraFileDialogHost], set up by Main.kt), so it also lies over the browser panel.
  */
@@ -172,8 +172,8 @@ object LoraFileDialog {
     }
 
     /**
-     * False for the start window that asks for a missing Lora-Ordner: then nothing of the app may be touched (its
-     * settings live in the Lora-Ordner, and loading them would create the missing folder anew).
+     * False for the start window that asks for a missing Kana-Ordner: then nothing of the app may be touched (its
+     * settings live in the Kana-Ordner, and loading them would create the missing folder anew).
      */
     @Volatile
     var appLoaded = true
@@ -192,7 +192,7 @@ object LoraFileDialog {
         get() = runCatching { prefs.getBoolean("grid", false) }.getOrDefault(false)
         set(v) { runCatching { prefs.edit().putBoolean("grid", v).apply() } }
 
-    /** Files chosen in the dialog lately (the „Zuletzt“ list also shows them, not only the Lora-Ordner). */
+    /** Files chosen in the dialog lately (the „Zuletzt“ list also shows them, not only the Kana-Ordner). */
     internal fun recentPicks(): List<File> = runCatching { prefs.getString("recent", "").orEmpty() }.getOrDefault("")
         .split('\n').filter { it.isNotBlank() }.map(::File).filter { it.exists() }
 
@@ -261,7 +261,7 @@ internal fun fileIcon(e: DialogEntry): ImageVector = when {
     else -> Icons.Outlined.InsertDriveFile
 }
 
-/** The places of the side column: Lora's own first, then this PC. */
+/** The places of the side column: Kana's own first, then this PC. */
 internal fun dialogPlaces(c: AppContainer?, mode: LoraFileDialog.Mode): List<Pair<String, List<DialogPlace>>> {
     val home = File(System.getProperty("user.home"))
     val lora = buildList {
@@ -272,7 +272,7 @@ internal fun dialogPlaces(c: AppContainer?, mode: LoraFileDialog.Mode): List<Pai
         if (c != null) {
             val drive = runCatching { c.drive }.getOrNull()
             if (drive != null) {
-                add(DialogPlace.Folder(trLater("Lora-Ordner"), Icons.Outlined.FolderOpen, drive.root))
+                add(DialogPlace.Folder(trLater("Kana-Ordner"), Icons.Outlined.FolderOpen, drive.root))
                 add(DialogPlace.Folder(trLater("Hochgeladen"), Icons.Outlined.CloudUpload, File(drive.root, io.github.thepytales.llmhub.data.LoraDrive.UPLOADS)))
                 add(DialogPlace.Folder(trLater("Erstellt"), Icons.Outlined.AutoAwesome, File(drive.root, io.github.thepytales.llmhub.data.LoraDrive.CREATED)))
             }
@@ -300,7 +300,7 @@ internal fun dialogPlaces(c: AppContainer?, mode: LoraFileDialog.Mode): List<Pai
         if (Os.linux) (File("/media/${System.getProperty("user.name")}").listFiles().orEmpty().toList() + File("/mnt").listFiles().orEmpty().toList())
             .filter { it.isDirectory }.forEach { folder(it.name, Icons.Outlined.Storage, it) }
     }
-    return listOf(trLater("Lora") to lora, trLater("Dieser PC") to pc).filter { it.second.isNotEmpty() }
+    return listOf(trLater("Kana") to lora, trLater("Dieser PC") to pc).filter { it.second.isNotEmpty() }
 }
 
 /** A small preview picture of pictures (and the first page of PDFs), made in the background and kept a while. */
@@ -337,7 +337,7 @@ private object DialogThumbs {
 
 private fun sizeText(bytes: Long): String = NextcloudService.size(bytes)
 
-/** The browser inside the dialog (also used by the start window that asks for the Lora-Ordner). */
+/** The browser inside the dialog (also used by the start window that asks for the Kana-Ordner). */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone: (List<File>?) -> Unit) {
@@ -768,7 +768,7 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
             text = {
                 Text(
                     when {
-                        inLora -> tr("Kommt in den Papierkorb von Lora und lässt sich 30 Tage lang wiederherstellen.")
+                        inLora -> tr("Kommt in den Papierkorb von Kana und lässt sich 30 Tage lang wiederherstellen.")
                         bin -> tr("Kommt in den Papierkorb von Windows.")
                         else -> tr("Wird endgültig gelöscht – das lässt sich nicht rückgängig machen.")
                     },
@@ -967,7 +967,7 @@ internal fun renameProblem(f: File, name: String): String? {
     }
 }
 
-/** Renames [f]: in the Lora-Ordner through the drive (tags and stars move along), elsewhere on the disk. */
+/** Renames [f]: in the Kana-Ordner through the drive (tags and stars move along), elsewhere on the disk. */
 internal fun renameEntry(c: AppContainer?, f: File, name: String): File {
     if (name == f.name) return f
     renameProblem(f, name)?.let { throw IllegalArgumentException(it) }
@@ -977,7 +977,7 @@ internal fun renameEntry(c: AppContainer?, f: File, name: String): File {
     return target
 }
 
-/** Deletes [files]: Lora's Papierkorb inside the Lora-Ordner, else the Windows one, else for good (after asking). */
+/** Deletes [files]: Kana's Papierkorb inside the Kana-Ordner, else the Windows one, else for good (after asking). */
 internal fun deleteEntries(c: AppContainer?, files: List<File>, inLora: Boolean, bin: Boolean) {
     when {
         inLora && c != null -> { c.drive.delete(files); c.drive.changed() }

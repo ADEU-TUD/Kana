@@ -87,7 +87,7 @@ private val TABS = listOf(trLater("Übersicht"), trLater("Gliederung"), trLater(
 
 /**
  * Antrags-Werkstatt (AP-21): the proposals; each with checklist and deadlines (into the calendar), the outline with the
- * Zeichen-/Seitenwächter, Arbeitspakete as Gantt, the budget with the funder's flat rate and the Abgabe-Check. Lora reads
+ * Zeichen-/Seitenwächter, Arbeitspakete as Gantt, the budget with the funder's flat rate and the Abgabe-Check. Kana reads
  * the call and writes in the mode „Antrag“, a trial review takes the role of a reviewer.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,10 +110,10 @@ fun ProposalScreen(c: AppContainer, onBack: () -> Unit) {
             when {
                 open != null -> ProposalDetail(c, open)
                 all.isEmpty() -> Column(Modifier.widthIn(max = 560.dp).padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    LoraFace(Modifier.size(72.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.NOTES, LoraAction.CALENDAR, LoraAction.CHART), LoraAction.NOTES))
+                    LoraFace(Modifier.size(72.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.NOTES, LoraAction.CALENDAR, LoraAction.CHART), LoraAction.NOTES))
                     Text(tr("Noch keine Anträge"), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        tr("Gib Lora die Ausschreibung (PDF oder Link): Sie legt Checkliste, Fristen und die Gliederung mit Seiten- und Zeichengrenzen an. Danach planst du Arbeitspakete und Budget, schreibst die Abschnitte – der Wächter zählt mit – und machst einen Probelauf mit einer Gutachter-Rolle."),
+                        tr("Gib Kana die Ausschreibung (PDF oder Link): Sie legt Checkliste, Fristen und die Gliederung mit Seiten- und Zeichengrenzen an. Danach planst du Arbeitspakete und Budget, schreibst die Abschnitte – der Wächter zählt mit – und machst einen Probelauf mit einer Gutachter-Rolle."),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -123,7 +123,7 @@ fun ProposalScreen(c: AppContainer, onBack: () -> Unit) {
                 }
                 else -> LazyColumn(Modifier.widthIn(max = 860.dp).fillMaxWidth(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     item {
-                        OutlinedButton(onClick = { proposalChat(tr("Hier ist die Ausschreibung: ")) }) { Text(tr("Neue Ausschreibung mit Lora einlesen")) }
+                        OutlinedButton(onClick = { proposalChat(tr("Hier ist die Ausschreibung: ")) }) { Text(tr("Neue Ausschreibung mit Kana einlesen")) }
                     }
                     items(all.sortedByDescending { it.updatedAt }, key = { it.id }) { p -> ProposalRow(p) { openId = p.id } }
                 }
@@ -178,7 +178,7 @@ private fun NewProposalDialog(onDismiss: () -> Unit, onCreate: (Proposal) -> Uni
                 }
                 Text(
                     tr("Gliederung, Checkliste und Pauschale kommen aus der Vorlage für") + " ${funder.name}" + (if (funder.program.isNotBlank()) " (${funder.program})" else "") + ". " +
-                        tr("Mit der Ausschreibung passt Lora sie an.") + if (funder.note.isNotBlank()) " " + funder.note else "",
+                        tr("Mit der Ausschreibung passt Kana sie an.") + if (funder.note.isNotBlank()) " " + funder.note else "",
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -202,7 +202,7 @@ private fun ProposalDetail(c: AppContainer, p: Proposal) {
         .also { MarkdownDocx.write(it, p.title, ProposalChecks.markdown(p)) }
     Column(Modifier.widthIn(max = 920.dp).fillMaxSize()) {
         FlowRow(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Button(onClick = { proposalChat(tr("Weiter am Antrag") + " „${p.title}“ (${ProposalTools.ID_LABEL} ${p.id}): ", p) }) { Text(tr("Mit Lora weiterarbeiten")) }
+            Button(onClick = { proposalChat(tr("Weiter am Antrag") + " „${p.title}“ (${ProposalTools.ID_LABEL} ${p.id}): ", p) }) { Text(tr("Mit Kana weiterarbeiten")) }
             OutlinedButton(onClick = { proposalChat(ProposalTools.reviewPrompt(p), p, send = true) }) {
                 Icon(Icons.Outlined.RateReview, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Probelauf: Gutachter:in"))
             }
@@ -247,7 +247,7 @@ private fun OverviewTab(p: Proposal, change: ((Proposal) -> Proposal) -> Unit, o
         Text(p.funderInfo.name + (if (p.program.isNotBlank()) " – ${p.program}" else "") + " · ${p.durationMonths} " + tr("Monate"), style = MaterialTheme.typography.bodyMedium)
         if (p.callSource.isNotBlank()) Text(tr("Quelle:") + " " + p.callSource, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (p.callSummary.isNotBlank()) MarkdownText(p.callSummary)
-        else HintText(tr("Noch keine Ausschreibung eingelesen – „Mit Lora weiterarbeiten“ und das PDF oder den Link anhängen."))
+        else HintText(tr("Noch keine Ausschreibung eingelesen – „Mit Kana weiterarbeiten“ und das PDF oder den Link anhängen."))
     }
     Section(tr("Fristen")) {
         p.deadlines.sortedBy { it.date }.forEach { d ->
@@ -370,7 +370,7 @@ private fun SectionCard(p: Proposal, index: Int, s: ProposalSection, change: ((P
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(s.title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-                TextButton(onClick = { proposalChat(tr("Schreibe im Antrag „{0}“ ({1}) den Abschnitt „{2}“: ", p.title, "${ProposalTools.ID_LABEL} ${p.id}", s.title), p) }) { Text(tr("Mit Lora")) }
+                TextButton(onClick = { proposalChat(tr("Schreibe im Antrag „{0}“ ({1}) den Abschnitt „{2}“: ", p.title, "${ProposalTools.ID_LABEL} ${p.id}", s.title), p) }) { Text(tr("Mit Kana")) }
                 TextButton(onClick = { limits = true }) { Text(tr("Grenze")) }
             }
             if (s.guidance.isNotBlank()) Text(s.guidance, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -428,7 +428,7 @@ private fun WorkPackagesTab(p: Proposal, change: ((Proposal) -> Proposal) -> Uni
         OutlinedTextField(value = duration, onValueChange = { v -> duration = v.filter(Char::isDigit).take(3) }, singleLine = true, label = { Text(tr("Laufzeit in Monaten")) }, modifier = Modifier.width(180.dp))
         TextButton(enabled = duration.toIntOrNull()?.let { it in 1..120 && it != p.durationMonths } == true, onClick = { change { it.copy(durationMonths = duration.toInt()) } }) { Text(tr("Übernehmen")) }
     }
-    if (p.workPackages.isEmpty()) HintText(tr("Noch keine Arbeitspakete. Lora plant sie mit dir, oder du legst sie hier an."))
+    if (p.workPackages.isEmpty()) HintText(tr("Noch keine Arbeitspakete. Kana plant sie mit dir, oder du legst sie hier an."))
     else Gantt(p) { edit = it }
     OutlinedButton(onClick = { edit = WorkPackage(title = "", start = 1, months = minOf(6, p.durationMonths)) }) { Icon(Icons.Outlined.Add, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Arbeitspaket")) }
     edit?.let { w ->
@@ -536,7 +536,7 @@ private fun BudgetTab(p: Proposal, change: ((Proposal) -> Proposal) -> Unit) {
             TextButton(onClick = { change { it.copy(overheadPercent = overhead.replace(',', '.').toDoubleOrNull()?.takeIf { v -> v > 0 }) } }) { Text(tr("Übernehmen")) }
         }
         OutlinedButton(onClick = { edit = BudgetRow(category = cats.firstOrNull() ?: "Personal", item = "", amounts = List(p.years) { 0.0 }) }) { Icon(Icons.Outlined.Add, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Posten")) }
-        HintText(tr("Personalmittel nach den aktuellen Sätzen des Förderers (z. B. DFG-Personalmittelsätze) – Lora kennzeichnet Annahmen."))
+        HintText(tr("Personalmittel nach den aktuellen Sätzen des Förderers (z. B. DFG-Personalmittelsätze) – Kana kennzeichnet Annahmen."))
     }
     edit?.let { r -> BudgetDialog(p, r, cats, change) { edit = null } }
 }

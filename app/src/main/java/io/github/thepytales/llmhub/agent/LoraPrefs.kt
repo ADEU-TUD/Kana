@@ -13,13 +13,13 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
 /**
- * „Was Lora über dich weiß“ (AP-39): preferences per tool in the memory (category Vorlieben). Lora asks before she
+ * „Was Kana über dich weiß“ (AP-39): preferences per tool in the memory (category Vorlieben). Kana asks before she
  * remembers anything („Soll ich mir merken, dass …?“) and uses what she knows as defaults of her actions (folder
  * structure, export preset). Nothing from the Tresor ends up here. The entries are normal memory entries, so they are
  * synced, shown under Einstellungen › Gedächtnis and go into chats like the rest.
  */
 object LoraPrefs {
-    /** The tools a preference can belong to, in the order of Einstellungen › Lora › Gedächtnis. */
+    /** The tools a preference can belong to, in the order of Einstellungen › Kana › Gedächtnis. */
     val TOOLS: List<Pair<String, String>> = listOf(
         "files" to trLater("Dateien"), "pdf" to trLater("PDF-Werkzeugkasten"), "doc" to trLater("Dokumente"), "sheet" to trLater("Tabellen"),
         "slides" to trLater("Folien"), "video" to trLater("Video"), "literature" to trLater("Literatur"), "chat" to trLater("Chat"),
@@ -75,7 +75,7 @@ object LoraPrefs {
         return all(c).filter { it.tool == key && !it.expired() }.joinToString("; ") { it.text }.ifBlank { null }
     }
 
-    /** All preferences for Lora's own prompt („Vorlieben: …“), or null. */
+    /** All preferences for Kana's own prompt („Vorlieben: …“), or null. */
     fun promptLine(c: AppContainer): String? {
         if (!active(c)) return null
         val list = all(c).filter { !it.expired() }
@@ -89,7 +89,7 @@ object LoraPrefs {
 
     /**
      * After an action with a choice the user made himself (aufräumen nach Semester, Export für OPAL): the question
-     * whether Lora should remember it, or null.
+     * whether Kana should remember it, or null.
      */
     fun offerFor(c: AppContainer, action: ToolAction, args: JsonObject): LoraStep.Remember? {
         for (p in action.remember) {
@@ -132,6 +132,6 @@ object LoraPrefs {
         return e
     }
 
-    /** „Alles vergessen“ of Einstellungen › Lora › Gedächtnis: removes every preference, returns them for Rückgängig. */
+    /** „Alles vergessen“ of Einstellungen › Kana › Gedächtnis: removes every preference, returns them for Rückgängig. */
     fun forgetAll(c: AppContainer): List<MemoryEntry> = all(c).also { list -> list.forEach { c.memory.delete(it.id) } }
 }

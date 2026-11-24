@@ -90,7 +90,7 @@ fun main(args: Array<String>) {
     }
     Network.setup()
     val showRequests = MutableStateFlow(0)
-    // AP-59: started from the Explorer's context menu („Mit Lora öffnen“, „Lora fragen“) – a running app takes the file.
+    // AP-59: started from the Explorer's context menu („Mit Kana öffnen“, „Kana fragen“) – a running app takes the file.
     val shell = io.github.thepytales.llmhub.desktop.ShellArgs.parse(args.toList())
     if (!SingleInstance.acquire(
             message = shell?.let { io.github.thepytales.llmhub.desktop.ShellArgs.line(it) },
@@ -98,7 +98,7 @@ fun main(args: Array<String>) {
         ) { showRequests.update { it + 1 } }
     ) exitProcess(0)
     shell?.let { io.github.thepytales.llmhub.desktop.ShellArgs.emit(it) }
-    // Lora-Ordner (AP-16): moved in the Explorer or its drive is missing – ask where it is now, before anything is loaded.
+    // Kana-Ordner (AP-16): moved in the Explorer or its drive is missing – ask where it is now, before anything is loaded.
     if (selfTest == null) io.github.thepytales.llmhub.desktop.Paths.missingRoot()?.let { missing -> if (!locateLoraFolder(missing)) exitProcess(0) }
     // Einfacher Sync (AP-12): before anything is loaded, make sure the synced data folder is not open on another PC and
     // that PC's changes have arrived; then this PC keeps its note there.
@@ -125,7 +125,7 @@ fun main(args: Array<String>) {
     Thread { Thread.sleep(4000); runCatching { io.github.thepytales.llmhub.ui.restoreExportQueue(LlmHubApp.container) } }.apply { isDaemon = true }.start()
     Updates.onInfo = { ctx, info -> io.github.thepytales.llmhub.desktop.Extensions.onUpdateInfo(ctx, info) }
     Autostart.refresh()
-    AppLog.i("Lora ${BuildConfig.VERSION_NAME} gestartet (${System.getProperty("os.name")}, Java ${System.getProperty("java.version")})")
+    AppLog.i("Kana ${BuildConfig.VERSION_NAME} gestartet (${System.getProperty("os.name")}, Java ${System.getProperty("java.version")})")
     val minimized = Autostart.FLAG in args && isTraySupported
     // Measuring point once the app has started (AP-04), a few seconds later when the first screen is up.
     Thread {
@@ -136,7 +136,7 @@ fun main(args: Array<String>) {
     }.apply { isDaemon = true }.start()
     // macOS: clicks that only worked the second time – scrolling during the click, button state (see MacClickFix).
     io.github.thepytales.llmhub.desktop.MacClickFix.install()
-    // Lora in mehreren Fenstern (AP-84): chats, documents and Lora beside the main window.
+    // Kana in mehreren Fenstern (AP-84): chats, documents and Kana beside the main window.
     io.github.thepytales.llmhub.ui.ExtraWindows.wire()
     application {
         App(startHidden = minimized, selfTest = selfTest, showRequests = showRequests)
@@ -207,7 +207,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
     LaunchedEffect(Unit) {
         showRequests.collect { if (it > 0) show() }
     }
-    // AP-12: the note says whether Lora only waits in the notification area (another PC may then open the folder).
+    // AP-12: the note says whether Kana only waits in the notification area (another PC may then open the folder).
     val runs by c.runs.runs.collectAsState()
     val idle = runs.isEmpty()
     SideEffect { io.github.thepytales.llmhub.desktop.SyncSession.background = { !visible && idle } }
@@ -219,7 +219,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
     }
 
     val recordScope = rememberCoroutineScope()
-    // A file from the Explorer's context menu (AP-59): show the window and open it or ask Lora about it.
+    // A file from the Explorer's context menu (AP-59): show the window and open it or ask Kana about it.
     LaunchedEffect(Unit) {
         io.github.thepytales.llmhub.desktop.ShellArgs.requests.collect { r ->
             show()
@@ -233,7 +233,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
         Tray(
             icon = painterResource("tray.png"),
             state = trayState,
-            tooltip = "Lora",
+            tooltip = "Kana",
             // Double-click on the icon or click on a notification.
             onAction = {
                 val recent = lastNotified?.takeIf { System.currentTimeMillis() - it.second < 10 * 60_000 }?.first
@@ -250,7 +250,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
                     Item(tr("Aufnahme beenden"), onClick = { recordScope.launch { io.github.thepytales.llmhub.ui.finishRecording(c, rec); show() } })
                     Separator()
                 }
-                Item(tr("Lora öffnen"), onClick = { show() })
+                Item(tr("Kana öffnen"), onClick = { show() })
                 Item(tr("Neuer Chat"), onClick = {
                     show()
                     Navigation.openRoute.value = "chat"
@@ -270,7 +270,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
                     toldAboutTray = true
                     trayState.sendNotification(
                         Notification(
-                            tr("Lora läuft weiter"),
+                            tr("Kana läuft weiter"),
                             tr("Antworten und geplante Aufgaben laufen im Hintergrund. Öffnen oder beenden über das Symbol im Infobereich."),
                             Notification.Type.Info,
                         )
@@ -280,7 +280,7 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
         },
         visible = visible,
         state = windowState,
-        title = "Lora",
+        title = "Kana",
         icon = painterResource("icon.png"),
         onPreviewKeyEvent = ::shortcut,
         onKeyEvent = { e ->
@@ -315,10 +315,10 @@ private fun ApplicationScope.App(startHidden: Boolean, selfTest: File?, showRequ
             }
         }
         LlmHubTheme(settings) {
-            // Lora-Dateidialog (AP-42) for Öffnen, Speichern unter and Ordnerwahl everywhere in the app.
+            // Kana-Dateidialog (AP-42) for Öffnen, Speichern unter and Ordnerwahl everywhere in the app.
             io.github.thepytales.llmhub.ui.LoraFileDialogHost(c)
             io.github.thepytales.llmhub.ui.SyncNewcomerDialog(visible = visible, idle = idle) { note ->
-                if (note != null && tray) trayState.sendNotification(Notification("Lora", note, Notification.Type.Info))
+                if (note != null && tray) trayState.sendNotification(Notification("Kana", note, Notification.Type.Info))
                 quit()
             }
             Box(
@@ -358,7 +358,7 @@ private fun zoom(step: Int) {
 }
 
 /**
- * Strg+N new chat, Strg+, settings, Strg++/Strg+−/Strg+0 zoom, Strg+K command palette, Strg+L Lora,
+ * Strg+N new chat, Strg+, settings, Strg++/Strg+−/Strg+0 zoom, Strg+K command palette, Strg+L Kana,
  * Strg+Umschalt+L literature, Strg+/ shortcut overview (see ShortcutsDialog); Strg+B side menu and Strg+D files only
  * after the focused element (AppShortcuts).
  */
@@ -376,8 +376,8 @@ private fun shortcut(e: KeyEvent): Boolean {
 
 
 /**
- * The Lora-Ordner is not where it was (moved, renamed, drive not connected): the user shows its new place, creates it
- * anew at the old one, or ends the app. A small window of its own in the Lora style (AP-42) – nothing of the app is
+ * The Kana-Ordner is not where it was (moved, renamed, drive not connected): the user shows its new place, creates it
+ * anew at the old one, or ends the app. A small window of its own in the Kana style (AP-42) – nothing of the app is
  * loaded yet, so it touches neither the settings nor the data.
  */
 private fun locateLoraFolder(missing: File): Boolean {
@@ -394,7 +394,7 @@ private fun locateLoraFolder(missing: File): Boolean {
         }
         Window(
             onCloseRequest = { done(false) },
-            title = "Lora-Ordner nicht gefunden",
+            title = "Kana-Ordner nicht gefunden",
             icon = painterResource("icon.png"),
             state = rememberWindowState(size = DpSize(if (picking) 940.dp else 620.dp, if (picking) 620.dp else 400.dp), position = WindowPosition.Aligned(androidx.compose.ui.Alignment.Center)),
         ) {
@@ -404,7 +404,7 @@ private fun locateLoraFolder(missing: File): Boolean {
                         io.github.thepytales.llmhub.ui.LoraFileBrowser(
                             null,
                             io.github.thepytales.llmhub.ui.LoraFileDialog.Request(
-                                io.github.thepytales.llmhub.ui.LoraFileDialog.Mode.FOLDER, "Wo liegt der Lora-Ordner jetzt?",
+                                io.github.thepytales.llmhub.ui.LoraFileDialog.Mode.FOLDER, "Wo liegt der Kana-Ordner jetzt?",
                                 start = missing.parentFile?.takeIf { it.isDirectory } ?: paths.documents,
                             ),
                         ) { files ->
@@ -418,10 +418,10 @@ private fun locateLoraFolder(missing: File): Boolean {
                         }
                     } else {
                         androidx.compose.foundation.layout.Column(Modifier.padding(28.dp), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(14.dp)) {
-                            androidx.compose.material3.Text("Der Lora-Ordner ist nicht mehr an seinem Platz", style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
+                            androidx.compose.material3.Text("Der Kana-Ordner ist nicht mehr an seinem Platz", style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
                             androidx.compose.material3.Text(missing.absolutePath, style = androidx.compose.material3.MaterialTheme.typography.bodyMedium)
                             androidx.compose.material3.Text(
-                                "Wurde er verschoben oder umbenannt? Dann zeig Lora, wo er jetzt liegt.\n" +
+                                "Wurde er verschoben oder umbenannt? Dann zeig Kana, wo er jetzt liegt.\n" +
                                     "Liegt er auf einem Netz- oder USB-Laufwerk, das gerade fehlt: Laufwerk verbinden und „Erneut versuchen“.",
                                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                             )
@@ -437,8 +437,8 @@ private fun locateLoraFolder(missing: File): Boolean {
                     unknown?.let { dir ->
                         androidx.compose.material3.AlertDialog(
                             onDismissRequest = { unknown = null },
-                            title = { androidx.compose.material3.Text("Lora-Ordner") },
-                            text = { androidx.compose.material3.Text("In „${dir.absolutePath}“ liegt kein Lora-Ordner. Trotzdem dort neu anfangen?") },
+                            title = { androidx.compose.material3.Text("Kana-Ordner") },
+                            text = { androidx.compose.material3.Text("In „${dir.absolutePath}“ liegt kein Kana-Ordner. Trotzdem dort neu anfangen?") },
                             confirmButton = { androidx.compose.material3.TextButton(onClick = { paths.useRoot(dir); done(true) }) { androidx.compose.material3.Text("Ja, dort anfangen") } },
                             dismissButton = { androidx.compose.material3.TextButton(onClick = { unknown = null }) { androidx.compose.material3.Text("Abbrechen") } },
                         )

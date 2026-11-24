@@ -35,7 +35,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * Lora-Dateidialog auf Android (AP-64), where the system dialog does not reach: a folder of the app's own Lora-Ordner
+ * Kana-Dateidialog auf Android (AP-64), where the system dialog does not reach: a folder of the app's own Kana-Ordner
  * (synced with the PC) as the place to save. The folders as a tree, a new folder on the spot, and – when [onElsewhere] is
  * given – „Anderswo …“ for the Android dialog (Downloads, Drive, a USB stick).
  */
@@ -57,7 +57,7 @@ fun LoraFolderPicker(
         title = { Text(title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
         text = {
             Column(Modifier.heightIn(max = 460.dp)) {
-                HintText(tr("Im Lora-Ordner – über den Sync auch am PC."))
+                HintText(tr("Im Kana-Ordner – über den Sync auch am PC."))
                 LazyColumn(Modifier.weight(1f, fill = false)) {
                     items(folders) { f ->
                         val depth = if (f.isEmpty()) 0 else f.count { it == '/' } + 1

@@ -109,11 +109,11 @@ class AskUserTool : ToolProvider {
 }
 
 /**
- * TU Vorlagen als Fragerunde (AP-06): instead of the form, Lora asks for the fields step by step with answer buttons and
+ * TU Vorlagen als Fragerunde (AP-06): instead of the form, Kana asks for the fields step by step with answer buttons and
  * then carries out the template with the answers.
  */
 object TemplateInterview {
-    /** Templates with this many fields or more get the button „Mit Lora Schritt für Schritt“. */
+    /** Templates with this many fields or more get the button „Mit Kana Schritt für Schritt“. */
     const val MIN_FIELDS = 3
 
     fun offered(t: io.github.thepytales.llmhub.data.Template): Boolean = t.direct == null && t.fields.size >= MIN_FIELDS

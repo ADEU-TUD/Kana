@@ -44,7 +44,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Lora sortiert selbst (AP-69 b–d): with a mailbox and a model on this device made up for the test. */
+/** Kana sortiert selbst (AP-69 b–d): with a mailbox and a model on this device made up for the test. */
 class MailSorterTest {
     /** A mailbox in memory that, like Outlook, gives every moved mail a new id; it records what the sorter asks of it. */
     private class FakeBox : OutlookBridge {
@@ -353,7 +353,7 @@ class MailSorterTest {
     @Test
     fun lorasProposalAndTheActionInAnAblauf() {
         MailSorter.testModel = FakeModel()
-        // Lora suggests the folders; the person confirms (or changes) them first.
+        // Kana suggests the folders; the person confirms (or changes) them first.
         val run = MailSorter.start(c, MailSortWish.spec("Räum meinen Posteingang der letzten Woche auf und schlag mir sinnvolle Ordner vor"))
         val folders = await(run.id)
         assertEquals(MailSortRun.FOLDERS, folders.state, folders.message)

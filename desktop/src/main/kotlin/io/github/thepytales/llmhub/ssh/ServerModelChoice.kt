@@ -8,9 +8,9 @@ import io.github.thepytales.llmhub.ui.tr
 import java.util.Locale
 
 /**
- * Where Lora thinks in the Server-Terminal (AP-131 e): the model on this PC or the Uni-Server of the TU Dresden – never
+ * Where Kana thinks in the Server-Terminal (AP-131 e): the model on this PC or the Uni-Server of the TU Dresden – never
  * an external cloud provider (like the Postfach). The terminal asks once ([AppSettings.serverTerminalModel] empty) with
- * a recommendation for this PC and the risks of both ways; Einstellungen › Lora changes it later.
+ * a recommendation for this PC and the risks of both ways; Einstellungen › Kana changes it later.
  */
 object ServerModelChoice {
     enum class Choice(val key: String) { LOCAL("LOCAL"), TU_SERVER("TU_SERVER") }
@@ -53,7 +53,7 @@ object ServerModelChoice {
     /** The best installed local model for the terminal (code specialists count – shell commands are code). */
     fun localModel(c: AppContainer): String? = c.localLlm.installedModels().maxByOrNull { it.quality }?.modelId
 
-    /** Lora's model when it runs at the TU, else the default Lora model on the Uni-Server; null without the Uni key. */
+    /** Kana's model when it runs at the TU, else the default Kana model on the Uni-Server; null without the Uni key. */
     fun tuModel(c: AppContainer): String? {
         val s = c.settings.current
         if (!s.hasApiKey) return null
@@ -104,7 +104,7 @@ object ServerModelChoice {
                 if (!localOk) add(tr("Erst ein Modell laden (Einstellungen › Lokale Modelle), sonst gibt es keine Vorschläge."))
                 if (small || !localOk) add(tr("Kleine Modelle schlagen öfter falsche oder unvollständige Befehle vor – lies jede Karte, bevor du klickst."))
                 if (slow && speed != null) add(speed)
-                add(tr("Während Lora denkt, ist der PC ausgelastet (Lüfter, Akku)."))
+                add(tr("Während Kana denkt, ist der PC ausgelastet (Lüfter, Akku)."))
             },
         )
         val tu = Option(
@@ -118,7 +118,7 @@ object ServerModelChoice {
                 add(tr("Ohne Internet oder bei einer Störung des Uni-Servers gibt es keine Vorschläge (die festen Abläufe gehen weiter)."))
             },
         )
-        val both = tr("In beiden Fällen führt Lora nichts ohne deinen Klick aus. Externe Cloud-Anbieter (z. B. Gemini) sind fürs Terminal gesperrt.")
+        val both = tr("In beiden Fällen führt Kana nichts ohne deinen Klick aus. Externe Cloud-Anbieter (z. B. Gemini) sind fürs Terminal gesperrt.")
         return Advice(recommended, why, local, tu, both)
     }
 }

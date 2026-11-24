@@ -62,7 +62,7 @@ class NothingLostTest {
 
     private fun pages(f: File) = Loader.loadPDF(f).use { it.numberOfPages }
 
-    /** A change of the open PDF like the screen makes it (Lora's way uses the same history). */
+    /** A change of the open PDF like the screen makes it (Kana's way uses the same history). */
     private fun dropLastPage() = runBlocking {
         ActionHosts.changeOpenPdf!!("Seite löschen") { src, out ->
             Loader.loadPDF(src).use { d -> d.removePage(d.numberOfPages - 1); d.save(out) }

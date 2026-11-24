@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/** Fließtext-Editor (AP-44) and Lora im Dokument (AP-47): the running text and its Markdown. */
+/** Fließtext-Editor (AP-44) and Kana im Dokument (AP-47): the running text and its Markdown. */
 class FlowEditorTest {
     private fun rich(md: String) = RichText.fromBlocks(DocBlocks.split(md).filter(RichText::isFlowBlock))
     private fun md(r: RichText) = DocBlocks.join(RichText.toBlocks(r))

@@ -345,7 +345,7 @@ private fun BrowserHost() {
 @Composable
 private fun Preparing(p: WebEngine.State.Preparing) {
     Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        LoraFace(Modifier.size(64.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.GLOBE, LoraAction.SEARCH), LoraAction.GLOBE))
+        LoraFace(Modifier.size(64.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.GLOBE, LoraAction.SEARCH), LoraAction.GLOBE))
         Spacer(Modifier.size(12.dp))
         Text(p.step, style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.size(10.dp))
@@ -363,7 +363,7 @@ private fun SetUp(c: AppContainer, tab: Browser.Tab?) {
         Text(tr("Links neben dem Chat öffnen"), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.size(8.dp))
         Text(
-            tr("Lora richtet dafür einmalig einen Browser ein (Chromium, ca. 170 MB, ohne Admin-Rechte). Danach öffnen sich Links aus Chat, Literatur und Dokumenten hier als Tabs – mit Fragen zur Seite, Zusammenfassung und Übernahme in die Literatur. Anmeldungen (z. B. über die TU) bleiben erhalten."),
+            tr("Kana richtet dafür einmalig einen Browser ein (Chromium, ca. 170 MB, ohne Admin-Rechte). Danach öffnen sich Links aus Chat, Literatur und Dokumenten hier als Tabs – mit Fragen zur Seite, Zusammenfassung und Übernahme in die Literatur. Anmeldungen (z. B. über die TU) bleiben erhalten."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.widthIn(max = 420.dp),

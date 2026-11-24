@@ -1,10 +1,11 @@
-# Lora – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden
+# Kana – Der freundliche Helfer für alle Wünsche in Forschung, Lehre und Verwaltung an der TU Dresden
 
 Eigene Android-App (und portable Windows-Version) für die OpenAI-kompatible LLM-Schnittstelle unter `https://llm.scads.ai/v1`
 (API-Key aus dem TU-Dresden-Self-Service). Inoffiziell, nicht mit der Universität verbunden.
 
-**Name**: Die App heißt seit Version 1.0.44 **Lora** – wie ihre Helferin (bis 1.0.43 „ADEU LLM“). Sichtbar heißt alles
-Lora (Fenster, Taskleiste, Android-Symbol, Startanimation mit Slogan, Updates, Dokument-Metadaten). **Technische Namen
+**Name**: Die App heißt seit Version 1.0.78 **Kana** – wie ihre Helferin (1.0.44 bis 1.0.77 „Lora“, bis 1.0.43
+„ADEU LLM“; AP-155). Kana versteht weiter, wenn man sie mit „Lora“ anspricht. Sichtbar heißt alles
+Kana (Fenster, Taskleiste, Android-Symbol, Startanimation mit Slogan, Updates, Dokument-Metadaten). **Technische Namen
 bleiben bewusst**: `ADEU LLM.exe`, die Datenordner `%APPDATA%\ADEU LLM` und `%LOCALAPPDATA%\ADEU LLM`, die Dateien der
 Releases (`ADEU-LLM-x.y.z-…`) und der Autostart-Eintrag – ältere Versionen suchen beim Update genau diese Namen, und
 vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen wäre ein eigener Schritt mit Migration.
@@ -16,25 +17,25 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Corporate Designs), **Office** (nüchtern wie Microsoft 365) und **Hoher Kontrast** (barrierearm, WCAG AAA). Unter
   *Weitere Stile* bleiben Claude, ChatGPT, Gemini und Material You. *Einstellungen › Darstellung* zeigt jeden Stil als
   kleine Vorschau; dort lässt sich auch die Startanimation ausschalten.
-- **Logo und Startanimation**: Das Logo zeigt Lora, das Maskottchen, beim Lesen – im App-Violett mit weißem Gesicht auf
-  einer hellen Kachel (seit 1.0.70 in der neuen Zeichnung mit Licht und Schatten, die Figur etwas größer). Beim Start erscheint die Kachel, Lora hüpft hinein und blättert eine Seite um (abschaltbar unter
+- **Logo und Startanimation**: Das Logo zeigt Kana, das Maskottchen, beim Lesen – im App-Violett mit weißem Gesicht auf
+  einer hellen Kachel (seit 1.0.70 in der neuen Zeichnung mit Licht und Schatten, die Figur etwas größer). Beim Start erscheint die Kachel, Kana hüpft hinein und blättert eine Seite um (abschaltbar unter
   *Einstellungen › Darstellung*). App-Symbole für Windows (`.ico`, Infobereich) und Android (Launcher, Benachrichtigung)
   entstehen aus derselben Zeichnung (siehe *Logo ändern* unten).
 - **Chat im ADEU-Stil**: Antworten sind ruhiger Text; Kästen für Code, Tabellen und Hinweise (`> [!NOTE]` oder
   `> **Hinweis:**`) haben einen feinen Rand und einen Farbakzent statt grauer Flächen. Links zeigen ihre Domain als kleine
   Marke, bloße Adressen erscheinen nur als Marke, Quellen wie `[1]` werden zu nummerierten Marken, die auf die
   Quellenliste am Ende der Antwort verlinken. Anhänge, Dokumentkarten, die Literaturliste und Fehler sehen einheitlich
-  aus; Lora signiert jede Antwort klein neben dem Modellnamen. Gilt für alle Stile, Hoher Kontrast bleibt WCAG AAA.
+  aus; Kana signiert jede Antwort klein neben dem Modellnamen. Gilt für alle Stile, Hoher Kontrast bleibt WCAG AAA.
 - **Aufgeräumte Seitenleiste**: oben *Neuer Chat* und bis zu vier Bereiche (Standard: *Erstellen*, *Literatur*,
   *Transkription*, *Dateien*), darunter ausklappbar **„Mehr“** mit *Bilder erzeugen*, *Geplante Aufgaben* und allen
   eingeschalteten Werkzeugen (auf-/zugeklappt bleibt gespeichert). Rechtsklick bzw. langes Drücken holt einen Bereich
   nach oben, schiebt ihn unter „Mehr“ oder **blendet ihn aus** (alle außer *Erstellen* und *Dateien*; auch unter
-  *Einstellungen › Werkzeuge › Seitenleiste*) – Ausgeblendetes bleibt über Strg+K und Lora erreichbar. Darunter Projekte,
+  *Einstellungen › Werkzeuge › Seitenleiste*) – Ausgeblendetes bleibt über Strg+K und Kana erreichbar. Darunter Projekte,
   angeheftete Chats und die Chats nach Tagen. Modellübersicht, Modellvergleich, Verbrauch und die lokalen Modelle stehen
   in den Einstellungen unter *Modelle* bzw. *Daten*.
 - **Einschaltbare Werkzeuge** (*Einstellungen › Werkzeuge*): große Werkzeuge haben je einen Schalter und sind anfangs
-  aus; eingeschaltete erscheinen unter „Mehr“, zugehörige Modi (z. B. *Lernspiel*) erst dann in `/`, Strg+K und Loras
-  Landkarte. Passt eine Anfrage zu einem ausgeschalteten Werkzeug, schlägt Lora es über dem Eingabefeld vor („Quiz“ →
+  aus; eingeschaltete erscheinen unter „Mehr“, zugehörige Modi (z. B. *Lernspiel*) erst dann in `/`, Strg+K und Kanas
+  Landkarte. Passt eine Anfrage zu einem ausgeschalteten Werkzeug, schlägt Kana es über dem Eingabefeld vor („Quiz“ →
   *Lernspiele*). Einschaltbar sind der *PDF-Werkzeugkasten*, der *Tresor*, *Lernspiele*, *Stapel & Massenkontrolle*, die
   *Antrags-Werkstatt* und (Windows) *Mail & Kalender* und der *Videoeditor*. Gestalten (Poster, Flyer …) ist kein Werkzeug mehr, sondern Teil von *Erstellen*. Der Browser
   neben dem Chat ist ein Schalter unter *Einstellungen › Windows*.
@@ -45,11 +46,11 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   gibt den Platz wieder frei. Erste Erweiterung ist das **Videoeditor-Paket** (ca. 40 MB: ffprobe für genaue Angaben zu
   Videos, Sprachmodell RNNoise für die Rauschminderung, seit Paket 2 die Gesichtserkennung YuNet); der Videoeditor bietet es beim ersten Öffnen an und funktioniert
   auch ohne. Die **Browser-Engine** (Chromium, AP-14) steht daneben und lässt sich ebenso entfernen.
-- **Lora, die Helferin im Kern der App** (AP-33 bis AP-36):
-  - **Lora-Panel** statt Popup: am PC (breite Fenster) eine Seitenleiste rechts, die beim Navigieren offen bleibt – die
+- **Kana, die Helferin im Kern der App** (AP-33 bis AP-36):
+  - **Kana-Panel** statt Popup: am PC (breite Fenster) eine Seitenleiste rechts, die beim Navigieren offen bleibt – die
     App wird schmaler statt verdeckt –, auf dem Handy ein Blatt von unten. Das Gespräch bleibt bis *Neu beginnen*,
     Antworten erscheinen schrittweise und formatiert, *Abbrechen* stoppt, Fehler sind freundlich formuliert.
-  - **Kontext**: Lora weiß, wo du bist, und zeigt passende Vorschläge („Das passt hier“): im Chat *Chat zusammenfassen*
+  - **Kontext**: Kana weiß, wo du bist, und zeigt passende Vorschläge („Das passt hier“): im Chat *Chat zusammenfassen*
     und *Als Word-Dokument* (landen direkt im offenen Chat), in den Einstellungen *Hell oder dunkel*, in der Literatur
     *Exzerpt erstellen* und *Zitierstil* usw. Feste Ziele öffnen sofort, ohne Anfrage.
   - **Ergebnis-Karten**: Orte mit Pfad und *Öffnen*, Einstellungen mit Vorher → Nachher, *Umstellen* und **Rückgängig**,
@@ -57,34 +58,34 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **Neue Fähigkeiten**: frühere Chats durchsuchen („Wo hatte ich das mit der Wübben-Stiftung?“, „meine letzten Chats“ –
     auf dem Gerät), **Fristen und Erinnerungen in den Kalender** (ganztägiger Termin mit Erinnerung, öffnet in Outlook
     bzw. der Kalender-App), mehrere Einstellungen auf einmal.
-  - **Saubere Übergabe an den Chat**: Über der Frage steht eine Karte *Von Lora übergeben · Modell · Grund*; was Lora
+  - **Saubere Übergabe an den Chat**: Über der Frage steht eine Karte *Von Kana übergeben · Modell · Grund*; was Kana
     schon geklärt hat, geht als versteckte Anweisung mit (aufklappbar) statt sichtbar in deinem Text. **Standardmodell
-    für Übergaben ist DeepSeek V4.1 Flash** (*Einstellungen › Lora*); nur in Sonderfällen – Programmieren, sehr
-    schwierige Analysen, riesige Textmengen – wählt Lora selbst ein anderes und nennt den Grund. Der Chat behält das
+    für Übergaben ist DeepSeek V4.1 Flash** (*Einstellungen › Kana*); nur in Sonderfällen – Programmieren, sehr
+    schwierige Analysen, riesige Textmengen – wählt Kana selbst ein anderes und nennt den Grund. Der Chat behält das
     Modell (kein automatischer Wechsel danach). *Übergaben erst zeigen* legt die Frage nur ins Eingabefeld.
-  - **Lora im Chat**: *Nächste Schritte* unter der letzten Antwort, auf dem Gerät erkannt – *Frist 30.11. in den
+  - **Kana im Chat**: *Nächste Schritte* unter der letzten Antwort, auf dem Gerät erkannt – *Frist 30.11. in den
     Kalender* (auch aus Tabellen mit Spalte „Frist“), *Tabelle als Excel*, *In Literatur übernehmen* (DOIs über
-    Crossref), *Als Word-Dokument*. Beim Tippen zeigt Lora über dem Eingabefeld den passenden Ort der App („dunkles
+    Crossref), *Als Word-Dokument*. Beim Tippen zeigt Kana über dem Eingabefeld den passenden Ort der App („dunkles
     Design“ → *Darstellung › Helligkeit*), nie bei echten Fragen. Die Arbeitskarte beschreibt den Schritt verständlich
-    („Sucht im Web: „…““, „Liest dfg.de“, „Schreibt „Antrag““); ist eine Antwort fertig, jubelt Loras Signatur kurz.
-  - **Überall erreichbar**: **Strg+L** (Windows; Literatur jetzt Strg+Umschalt+L), der Knopf **„Frag Lora“** oben im
-    Chat (Loras Gesicht in einer violetten Pille, auf schmalen Fenstern mit Chat-Titel nur das runde Gesicht), ein Tipp
-    auf Lora auf der Startseite, Strg+K › *Lora fragen*, die schlafende Lora unten rechts (verdeckt keine Einträge), Android:
-    langes Drücken aufs App-Symbol › *Lora fragen*.
-  - **Nahaufnahme statt Miniatur**: Wo wenig Platz ist – Knopf in der Kopfleiste, schlafende Lora unten rechts, kleine
-    Karten und Chips –, zeigt die App Loras **Gesicht in Nahaufnahme** (Kopf mit Antenne und Visier) statt der ganzen,
+    („Sucht im Web: „…““, „Liest dfg.de“, „Schreibt „Antrag““); ist eine Antwort fertig, jubelt Kanas Signatur kurz.
+  - **Überall erreichbar**: **Strg+L** (Windows; Literatur jetzt Strg+Umschalt+L), der Knopf **„Frag Kana“** oben im
+    Chat (Kanas Gesicht in einer violetten Pille, auf schmalen Fenstern mit Chat-Titel nur das runde Gesicht), ein Tipp
+    auf Kana auf der Startseite, Strg+K › *Kana fragen*, die schlafende Kana unten rechts (verdeckt keine Einträge), Android:
+    langes Drücken aufs App-Symbol › *Kana fragen*.
+  - **Nahaufnahme statt Miniatur**: Wo wenig Platz ist – Knopf in der Kopfleiste, schlafende Kana unten rechts, kleine
+    Karten und Chips –, zeigt die App Kanas **Gesicht in Nahaufnahme** (Kopf mit Antenne und Visier) statt der ganzen,
     dort winzigen Figur. Sie blinzelt, atmet, folgt dem Mauszeiger mit den Augen, winkt (Hand am Rand) oder schläft
-    (geschlossene Augen, aufsteigende „z“); mit der Maus über der schlafenden Lora wacht sie auf und winkt
+    (geschlossene Augen, aufsteigende „z“); mit der Maus über der schlafenden Kana wacht sie auf und winkt
     (`drawLoraFace` in `ui/LoraFigure.kt`, `LoraFace`/`LoraFaceStill` in `ui/LoraUi.kt`).
-  - **Wege mit Animation**: Führt Lora irgendwohin, fliegt sie aus ihrem Panel dorthin – ins Eingabefeld des Chats, zum
+  - **Wege mit Animation**: Führt Kana irgendwohin, fliegt sie aus ihrem Panel dorthin – ins Eingabefeld des Chats, zum
     Eintrag der Seitenleiste oder zur Einstellung, die dann leuchtet – mit einer Spur kleiner Sterne und einem Ring bei
     der Landung.
-- **Lora handelt in Werkzeugen** (AP-38, Runde 2): Lora führt nicht nur hin, sie **bedient die Werkzeuge selbst** –
-  im Lora-Panel, mit sichtbaren Schritten („Fügt 2 PDFs zusammen …“), einer Ergebniskarte mit **Rückgängig** und *Öffnen*.
+- **Kana handelt in Werkzeugen** (AP-38, Runde 2): Kana führt nicht nur hin, sie **bedient die Werkzeuge selbst** –
+  im Kana-Panel, mit sichtbaren Schritten („Fügt 2 PDFs zusammen …“), einer Ergebniskarte mit **Rückgängig** und *Öffnen*.
   Alles, was verschiebt, löscht (Papierkorb) oder überschreibt, zeigt vorher eine **Vorschau vorher → nachher** und wartet
-  auf *Ausführen*. Jedes Werkzeug meldet seine Aktionen in einem Register (`agent/ToolActions.kt`); Lora bekommt nur die
-  des offenen Bereichs und weiß, was ausgewählt ist. Jede Aktion steht im **Protokoll der Lora-Aktionen**
-  (*Einstellungen › Lora*, Datei `lora-aktionen.log`). **Datenschutz** gilt auch für Aktionen: Was Inhalte an ein Modell
+  auf *Ausführen*. Jedes Werkzeug meldet seine Aktionen in einem Register (`agent/ToolActions.kt`); Kana bekommt nur die
+  des offenen Bereichs und weiß, was ausgewählt ist. Jede Aktion steht im **Protokoll der Kana-Aktionen**
+  (*Einstellungen › Kana*, Datei `lora-aktionen.log`). **Datenschutz** gilt auch für Aktionen: Was Inhalte an ein Modell
   gibt (nach Inhalt umbenennen, Handout, schreiben, kürzen), nimmt nur ein Modell, das die Datenschutzstufe des Projekts
   erlaubt – im Tresor nur den Uni-Server, bei *Nur auf diesem Gerät* nur ein lokales Modell (sonst ohne Modell bzw. gar
   nicht); Dateien des Tresors erreichen keine Aktion, und *Nur auf diesem Gerät* lädt nichts in die Nextcloud.
@@ -97,29 +98,29 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Überschrift (siehe AP-47).
   - **Tabelle**: Zellen füllen (Werte und Formeln), Spalte mit Formel für jede Zeile (`=B{r}*0,5+C{r}*0,5`), nach einer
     Spalte sortieren, Daten bereinigen (Leerzeichen, leere und doppelte Zeilen – mit Vorschau), Summe und Mittelwert
-    unter die Zahlenspalten. „Sortiere nach Klausur absteigend“ erkennt Lora ohne Modell.
+    unter die Zahlenspalten. „Sortiere nach Klausur absteigend“ erkennt Kana ohne Modell.
   - **Präsentation**: Folie anlegen (Titel, Stichpunkte, Layout), Folie ändern (auch Sprechernotizen), Folie löschen
     (mit Vorschau), Folien aus einer Gliederung, volle Folien teilen.
   - **Video** (PC): Videoprojekt aus einer Aufnahme anlegen, schneiden (an einer Zeit oder der Abspielposition), Clip
     entfernen, Titel/Bauchbinde/Einblendung/Abspann im TUD-Design, Untertitel aus der Transkription (transkribiert vorher,
-    wenn nötig), Pausen und Füllwörter herausschneiden, *Mit Lora kürzen* („auf 10 Minuten, Beispiele behalten“, mit
+    wenn nötig), Pausen und Füllwörter herausschneiden, *Mit Kana kürzen* („auf 10 Minuten, Beispiele behalten“, mit
     Vorschau der neuen Länge) und Export als MP4 in *Erstellt* (OPAL, YouTube, wie das Projekt). Bei offenem Editor
     laufen die Aktionen über dessen Verlauf – Strg+Z nimmt sie ebenfalls zurück.
   - **Werkzeugübergreifend**: Aufnahme transkribieren (mit Zeitmarken wie in *Transkription*, das Transkript steht dort
     und als Textdatei daneben), Handout als Word aus einer Datei, Dateien in die Nextcloud.
-  - Klare Wünsche erkennt Lora **auf dem Gerät** ohne Modell: „PDF bearbeiten“ (öffnet die ausgewählte PDF im
+  - Klare Wünsche erkennt Kana **auf dem Gerät** ohne Modell: „PDF bearbeiten“ (öffnet die ausgewählte PDF im
     Werkzeugkasten), „Füge die offenen PDFs zusammen“, „Finde Duplikate“, „Räum diesen Ordner auf“, „verkleinern“,
     „Texterkennung“. In *Dateien* hat jede PDF zudem *⋮ › Im PDF-Werkzeugkasten bearbeiten*.
-- **Ein Gedächtnis für Lora** (AP-39): *Einstellungen › Lora › Gedächtnis – was Lora über dich weiß* zeigt **Vorlieben je
+- **Ein Gedächtnis für Kana** (AP-39): *Einstellungen › Kana › Gedächtnis – was Kana über dich weiß* zeigt **Vorlieben je
   Werkzeug** (Dateien, PDF, Dokumente, Tabellen, Folien, Video, Literatur, Chat) – jede änderbar und löschbar, dazu
-  *Alles vergessen* (mit Rückgängig). Lora **fragt immer vorher**: Hat man selbst „nach Semester“ aufgeräumt oder „für
+  *Alles vergessen* (mit Rückgängig). Kana **fragt immer vorher**: Hat man selbst „nach Semester“ aufgeräumt oder „für
   OPAL“ exportiert, erscheint *Soll ich mir merken, dass …? · Merken · Nein*; „Merk dir, dass ich Handouts zweispaltig
   möchte“ geht genauso. Gemerktes ist danach der **Standard ihrer Aktionen** (aufräumen ohne Angabe → nach Semester,
-  „(wie gemerkt)“; Export-Dialog mit der gemerkten Vorgabe) und steht in Loras Anweisungen und – als Kategorie
+  „(wie gemerkt)“; Export-Dialog mit der gemerkten Vorgabe) und steht in Kanas Anweisungen und – als Kategorie
   *Vorlieben* – in jedem Chat. Aus dem Tresor wird nie etwas gemerkt (auch das Dazulernen nach dem Chat und *remember*
   bleiben dort aus). Die Einträge liegen im normalen Gedächtnis und gehen mit dem Sync mit.
 - **Abläufe über Werkzeuge** (AP-40): Mehrschrittige Aufträge – „Aus dieser Aufnahme: transkribieren, Untertitel, auf 10
-  Minuten kürzen, Handout als Word“ oder „Alle Abgaben zusammenfügen, schwärzen, in die Nextcloud“ – **plant Lora zuerst**
+  Minuten kürzen, Handout als Word“ oder „Alle Abgaben zusammenfügen, schwärzen, in die Nextcloud“ – **plant Kana zuerst**
   (`agent/LoraPlan.kt`): Die Karte zeigt die Schritte mit Werkzeug, geschätzter Dauer und Datenschutzhinweis, darunter
   *Los · Ändern · Abbrechen* (*Ändern*: Schritte abwählen oder in Worten sagen, was anders sein soll). Danach laufen die
   Schritte nacheinander mit den Aktionen von AP-38; jeder Schritt arbeitet mit den Dateien des vorigen weiter.
@@ -128,23 +129,23 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   geschlossenem Panel) und melden sich am Ende per Benachrichtigung; Zwischenergebnisse stehen verknüpft an ihrem
   Schritt. Abläufe liegen in `lora-ablaeufe.json` – ein laufender **setzt nach einem Neustart der App fort**.
 - **Leuchtrahmen überall und Touren** (AP-41): Jede Einstellung mit Schalter und die wichtigen Knöpfe der Werkzeuge (Suche,
-  „+“, Orte und Sortieren in *Dateien*; Öffnen, Modi, Zusammenfügen, Speichern im PDF-Werkzeugkasten; Lora-Feld,
+  „+“, Orte und Sortieren in *Dateien*; Öffnen, Modi, Zusammenfügen, Speichern im PDF-Werkzeugkasten; Kana-Feld,
   TU Vorlagen und *Neue Vorlage* in *Erstellen*; Projekt, Titel, Untertitel, Rohschnitt und Export im Videoeditor) haben
-  einen Leuchtrahmen, zu dem Lora führen kann; ein Test prüft, dass jedes Ziel der Landkarte seinen Rahmen hat. Beim
-  ersten Öffnen von *Dateien*, *Erstellen*, PDF-Werkzeugkasten und Videoeditor bietet Lora eine **kurze Tour** an (3–6
+  einen Leuchtrahmen, zu dem Kana führen kann; ein Test prüft, dass jedes Ziel der Landkarte seinen Rahmen hat. Beim
+  ersten Öffnen von *Dateien*, *Erstellen*, PDF-Werkzeugkasten und Videoeditor bietet Kana eine **kurze Tour** an (3–6
   Schritte: Leuchtrahmen + eine Zeile, *Zurück · Überspringen · Weiter*). Touren sind Daten (`ui/LoraTour.kt`), englisch
-  über `en.tsv`; abschaltbar unter *Einstellungen › Lora › Touren*, wieder aufrufbar über Strg+K („Tour“) oder „Zeig mir,
-  wie das geht“. Bei *Ruhigere Bewegungen* fliegt Lora nicht mit.
-- **Lora-Dateidialog** (AP-42, PC): Öffnen, Speichern unter und Ordnerwahl laufen überall über einen eigenen Dialog im
-  Lora-Stil statt der alten Windows-/Java-Dialoge – Seitenspalte wie im Tab *Dateien* (*Zuletzt · Markiert · Lora-Ordner ·
+  über `en.tsv`; abschaltbar unter *Einstellungen › Kana › Touren*, wieder aufrufbar über Strg+K („Tour“) oder „Zeig mir,
+  wie das geht“. Bei *Ruhigere Bewegungen* fliegt Kana nicht mit.
+- **Kana-Dateidialog** (AP-42, PC): Öffnen, Speichern unter und Ordnerwahl laufen überall über einen eigenen Dialog im
+  Kana-Stil statt der alten Windows-/Java-Dialoge – Seitenspalte wie im Tab *Dateien* (*Zuletzt · Markiert · Kana-Ordner ·
   Hochgeladen · Erstellt · Nextcloud · Ablageorte*, darunter *Dieser PC* mit Laufwerken, Desktop, Dokumente, Downloads,
   Bilder und Cloud-Ordnern wie OneDrive), Pfadleiste (auch zum Eintippen), Suche, Filter nach Dateityp, Liste oder Raster
   mit Vorschaubildern (Bilder, erste PDF-Seite), Mehrfachauswahl mit Strg, neuer Ordner, Dateien aus dem Explorer
   hineinziehen. Der zuletzt benutzte Ort je Zweck (Bilder, Videos, Dokumente, Speichern je Dateityp) wird gemerkt.
   Tastatur: Pfeile, Enter, Rücktaste, Strg+A, Tippen springt; Screenreader-Beschriftungen. Aus der Nextcloud geöffnete
   Dateien werden geladen, *Speichern unter* in die Nextcloud lädt die Datei nach dem Schreiben hoch. Auch die Frage nach
-  einem verschobenen Lora-Ordner beim Start ist jetzt ein Fenster im Lora-Stil. Dateien und Ordner lassen sich im Dialog
-  **umbenennen** (F2, Rechtsklick, Knopf) und **löschen** (Entf, Rechtsklick, Knopf; im Lora-Ordner in dessen Papierkorb,
+  einem verschobenen Kana-Ordner beim Start ist jetzt ein Fenster im Kana-Stil. Dateien und Ordner lassen sich im Dialog
+  **umbenennen** (F2, Rechtsklick, Knopf) und **löschen** (Entf, Rechtsklick, Knopf; im Kana-Ordner in dessen Papierkorb,
   sonst in den Windows-Papierkorb).
 - **Fließtext-Editor für Dokumente** (AP-44, mit dem Text-Kern aus AP-43): Text-Dokumente bearbeitest du wie in Google
   Docs als **durchgehenden Text** – ein Cursor, Markieren über Absätze hinweg, Formatieren mit Symbolleiste, Menüs
@@ -165,11 +166,11 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   bleiben Zeichen für Zeichen erhalten – mit Formatvorlagen, Lesezeichen, Feldern, Inhaltssteuerelementen –, ebenso
   Kopf- und Fußzeilen, Nummerierungen, Bilder und alle anderen Teile der Datei; neue Überschriften nehmen die
   Formatvorlagen des Originals. Nur wenn das nicht sicher geht (z. B. ein neues Bild), entsteht die Datei wie bisher neu.
-- **Lora schreibt im Dokument** (AP-47): **„Hilf mir schreiben“** (Strg+J, ✨ in der Symbolleiste, *Extras* oder im
-  leeren Dokument) – Lora schreibt sichtbar an der Cursorstelle, farbig hinterlegt, mit Überschriften als Formatvorlagen;
-  danach *Übernehmen · Neu · Verwerfen*. **Überarbeiten als Vorschlag** (*Extras › Markierung mit Lora überarbeiten* oder
-  Lora: „Überarbeite Abschnitt Methode kürzer“): die Änderungen erscheinen wie bei *Änderungen nachverfolgen* rot/grün im
-  Text, eine Leiste führt von Vorschlag zu Vorschlag mit *Annehmen*, *Ablehnen* und *Alle …*; Loras Begründung steht als
+- **Kana schreibt im Dokument** (AP-47): **„Hilf mir schreiben“** (Strg+J, ✨ in der Symbolleiste, *Extras* oder im
+  leeren Dokument) – Kana schreibt sichtbar an der Cursorstelle, farbig hinterlegt, mit Überschriften als Formatvorlagen;
+  danach *Übernehmen · Neu · Verwerfen*. **Überarbeiten als Vorschlag** (*Extras › Markierung mit Kana überarbeiten* oder
+  Kana: „Überarbeite Abschnitt Methode kürzer“): die Änderungen erscheinen wie bei *Änderungen nachverfolgen* rot/grün im
+  Text, eine Leiste führt von Vorschlag zu Vorschlag mit *Annehmen*, *Ablehnen* und *Alle …*; Kanas Begründung steht als
   Kommentar am Rand. Die Formatierung des übrigen Textes bleibt.
 - **Gliederung und Formatvorlagen** (AP-46, seit 1.0.54): Links im Editor steht die **Gliederung** (wie in Docs,
   *Ansicht › Gliederung*): Klick springt zur Überschrift, der Griff ⠿ verschiebt per Ziehen den **ganzen Abschnitt** samt
@@ -188,10 +189,10 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   **Seitenumbruch** beginnt in der Seitenansicht wirklich eine neue Seite, Silbentrennung im Blocksatz, und die
   **Zwischenablage mit Formatierung**: Kopieren gibt Word, Browser und Mail formatierten Text (HTML), Einfügen aus Word,
   Google Docs und Webseiten übernimmt Überschriften, Listen, Ausrichtung, fett/kursiv/unterstrichen, Farben und Links
-  (`docs/text/RichHtml.kt`). Über einer Markierung erscheint **Loras kleines Menü** (AP-47): *Überarbeiten …*, *Kürzer*,
+  (`docs/text/RichHtml.kt`). Über einer Markierung erscheint **Kanas kleines Menü** (AP-47): *Überarbeiten …*, *Kürzer*,
   *Formeller*, *Einfacher* (als einzeln annehmbare Vorschläge) und *Kommentar*.
 - **Word-Treue, Teil 2** (AP-45, seit 1.0.54): Aus .docx kommen jetzt auch **Kopf- und Fußzeile** (Text ohne Seitenzahlen;
-  nicht bei Dateien, die Lora selbst geschrieben hat), die **Seitenränder**, **Textfelder** (nur lesen, beim Zurückschreiben
+  nicht bei Dateien, die Kana selbst geschrieben hat), die **Seitenränder**, **Textfelder** (nur lesen, beim Zurückschreiben
   bleiben sie unverändert), der Inhalt von **Inhaltssteuerelementen** (Felder in Vorlagen, bisher verloren), Untertitel,
   Bildunterschrift und Literatur sowie **Zeilenabstand und Einzüge**. Test `EditorCoreTest` (Vorlage mit Kopf-/Fußzeile,
   Textfeld, Feldern; öffnen → bearbeiten → ins Original zurückschreiben).
@@ -238,75 +239,75 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - Das **PDF** folgt denselben Umbruchregeln wie die Seitenansicht, wird aber weiter über HTML gesetzt (Offene Frage 8:
     so belassen) – Seitenumbrüche können je nach Schrift um einige Zeilen abweichen.
   Tests `EditorRestTest`, `PruefsammlungTest`, `FlowEditorUiTest`.
-- **Lora versteht Befehle auf dem Gerät und arbeitet im Mischmodus** (seit 1.0.65, AP-71):
+- **Kana versteht Befehle auf dem Gerät und arbeitet im Mischmodus** (seit 1.0.65, AP-71):
   - **Befehlsmodell**: Ein kleines eigenes Modell (distilbert-base-german-cased, Apache-2.0, auf erfundenen Wünschen
-    trainiert) ordnet, was du Lora oder in **Strg+K** schreibst, in etwa 3 Millisekunden einer von 178 Aktionen der App zu
+    trainiert) ordnet, was du Kana oder in **Strg+K** schreibst, in etwa 3 Millisekunden einer von 178 Aktionen der App zu
     – Bereich oder Werkzeug öffnen, Modus starten, Einstellung zeigen oder umstellen („mach dunkel“, „Schrift größer“),
     TU Vorlage, Aktion im offenen Werkzeug („füge die PDFs zusammen“, „sortiere nach Nachname absteigend“, „lösch Seite 3“),
     Tour, frühere Chats, Frist. Offline, auch mit Tippfehlern, Umgangssprache und einfachem Englisch. Werte (an/aus,
     Seiten, Spalte, Ordner, Dateiname, Datum) liest die App danach mit Regeln aus dem Wunsch. **Ist das Modell unsicher,
-    führt es nichts aus**, sondern Lora fragt wie bisher ein Sprachmodell – eine falsch ausgeführte Aktion ist schlimmer
-    als eine Rückfrage. Einstellungen ändert Lora weiter erst nach „Ja“, riskante Aktionen zeigen zuerst die Vorschau.
+    führt es nichts aus**, sondern Kana fragt wie bisher ein Sprachmodell – eine falsch ausgeführte Aktion ist schlimmer
+    als eine Rückfrage. Einstellungen ändert Kana weiter erst nach „Ja“, riskante Aktionen zeigen zuerst die Vorschau.
     Gemessen auf 386 ungesehenen Wünschen: 84 % der Befehle sofort richtig, **0 % falsch ausgeführt** (die bisherigen
     Regeln: 38 % und 19 %), alle freien Anfragen weitergegeben. In Strg+K steht der erkannte Befehl als erster Eintrag (⚡).
-    Das Modell kommt als Download (41 MB) – angeboten im Dialog vom ersten Start oder unter *Einstellungen › Lora*, dort
-    auch Schalter, Modellkarte und *Löschen*. Ohne Modell arbeitet Lora wie bisher.
-  - **Mischmodus** (*Einstellungen › Lora › Wo Lora arbeitet*): **Gemischt (empfohlen)** – Befehle sofort auf dem Gerät;
+    Das Modell kommt als Download (41 MB) – angeboten im Dialog vom ersten Start oder unter *Einstellungen › Kana*, dort
+    auch Schalter, Modellkarte und *Löschen*. Ohne Modell arbeitet Kana wie bisher.
+  - **Mischmodus** (*Einstellungen › Kana › Wo Kana arbeitet*): **Gemischt (empfohlen)** – Befehle sofort auf dem Gerät;
     kurze, einfache Aufgaben (umformulieren, kurz erklären, eine kurze Nachricht) mit einem installierten Sprachmodell
     auf diesem Gerät, wenn die Hardware reicht; alles andere (lange Dokumente, Analysen, Bilder, Websuche, mehrere
     Schritte) über den Server wie bisher. **Nur lokal** – nichts geht an einen Server; die App sagt klar, was das kostet
     (schlichtere Antworten, kurze Texte, oft eine halbe Minute je Antwort, keine Websuche). **Nur Server** – Sprachmodelle
     nur auf dem Server. Unverändert: Ins Postfach schaut nur ein Modell auf diesem Gerät, Tresor und Projekte „Nur auf
     diesem Gerät“ behalten ihre Regeln, vor jeder Server-Anfrage wird pseudonymisiert, Übergaben gehen an DeepSeek V4.1
-    Flash, Lora selbst nutzt GLM-5.3 Flash. Mit *Modell automatisch wählen* gilt dasselbe im Chat. Unter der Einstellung
-    steht, **wie oft und wie schnell** Lora ohne Server geantwortet hat (nur Zahlen, auf dem Gerät).
+    Flash, Kana selbst nutzt GLM-5.3 Flash. Mit *Modell automatisch wählen* gilt dasselbe im Chat. Unter der Einstellung
+    steht, **wie oft und wie schnell** Kana ohne Server geantwortet hat (nur Zahlen, auf dem Gerät).
   - **Welche Modelle sollen auf dieses Gerät?** Der Dialog vom ersten Start fragt jetzt auch danach – Befehle verstehen
-    (41 MB), Namen schützen (72 MB), ein Sprachmodell, das zur Hardware passt, und wo Lora arbeiten soll, je mit einem
-    Satz Erklärung. Wer Lora schon nutzt, bekommt die Frage einmalig als „Neu: Modelle für dieses Gerät“ („Übernehmen“,
+    (41 MB), Namen schützen (72 MB), ein Sprachmodell, das zur Hardware passt, und wo Kana arbeiten soll, je mit einem
+    Satz Erklärung. Wer Kana schon nutzt, bekommt die Frage einmalig als „Neu: Modelle für dieses Gerät“ („Übernehmen“,
     „Später“, „Nicht mehr fragen“).
   - Werkzeuge, Messkorpus und Zahlen: [`tools/befehle/README.md`](tools/befehle/README.md). Auf Android getestet.
-- **Neue, bessere Modelle: Lora Namensschutz und Lora Befehle** (seit 1.0.66, AP-67/AP-71): Die beiden kleinen Modelle
-  auf dem Gerät heißen jetzt **Lora Namensschutz** (bisher „Erkennungsmodell“ der Pseudonymisierung) und **Lora Befehle**
+- **Neue, bessere Modelle: Kana Namensschutz und Kana Befehle** (seit 1.0.66, AP-67/AP-71): Die beiden kleinen Modelle
+  auf dem Gerät heißen jetzt **Kana Namensschutz** (bisher „Erkennungsmodell“ der Pseudonymisierung) und **Kana Befehle**
   (bisher „Befehlsmodell“) und sind nachtrainiert – nur mit erfundenen Daten, gemessen auf dem Prüfteil, der nie zum
   Training diente:
-  - **Lora Befehle** trifft **95 %** der Befehle selbst (vorher 84 %), führt 1,3 % der Eingaben falsch aus (Ziel höchstens
+  - **Kana Befehle** trifft **95 %** der Befehle selbst (vorher 84 %), führt 1,3 % der Eingaben falsch aus (Ziel höchstens
     2 %) und gibt 98 % der freien Anfragen an ein Sprachmodell weiter – auch umgangssprachlich („wo is …“, „servus, …“),
     auf Englisch und mit Wünschen statt Zielen („ich muss was mit einem PDF machen“). Download 55 MB.
-  - **Lora Namensschutz** ersetzt in der App ein Drittel weniger öffentliche Angaben fälschlich (5,0 % statt 7,4 %; mehr
+  - **Kana Namensschutz** ersetzt in der App ein Drittel weniger öffentliche Angaben fälschlich (5,0 % statt 7,4 %; mehr
     Beispiele mit öffentlichen Personen, zitierten Autor:innen und Literaturangaben) und findet weiter 98,5 % der privaten.
     Das Ziel „höchstens 2 %“ ist noch offen (AP-67). Download 93 MB.
   - **Update ohne Bruch**: Wer eines der alten Modelle hat, arbeitet damit weiter und bekommt die neue Version einmal
     angeboten („Neue Version von …“, „Laden“, „Später“, „Nicht mehr fragen“; auch unter *Einstellungen › Inhalte zum
     Nachladen* als *Aktualisieren*). Nach dem Laden wird die alte Datei gelöscht.
-  - **Herkunft und Lizenz**: Lora Namensschutz beruht auf `deepset/gbert-base` (deepset GmbH, MIT), Lora Befehle auf
+  - **Herkunft und Lizenz**: Kana Namensschutz beruht auf `deepset/gbert-base` (deepset GmbH, MIT), Kana Befehle auf
     `distilbert-base-german-cased` (Hugging Face, Apache-2.0); beide Basismodelle wurden von uns feinabgestimmt und
     verändert, ihre Urheber haben unsere Modelle weder geprüft noch gebilligt. Modellkarten mit Lizenztext unter
     *Modellkarte* in den Einstellungen; für die Modelle selbst gilt [`License.md`](License.md).
-- **„Meinst du … oder …?“ statt Weitergabe** (seit 1.0.66, AP-73): Ist Lora Befehle unsicher, schwankt aber nur
-  zwischen zwei Befehlen, zeigt Lora die beiden als Knöpfe und dazu **Etwas anderes** (dann geht der Wunsch wie bisher an
+- **„Meinst du … oder …?“ statt Weitergabe** (seit 1.0.66, AP-73): Ist Kana Befehle unsicher, schwankt aber nur
+  zwischen zwei Befehlen, zeigt Kana die beiden als Knöpfe und dazu **Etwas anderes** (dann geht der Wunsch wie bisher an
   Regeln und Sprachmodell) – sofort und offline, statt einen Server zu fragen. Ein Tipp führt den Befehl aus wie einen
   sicher erkannten (Einstellungen und riskante Aktionen fragen weiter nach). Gemessen auf den ungesehenen Wünschen: Bei
   81 % der bisher weitergegebenen Befehle steht der richtige unter den zwei Knöpfen, 3,6 % der freien Anfragen bekommen
   Knöpfe, zusammen sind 97 % der Befehle sofort oder mit einem Tipp erledigt – weiter ohne falsch ausgeführte Aktion.
   Die Untergrenze (0,3) ist nur auf dem Entwicklungsteil des Messkorpus gewählt (`tools/befehle/rueckfrage.py`).
-- **Lora lernt aus Korrekturen** (seit 1.0.66, AP-72): Wählst du einen der zwei Knöpfe, schreibst „nein, ich meinte …“
-  oder tippst in Loras Antwort auf den richtigen Ort, merkt sich Lora das Paar *Wunsch → gemeinte Aktion* **auf diesem
-  Gerät** und führt den Wunsch beim nächsten Mal sofort richtig aus – vor Lora Befehle, ohne Sprachmodell.
-  „Rückgängig“ direkt nach einer Aktion, die Lora auf dem Gerät erkannt hat, heißt umgekehrt: diese Aktion für diesen
-  Wunsch nicht mehr ohne Rückfrage. *Einstellungen › Lora › Was Lora aus Korrekturen gelernt hat* zeigt die Liste mit
+- **Kana lernt aus Korrekturen** (seit 1.0.66, AP-72): Wählst du einen der zwei Knöpfe, schreibst „nein, ich meinte …“
+  oder tippst in Kanas Antwort auf den richtigen Ort, merkt sich Kana das Paar *Wunsch → gemeinte Aktion* **auf diesem
+  Gerät** und führt den Wunsch beim nächsten Mal sofort richtig aus – vor Kana Befehle, ohne Sprachmodell.
+  „Rückgängig“ direkt nach einer Aktion, die Kana auf dem Gerät erkannt hat, heißt umgekehrt: diese Aktion für diesen
+  Wunsch nicht mehr ohne Rückfrage. *Einstellungen › Kana › Was Kana aus Korrekturen gelernt hat* zeigt die Liste mit
   *Löschen* je Eintrag und *Alle löschen*, einen Schalter und *Exportieren …*: Nach dem Durchsehen (Häkchen weg bei
   allem mit Namen) entsteht `lora-korrekturen.jsonl` als Stoff für das nächste Training (`tools/befehle/`). Im Tresor
-  merkt sich Lora nichts; nichts davon verlässt das Gerät von selbst. Tests `LoraCorrectionsTest`, `CommandModelTest`.
+  merkt sich Kana nichts; nichts davon verlässt das Gerät von selbst. Tests `LoraCorrectionsTest`, `CommandModelTest`.
 - **Fehlermeldungen in Klartext mit Lösungsknopf** (seit 1.0.66, AP-74): Statt „HTTP 401“ oder einer Java-Meldung steht
-  im Chat, in Loras Panel und in den Hinweisleisten ein verständlicher Satz mit dem passenden Schritt als Knopf –
+  im Chat, in Kanas Panel und in den Hinweisleisten ein verständlicher Satz mit dem passenden Schritt als Knopf –
   *Schlüssel prüfen*, *Modell wechseln*, *Neuen Chat beginnen*, *Werkzeuge einschalten*, *Modelle auf diesem Gerät*,
   *Papierkorb leeren*, *Problem melden* … Die technische Meldung bleibt unter *Details* aufklappbar. Ein gemeinsamer
   Katalog (`ui/ErrorHelp.kt`) mit den 30 häufigsten Fehlern, auf dem Gerät, ohne Sprachmodell; auch ältere Chats zeigen
   ihre Fehler so. Test `ErrorHelpTest`.
-- **Lora-Verlauf mit „Nochmal“** (seit 1.0.66, AP-75): Pfeil hoch im Lora-Eingabefeld und in Strg+K holt die letzten 20
-  Wünsche zurück (ändern, Enter schickt sie nochmal); unter Loras Begrüßung steht **Zuletzt** mit *Nochmal* und
+- **Kana-Verlauf mit „Nochmal“** (seit 1.0.66, AP-75): Pfeil hoch im Kana-Eingabefeld und in Strg+K holt die letzten 20
+  Wünsche zurück (ändern, Enter schickt sie nochmal); unter Kanas Begrüßung steht **Zuletzt** mit *Nochmal* und
   *Anheften*. Ein angehefteter Befehl bekommt einen Namen und steht unter **Eigene Befehle** in Strg+K. Nur auf diesem
-  Gerät, abschaltbar unter *Einstellungen › Lora › Verlauf und eigene Befehle*, aus dem Tresor nichts. Test `LoraHistoryTest`.
+  Gerät, abschaltbar unter *Einstellungen › Kana › Verlauf und eigene Befehle*, aus dem Tresor nichts. Test `LoraHistoryTest`.
 - **Sprachmodell-Empfehlung nach Messung** (seit 1.0.66, AP-76): *Modelle auf diesem Gerät › Wie schnell sind die Modelle
   hier? › Messen* lässt jedes installierte Modell einmal eine kurze Mail schreiben (etwa eine halbe Minute je Modell, mit
   Grafikkarte und – wenn es eine gibt – ohne) und zeigt z. B. „schafft etwa 12 Wörter je Sekunde, erstes Wort nach 1,2 s –
@@ -315,17 +316,17 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   bisher nach Arbeitsspeicher). Test `LocalSpeedTest`.
 - **Probelauf und „Alles rückgängig“** (seit 1.0.66, AP-77): „Was würde passieren, wenn ich alle PDFs nach Archiv
   verschiebe?“ plant die Aktion, zeigt aber nur die Vorschau mit *Doch ausführen*. Jede riskante Vorschau sagt, wie viele
-  Dateien es betrifft, was in den Papierkorb geht, was sich nicht über Lora zurücknehmen lässt, und rät bei vielen
+  Dateien es betrifft, was in den Papierkorb geht, was sich nicht über Kana zurücknehmen lässt, und rät bei vielen
   Dateien („Das betrifft 214 Dateien – erst an einem Ordner ausprobieren?“). „Mach alles von heute rückgängig“ (oder
-  *Einstellungen › Lora › Heute erledigt*) listet Loras Aktionen des Tages – einzeln oder alle zurücknehmen, mit Hinweis,
+  *Einstellungen › Kana › Heute erledigt*) listet Kanas Aktionen des Tages – einzeln oder alle zurücknehmen, mit Hinweis,
   was nicht mehr geht (z. B. vor einem Neustart). Test `DryRunTest`.
-- **Eigene Wörter und Wissenspakete** (seit 1.0.66, AP-78): Unter *Einstellungen › Lora › Eigene Wörter* Abkürzungen und
-  Namen mit Erklärung und anderen Schreibweisen („MHB“ = Modulhandbuch). Lora versteht sie in Befehlen, die Dateisuche
+- **Eigene Wörter und Wissenspakete** (seit 1.0.66, AP-78): Unter *Einstellungen › Kana › Eigene Wörter* Abkürzungen und
+  Namen mit Erklärung und anderen Schreibweisen („MHB“ = Modulhandbuch). Kana versteht sie in Befehlen, die Dateisuche
   findet über sie, Chats bekommen die Erklärung als kurzen Kontext, wenn ein Wort vorkommt; „Was ist das ZLSB?“ beantwortet
-  Lora auf dem Gerät. **Wissenspaket „Lehramt an der TU Dresden“** (39 Einträge: Einrichtungen, Studiengänge, Praktika,
+  Kana auf dem Gerät. **Wissenspaket „Lehramt an der TU Dresden“** (39 Einträge: Einrichtungen, Studiengänge, Praktika,
   Prüfungen, Ordnungen, Ansprechstellen) – jede Angabe mit Quelle und Stand, nur aus offiziellen Seiten von TU Dresden und
   Freistaat ([`tools/wissen/`](tools/wissen/README.md)), geladen wie die Modelle (fester Commit, SHA-256). **Einstellungen ›
-  Inhalte zum Nachladen** zeigt alles Nachladbare (Lora Befehle, Lora Namensschutz, Sprachmodelle, Spracherkennung,
+  Inhalte zum Nachladen** zeigt alles Nachladbare (Kana Befehle, Kana Namensschutz, Sprachmodelle, Spracherkennung,
   Videoeditor-Paket, Wissenspakete) mit Zweck, Größe, Laden/Aktualisieren/Löschen. Test `VocabularyTest`.
 - **Hausstil-Prüfung und Barrierefreiheits-Check** (seit 1.0.66, AP-79): „Prüfe Hausstil und Barrierefreiheit“ im
   Dokument oder in Folien zeigt jede Fundstelle („Absatz 4“, „Folie 2“): eigene Regeln der Professur (*Einstellungen ›
@@ -334,11 +335,11 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   „hier“, nackte Adressen, Tabellen ohne Kopfzeile, Folien ohne Titel. „Behebe …“ ändert, was sicher geht – mit Vorschau
   und Rückgängig. Für Word- und PowerPoint-Dateien prüft der Bericht *Barrierefreiheit und Hausstil* zusätzlich Schriften
   (Noto Sans) und Farben (TUD-Palette). Test `StyleCheckTest`.
-- **Rollenauswahl beim ersten Start** (seit 1.0.66, AP-80): „Wofür nutzt du Lora vor allem?“ – Lehre, Forschung,
+- **Rollenauswahl beim ersten Start** (seit 1.0.66, AP-80): „Wofür nutzt du Kana vor allem?“ – Lehre, Forschung,
   Verwaltung, Studium (mehrere möglich). Danach sind passende Werkzeuge vorgeschlagen, die TU Vorlagen der Rollen stehen
-  oben, Loras Startvorschläge passen („Seminar planen“) und das Lehramts-Paket wird empfohlen. Änderbar unter
-  *Einstellungen › Lora › Wofür nutzt du Lora?* (eine Rolle schaltet Werkzeuge nur ein, nie aus). Test `RolesTest`.
-- **Lora-Pakete teilen** (seit 1.0.66, AP-83): *Einstellungen › Lora › Lora-Paket teilen › Exportieren …* schreibt eigene
+  oben, Kanas Startvorschläge passen („Seminar planen“) und das Lehramts-Paket wird empfohlen. Änderbar unter
+  *Einstellungen › Kana › Wofür nutzt du Kana?* (eine Rolle schaltet Werkzeuge nur ein, nie aus). Test `RolesTest`.
+- **Kana-Pakete teilen** (seit 1.0.66, AP-83): *Einstellungen › Kana › Kana-Paket teilen › Exportieren …* schreibt eigene
   Befehle (angeheftet), eigene Wörter, eigene TU Vorlagen und Hausstil-Regeln in **eine Datei** (`….lora-paket.json`, das
   Format der Wissenspakete) – ohne Chats, Gedächtnis, Verlauf und Schlüssel. *Importieren …* zeigt vorher, was hinzukommt
   und was ersetzt würde; das Paket steht danach unter *Inhalte zum Nachladen* und lässt sich wieder entfernen.
@@ -353,20 +354,20 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   darin, mit *Fortsetzen* oder auf Wunsch von selbst. Die **Schnellansicht** in *Dateien* (Leertaste) spielt Videos und
   Tonaufnahmen ab (AP-82): Start/Pause, ±10 s, Regler, Dauer; Tasten K, J, L – am PC und auf Android. Tests
   `ExportQueueRestartTest`, `MediaLookTest`.
-- **Lora in mehreren Fenstern** (seit 1.0.66, AP-84, PC): *In neuem Fenster öffnen* im Chat-Menü der Seitenleiste, bei
-  Dokumenten in *Dateien* und oben in Loras Panel. Jedes Fenster hat seine eigene Ansicht, alle teilen dieselben Daten
+- **Kana in mehreren Fenstern** (seit 1.0.66, AP-84, PC): *In neuem Fenster öffnen* im Chat-Menü der Seitenleiste, bei
+  Dokumenten in *Dateien* und oben in Kanas Panel. Jedes Fenster hat seine eigene Ansicht, alle teilen dieselben Daten
   (ein Prozess); zwei Chats antworten gleichzeitig, ein Chat ist nie in zwei Fenstern offen (das Hauptfenster zeigt dann
   *Zum Fenster* / *Hierher holen*), Schließen eines Fensters beendet nichts anderes; Größe und Ort werden je Art gemerkt.
   Entschieden: nur Fenster, keine Tabs. Test `ExtraWindowsTest`.
 - **Aufgeräumte Datenschutzseite** (seit 1.0.67, AP-103): *Einstellungen › Datenschutz* zeigt oben in einer Karte, ob
-  der Schutz an ist, was gerade wirkt („Aktiv: Regeln · Namen automatisch · Lora Namensschutz · Gründlich aus“) und die
-  festen Regeln als Marken (*Postfach nur auf diesem Gerät*, *Tresor*). Darunter *Erkennung* (Lora Namensschutz, Namen
+  der Schutz an ist, was gerade wirkt („Aktiv: Regeln · Namen automatisch · Kana Namensschutz · Gründlich aus“) und die
+  festen Regeln als Marken (*Postfach nur auf diesem Gerät*, *Tresor*). Darunter *Erkennung* (Kana Namensschutz, Namen
   automatisch, öffentliche Quellen, Gründlich) mit kurzen Erklärungen; *Meine Listen* (immer / nie ersetzen, Übernehmen
   und Speichern, Zuordnungen mit Suche), *Ausprobieren*, *Feineinstellungen* (die 22 Einzelschalter, je Gruppe eine
   Zeile „4 von 4 an“, darin der kleine Bereich *Hinweise beim Senden* mit „Warnung bei Bildern“ und
-  „Namensvorschläge“) und *So schützt Lora deine Daten* sind zugeklappt; was offen ist, merkt sich die App. Ist der
+  „Namensvorschläge“) und *So schützt Kana deine Daten* sind zugeklappt; was offen ist, merkt sich die App. Ist der
   Schutz aus, sind die Bereiche sichtbar ausgegraut. Ohne Aufklappen passt die Seite auf einen Bildschirm (888 statt
-  über 2 400 dp hoch); alle Einstellungen behalten ihre Werte, Strg+K, Lora und die Leuchtrahmen finden sie weiter
+  über 2 400 dp hoch); alle Einstellungen behalten ihre Werte, Strg+K, Kana und die Leuchtrahmen finden sie weiter
   (der Rahmen öffnet den zugeklappten Bereich). Test `PrivacyPageTest` (alle `PiiFeature`-Schalter, Leuchtrahmen,
   Hoher Kontrast).
 
@@ -374,7 +375,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | --- | --- | --- |
   | ![Datenschutz vorher](docs/bilder/datenschutz-vorher.png) | ![Datenschutz nachher](docs/bilder/datenschutz-nachher.png) | ![Feineinstellungen offen](docs/bilder/datenschutz-nachher-feineinstellungen.png) |
 - **Suche nach Bedeutung auf diesem Gerät** (seit 1.0.67, AP-107): Unter *Einstellungen › Wissen* lässt sich
-  **multilingual-e5-small – Lora Edition** laden (123 MB, MIT-Lizenz, unverändert aus dem Original auf Hugging Face,
+  **multilingual-e5-small – Kana Edition** laden (123 MB, MIT-Lizenz, unverändert aus dem Original auf Hugging Face,
   fester Commit, SHA-256). Dann findet die Wissenssammlung – allgemein und in Projekten, auch solchen „Nur auf diesem
   Gerät“ – passende Stellen nach Bedeutung ohne Server („Hiwi“ findet „studentische Hilfskraft“); vorhandene Dokumente
   werden im Hintergrund neu aufbereitet, die Liste zeigt „Suche nach Bedeutung auf diesem Gerät“. Schalter *Auf diesem
@@ -389,7 +390,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Grafikkarte sechs Schritte und „Modellstandard“ ohne Denken, mit Grafikkarte oder Apple-Chip zwölf. *Stopp* legt sofort
   auf und beendet auch die Arbeit des Modell-Servers (er lädt bei der nächsten Frage neu). Lokale Anfragen werden nie
   von selbst wiederholt; dauert es zu lange: „Das dauert auf diesem Gerät zu lange – … Server-Modell oder kürzere
-  Frage?“. Auf Android wartet Lora, wenn das System das Gerät als warm meldet, und hält an, bevor es heiß wird; der
+  Frage?“. Auf Android wartet Kana, wenn das System das Gerät als warm meldet, und hält an, bevor es heiß wird; der
   Modell-Server rechnet dort nur auf den großen Kernen (höchstens die Hälfte). Die Arbeitskarte zeigt „Liest die Anfrage
   ein … 40 %“. Test `LocalLimitsTest`; Messung am Gerät: Arbeitsplan AP-116.
 - **Bedienelemente aus einem Guss** (seit 1.0.71, AP-123): Knöpfe, Dialoge, Eingabefelder, Schalter und Menüs der
@@ -431,20 +432,20 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 - **Dokument-Editor aufgeräumt wie Google Docs** (seit 1.0.71, APD-15 und AP-125): Mehr Platz für die Seite und alles
   erreichbar – auf dem Laptop (1366 × 768 bei 150 %) beginnt der Text bei 215 statt 320 dp.
   - **Kopf wie Docs**: Titel (Klick: umbenennen) mit *Gespeichert*, die Menüs *Datei · Bearbeiten · Ansicht · Einfügen ·
-    Format · Extras* direkt darunter; rechts Kommentare, Lora und **Exportieren**. Alles aus dem früheren „⋮“ steht unter
+    Format · Extras* direkt darunter; rechts Kommentare, Kana und **Exportieren**. Alles aus dem früheren „⋮“ steht unter
     *Datei* (Umbenennen, Kopie anlegen, Anheften, Ablageort, Exportieren, In Word öffnen, Teilen, Seite einrichten,
     Design, Versionsverlauf, Löschen). Die Reiterzeile erscheint erst ab zwei Tabs (*Einfügen › Tab*).
   - **Formatleiste** über die ganze Breite; was nicht passt, steht unter **„⋯“** statt abgeschnitten zu werden.
     **Strg+Umschalt+F** (oder der Pfeil am Ende der Leiste) blendet Titel und Menüs aus.
   - **Statusleiste** unten: Seite x von y, Wörter (auch der Markierung; Klick: Zeichen und Seiten), Zoom mit
-    *Seitenbreite*. Kein schwebendes „Mit KI schreiben“ mehr über dem Text (Lora: ✨ oben, Strg+E, Strg+J).
+    *Seitenbreite*. Kein schwebendes „Mit KI schreiben“ mehr über dem Text (Kana: ✨ oben, Strg+E, Strg+J).
   - **Tasten wie in Word, ohne Überschneidung mit der App**: Strg+Z nimmt zurück, was gerade getippt wurde (vorher
     passierte direkt danach nichts), Strg+F sucht im Text, Strg+B macht im Text fett und Strg+D dupliziert in Folien und
     Gestalten (vorher nahm die App beide Tasten für Seitenleiste und Dateien – außerhalb von Texten bleiben sie das).
     Ausrichtung: Strg+Umschalt+E zentriert, Strg+R rechtsbündig, Strg+Umschalt+J Blocksatz; Strg+K bleibt die
     Befehlssuche, Strg+E die KI.
   - **Rechtsklick-Menü wie in Word**: Rechtschreibvorschläge für das Wort unter der Maus (*Zum Wörterbuch
-    hinzufügen*), Ausschneiden, Kopieren, Einfügen, **Nur Text einfügen** (auch Strg+Umschalt+V), Link, Kommentar, Lora,
+    hinzufügen*), Ausschneiden, Kopieren, Einfügen, **Nur Text einfügen** (auch Strg+Umschalt+V), Link, Kommentar, Kana,
     Format übertragen, Formatierung entfernen, Alles auswählen – mit den Tasten daneben; Menütaste und Umschalt+F10 öffnen
     es am Cursor.
   - **Autokorrektur beim Tippen**: „Anführungszeichen“ und ’, -- wird –, ... wird …, (c) wird ©, -> wird →, Satzanfang groß
@@ -539,21 +540,21 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Mitte mit *Anfang* (I), *Ende* (O) und **Herausschneiden** (auch Entf ohne Auswahl) – alles danach rückt nach.
   **Rechtsklick** auf Clip, Titel, Ton oder eine leere Stelle zeigt in Klartext, was dort geht (*Hier teilen*, *Anfang bis
   hier entfernen*, *Ton aus*, *Name hier einblenden* …). Dazu Knöpfe mit Wort statt nur Symbol, wo Platz ist, eine
-  Hinweiszeile passend zur Auswahl, *Gespeichert* im Kopf, ein Hilfe-Menü (Erste Schritte, Tour, Tasten, Lora), Klick ins
+  Hinweiszeile passend zur Auswahl, *Gespeichert* im Kopf, ein Hilfe-Menü (Erste Schritte, Tour, Tasten, Kana), Klick ins
   Bild spielt ab, Mauszeiger zum Ziehen an Clip-Rändern, die Zeitleiste folgt beim Abspielen, *Ganze Zeitleiste zeigen*
-  (Umschalt+Z), Zeiten auch als „1:23,5“ eintippen, Dateien aus dem Explorer in den Editor ziehen. Lora kann jetzt
+  (Umschalt+Z), Zeiten auch als „1:23,5“ eintippen, Dateien aus dem Explorer in den Editor ziehen. Kana kann jetzt
   „Schneide 1:20 bis 1:45 heraus“. Details unter *Videoeditor für Einsteiger* weiter unten.
-- **Lora einrichten Schritt für Schritt** (seit 1.0.69, AP-120): Beim ersten Start erscheint statt der kurzen Fragen
-  ein Einrichtungsfenster mit acht Schritten – *Willkommen*, *Wofür* (Rollen, AP-80), *Wo Lora arbeitet*, *Zugang*,
+- **Kana einrichten Schritt für Schritt** (seit 1.0.69, AP-120): Beim ersten Start erscheint statt der kurzen Fragen
+  ein Einrichtungsfenster mit acht Schritten – *Willkommen*, *Wofür* (Rollen, AP-80), *Wo Kana arbeitet*, *Zugang*,
   *Datenschutz*, *Werkzeuge*, *Aussehen*, *Fertig* (Übersicht mit *Ändern* je Punkt). Geschrieben für Menschen ohne
   Technikerfahrung: eine Entscheidung je Schritt, Empfehlung vorgewählt, alles überspringbar; jede Wahl wird sofort
-  gespeichert, *Später* merkt sich den Schritt (`setupStep`). Bei *Wo Lora arbeitet* steht der **Uni-Server (empfohlen)**
+  gespeichert, *Später* merkt sich den Schritt (`setupStep`). Bei *Wo Kana arbeitet* steht der **Uni-Server (empfohlen)**
   vorn; **Alles auf diesem Gerät** ist ausdrücklich als Sonderfall beschrieben („nur sinnvoll für sehr sensible Daten oder
   ohne Server“, mit Einschätzung des Arbeitsspeichers) und führt nach *Fertig* in die Einrichtung „Alles lokal“
   (AP-112); ein eigener Anbieter (Gemini) und Expertenfunktionen (Server-Terminal, MCP-Server/Anbindungen) sind unter
   *Für Fortgeschrittene* eingeklappt. Der Zugang erklärt das Self-Service-Portal in drei Schritten und prüft den
-  Schlüssel. Jederzeit wieder über Lora („Lora einrichten“), Strg+K, die Willkommenskarte und *Einstellungen › Lora ›
-  Lora Schritt für Schritt einrichten* (Route `setup`, `ui/SetupWizard.kt`). Test `SetupLookTest` (Bilder je Schritt).
+  Schlüssel. Jederzeit wieder über Kana („Kana einrichten“), Strg+K, die Willkommenskarte und *Einstellungen › Kana ›
+  Kana Schritt für Schritt einrichten* (Route `setup`, `ui/SetupWizard.kt`). Test `SetupLookTest` (Bilder je Schritt).
 - **Wohin die Daten gehen** (seit 1.0.69, AP-119, Wunsch eines Kollegen): Neben jedem Modell und Server steht
   **„lokal“** (grün), **„TU-Server“** (gelb) oder **„Cloud“** (rot) – in der Modellauswahl, der Modellübersicht, am
   Modell-Knopf im Eingabefeld, bei *API-Zugang* (Uni-Server und weitere Anbieter; ein Server auf `localhost`, z. B.
@@ -565,59 +566,59 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   kommen eindeutig an („1.234“ bleibt in einer deutschen Datei tausendzweihundert…, in einer englischen 1,234),
   Postleitzahlen und Matrikelnummern behalten ihre Nullen. Beim Export zwei CSV-Arten: *für Excel* (Semikolon,
   Dezimalkomma, BOM) und *Standard* (Komma, Dezimalpunkt, UTF-8). Gilt auch beim normalen Öffnen und für Exporte aus
-  OPAL, LimeSurvey und Selma. Lora: `files.csv_open`. Test `CsvPilotTest`.
+  OPAL, LimeSurvey und Selma. Kana: `files.csv_open`. Test `CsvPilotTest`.
 - **Formatwandler, Rest** (seit 1.0.69, AP-90): Bilder untereinander (JPG, PNG, WebP; HEIC, AVIF, TIFF, GIF als Quelle) –
   richtig gedreht, ohne Metadaten, mit Hinweis auf verlorene Transparenz oder Animation; **OpenDocument als Quelle**:
   ODT → Word, PDF, RTF, Markdown, Text, HTML; ODS → Excel (mit Formeln), CSV, PDF; ODP → PowerPoint, PDF. ODT/ODS/ODP
   lassen sich auch in den Editor übernehmen.
-- **Fotos vom Handy aufbereiten** (seit 1.0.69, AP-100): *⋮ › Fotos aufbereiten* an Fotos oder einem Ordner (und Lora:
+- **Fotos vom Handy aufbereiten** (seit 1.0.69, AP-100): *⋮ › Fotos aufbereiten* an Fotos oder einem Ordner (und Kana:
   „bereite die Exkursionsfotos auf“): als JPG (auch iPhone-HEIC), nach EXIF bzw. HEIF-Drehung aufgerichtet, nach
   Aufnahmezeit benannt („2026-11-10_14-32_Exkursion.jpg“, gleiche Minute mit „_2“), ohne Ortsdaten und andere
   Metadaten, auf Wunsch verkleinert (3000/2048/1280 px). Ergebnis im Ordner „aufbereitet“, Originale bleiben. HEIC liest
-  am PC ffmpeg (Windows: in der App; macOS auch `sips`), auf Android das System. Lora: `files.photos_prepare`.
+  am PC ffmpeg (Windows: in der App; macOS auch `sips`), auf Android das System. Kana: `files.photos_prepare`.
 - **Archiv-Werkzeug** (seit 1.0.69, AP-99): ZIP, 7z, TAR, TAR.GZ/BZ2/XZ öffnen sich wie Ordner (durchsuchen, einzelne
   Dateien öffnen ohne alles zu entpacken, *Alles entpacken*, *Frag dieses Archiv*). *Als ZIP packen* mit Stärke,
-  Passwort (AES-256) und **in Teilen** (10/20/50 MB für Mails: .zip, .z01 …, öffnen mit 7-Zip, WinRAR oder Lora).
+  Passwort (AES-256) und **in Teilen** (10/20/50 MB für Mails: .zip, .z01 …, öffnen mit 7-Zip, WinRAR oder Kana).
   Pfade, die aus dem Zielordner führen würden, werden abgewiesen. zip4j und Commons Compress (Apache-2.0).
-  Lora: `files.zip`, `files.unzip`.
+  Kana: `files.zip`, `files.unzip`.
 - **Passwortschutz für Dateien** (seit 1.0.69, AP-98): *⋮ › Passwort …* setzt, ändert oder entfernt (mit bekanntem
   Passwort) den Schutz von Word, Excel, PowerPoint (wie Office: Agile Encryption, AES-256/SHA-512 mit Prüfsumme – mit
   LibreOffice und msoffcrypto gegengeprüft), PDF (AES-256, PC) und ZIP (AES-256); neue Datei daneben oder Original
-  ersetzen. Geschützte Office-Dateien öffnen nach Eingabe des Passworts als Kopie im Editor. Lora öffnet nur das Fenster –
+  ersetzen. Geschützte Office-Dateien öffnen nach Eingabe des Passworts als Kopie im Editor. Kana öffnet nur das Fenster –
   Passwörter gehen nie an ein Modell. Kein Knacken fremder Passwörter.
 - **Schriften-Notfall** (seit 1.0.69, AP-91): *⋮ › Schriften prüfen …* (Word, PowerPoint, PDF) zeigt je Schrift
   *installiert*, *eingebettet* oder *fehlt*, erkennt die TU-Schriften (Noto Sans, Open Sans, Univers), schlägt Ersatz vor
   (metrisch gleich: Carlito für Calibri, Liberation für Arial/Times/Courier …, sonst ähnlich) mit Auswirkung („Text etwa
   12 % breiter – aus 12 Seiten werden etwa 13“), übernimmt den Ersatz in eine Kopie und **bettet installierte Schriften
-  in Word-Dateien ein** (wie Word: verschleiert, Lizenzbits beachtet). Lora: `files.fonts_check`.
+  in Word-Dateien ein** (wie Word: verschleiert, Lizenzbits beachtet). Kana: `files.fonts_check`.
 - **Druck-Lotse** (seit 1.0.69, AP-97, PC): *⋮ › Druck-Lotse …* für PDF, Word und Folien: Prüfung vor dem Druck
   (Bildauflösung dort, wo das Bild steht, RGB-Bilder, nicht eingebettete Schriften, Beschnitt, Seitenzahl) und daraus eine
   **Broschüre mit Rückenheftung** (A5 auf A4, auf ein Vielfaches von 4 aufgefüllt, Falt-Reihenfolge), mehrere Seiten pro
   Blatt (2/4/6/9), Handzettel aus Folien (3 je Seite mit Linien), doppelseitig mit Bundsteg oder **Beschnitt und
-  Schnittmarken** für die Druckerei (3 mm, TrimBox/BleedBox). Alles vektoriell. Lora: `files.print`. Test
+  Schnittmarken** für die Druckerei (3 mm, TrimBox/BleedBox). Alles vektoriell. Kana: `files.print`. Test
   `PrintAndFontsTest`.
 - **Suche nach Bedeutung überall** (seit 1.0.69, AP-107 Rest): Mit dem Suchmodell auf dem Gerät finden jetzt auch
   *Frag diesen Ordner*, die **Chatsuche** („Ähnlich nach Bedeutung“ unter den Treffern), die **Wissenspakete** (passende
   Begriffe auch ohne das Wort) und **große Anhänge** (die passenden Stellen) das Gemeinte in anderen Worten – gemischt
   wie in der Wissenssammlung (0,8 Bedeutung : 0,2 Wörter), Vektoren je Text zwischengespeichert, nichts verlässt das
   Gerät. Ohne Modell bleibt es die Wortsuche. Test `SemanticRestTest`.
-- **Server-Terminal mit Lora** (nach 1.0.67, AP-118, nur Windows/macOS/Linux): Neues Werkzeug unter *Einstellungen ›
+- **Server-Terminal mit Kana** (nach 1.0.67, AP-118, nur Windows/macOS/Linux): Neues Werkzeug unter *Einstellungen ›
   Werkzeuge* (anfangs aus, danach unter *Mehr*), um Webserver über SSH zu pflegen – wie PuTTY: gespeicherte Sitzungen
   mit Host, Port (22), eigenem Benutzer und Schlüssel (OpenSSH oder PuTTY `.ppk`, mit Passphrase) oder Passwort. Beim
   ersten Verbinden zeigt die App den SHA-256-Fingerabdruck des Servers und fragt; ein **geänderter** Schlüssel blockt die
   Verbindung mit Warnung, weiter nur nach ausdrücklichem Ersetzen (eigene `known_hosts` im Datenordner). Passwort und
   Passphrase nur auf Wunsch gespeichert, verschlüsselt mit dem Schlüssel des Geräts (wie der API-Schlüssel).
   - **Terminal**: JediTerm (wie in IntelliJ) mit Farben, `vim`, `top`; man tippt frei wie in PuTTY.
-  - **Lora daneben**: „Was soll passieren?“ → Schritte mit Befehl, Erklärung, Sicherheitsaspekten und Einstufung *liest
-    nur · ändert · riskant* (die App stuft selbst ein, Lora kann nur vorsichtiger machen). **Jeder Schritt läuft erst
+  - **Kana daneben**: „Was soll passieren?“ → Schritte mit Befehl, Erklärung, Sicherheitsaspekten und Einstufung *liest
+    nur · ändert · riskant* (die App stuft selbst ein, Kana kann nur vorsichtiger machen). **Jeder Schritt läuft erst
     nach Klick** auf *Ausführen* (oder *Im Terminal*, wenn `sudo` ein Passwort will); *Bearbeiten*, *Überspringen*,
-    *Abbrechen*, bei Fehlern *Lora fragen*. Feste Abläufe: *Symfony aktualisieren* (`git pull` → `composer install` →
+    *Abbrechen*, bei Fehlern *Kana fragen*. Feste Abläufe: *Symfony aktualisieren* (`git pull` → `composer install` →
     `asset-map:compile` → Standard-ACL für `www-data` auf `public/assets/` und `vendor/` → Cache als `www-data` leeren),
     *Apache prüfen und neu laden*, *Zertifikat prüfen und erneuern*, *Symfony-Status*.
-  - **Datenschutz**: Vorschläge bevorzugt vom Modell auf diesem Gerät. Nur ohne eines (und wenn *Wo Lora arbeitet › Lora*
+  - **Datenschutz**: Vorschläge bevorzugt vom Modell auf diesem Gerät. Nur ohne eines (und wenn *Wo Kana arbeitet › Kana*
     es erlaubt) geht die Anfrage an den Server – vorher werden Hosts, IP-Adressen, Benutzer, Mail-Adressen und der Ordner
     der Anwendung durch Platzhalter ersetzt, Passwörter, Schlüssel, Tokens und `KEY=…`-Werte durch `<geheim>`; ein
-    Hinweis über Loras Spalte sagt, wohin es geht, *Was an den Server ging* zeigt es.
+    Hinweis über Kanas Spalte sagt, wohin es geht, *Was an den Server ging* zeigt es.
   - **Protokoll** je Sitzung und Tag (`ssh/protokoll/` im Datenordner): Zeit, Zustimmung, Befehl, Exit-Code, gekürzte
     Ausgabe – ohne Geheimnisse; *Protokoll kopieren*.
 
@@ -629,11 +630,11 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Gespeicherte Sitzungen | Ablauf „Symfony aktualisieren“ |
   | --- | --- |
   | ![Server-Terminal, Sitzungen](docs/bilder/ap118-sitzungen.png) | ![Server-Terminal, Ablauf](docs/bilder/ap118-ablauf.png) |
-- **Server-Terminal: Lora arbeitet im Terminal, Dateien, Schlüssel, Tabs** (nach 1.0.72, AP-131, nur Windows/macOS/Linux):
-  - **Lora sagen, was passieren soll** (Wunsch des Kollegen): „Wie viel Speicher ist frei?“ – Lora sagt in einem Satz,
-    was sie vorhat, und zeigt den Befehl mit Erklärung und Einstufung (*Lora möchte: …*). Nach Klick auf *Ausführen*
+- **Server-Terminal: Kana arbeitet im Terminal, Dateien, Schlüssel, Tabs** (nach 1.0.72, AP-131, nur Windows/macOS/Linux):
+  - **Kana sagen, was passieren soll** (Wunsch des Kollegen): „Wie viel Speicher ist frei?“ – Kana sagt in einem Satz,
+    was sie vorhat, und zeigt den Befehl mit Erklärung und Einstufung (*Kana möchte: …*). Nach Klick auf *Ausführen*
     tippt sie ihn ins Terminal und drückt Enter; man sieht alles, `cd` gilt weiter, ein `sudo`-Passwort tippt man selbst
-    im Terminal (Lora sieht es nicht). Danach sagt Lora, was herauskam, oder schlägt den nächsten Befehl vor – **jeder
+    im Terminal (Kana sieht es nicht). Danach sagt Kana, was herauskam, oder schlägt den nächsten Befehl vor – **jeder
     Befehl braucht einen Klick**. Kein Tippen in vim/less/top, *Abbrechen (Strg+C)*, *Nur eintragen* (ohne Enter).
     Beispiele zum Anklicken; die festen Abläufe bleiben.
   - **Dateien per SFTP** (wie WinSCP): Seitenfenster *Dateien* mit Größe und Rechten, folgt auf Wunsch dem `cd` im
@@ -643,10 +644,10 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **SSH-Schlüssel**: *Schlüssel* erzeugt ein Ed25519-Paar (mit Passphrase, nur fürs eigene Konto lesbar), zeigt den
     öffentlichen Schlüssel zum Kopieren und legt ihn nach Zustimmung in `~/.ssh/authorized_keys`; danach *Mit Schlüssel
     anmelden*. Gespeicherte Sitzungen öffnen mit einem Klick.
-  - **Lokal oder TU-Server**: Beim ersten Öffnen fragt ein Pop-up, wo Lora denkt – Modell auf diesem PC oder TU-Server –,
+  - **Lokal oder TU-Server**: Beim ersten Öffnen fragt ein Pop-up, wo Kana denkt – Modell auf diesem PC oder TU-Server –,
     mit Empfehlung für diesen PC, Begründung und den Risiken beider Wege; externe Cloud-Anbieter sind fürs Terminal
-    gesperrt. Änderbar unter *Einstellungen › Lora › Server-Terminal*.
-  - **Tabs**: mehrere Server nebeneinander, Farbe je Sitzung (z. B. Rot für den Live-Server); Lora hilft im offenen Tab
+    gesperrt. Änderbar unter *Einstellungen › Kana › Server-Terminal*.
+  - **Tabs**: mehrere Server nebeneinander, Farbe je Sitzung (z. B. Rot für den Live-Server); Kana hilft im offenen Tab
     und sagt, in welchem. *An mehrere senden*: eine Zeile an ausdrücklich angekreuzte Sitzungen, mit zweiter Rückfrage.
 
   Tests `ServerTerminalLoraTest` (eingebetteter SSH/SFTP-Server mit einer Shell wie bash), `ServerModelChoiceTest` und
@@ -654,17 +655,17 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 
   ![Server-Terminal: Lokal oder TU-Server](docs/bilder/ap131-lokal-oder-tu.png)
 
-  | Lora fragt vor dem Befehl | Lora sagt, was herauskam | Dateien und Tabs |
+  | Kana fragt vor dem Befehl | Kana sagt, was herauskam | Dateien und Tabs |
   | --- | --- | --- |
-  | ![Lora fragt](docs/bilder/ap131-lora-frage.png) | ![Lora antwortet](docs/bilder/ap131-lora-ergebnis.png) | ![Dateien](docs/bilder/ap131-dateien.png) |
-- **Eigene Modelle aktualisieren** (nach 1.0.67, AP-117): Die App erkennt die Fassung von Lora Namensschutz und Lora
+  | ![Kana fragt](docs/bilder/ap131-lora-frage.png) | ![Kana antwortet](docs/bilder/ap131-lora-ergebnis.png) | ![Dateien](docs/bilder/ap131-dateien.png) |
+- **Eigene Modelle aktualisieren** (nach 1.0.67, AP-117): Die App erkennt die Fassung von Kana Namensschutz und Kana
   Befehle am SHA-256 statt an der Größe – auch ein Nachtraining mit gleichem Dateinamen und gleicher Größe kommt als
   Update an. Bis zum Download arbeitet die bisherige Fassung mit ihrer eigenen Schwelle und ihren Etiketten weiter
   (bekannt: 1.0.65 und 1.0.66); „Nicht mehr fragen“ gilt je Fassung. Neue Fassungen veröffentlicht
   `tools/modelle/veroeffentlichen.py` nur bei erreichten Zielen auf einen eigenen Branch auf GitHub (über 95 MB in
   Teilen); Anleitung in [`tools/modelle/README.md`](tools/modelle/README.md). Test `OwnModelsTest`.
-- **Wo Lora arbeitet – Lora offline** (nach 1.0.67, AP-112): Neue Seite *Einstellungen › Wo Lora arbeitet*. Oben die
-  Schnellwahl *Alles lokal · Gemischt (empfohlen) · Alles über API*, darunter eine Tabelle aller Bereiche (Lora, Chat,
+- **Wo Kana arbeitet – Kana offline** (nach 1.0.67, AP-112): Neue Seite *Einstellungen › Wo Kana arbeitet*. Oben die
+  Schnellwahl *Alles lokal · Gemischt (empfohlen) · Alles über API*, darunter eine Tabelle aller Bereiche (Kana, Chat,
   Postfach, Dokumente/Tabellen/Folien, Transkription, Spracheingabe und Diktat, Suche, Vorlesen, Bilder verstehen,
   Pseudonymisierung, Befehle, Bilder erzeugen, Web) mit *Lokal / Gemischt / API* je Bereich; was nicht geht, ist
   ausgegraut mit Grund („Ins Postfach darf nur ein Modell auf diesem Gerät“, „Nur über API – kein Bildmodell auf dem
@@ -673,17 +674,17 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   ab 6 GB oder einen Apple-Chip“), *braucht Internet* oder *nur über API* (mit Schloss – nicht versteckt). Dieselbe
   Kennzeichnung steht bei *Bilder erzeugen*, *Transkription*, *Vorlesen* und *Wissenssammlung*.
   - **Alles lokal einrichten**: ein Assistent Schritt für Schritt – Gerät messen, Zweck wählen, Sprachmodell mit Größe
-    und Tempo („schreibt ≈ 13 Wörter/s“), laden mit Fortschritt, kurz ausprobieren („Frag Lora etwas“), Befehle und
+    und Tempo („schreibt ≈ 13 Wörter/s“), laden mit Fortschritt, kurz ausprobieren („Frag Kana etwas“), Befehle und
     Namensschutz, Suche, Spracherkennung, Stimme, Bildteil, am Ende eine Übersicht. *Später* merkt sich den Schritt.
   - **Profil „Alles auf diesem Gerät“** (auch im Dialog vom ersten Start, der jetzt auch ohne API-Schlüssel kommt):
-    Lora, Chats, Dokumente, Suche, Sprache und Bilder verstehen bleiben hier; Internet nur für Web, Literatur, Nextcloud
+    Kana, Chats, Dokumente, Suche, Sprache und Bilder verstehen bleiben hier; Internet nur für Web, Literatur, Nextcloud
     und Updates. Eine einzige Sperre im Anfrageweg sorgt dafür, dass nichts still an einen Server geht – ein Chat mit
-    Server-Modell läuft mit dem Modell auf diesem Gerät weiter (mit den Grenzen aus AP-116), fehlt etwas, sagt Lora in
+    Server-Modell läuft mit dem Modell auf diesem Gerät weiter (mit den Grenzen aus AP-116), fehlt etwas, sagt Kana in
     Klartext, was zu laden ist (Knopf *Einrichtung öffnen*). Ohne API-Schlüssel gilt das von selbst.
-  - **Ohne Schlüssel**: Willkommenskarte mit zweitem Weg *Alles auf diesem Gerät einrichten*; Lora, Chat, Diktat und
-    Vorlesen laufen mit den Modellen auf dem Gerät; Lora-Mikrofon und Diktat erkennen Sprache zuerst auf dem Gerät.
+  - **Ohne Schlüssel**: Willkommenskarte mit zweitem Weg *Alles auf diesem Gerät einrichten*; Kana, Chat, Diktat und
+    Vorlesen laufen mit den Modellen auf dem Gerät; Kana-Mikrofon und Diktat erkennen Sprache zuerst auf dem Gerät.
   - **Rückfall, wenn der Uni-Server wegfällt**: Antwortet der Uni-Server mindestens zwei Tage lang nicht (bei
-    funktionierendem Internet) oder nimmt den Schlüssel nicht mehr an, fragt Lora einmal: *Auf diesem Gerät
+    funktionierendem Internet) oder nimmt den Schlüssel nicht mehr an, fragt Kana einmal: *Auf diesem Gerät
     weiterarbeiten* oder *Anderen Schlüssel eintragen* – Chats, Dateien und Einstellungen bleiben, alte Chats laufen mit
     dem neuen Modell weiter.
 
@@ -692,12 +693,12 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 
   | Windows-Fenster (Gemischt) | Android, ohne Schlüssel | Einrichtung Schritt für Schritt |
   | --- | --- | --- |
-  | ![Wo Lora arbeitet, Windows](docs/bilder/ap112-orte-windows.png) | ![Wo Lora arbeitet, Android](docs/bilder/ap112-orte-android.png) | ![Einrichtung](docs/bilder/ap112-einrichtung.png) |
+  | ![Wo Kana arbeitet, Windows](docs/bilder/ap112-orte-windows.png) | ![Wo Kana arbeitet, Android](docs/bilder/ap112-orte-android.png) | ![Einrichtung](docs/bilder/ap112-einrichtung.png) |
 - **Natürliche Stimme auf diesem Gerät** (seit 1.0.67, AP-111): Unter *Einstellungen › Vorlesen & Spracheingabe* gibt es
   neben der KI-Stimme des Uni-Servers und der Stimme des Systems **Natürliche Stimme auf diesem Gerät**: die deutsche
   Piper-Stimme „Thorsten“ (Aufnahmen von Thorsten Müller, frei als CC0; 64 MB, einmal laden, fester Commit auf Hugging
   Face, SHA-256), über dieselbe sherpa-onnx wie die Spracherkennung – ohne Server. Sie liest auch, wenn ein Text das Gerät
-  nicht verlassen darf (Projekte „Nur auf diesem Gerät“), und im Sprachmodus mit *Wo Lora arbeitet: Nur lokal*; dort
+  nicht verlassen darf (Projekte „Nur auf diesem Gerät“), und im Sprachmodus mit *Wo Kana arbeitet: Nur lokal*; dort
   bleibt dann auch die Spracherkennung auf dem Gerät (ohne Erkennungsmodell sagt die App, was fehlt, statt den Server zu
   nehmen). Der erste Satz einer Antwort ist nach rund einer Viertelsekunde fertig (in der App gemessen: 66–215 ms je
   erstem Satz, Laden einmalig 1,2 s). Werkzeuge und Zahlen: [`tools/stimme/README.md`](tools/stimme/README.md); Test
@@ -710,7 +711,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   mit Zellen zum Korrigieren und Zeilen zum Löschen; *Als Excel speichern* nimmt die korrigierte Fassung. Gemessen auf
   erfundenen PDFs (Statistik-Berichte über mehrere Seiten, Haushaltspläne, Paper-Tabellen; Prüfteil 8 Dateien): richtige
   Zellen vorher 47,8 %, jetzt 100 %. Gescannte PDFs erst mit der Texterkennung. Test `PdfTableCorpusTest`.
-- **Formatwandler mit Verlustanzeige** (seit 1.0.67, AP-90): In *Dateien* › ⋮ › **Umwandeln …** (und über Lora: „mach
+- **Formatwandler mit Verlustanzeige** (seit 1.0.67, AP-90): In *Dateien* › ⋮ › **Umwandeln …** (und über Kana: „mach
   daraus eine ODT“) Word → ODT, PDF, RTF, Markdown, Text, HTML; Excel → ODS, CSV, PDF; PowerPoint → ODP, PDF; Markdown,
   Text, RTF, HTML und CSV → Word bzw. Excel/ODS. **Vorher** sagt eine Karte, was verloren geht oder sich ändert – Formeln
   (nur Werte; ODS behält sie), Tabellenblätter bei CSV, Kommentare, Änderungsspuren, Makros, Animationen und Übergänge,
@@ -739,20 +740,20 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 - **Geräteprofil und Tempo-Vorhersage** (seit 1.0.67, AP-105): *Modelle auf diesem Gerät › Geräteprofil* zeigt, was
   das Tempo bestimmt – Speicherbandbreite (unter Windows aus der Firmware-Tabelle: Typ, Takt, Busbreite, ohne
   Admin-Rechte; auf dem Mac aus dem Apple-Chip), Befehlssätze (AVX2, AVX-512, auf ARM DotProd/I8MM), Grafikkerne. Daraus
-  sagt Lora für **jedes** Modell vorher, wie schnell es hier schreibt und einliest („schreibt ≈ 12 Wörter/s · liest ≈ 300
+  sagt Kana für **jedes** Modell vorher, wie schnell es hier schreibt und einliest („schreibt ≈ 12 Wörter/s · liest ≈ 300
   Wörter/s · geschätzt“), noch bevor es geladen ist. *Gerät messen* (≈ 20 s, auch im Dialog vom ersten Start) misst den
   Speicher und lässt das kleinste installierte Modell einen festen Text lesen und schreiben; jede Messung (auch *Messen*,
   AP-76) korrigiert die Vorhersage aller Modelle. *Messprotokoll kopieren* liefert Profil, Messungen und „Vorhersage gegen
   Messung“ als Text. Nichts verlässt dabei das Gerät. Test `SpeedForecastTest`.
 - **Modellkatalog in feinen Stufen, nach Zweck** (seit 1.0.67, AP-106): 16 lokale Modelle von 0,8 bis 35 Mrd. Parametern,
-  alle Apache-2.0, je als „<Original> – Lora Edition“ (von uns ausgewählt, gemessen und eingestellt; Gewichte unverändert,
+  alle Apache-2.0, je als „<Original> – Kana Edition“ (von uns ausgewählt, gemessen und eingestellt; Gewichte unverändert,
   Urheber und Lizenz wie im Original – siehe *Modellkarte*). Unter *Modelle auf diesem Gerät* und im Dialog vom ersten
   Start wählst du, wofür vor allem: **Allrounder** (Standard), **Texte** (Gemma 4), **Code** (Qwen Coder), **Postfach**
   (Qwen 3.5/3.6); ohne Wahl folgt es der Rolle. Je Zweck empfiehlt die App das stärkste Modell, das auf diesem Gerät
   mindestens 8 Wörter/s schreibt (Vorhersage aus AP-105) – Spezialisten werden nur bei Bedarf geladen, Programmier-Wünsche
   gehen lokal an den Code-Spezialisten. Übersicht aller Stufen: [`docs/MODELLKATALOG.md`](docs/MODELLKATALOG.md);
   Messkorpus zur Wahl: [`tools/modellwahl/`](tools/modellwahl/README.md). Tests `LocalCatalogStepsTest`.
-- **Eigener Spiegel auf Hugging Face** (seit 1.0.68): Alle Modelle der Lora Edition – Sprachmodelle mit Bildteil, Suche,
+- **Eigener Spiegel auf Hugging Face** (seit 1.0.68): Alle Modelle der Kana Edition – Sprachmodelle mit Bildteil, Suche,
   Spracherkennung, YuNet, RNNoise – liegen byte-gleich mit Lizenz und Modellkarte unter
   [huggingface.co/thepytales](https://huggingface.co/thepytales). Die App lädt zuerst von dort und, falls das scheitert,
   vom Original; Größe und SHA-256 werden wie bisher geprüft. Spiegeln neuer Modelle: [`tools/huggingface/`](tools/huggingface/README.md).
@@ -768,16 +769,16 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   „Nur auf diesem Gerät“. Auf dem Prozessor rechnet die App mit kleineren Bildern; ohne Grafikkarte dauert ein Bild je
   nach Modell etwa 10 s bis über eine Minute (Vorhersage), mit Grafikkarte oder Apple-Chip wenige Sekunden. Messkorpus:
   [`tools/bildverstehen/`](tools/bildverstehen/README.md). Test `LocalVisionTest`.
-- **Lora als Navigatorin**: Lora findet Einstellungen, Bereiche, Modi, TU Vorlagen und Werkzeuge. „Dunkles Design“ springt
+- **Kana als Navigatorin**: Kana findet Einstellungen, Bereiche, Modi, TU Vorlagen und Werkzeuge. „Dunkles Design“ springt
   zu *Darstellung* und hebt die Helligkeit mit einem **Leuchtrahmen** hervor, „Ich will ein PDF zusammenfügen“ schlägt den
-  PDF-Werkzeugkasten vor, „Erklär mir Exzerpte“ gibt die Frage an einen Chat weiter. Einfache Wünsche löst Lora **auf dem
+  PDF-Werkzeugkasten vor, „Erklär mir Exzerpte“ gibt die Frage an einen Chat weiter. Einfache Wünsche löst Kana **auf dem
   Gerät** über eine Landkarte der App (`data/AppMap.kt`, mit Synonymen) – ohne Anfrage; nur für echte Gespräche fragt sie
   GLM-5.3 Flash (Denkphase aus) mit den Werkzeugen *navigate*, *open_mode*, *change_setting* (nur nach Bestätigung),
-  *enable_tool*, *handoff_chat*, *explain* (eingebaute Hilfe) und Rückfragen mit Antwortknöpfen. Einstiege: schlafende Lora
-  unten rechts in den Einstellungen, TU Vorlagen und Literatur (Tipp weckt sie, Text oder Sprache), ein Tipp auf Lora auf
-  der Startseite, *Frag Lora* oben im Chat, Strg+K › *Lora fragen*, langes Drücken auf Lora im Chat. Beim ersten Start höchstens zwei Fragen (wo Lora
-  erscheint, welche Werkzeuge sichtbar sind). *Einstellungen › Lora*: überall / nur im Chat / aus (ersetzt „Lora
-  ausblenden“), Modell, ruhigere Bewegungen, Hinweise. Lora läuft nur auf Abruf; in Projekten „Nur auf diesem Gerät“ sucht
+  *enable_tool*, *handoff_chat*, *explain* (eingebaute Hilfe) und Rückfragen mit Antwortknöpfen. Einstiege: schlafende Kana
+  unten rechts in den Einstellungen, TU Vorlagen und Literatur (Tipp weckt sie, Text oder Sprache), ein Tipp auf Kana auf
+  der Startseite, *Frag Kana* oben im Chat, Strg+K › *Kana fragen*, langes Drücken auf Kana im Chat. Beim ersten Start höchstens zwei Fragen (wo Kana
+  erscheint, welche Werkzeuge sichtbar sind). *Einstellungen › Kana*: überall / nur im Chat / aus (ersetzt „Kana
+  ausblenden“), Modell, ruhigere Bewegungen, Hinweise. Kana läuft nur auf Abruf; in Projekten „Nur auf diesem Gerät“ sucht
   sie nur lokal.
 - **Startseite**: unter der Begrüßung die Tätigkeiten als schlichte **Chips** – *Schreiben*, *Dokument erstellen*,
   *Dateien auswerten*, *Literatur finden*, *TU Vorlagen*. Ein Tipp öffnet an ihrer Stelle **konkrete Starts**, damit
@@ -785,8 +786,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   *Protokoll aus Notizen*, *Präsentation*, *Zusammenfassen* (wählt Dateien und legt den Auftrag ins Eingabefeld),
   *Aktuelle Literatur zu einem Thema* (Literatursuchmodus), *Antwort nur mit Belegen* (Quellenmodus) oder die eigenen
   TU Vorlagen; ✕ führt zurück, Tippen schließt sie. Darunter *Zuletzt* (die letzten Chats) und *Favoriten*
-  (★-Vorlagen). Lora bietet in der Sprechblase jeweils eine Idee an; ein Tipp auf Lora öffnet ihr Panel. Das frühere
-  zweite Eingabefeld *Frag Lora …* ist weggefallen – dafür ist der Knopf oben deutlich größer.
+  (★-Vorlagen). Kana bietet in der Sprechblase jeweils eine Idee an; ein Tipp auf Kana öffnet ihr Panel. Das frühere
+  zweite Eingabefeld *Frag Kana …* ist weggefallen – dafür ist der Knopf oben deutlich größer.
 - **Einstellungen in Gruppen**: Profil, *Zugang* (API, GitHub, Umgebungen), *Assistent* (Chat & Werkzeuge, Werkzeuge,
   Datenschutz, Gedächtnis, Wissenssammlung), *Modelle* (Übersicht, Vergleich, Modelle auf diesem Gerät, Transkription),
   *Dokumente & Darstellung* und *Daten* (Verbrauch, Sicherung, Arbeitsspeicher). *Chat & Werkzeuge* ist
@@ -819,13 +820,13 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Überschriften, Listen und Tabellen beim Modell an – „Mach daraus ein Dokument im TUD-Design“ funktioniert so direkt.
   Beliebig viele Dateien (je bis 25 MB, Text bis 120 000 Zeichen) und bis zu 10 Bilder auf einmal.
 - **Erstellen** (Seitenleiste, AP-24) – neben *Dateien* der zweite Ort für Inhalte: oben das Feld **„Was möchtest du
-  erstellen?“** (Lora erledigt es im Chat, auch mit angehängter Datei – „Tagungsposter aus meinem Paper“, „Aushang für die
+  erstellen?“** (Kana erledigt es im Chat, auch mit angehängter Datei – „Tagungsposter aus meinem Paper“, „Aushang für die
   Sprechstunde“, „Protokoll aus meinen Notizen“), darunter unter Windows **Gestalten** und **Meine Designs**, dann die
   **TU Vorlagen**.
 - **Gestalten** (Windows, AP-24, Vorbild Canva, Schwerpunkt Corporate Design): Vorlagen *Tagungsposter* (A1),
   *Digitales Poster* (16:9 für Bildschirme, nach dem Layout „3 Spalten“ des CD-Pakets), *Flyer* (A5), *Aushang* (A4),
   *Einladungskarte* (A5 quer), *Social Media: Beitrag* und *Story*, *OPAL-Kursbanner*, *Titelbild für Lehrvideos* – jede
-  zum **Selbst gestalten** oder **Lora machen lassen**; dazu *Poster aus einem Paper* und *Leeres Design* in 18 Formaten
+  zum **Selbst gestalten** oder **Kana machen lassen**; dazu *Poster aus einem Paper* und *Leeres Design* in 18 Formaten
   (A0–A6, DIN lang, Bildschirmformate in Pixeln). Alle Vorlagen folgen dem **CD 2025**: Logo oben links (A4 wie in
   Briefen und Urkunden 25/18 mm), Überschriften in Noto Sans Medium (Brillantblau auf Weiß, Weiß auf Brillantblau),
   Fließtext Schwarz, nur TUD Farben, die **Shape** als Bildmotiv (randabfallend, gern mit Foto darin) und TUD-Icons. Briefe, Protokolle und
@@ -854,7 +855,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **Export**: **PNG** (Bildschirmformate in ihrer Pixelgröße, Druckformate mit 150 oder 300 dpi; mehrere Seiten als ZIP),
     **PDF für den Druck** (vektoriell, Noto Sans eingebettet; auf Wunsch mit 3 mm Beschnitt und Schnittmarken für die
     Druckerei) und **PowerPoint** mit echten, bearbeitbaren Textfeldern und Formen.
-  - **Lora gestaltet in jedem Chat** (Windows): `create_design`, `update_design`, `read_design` füllen die Platzhalter einer
+  - **Kana gestaltet in jedem Chat** (Windows): `create_design`, `update_design`, `read_design` füllen die Platzhalter einer
     Vorlage (Texte passen sich der Box an), setzen QR-Codes und erzeugen auf Wunsch ein Bild für den Bildplatz; Modus
     *Gestalten* (`/Gestalten`) mit Vorgaben (knapp, nichts erfinden). Unter der Antwort eine Karte mit Vorschau und
     *Bearbeiten*; ist der Editor offen, lädt er eine im Chat geänderte Fassung nach.
@@ -865,7 +866,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Exzerpt, Projektskizze, Einwilligungserklärung, Peer Review), *Kommunikation*, *Allgemein* und *Personas*
   (Didaktik-Beratung, Methoden- & Statistikberatung, Lektorat, kritische:r Gutachter:in …). Vorlage wählen, die Felder in
   einem Formular ausfüllen, senden – die Anweisungen an das Modell schickt die App unsichtbar mit, im Chat steht nur
-  „Vorlage: …“ und Ihre Angaben. Suche, Filter nach Bereich, Favoriten (★, Lora bietet sie auf dem Startbildschirm an), eigene
+  „Vorlage: …“ und Ihre Angaben. Suche, Filter nach Bereich, Favoriten (★, Kana bietet sie auf dem Startbildschirm an), eigene
   Vorlagen mit Platzhaltern `{{Feld}}` bzw. `{{Feld|Beispiel}}`, eingebaute Vorlagen lassen sich kopieren und anpassen.
   Eigene Vorlagen per *Teilen* als Text an Kolleg:innen schicken und dort über *Importieren* übernehmen. Die eingebauten
   Vorlagen kommen mit jedem Update aktuell mit. *Einstellungen › Dokumente & Logos › Meine Absenderangaben* füllt die
@@ -1038,43 +1039,43 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Dokumente: GLM-5.3 Flash) und **fragt vorher** („Anderes Modell verwenden? – Ja, GLM-5.3 / Nein, DeepSeek V4.1
   Flash“). Entschieden wird auf dem Gerät, ohne zusätzliche Anfrage. *Einstellungen › Chat & Werkzeuge*: neue Chats
   automatisch, Rückfrage abschaltbar.
-- **Lora, das Maskottchen und der Forschungsassistent**: ein kleiner, runder Roboter in der Farbe des Stils (benannt
-  nach *Low-Rank Adaptation*). Auf „Wie heißt du?“ stellt sich der Assistent als Lora vor, der Forschungsassistent der
-  App; nach dem Modell gefragt, nennt Lora das Sprachmodell, das gerade antwortet. Eine Persona oder ein eigener
+- **Kana, das Maskottchen und der Forschungsassistent**: ein kleiner, runder Roboter in der Farbe des Stils – kurz
+  und freundlich Kana (bis 1.0.77 „Lora“; wer sie so anspricht, meint weiter sie). Auf „Wie heißt du?“ stellt sich der Assistent als Kana vor, der Forschungsassistent der
+  App; nach dem Modell gefragt, nennt Kana das Sprachmodell, das gerade antwortet. Eine Persona oder ein eigener
   System-Prompt darf eine andere Rolle vorgeben.
   **Im Chat** bleiben Gedankengang und Werkzeugschritte eingeklappt (*Chat & Werkzeuge › Arbeitsschritte einklappen*,
-  Standard an); solange der Agent arbeitet, begleitet Lora die Antwort in einer Karte mit fester Höhe (nichts springt) –
-  Lora auf einer kleinen, hell beleuchteten Bühne, daneben „Lora ist dran“ mit der bisherigen Zeit, der aktuelle Schritt,
-  die Zahl der Schritte, die alles aufklappt, und eine feine Fortschrittslinie am unteren Rand. Lora forscht dabei mit:
+  Standard an); solange der Agent arbeitet, begleitet Kana die Antwort in einer Karte mit fester Höhe (nichts springt) –
+  Kana auf einer kleinen, hell beleuchteten Bühne, daneben „Kana ist dran“ mit der bisherigen Zeit, der aktuelle Schritt,
+  die Zahl der Schritte, die alles aufklappt, und eine feine Fortschrittslinie am unteren Rand. Kana forscht dabei mit:
   mikroskopiert, experimentiert mit dem Erlenmeyerkolben, dreht den Globus, schaut durchs Teleskop und durchs Fernglas,
   funkt mit der Antenne, blättert im Karteikasten, holt ein Buch aus dem Regal, fängt umherflatternde Seiten mit dem
   Kescher, gräbt ein Fossil aus, schleppt Bücherstapel, puzzelt, rechnet am Abakus, faltet Papierflieger, hört mit
   Kopfhörern zu, notiert, präsentiert ein Diagramm, hat Geistesblitze, liest, tippt, jongliert, tanzt, dreht Pirouetten
   und trinkt zwischendurch Kaffee – und spielt oft nach, was der Agent gerade tut (Websuche: Lupe, Antenne, Teleskop,
   Fernglas; Literatur: Bücher, Karteikasten, Regal; Rechnen: Experiment und Abakus; E-Mail: Papierflieger;
-  Transkription: Kopfhörer; Nachdenken: Denkerpose und Puzzle). Dabei geht es natürlich zu: Ein Buch hält Lora mit dem
-  Einband nach außen, auf dem Klemmbrett entstehen die Zeilen unter ihrem Stift. Lora dreht Kopf und Körper
+  Transkription: Kopfhörer; Nachdenken: Denkerpose und Puzzle). Dabei geht es natürlich zu: Ein Buch hält Kana mit dem
+  Einband nach außen, auf dem Klemmbrett entstehen die Zeilen unter ihrem Stift. Kana dreht Kopf und Körper
   zu dem, was gerade wichtig ist, lehnt sich in Bewegungen, federt beim Hüpfen, die Antenne schwingt nach, die Arme
-  haben weiche Ellbogen, und zwischen zwei Tätigkeiten hüpft Lora kurz hinüber. Ein Tipp auf Lora in der Arbeitskarte
-  bringt ein Winken, eine Pirouette, einen Geistesblitz, einen Jubel oder ein Nicken. **Seit AP-36** arbeitet Lora auch
+  haben weiche Ellbogen, und zwischen zwei Tätigkeiten hüpft Kana kurz hinüber. Ein Tipp auf Kana in der Arbeitskarte
+  bringt ein Winken, eine Pirouette, einen Geistesblitz, einen Jubel oder ein Nicken. **Seit AP-36** arbeitet Kana auch
   mit Werkzeugen, die wirklich ansetzen – ihre Hände greifen dabei gezielt nach einem Punkt: Die **Schere** schneidet ein
   Blatt entlang der Linie durch (die untere Hälfte fällt), **Stempel** und **Tacker** stehen auf einem kleinen
-  Beistelltisch – der Stempel trifft das Blatt und hinterlässt ein rotes Siegel, das Lora danach zeigt; dazu ein
+  Beistelltisch – der Stempel trifft das Blatt und hinterlässt ein rotes Siegel, das Kana danach zeigt; dazu ein
   **Brief**, der gefaltet, eingesteckt und mit einem Herz versiegelt wird (E-Mail-Entwürfe), der **Wandkalender**, an dem
   sie umblättert und einen Tag rot einkreist (Termine, Fristen), die **Staffelei** (Logos), das **Vorhängeschloss** mit
   Schlüssel, eine **Präsentation** mit Zeigestock (Dokumente), eine **Tabelle**, die sich füllt (Excel), **Übersetzen** mit
   zwei Sprechblasen, der **Textmarker** (Dokumente und Quellen prüfen) und ein **Ordner**, in den ein Blatt fällt. Dazu
-  Stimmungen: Lora **zeigt den Weg**, wenn sie irgendwohin führt, **nickt**, **zuckt mit den Schultern**, wenn sie nichts
+  Stimmungen: Kana **zeigt den Weg**, wenn sie irgendwohin führt, **nickt**, **zuckt mit den Schultern**, wenn sie nichts
   findet, **kratzt sich am Kopf** bei Fehlern, **jubelt** mit Konfetti und **fliegt** von ihrem Panel zum Ziel. Ihre
   Augen folgen dem Mauszeiger, solange sie nur da ist; morgens beginnt sie auf der Startseite mit einem Kaffee, spätabends
-  ist sie ruhiger. *Ruhigere Bewegungen* (Einstellungen › Lora) gilt auch für das Fliegen. Fertige Antworten zeigen eine ruhige Zeile
-  „Gedankengang und 4 Arbeitsschritte“. **Auf der Startseite** winkt Lora zur Begrüßung, wartet dann (schaut sich um,
+  ist sie ruhiger. *Ruhigere Bewegungen* (Einstellungen › Kana) gilt auch für das Fliegen. Fertige Antworten zeigen eine ruhige Zeile
+  „Gedankengang und 4 Arbeitsschritte“. **Auf der Startseite** winkt Kana zur Begrüßung, wartet dann (schaut sich um,
   streckt sich, gießt die Pflanze, hört Musik, liest, dreht den Globus …) und bietet in einer Sprechblase eine Idee an –
   Favoriten bzw. empfohlene Vorlagen, Beispiele wie „Literatur zu einem Thema finden“ und alle Vorlagen; ↻ bringt mit
-  einem Geistesblitz die nächste, ein Tipp auf Lora öffnet ihr Panel. Beim Tippen schreibt Lora mit; nach einer Weile ohne Eingabe nickt
-  Lora ein. Wer Lora nicht sehen möchte, schaltet *Chat & Werkzeuge › Lora ausblenden* ein (Standard aus): Dann zeigen
+  einem Geistesblitz die nächste, ein Tipp auf Kana öffnet ihr Panel. Beim Tippen schreibt Kana mit; nach einer Weile ohne Eingabe nickt
+  Kana ein. Wer Kana nicht sehen möchte, schaltet *Chat & Werkzeuge › Kana ausblenden* ein (Standard aus): Dann zeigen
   Startseite, Arbeitskarte und Sprachmodus das Symbol der App, die Ideen bleiben erreichbar.
-  **Neues Aussehen und lebendigere Bewegung** (seit 1.0.70, AP-122): Lora ist neu gezeichnet – ein Körper mit Volumen
+  **Neues Aussehen und lebendigere Bewegung** (seit 1.0.70, AP-122): Kana ist neu gezeichnet – ein Körper mit Volumen
   (Verlauf, weiches Licht von links oben, Glanz, aus der Stilfarbe abgeleitet), der Kopf als Kuppel, das Visier wie Glas,
   größere Augen mit Lichtpunkten, kleine Stiefel, verjüngte Arme und Beine. Das Gesicht bleibt auch im dunklen Design
   weiß. Sie „spürt“ ihre Bewegung: Antenne, Arme und Körper schwingen nach, sie streckt sich im Sprung und federt bei der
@@ -1190,14 +1191,14 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   einer Antwort: *⋯ › Literaturverzeichnis erstellen*. Der Zitierstil ist unter *Einstellungen › Literatur & Zotero* wählbar.
 - **Modi mit einheitlichem Rahmen**: Jeder Modus zeigt über dem Eingabefeld einen Chip mit ✕ zum Verlassen und eine Zeile
   „was passiert hier · Daten: …“; im leeren Chat steht ein Beispiel zum Antippen. Modi starten mit `/` (z. B. `/Planen`),
-  über die Befehlspalette (Strg+K, Gruppe *Modi*), die Startseite und Loras Ideen: *Literatursuche*, *Quellenmodus*,
+  über die Befehlspalette (Strg+K, Gruppe *Modi*), die Startseite und Kanas Ideen: *Literatursuche*, *Quellenmodus*,
   *Exzerpt*, *Planungsmodus* und *Sprachmodus*. Neue Modi brauchen nur eine Definition in `agent/ChatModes.kt`.
 - **Rückfragen mit Antwortknöpfen**: Statt zu raten, stellt das Modell vor größeren Aufgaben 1–4 kurze Fragen
   (`ask_user`) – als Karte im Chat mit Antwortknöpfen (eine oder mehrere Antworten) und einem Feld für eine eigene
   Antwort; *Antworten* schickt alles als eine Nachricht, *Überspringen* lässt das Modell mit Annahmen weitermachen. Im
-  **Planungsmodus** klärt Lora ein Vorhaben (Seminar, Antrag, Projekt, Paper, Arbeitsplan) in mehreren solchen Runden und
+  **Planungsmodus** klärt Kana ein Vorhaben (Seminar, Antrag, Projekt, Paper, Arbeitsplan) in mehreren solchen Runden und
   schreibt daraus einen Plan als Dokument. **TU Vorlagen mit vielen Feldern** lassen sich statt im Formular mit
-  *Lieber mit Lora Schritt für Schritt* als Fragerunde ausfüllen.
+  *Lieber mit Kana Schritt für Schritt* als Fragerunde ausfüllen.
 - **Quellenmodus mit Belegpflicht** (`/Quellen`): Jede Aussage bekommt einen Marker [n], die Antwort endet mit
   „## Belege“ – Datei und Seite, DOI, URL oder Transkriptzeit, jeweils mit wörtlichem Zitat. Danach prüft die App **auf dem
   Gerät** jedes Zitat gegen die Quellen des Chats (Anhänge mit ihren Seitenmarken, gelesene Webseiten, Wissenssammlung,
@@ -1230,7 +1231,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   **Formulare ausfüllbar machen**: *Felder erkennen* findet Eingabestellen (Linien „____“, „Name:“ mit Platz, Kästchen ☐,
   Datum, Unterschrift), die Felder lassen sich verschieben, in der Größe ändern, umbenennen und umtypisieren; oder der
   Agent macht es im Chat (`make_pdf_fillable`). Danach füllt man das PDF am PC aus (auch der Agent mit `fill_pdf`).
-  Android: Betrachter, Seiten und Markieren. Lora schneidet, heftet und stempelt dazu.
+  Android: Betrachter, Seiten und Markieren. Kana schneidet, heftet und stempelt dazu.
   **Stufe 2** (AP-15) mit den Bereichen *Unterschreiben*, *Umwandeln* und *KI*:
   - **Texterkennung (OCR)**: Scans werden durchsuchbar – auf Windows mit der **Texterkennung von Windows** (Deutsch,
     sonst Englisch; nichts verlässt den PC, nichts zu installieren; über Windows PowerShell 5.1 als `-EncodedCommand`,
@@ -1275,7 +1276,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Zertifikat vertraut (Bouncy Castle). **Tags erzeugen** für PDF/UA: Überschriften nach Schriftgröße, Absätze, Listen,
   Abbildungen mit eingegebenem Alternativtext, Linien und Seitenzahlen als Dekoration – danach meldet die PDF/UA-Prüfung
   „Mit Struktur (Tags)“. Tabellen werden noch nicht erkannt. Test `PdfRestTest`.
-- **Mail & Kalender** (AP-13, AP-27, Werkzeug *Mail & Kalender*, anfangs aus): Lora arbeitet unter Windows mit dem
+- **Mail & Kalender** (AP-13, AP-27, Werkzeug *Mail & Kalender*, anfangs aus): Kana arbeitet unter Windows mit dem
   **klassischen Outlook** dieses PCs – lokal über COM (JNA, ohne PowerShell, ohne Admin-Rechte, ohne Freigabe der IT;
   Outlook startet bei Bedarf im Hintergrund). Für das neue Outlook, andere Mailprogramme und **das Handy** gibt es den
   **Weg über den Mailserver** (AP-27, *Einstellungen › Verbindungen › Mail über den Server*): IMAP mit TLS (993) oder
@@ -1287,39 +1288,39 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **Nur ein Modell auf diesem Gerät** (AP-68): Mails, Ordner, Termine und Aufgaben liest weder der Uni-Server noch ein
     externer Anbieter – fest, ohne Schalter. Der Modus *Postfach* arbeitet *Nur auf diesem Gerät* und bietet im
     Modellwähler nur lokale Modelle an; Mail-Werkzeuge gibt es in keinem Chat mit einem Server-Modell, auch nicht über
-    Lora, Abläufe, Stapel oder geplante Aufgaben. Fehlt ein lokales Modell, erklärt *Mail & Kalender* warum und schlägt
-    ein passendes zum Herunterladen vor (je nachdem, ob der PC eine Grafikkarte hat). Lora nimmt Mail-Aufträge an, liest
+    Kana, Abläufe, Stapel oder geplante Aufgaben. Fehlt ein lokales Modell, erklärt *Mail & Kalender* warum und schlägt
+    ein passendes zum Herunterladen vor (je nachdem, ob der PC eine Grafikkarte hat). Kana nimmt Mail-Aufträge an, liest
     aber selbst keine Mails – das Modell auf dem Gerät erledigt sie („läuft auf diesem Gerät“). Lange Mails liest es
     gekürzt (Kopf und Anfang), damit es auch ohne Grafikkarte zügig geht. **An Chat übergeben**: Eine Zusammenfassung
     des lokalen Modells geht an DeepSeek – vorher als Karte zum Prüfen und Ändern, pseudonymisiert, ohne Mails, Anhänge
     und Mail-Kennungen; der neue Chat kann nicht ins Postfach greifen.
   - **Mailansicht wie ein Mailprogramm** (AP-69): links alle Ordner mit Unterordnern und Ungelesen-Zahl, in der Mitte
-    die Mails nach Heute, Gestern, Diese Woche …, rechts die geöffnete Mail mit Anhängen (öffnen, in den Lora-Ordner
+    die Mails nach Heute, Gestern, Diese Woche …, rechts die geöffnete Mail mit Anhängen (öffnen, in den Kana-Ordner
     speichern, *In Outlook öffnen*). Auch Postfächer mit vielen tausend Mails laufen flüssig (Nachladen beim Scrollen),
     die Spaltenbreiten lassen sich ziehen. **Suchen und filtern** nach Absender, Betreff, Zeitraum, ungelesen, mit
     Anhang, in einem oder allen Ordnern. Mehrere Mails auswählen, auf einen Ordner ziehen, als gelesen/ungelesen
-    markieren, Ordner anlegen und umbenennen – alles mit Rückgängig und im Protokoll. Lora weiß, welche Mails ausgewählt
+    markieren, Ordner anlegen und umbenennen – alles mit Rückgängig und im Protokoll. Kana weiß, welche Mails ausgewählt
     sind. Auf dem Handy erst die Liste, dann die Mail. Über den Mailserver fragt die App lange Listen in kurzen Befehlen
     ab, weil Exchange Zeilen über 10 KB ablehnt (in 1.0.62 bei großen Posteingängen „Command Error. 10“).
-  - **Lora sortiert selbst** (AP-69): „Geh die Mails der letzten Woche durch und ordne sie in Lehre, Forschung und
-    Verwaltung ein“ – fehlende Ordner (auch Unterordner wie „Lehre/WS 2026-27“) legt Lora in Outlook an oder schlägt
+  - **Kana sortiert selbst** (AP-69): „Geh die Mails der letzten Woche durch und ordne sie in Lehre, Forschung und
+    Verwaltung ein“ – fehlende Ordner (auch Unterordner wie „Lehre/WS 2026-27“) legt Kana in Outlook an oder schlägt
     eine Ordnerstruktur vor. Das Modell auf dem Gerät liest Kopf und Anfang jeder Mail. Danach **eine Vorschau** für den
     ganzen Auftrag (einzelne Mails umhängen oder auslassen, Unsichere gesondert) und **ein Klick** *Einordnen*; mit
     „ohne Rückfrage“ ohne Vorschau, Unsichere bleiben dann liegen. Der Lauf geht im Hintergrund mit Fortschritt, Pause
     und Abbrechen weiter, auch nach einem Neustart, und lässt sich **als Ganzes rückgängig** machen (neue Ordner bleiben
     stehen). Aus einem Lauf werden auf Wunsch feste Regeln oder ein regelmäßiger Auftrag („jeden Montag“); Korrekturen
-    merkt sich Lora als Beispiele, wenn man zustimmt. Auch als Lora-Aktion in Abläufen.
-  - **Sortieren**: Lora schlägt Ordner und feste **Sortierregeln** vor (Absender/Betreff enthält … → Ordner);
+    merkt sich Kana als Beispiele, wenn man zustimmt. Auch als Kana-Aktion in Abläufen.
+  - **Sortieren**: Kana schlägt Ordner und feste **Sortierregeln** vor (Absender/Betreff enthält … → Ordner);
     Verschieben fragt vorher, Regeln wirken nur über *Regeln anwenden …*, das zuerst zeigt, was wohin käme.
   - **Antworten im eigenen Stil** (Gedächtnis, gesendete Mails) landen als **Entwurf** in Outlook – mit zitiertem Verlauf.
   - **Fristen und Termine** aus Mails als Termin (Fristen ganztägig mit Erinnerung) oder **Aufgabe**; **freie Zeiten**
     mit Kolleg:innen aus Frei/Gebucht (Mo–Fr, 8–18 Uhr, einstellbar) und **Einladungen**, die vorbereitet in Outlook
     aufgehen – senden tut die Person selbst.
   - **Harte Regeln**: Die Brücke zu Outlook hat weder Löschen noch Senden. Jede Änderung steht im **Protokoll** unter
-    *Mehr › Mail & Kalender* (Reiter *Übersicht*: Verbindung, Termine von heute und morgen, Starts für Lora, Regeln).
+    *Mehr › Mail & Kalender* (Reiter *Übersicht*: Verbindung, Termine von heute und morgen, Starts für Kana, Regeln).
     Modus *Postfach* (`/Postfach`).
   - Je nach Virenscanner fragt Outlook einmal „Ein Programm versucht, auf E-Mail-Adressen zuzugreifen“ – dort zulassen.
-- **Dateien** (AP-16 Stufe 0, Tab *Dateien* oben in der Seitenleiste, Strg+D) – wie Google Drive: der **Lora-Ordner**
+- **Dateien** (AP-16 Stufe 0, Tab *Dateien* oben in der Seitenleiste, Strg+D) – wie Google Drive: der **Kana-Ordner**
   mit den festen Ordnern **Hochgeladen** (eine Kopie jeder Datei, die in einen Chat kommt – dieselbe Datei nur einmal,
   nie aus Tresor-Chats) und **Erstellt** (alles, was die KI im Chat macht) und eigenen Ordnern.
   - **Raster mit Vorschaubild** (erste Seite, Folie, Tabelle, PDF-Seite, Foto) oder **Liste**, sortiert nach Name,
@@ -1331,17 +1332,17 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Kopie, **Markieren** (Stern), Schlagwörter, Mehrfachauswahl (lange drücken), **Papierkorb** (30 Tage, Wiederherstellen).
     Aus dem Explorer auf das Fenster gezogene Dateien landen im geöffneten Ordner.
   - **Aus dem Chat**: Dateien zeigen „aus „Chat““ (Klick öffnet ihn), *Chat-Menü › Dateien dieses Chats* zeigt alles, was
-    dort hochgeladen und erstellt wurde – auch nach dem Verschieben (die Chats behalten den alten Pfad, Lora findet die Datei).
+    dort hochgeladen und erstellt wurde – auch nach dem Verschieben (die Chats behalten den alten Pfad, Kana findet die Datei).
   - **Orte**: Ablageorte und Projektordner bleiben verknüpft; ihre Dateien lassen sich hier jetzt auch umbenennen,
     verschieben und löschen.
-  - **Lora-Ordner** (Windows): **ein Ordner für alles wie ein Obsidian-Vault** – standardmäßig `Dokumente\Lora`, versteckt
-    darin `.lora` mit Chats und Einstellungen. *⋮ › Lora-Ordner …* oder *Einstellungen › Windows*: **Verschieben …**
-    (alles wird kopiert, Lora startet dort neu) oder **Anderen Lora-Ordner wählen …**; selbst im Explorer verschoben, fragt
-    Lora beim Start, wo er jetzt liegt. API- und Tresor-Schlüssel bleiben am PC. Beim ersten Start mit 1.0.x zieht Lora
-    die Daten aus `%APPDATA%\ADEU LLM` dorthin um (ein selbst gewählter Datenordner wird selbst zum Lora-Ordner);
+  - **Kana-Ordner** (Windows): **ein Ordner für alles wie ein Obsidian-Vault** – standardmäßig `Dokumente\Kana` (ein `Dokumente\Lora` von vor 1.0.78 bleibt in Gebrauch), versteckt
+    darin `.lora` mit Chats und Einstellungen. *⋮ › Kana-Ordner …* oder *Einstellungen › Windows*: **Verschieben …**
+    (alles wird kopiert, Kana startet dort neu) oder **Anderen Kana-Ordner wählen …**; selbst im Explorer verschoben, fragt
+    Kana beim Start, wo er jetzt liegt. API- und Tresor-Schlüssel bleiben am PC. Beim ersten Start mit 1.0.x zieht Kana
+    die Daten aus `%APPDATA%\ADEU LLM` dorthin um (ein selbst gewählter Datenordner wird selbst zum Kana-Ordner);
     erstellte Dateien kommen nach *Erstellt*, gemerkte PDFs und Bilder alter Chats nach *Hochgeladen* (Word, Excel und
     andere alte Uploads gab es nur als Text).
-  - **Android**: Die Dateien liegen in der App; ein einmal im Systemdialog gewählter Ordner (z. B. `Dokumente/Lora`)
+  - **Android**: Die Dateien liegen in der App; ein einmal im Systemdialog gewählter Ordner (z. B. `Dokumente/Kana`)
     bekommt eine Kopie und gibt Änderungen zurück (alle zwei Minuten und nach Änderungen). Chats bleiben in der App.
 - **Dateiverwaltung** (AP-18): dazu alles, was die App als Datei kennt – Dateien in **Ablageorten** und
   **Projektordnern** (alle Formate) und die **Wissenssammlung**.
@@ -1355,10 +1356,10 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     und öffnet einen Chat im **Quellenmodus** über genau diese Dateien – das Werkzeug `search_folder` liefert die Stellen
     mit Datei und Seite, die Belegprüfung prüft jedes Zitat, ein Klick öffnet das PDF an der Seite. Wirkt der Ordner
     vertraulich, empfiehlt die App „Nur TU Dresden“.
-  - **Windows-Integration** (AP-59): Dateien aus dem Explorer in den offenen Ordner ziehen (Kopie) und **aus Lora hinaus**
+  - **Windows-Integration** (AP-59): Dateien aus dem Explorer in den offenen Ordner ziehen (Kopie) und **aus Kana hinaus**
     über den Griff ⋮⋮ an jeder Zeile in den Explorer, eine Outlook-Mail oder ein anderes Programm ziehen (auch mehrere
     ausgewählte); *Als Datei kopieren* legt Dateien in die Zwischenablage (Strg+V im Explorer oder in einer Mail).
-    **„Mit Lora öffnen“ / „Lora fragen“** im Kontextmenü des Explorers (und „Frag diesen Ordner“ auf Ordnern) – je
+    **„Mit Kana öffnen“ / „Kana fragen“** im Kontextmenü des Explorers (und „Frag diesen Ordner“ auf Ordnern) – je
     Benutzer ohne Admin-Rechte, Schalter unter *Einstellungen › Windows › Explorer und Papierkorb*; eine laufende App
     übernimmt die Datei. Wahlweise landen gelöschte Dateien im **Windows-Papierkorb**. **In Word/Excel/PowerPoint öffnen
     und zurück**: im Dateimenü und im Dokument-Menü; solange Office die Datei offen hat, steht „in Word geöffnet“ an der
@@ -1374,7 +1375,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Test `QuickLookTest`, Bild `build/files-details.png` (`Round2EndLookTest`).
 - **Dokumenten-Scanner** (AP-62, seit 1.0.61; *Dateien › + › Scannen*, Strg+K „Scannen“): Papier wird ein
   **durchsuchbares PDF**. Auf dem Handy die Seite von oben **fotografieren** (Kamera-App) oder aus den Fotos holen, unter
-  Windows **vom Scanner** (Scan-Dialog von Windows über WIA, ohne Treiber oder Admin-Rechte) oder Bilder öffnen. Lora findet
+  Windows **vom Scanner** (Scan-Dialog von Windows über WIA, ohne Treiber oder Admin-Rechte) oder Bilder öffnen. Kana findet
   die **Kanten des Papiers** (größte helle Fläche, Viereck größter Fläche in ihrer Hülle – auch schräg fotografiert), die
   Ecken lassen sich mit Finger oder Maus verschieben; die Seite wird **entzerrt** (fast A4 wird genau A4) und aufbereitet:
   *Farbe* (Weißabgleich am Papier), *Graustufen* und *Schwarz-Weiß* (Schatten von Hand und Lampe werden ausgeglichen),
@@ -1382,11 +1383,11 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   **Dateien › Scans**, mit **Texterkennung** (Windows: die eingebaute Texterkennung; Android: ein Bildmodell, das der
   Datenschutz erlaubt) als unsichtbare Textebene – suchen, kopieren, „Frag das PDF“. Über den Sync landet das PDF auch auf
   dem PC (**Handy als Scanner**). Tour *Scannen*. Tests `DocScannerTest` (drei schräg fotografierte Seiten → ein
-  durchsuchbares PDF im Lora-Ordner), Bild `build/scan-screen.png`.
-- **Office-Ausbau** (AP-16): Dokumente fühlen sich an wie Google Docs, mit **Lora rechts als Assistentin** (auf breiten
-  Bildschirmen gleich offen) und dem **Lora-Popup** über markiertem Text („Was soll Lora mit der Markierung machen?“,
+  durchsuchbares PDF im Kana-Ordner), Bild `build/scan-screen.png`.
+- **Office-Ausbau** (AP-16): Dokumente fühlen sich an wie Google Docs, mit **Kana rechts als Assistentin** (auf breiten
+  Bildschirmen gleich offen) und dem **Kana-Popup** über markiertem Text („Was soll Kana mit der Markierung machen?“,
   dazu Verbessern, Kürzen, Einfacher, Rechtschreibung …).
-  - **Echte Dateien**: Dokumente sind `.docx`, Präsentationen `.pptx`, Tabellen `.xlsx`, Markdown `.md` im Lora-Ordner –
+  - **Echte Dateien**: Dokumente sind `.docx`, Präsentationen `.pptx`, Tabellen `.xlsx`, Markdown `.md` im Kana-Ordner –
     sie öffnen in Word, PowerPoint und Excel. Der Titel ist der Dateiname. In Word geänderte Dateien kommen als neue
     Version zurück. **Verlustfrei**: Kommt eine Datei von außen (oder wurde in Word geändert), schreibt der Editor reine
     Textänderungen Absatz für Absatz, Zelle für Zelle **in das Original** – Formatvorlagen, Kopfzeilen, alles Unbekannte
@@ -1442,7 +1443,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Folien duplizieren/verschieben (Strg+M, Strg+D, Strg+Umschalt+↑/↓), **Vorführen** (F5) mit **Referentenansicht**
     (nächste Folie, Notizen, Timer), Export als PowerPoint im TUD-Design. Fehlt die Einrichtung, fragt der Editor danach.
     Seit AP-51: **Übergänge** (Überblenden, Schieben) und **Stichpunkte nacheinander** je Folie – beim Vorführen und in
-    PowerPoint (auch aus fremden .pptx gelesen) –, **Zeichnen** beim Präsentieren (D, E löscht) und Lora baut aus einem
+    PowerPoint (auch aus fremden .pptx gelesen) –, **Zeichnen** beim Präsentieren (D, E löscht) und Kana baut aus einem
     Dokument ein ganzes Deck („Mach aus dem Dokument eine Präsentation“).
     Seit 1.0.59 (AP-50, AP-51):
     - **Freie Elemente wie in Gestalten**: am runden Griff drehen, beim Verschieben an Rändern, Mitte und anderen Elementen
@@ -1453,9 +1454,9 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
       nur die geänderten Folien.
     - **Zwei Bildschirme**: beim Vorführen laufen die Folien auf dem Beamer, die Referentenansicht mit nächster Folie,
       Notizen und Timer bleibt auf dem Laptop (umschaltbar in der Vorführleiste).
-    - **Lora baut Folien aus einem Paper**: „Mach aus diesem Paper eine Präsentation“ baut aus einem PDF ein Deck im
+    - **Kana baut Folien aus einem Paper**: „Mach aus diesem Paper eine Präsentation“ baut aus einem PDF ein Deck im
       TUD-Design mit Abschnitten, Tabellen, Abbildungen und Sprechertexten; ✨ › *Folie schöner machen* zeigt Vorschläge
-      zum Antippen, Lora schreibt auf Wunsch die Sprechertexte.
+      zum Antippen, Kana schreibt auf Wunsch die Sprechertexte.
   - **Tabelle** (wie Excel): Zellraster mit Spalten- und Zeilenköpfen, **Bearbeitungsleiste mit Formeln** in deutscher
     Schreibweise (`=SUMME(B2:B9)`, `=MITTELWERT`, `=WENN(…;…;…)`, `=RUNDEN`, `=ZÄHLENWENN`, `=SUMMEWENN`, `=STABW`, `&` …,
     auch englische Namen), dazu **SVERWEIS, XVERWEIS, INDEX/VERGLEICH, WENNFEHLER, WENNS, ZÄHLENWENNS, SUMMEWENNS,
@@ -1476,7 +1477,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     reinen Text, Excel bekommt echten Rich Text (auch beim Öffnen fremder Dateien).
     **Diagramme** (AP-49) aus der Markierung in acht Arten (Säulen, Balken, gestapelt, Linie, Kreis, Punkt, Histogramm,
     Boxplot) in TUD-Farben, mit Titel und Achsentiteln, als SVG speicherbar und **verknüpft in Dokumente und Folien**
-    einfügbar – dort aktualisieren sie sich beim Öffnen aus der Tabelle. **Lora rechnet** auf dem Gerät: „Berechne die
+    einfügbar – dort aktualisieren sie sich beim Öffnen aus der Tabelle. **Kana rechnet** auf dem Gerät: „Berechne die
     Notenverteilung“, „Mittelwert der Note je Gruppe“ (wie eine Pivot-Tabelle) – als Formeln mit Diagramm neben den
     Daten – und „Erkläre die Formel in D2“.
     **Echte Office-Diagramme**: In der Excel-Datei sind die Diagramme echte Excel-Diagramme, die auf die Zellen zeigen
@@ -1504,9 +1505,9 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   **Google Drive**, OneDrive oder Nextcloud, synchronisiert deren Programm alles auf andere Rechner; Änderungen von dort und
   neue `.md`-Dateien erscheinen nach wenigen Sekunden. Den ganzen **Datenordner** synchronisiert *Einstellungen ›
   Synchronisation* (siehe unten).
-- **Sync für Android** (AP-28, *Einstellungen › Verbindungen › Mit dem PC synchronisieren*): Liegt der Lora-Ordner des
+- **Sync für Android** (AP-28, *Einstellungen › Verbindungen › Mit dem PC synchronisieren*): Liegt der Kana-Ordner des
   PCs in der Nextcloud (AP-12), holt sich das Handy über WebDAV **Chats, Projekte, Gedächtnis, Kurztexte, eigene TU
-  Vorlagen, Kontakte und die Dateien** des Lora-Ordners und lädt eigene Änderungen hoch – beim Öffnen der App, alle
+  Vorlagen, Kontakte und die Dateien** des Kana-Ordners und lädt eigene Änderungen hoch – beim Öffnen der App, alle
   fünf Minuten und beim Wechsel in den Hintergrund. Es gelten die Regeln von AP-12: Das Handy legt eine Notiz wie ein PC
   an; ist der Ordner am PC geöffnet oder sind dessen Änderungen noch unterwegs, wartet es. Haben beide Seiten etwas
   geändert, bleiben beide Fassungen (ein Chat wird zur „zweiten Fassung“, andere Dateien nach `sync/konflikte`).
@@ -1519,27 +1520,27 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Hintergrund“, ein PC darf den Ordner öffnen. Test `SyncRestsTest`.
 - **Einfacher Sync zwischen PCs** (Windows, *Einstellungen › Synchronisation*, AP-12): wie bei Obsidian liegt der
   Datenordner in einem Cloud-Ordner, der auf allen PCs eingerichtet ist – **Nextcloud**, **Google Drive für Desktop** oder
-  **OneDrive** (gefundene Cloud-Ordner stehen als Knopf da: *In OneDrive legen* …). Erster PC: Daten werden kopiert, Lora
+  **OneDrive** (gefundene Cloud-Ordner stehen als Knopf da: *In OneDrive legen* …). Erster PC: Daten werden kopiert, Kana
   startet neu. Zweiter PC: *Vorhandenen Ordner öffnen* – alles ist da. Am Büro-PC beginnen, am Laptop weiterarbeiten,
   ohne ZIP-Umzug.
   - **Was synchronisiert**: Chats, Projekte, Dokumente, Literatur, TU Vorlagen, Gedächtnis und Einstellungen
     (`einstellungen.json`). **API-Schlüssel, Tokens, Konten und Umgebungen nie**: Sie liegen mit DPAPI verschlüsselt in
     `%APPDATA%\ADEU LLM\schluessel.dat` auf jedem PC. Bis 1.0.44 lagen alle Einstellungen verschlüsselt im Datenordner,
-    die ein zweiter PC nicht lesen konnte und überschrieb; beim ersten Start teilt Lora sie einmal auf. Fensterposition,
+    die ein zweiter PC nicht lesen konnte und überschrieb; beim ersten Start teilt Kana sie einmal auf. Fensterposition,
     Update-Stand und `log.txt` bleiben ebenfalls auf dem PC, große Dateien (Modelle, Aufnahmen) wie bisher in
     `%LOCALAPPDATA%`.
   - **Nie gleichzeitig**: Jeder PC hinterlegt in `sync/geoeffnet-<PC>-<id>.json` eine kleine Notiz (seit wann offen,
     alle zwei Minuten „lebt noch“, beim Beenden „geschlossen“, dazu die in der Sitzung geänderten Dateien mit Größe).
-    **Vor dem Laden** prüft Lora: Ist sie auf einem anderen PC offen („Lora ist auf „BUERO-PC“ geöffnet – seit …“) oder
+    **Vor dem Laden** prüft Kana: Ist sie auf einem anderen PC offen („Kana ist auf „BUERO-PC“ geöffnet – seit …“) oder
     sind dessen Änderungen noch nicht angekommen („3 Dateien fehlen noch, z. B. ein Chat“), wartet ein kleines Fenster und
-    geht von selbst weiter, sobald alles da ist (*Trotzdem öffnen* / *Beenden*). Läuft Lora dort nur im Infobereich
+    geht von selbst weiter, sobald alles da ist (*Trotzdem öffnen* / *Beenden*). Läuft Kana dort nur im Infobereich
     ohne Arbeit, beendet sie sich von selbst, sobald ein anderer PC den Ordner öffnet; mit offenem Fenster fragt sie.
     Notizen ohne Lebenszeichen seit 15 Minuten (Absturz, Standby) blockieren nicht.
   - **Konfliktkopien** des Cloud-Dienstes (OneDrive „name-PC.json“, Google Drive „name (1).json“, Nextcloud/Dropbox
-    „conflicted copy“, Syncthing „sync-conflict“) erkennt Lora beim Start und **behält beide Fassungen**: ein Chat
+    „conflicted copy“, Syncthing „sync-conflict“) erkennt Kana beim Start und **behält beide Fassungen**: ein Chat
     erscheint als zweiter Chat „… (zweite Fassung)“, alles andere liegt unter `sync/konflikte/<Datum>/`. Nichts wird
     gelöscht. *Synchronisation beenden* kopiert die aktuellen Daten zurück in den Standardordner.
-- **Browser neben dem Chat auf Android** (AP-63, seit 1.0.61; Schalter *Einstellungen › Chat & Werkzeuge › Links in Lora
+- **Browser neben dem Chat auf Android** (AP-63, seit 1.0.61; Schalter *Einstellungen › Chat & Werkzeuge › Links in Kana
   öffnen*): die einfache Fassung des PC-Browsers – Links öffnen sich in einem Browser in der App (WebView; auf dem Handy
   über der App, auf Tablets rechts daneben), mit Zurück/Vor, Adresszeile und ↗ in den normalen Browser. Unter der Seite
   *Frage zur Seite*, *Zusammenfassen*, *In die Literatur* (Zitierangaben aus den Meta-Tags der Zeitschrift oder über die
@@ -1547,10 +1548,10 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 - **Android zieht nach** (AP-64, seit 1.0.61): **Folien auf dem zweiten Bildschirm** – ein Beamer an HDMI/USB-C oder eine
   drahtlose Übertragung (Miracast) bekommt die Folien, die Referentenansicht mit Notizen, nächster Folie und Zeit bleibt
   auf Handy oder Tablet (Android-`Presentation`; ein später angesteckter Beamer wird erkannt); **Wischen** blättert, der
-  Bildschirm bleibt beim Vorführen an. **Speichern** fragt zuerst nach einem Ordner im **Lora-Ordner** (der
+  Bildschirm bleibt beim Vorführen an. **Speichern** fragt zuerst nach einem Ordner im **Kana-Ordner** (der
   Android-Dialog erreicht ihn nicht – so landen Exporte auch per Sync am PC), *Anderswo …* öffnet den Systemdialog.
-  **PDF verkleinern** jetzt auch auf Android (im Werkzeugkasten und als Lora-Aktion). Fließtext-Editor, Tabellen, Folien,
-  Lora-Aktionen für Dateien und PDF, Gedächtnis und Touren laufen auf Android über den gemeinsamen Code; Videoeditor und
+  **PDF verkleinern** jetzt auch auf Android (im Werkzeugkasten und als Kana-Aktion). Fließtext-Editor, Tabellen, Folien,
+  Kana-Aktionen für Dateien und PDF, Gedächtnis und Touren laufen auf Android über den gemeinsamen Code; Videoeditor und
   Gestalten bleiben am PC. Test `AndroidCatchUpTest`.
 - **Browser neben dem Chat** (Windows, AP-14): Links aus Chat, Literatur und Dokumenten öffnen sich wie bei Google
   Antigravity **als Tabs rechts neben der App** – die App wird schmaler statt verdeckt, die Breite lässt sich ziehen; auf
@@ -1564,13 +1565,13 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     des Browsers – also auch hinter der TU-Anmeldung – und öffnet es im PDF-Werkzeugkasten. Heruntergeladene PDFs öffnen
     sich dort ebenfalls, andere Downloads landen in *Downloads*.
   - **Technik**: keine eigene Engine – Chromium über **JCEF** (`me.friwi:jcefmaven`). Chromium ist rund 170 MB groß und
-    steckt deshalb **nicht in jedem Update**: Beim ersten Link fragt Lora einmal und richtet es dann ohne Admin-Rechte in
+    steckt deshalb **nicht in jedem Update**: Beim ersten Link fragt Kana einmal und richtet es dann ohne Admin-Rechte in
     `%LOCALAPPDATA%\ADEU LLM\browser` ein (Download von GitHub bzw. Maven Central). Das Profil dort behält Cookies, eine
     Anmeldung über die TU (Shibboleth) bleibt also erhalten. *Einstellungen › Windows › Links neben dem Chat öffnen*
     schaltet den Browser ab (dann wie bisher der normale Browser). Download-Seiten der App öffnen immer extern.
     Bekannte Grenze: Dialoge der App, die über dem Browser liegen, verdeckt die Browserfläche teilweise (Chromium ist
     ein eigenes Fenster).
-  - Hängt Chromium auf einem PC beim Start, merkt Lora das (`browser/start.pending`) und startet ihn beim nächsten Mal nicht
+  - Hängt Chromium auf einem PC beim Start, merkt Kana das (`browser/start.pending`) und startet ihn beim nächsten Mal nicht
     von selbst, sondern bietet *Erneut versuchen* oder den normalen Browser an.
   - Test mit echtem Chromium (für Windows gedacht; in Linux-Containern kann CEF beim Initialisieren hängen):
     `ADEU_BROWSER_TEST=1 ./gradlew -p desktop test --tests '*BrowserLiveTest*'`.
@@ -1587,8 +1588,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **Untertitel** aus der vorhandenen **Transkription** (Transkript je Video zuordnen oder *Jetzt transkribieren*; die
     Untertitel folgen dem Schnitt) oder aus SRT/VTT; **einbrennen** oder als SRT/VTT neben dem Video speichern.
   - **Rohschnitt aus dem Transkript**: *Pausen und Füllwörter herausschneiden* (lange Pausen kurz, „äh“/„ähm“ heraus, wo
-    Wortzeiten gemessen sind) und **Mit Lora kürzen** („nur die Erklärung des Versuchsaufbaus, höchstens 5 Minuten“ –
-    Lora wählt die Abschnitte). Alles mit Strg+Z rückgängig.
+    Wortzeiten gemessen sind) und **Mit Kana kürzen** („nur die Erklärung des Versuchsaufbaus, höchstens 5 Minuten“ –
+    Kana wählt die Abschnitte). Alles mit Strg+Z rückgängig.
   - **Export** als MP4 (H.264/AAC, für das Web optimiert) mit Vorgaben *OPAL* (720p, kleine Datei), *YouTube* (1080p) und
     *Wie das Projekt*; mit Fortschritt und Abbrechen. Ein einziger ffmpeg-Lauf (das ffmpeg der App) baut den Film.
 - **Videoeditor: mehrere Spuren und echte Vorschau** (AP-52, seit 1.0.57):
@@ -1632,7 +1633,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     kurze Stücke rückwärts, Helligkeit/Kontrast/Sättigung und **Weißabgleich auf Knopfdruck** – Vorschau und Export sehen
     gleich aus.
   - **Zoom und Schwenk mit Keyframes**: im Screencast sanft auf einen Bildschirmbereich zoomen und wieder heraus, auch als
-    **Hochformat 9:16** – oder einfach „Zoome oben rechts hinein“ zu Lora sagen.
+    **Hochformat 9:16** – oder einfach „Zoome oben rechts hinein“ zu Kana sagen.
   - **Anonymisieren für Forschungsmaterial**: *Gesichter verpixeln* findet Gesichter auf dem eigenen PC (YuNet im
     Videoeditor-Paket, nichts verlässt den Rechner), die Verpixelung folgt den Personen; dazu Bereiche von Hand verpixeln
     oder weichzeichnen und **Stimmen verfremden** – jede Anonymisierung steht im Protokoll. Test `VideoEffectsTest`.
@@ -1641,8 +1642,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   ist beim Abspielen hervorgehoben. **Wörter markieren und Entf = herausschneiden** (Umschalt+Klick oder Ziehen markiert;
   der Clip wird geteilt, verknüpfter Ton geht mit, mit dem Magneten rückt alles nach), Absätze mit ↑/↓ verschieben
   (= Clips verschieben), Sprecher:innen am Absatz, **Füllwörter** (orange) und **lange Pausen** markiert und mit einem Klick
-  entfernt bzw. gekürzt. **Lora als Schnitt-Assistentin**: „Kürze auf 10 Minuten, behalte die Beispiele“ – die Vorschläge
-  stehen durchgestrichen im Text, jeder einzeln annehmen oder ablehnen; auch als Lora-Aktion *Im Transkript schneiden*.
+  entfernt bzw. gekürzt. **Kana als Schnitt-Assistentin**: „Kürze auf 10 Minuten, behalte die Beispiele“ – die Vorschläge
+  stehen durchgestrichen im Text, jeder einzeln annehmen oder ablehnen; auch als Kana-Aktion *Im Transkript schneiden*.
   Rückgängig wie überall. Test `TextCutTest` (u. a. ein Lehrvideo nur über den Text geschnitten, Export = Zeitleiste).
 - **Videoeditor: ruhiges Bild und anpassbare Oberfläche** (AP-70):
   - **Ruhige Vorschau**: Standbild und Wiedergabe sind gleich groß und liegen genau übereinander, auch bei 4:3- und
@@ -1681,7 +1682,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     Symbol; schmaler bleiben die Symbole mit Tooltip. Die Hinweiszeile sagt, was mit dem Gewählten geht („Clip gewählt:
     Ränder ziehen kürzt · S teilt · Entf löscht · Rechtsklick für mehr“). Im Kopf steht *Gespeichert* (jede Änderung wird
     von selbst gespeichert) und statt des Tastatur-Symbols ein **Hilfe-Menü** (*So entsteht dein Video*, *Tour durch den
-    Videoeditor*, *Tastenkürzel*, *Lora fragen*). Die Tastenkürzel sind nach *Abspielen*, *Schneiden*, *Quelle*, *Ansicht*
+    Videoeditor*, *Tastenkürzel*, *Kana fragen*). Die Tastenkürzel sind nach *Abspielen*, *Schneiden*, *Quelle*, *Ansicht*
     gruppiert. Der Medienpool hat ein kleines Suchfeld (ab vier Dateien) und ohne Dateien einen Knopf *Dateien hinzufügen*.
   - **Vorschau und Zeitleiste**: Ein Klick ins Bild spielt oder hält an (ein rundes Abspielsymbol zeigt das); ohne Clips
     steht dort *Videos hinzufügen*. Über Clip-Rändern zeigt der Mauszeiger ↔ (ziehen kürzt), über Clips eine Hand, mit der
@@ -1690,7 +1691,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     „1:23,5“ und „1:02:03“.
   - **Dateien aus dem Explorer**: auf den Editor gezogen kommen Videos und Bilder ans Ende, Ton an den Abspielkopf; auf den
     Medienpool gezogen nur in den Pool. Alles mit Strg+Z rückgängig.
-  - **Lora**: neue Aktion *Stück herausschneiden* („Schneide 1:20 bis 1:45 heraus“, ohne Zeiten: zwischen In und Out), mit
+  - **Kana**: neue Aktion *Stück herausschneiden* („Schneide 1:20 bis 1:45 heraus“, ohne Zeiten: zwischen In und Out), mit
     Vorschau und Rückgängig; Orte *So entsteht dein Video*, *Stück herausschneiden* und *Hilfe im Videoeditor* auf der
     Landkarte, die Tour zeigt die Schrittkarte und das Schneiden.
   Test `VideoEaseTest` (Kürzen, Herausschneiden mit verknüpftem Ton und ohne Magnet, Kopie, Zeiten; Startseite, Schrittkarte
@@ -1703,7 +1704,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
 - **Bildschirmaufnahme** (AP-56, *Videoeditor › Bildschirm aufnehmen*): ganzer Bildschirm, ein Fenster oder ein
   gezogener Bereich, dazu **Webcam**, **Mikrofon** und **Systemton** (über ein Aufnahmegerät wie „Stereomix“), Countdown,
   Mauszeiger und **Klicks als Ringe**. Ein ffmpeg-Prozess nimmt alles mit derselben Uhr auf, jede Quelle in eine eigene
-  Datei (`Lora-Ordner/Aufnahmen/<Datum>`). Während der Aufnahme eine kleine Leiste oben (sie selbst ist nicht im Bild),
+  Datei (`Kana-Ordner/Aufnahmen/<Datum>`). Während der Aufnahme eine kleine Leiste oben (sie selbst ist nicht im Bild),
   **Strg+Umschalt+F9** pausiert, **Strg+Umschalt+F10** stoppt – auch in anderen Programmen –, ebenso im Infobereich.
   Nach dem Stopp liegt sofort ein **Projekt mit getrennten Spuren** im Editor: Bildschirm auf V1, Webcam als Bild-in-Bild
   auf V2, Klicks auf V3, Mikrofon auf A1, Systemton auf A2; auf Wunsch **sofort transkribiert** (das Transkript wird
@@ -1713,19 +1714,19 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Apple VideoToolbox (ffmpeg muss den Encoder kennen *und* eine Probe-Kodierung muss gehen) und rechnet damit deutlich
   schneller; geht die Grafikkarte mitten im Export nicht, rechnet der Prozessor (x264) weiter. **Mehrere Ziele auf einmal**
   (OPAL 720p, YouTube 1080p, wie das Projekt, **nur Ton** als M4A, **Untertitel** als SRT/VTT, **Kapitel** für die
-  YouTube-Beschreibung; im MP4 sind die Kapitel immer), Ziel Lora-Ordner, eigener Ordner oder zusätzlich **Nextcloud**
+  YouTube-Beschreibung; im MP4 sind die Kapitel immer), Ziel Kana-Ordner, eigener Ordner oder zusätzlich **Nextcloud**
   (gestreamt hochgeladen). Die Exporte laufen nacheinander **im Hintergrund** – weiterarbeiten, Fortschritt als Chip
   „Exporte 1/3 · 45 %“ in der Kopfzeile, Liste mit Abbrechen, Öffnen, Kapitel kopieren. Test `ExportQueueTest`.
 - **Diagramme und Whiteboard** (AP-61, *Erstellen › Diagramme & Whiteboard*, im Dokument *Einfügen › Diagramm …*):
   **Flussdiagramme, Mindmaps, Organigramme und Zeitstrahlen**, deren **Verbinder an den Formen haften** (ziehen, die
-  Pfeile gehen mit), **automatisch angeordnet** oder von Hand; Formen Rechteck, abgerundet, Raute, Kreis, Notiz. **Lora
-  zeichnet**: „Mach ein Flussdiagramm aus diesem Ablauf“ – im Editor oder als Lora-Aktion *Diagramm zeichnen* direkt ins
+  Pfeile gehen mit), **automatisch angeordnet** oder von Hand; Formen Rechteck, abgerundet, Raute, Kreis, Notiz. **Kana
+  zeichnet**: „Mach ein Flussdiagramm aus diesem Ablauf“ – im Editor oder als Kana-Aktion *Diagramm zeichnen* direkt ins
   offene Dokument. **Mermaid-Text ↔ Diagramm** (flowchart/graph, mindmap, timeline) daneben, live in beide Richtungen.
   **Whiteboard**: freie Fläche (verschieben, Mausrad zoomt) mit Notizzetteln und Freihand. Im Dokument steht ein Diagramm
   als ` ```mermaid `- bzw. ` ```diagram `-Block, wird gezeichnet, ein Klick öffnet den Editor; im PDF als Vektorgrafik, in
   Word und PowerPoint als Bild mit den Verbindungen als Alternativtext; auf Folien mit dem Layout *Diagramm*. Tests
   `DiagramsTest`.
-- **Lernspiele-Baukasten** (AP-17, Werkzeug *Lernspiele*, anfangs aus): Lora baut aus Skript, Folien oder Beschreibung
+- **Lernspiele-Baukasten** (AP-17, Werkzeug *Lernspiele*, anfangs aus): Kana baut aus Skript, Folien oder Beschreibung
   **eigenständige Browserspiele** – Quiz, Zuordnen, Memory, Escape-Room, Lückentext … – als *eine* HTML-Datei mit CSS und
   JavaScript („Mach ein Zuordnungsspiel zu Kapitel 3 des angehängten Skripts“). Modus *Lernspiel* (`/Lernspiel`, nur bei
   eingeschaltetem Werkzeug) mit Vorgaben für gute Spiele (Anleitung, Rückmeldung je Antwort, Punktestand, Auswertung,
@@ -1747,12 +1748,12 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Zeitraum, genutzte Funktionen, entstandene Entwürfe; betroffene Teile werden als „[bitte ergänzen …]“ markiert. Formate:
   **Prüfungsleistung** (Erklärung mit Tabelle), **Verlag/Zeitschrift** (übliche englische Erklärung mit deutscher
   Fassung), **kurze Fußnote** – kopieren oder als Dokument öffnen. Immer erreichbar im Chat-Menü (*KI-Nutzungsnachweis*);
-  der Vorschlag lässt sich unter *Einstellungen › Lora* abschalten.
+  der Vorschlag lässt sich unter *Einstellungen › Kana* abschalten.
 - **Stapel & Massenkontrolle** (AP-20, Werkzeug *Stapel & Massenkontrolle*, anfangs aus): viele Dateien mit **demselben
   Auftrag** – nacheinander im Hintergrund statt in einem endlosen Chat. Dateien kommen aus der Mehrfachauswahl, einem
   **ZIP** (z. B. die Abgaben aus OPAL; ZIPs je Person werden mit geöffnet), einem **Ordner** (Windows) oder der Nextcloud;
   der Text wird auf dem Gerät gelesen. Vorlagen für den Auftrag: Zusammenfassen, Exzerpt, Steckbrief, Übersetzen – oder
-  ein eigener. Lora sitzt dabei auf der Fortschrittskarte („23 von 80“) und arbeitet Akten ab.
+  ein eigener. Kana sitzt dabei auf der Fortschrittskarte („23 von 80“) und arbeitet Akten ab.
   - **Pause und Fortsetzen**, übersteht einen Neustart (jedes Ergebnis wird sofort gespeichert; eine Datei, die beim
     Schließen lief, kommt zurück in die Warteschlange), läuft im Hintergrund (Windows im Infobereich, Android mit
     Benachrichtigung) und auf Wunsch **nur nachts** (22–6 Uhr). Fehlgeschlagene Dateien werden dreimal versucht, danach
@@ -1770,30 +1771,30 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
     **Ausreißer** (weit weg von den anderen, nicht bewertbar oder stark von der Entscheidung abweichend) sind markiert.
   - **Exporte**: Ergebnistabelle als Excel, **Rückmeldung je Person** als Word-Dateien in einem ZIP, Protokoll als Word;
     beim normalen Stapel alle Ergebnisse als ein Word-Dokument (auch direkt in die Nextcloud).
-  - Lora kann einen Stapel auch aus den Anhängen eines Chats anlegen (`create_batch`, `batch_status`, `read_batch_results`).
+  - Kana kann einen Stapel auch aus den Anhängen eines Chats anlegen (`create_batch`, `batch_status`, `read_batch_results`).
 - **Antrags-Werkstatt** (AP-21, Werkzeug *Antrags-Werkstatt*, anfangs aus; Modus *Antrag*): von der Ausschreibung bis zur
-  Abgabe. Lora liest die **Ausschreibung** (PDF oder Link) und legt den Antrag an: Förderer und Programm, Zusammenfassung,
+  Abgabe. Kana liest die **Ausschreibung** (PDF oder Link) und legt den Antrag an: Förderer und Programm, Zusammenfassung,
   **Checkliste** zum Abhaken, **Fristen** (mit *In den Kalender* als Kalenderdatei, Erinnerung eine Woche vorher) und die
   **Gliederung** mit den Grenzen der Ausschreibung. Vorlagen für **DFG** (Sachbeihilfe, Programmpauschale 22 %),
   **BMBF** (Projektskizze, Projektpauschale 20 %), **EU** (Horizon Europe Part B, 25 % indirekte Kosten, 45 Seiten),
   **SAB**, **TUD-intern** und andere – immer nur ein Start, die Ausschreibung gewinnt.
-  - **Gliederung mit Zeichen-/Seitenwächter**: Text je Abschnitt hier oder mit Lora schreiben; die App zählt Zeichen,
+  - **Gliederung mit Zeichen-/Seitenwächter**: Text je Abschnitt hier oder mit Kana schreiben; die App zählt Zeichen,
     Wörter und Seiten (einstellbar, Standard 3.000 Zeichen je Seite) und färbt, was zu lang ist.
   - **Arbeitspakete mit Gantt** (Balken über die Monate, Jahre markiert), **Budget** je Projektjahr nach den Kategorien
     des Förderers mit Pauschale, **DMP** und **Ethik** (die TU Vorlagen *Datenmanagementplan* und *Ethikantrag* helfen).
-  - **Probelauf mit Gutachter-Rolle**: Lora begutachtet den Antrag nach den Kriterien des Förderers (Stärken, Schwächen,
+  - **Probelauf mit Gutachter-Rolle**: Kana begutachtet den Antrag nach den Kriterien des Förderers (Stärken, Schwächen,
     Fragen, die fünf wichtigsten Änderungen); das Ergebnis bleibt am Antrag.
   - **Abgabe-Check**: offene Punkte der Checkliste, nahe oder verpasste Fristen, leere oder zu lange Abschnitte,
     Seitenlimit, Arbeitspakete außerhalb der Laufzeit, Budget, DMP, Ethik, Probelauf. Export des ganzen Antrags als Word.
-  - Werkzeuge für Lora: `save_proposal`, `write_proposal_section`, `read_proposal`, `save_proposal_review`; gut
+  - Werkzeuge für Kana: `save_proposal`, `write_proposal_section`, `read_proposal`, `save_proposal_review`; gut
     kombinierbar mit Rückfragen (Planungsmodus, AP-06).
 - **Nextcloud** (AP-22, *Einstellungen › Verbindungen*, Android und Windows): **Im Browser anmelden** (Nextcloud-Login,
   auch mit TU-Login und zweitem Faktor; die App bekommt ein eigenes App-Passwort, kein Passwort wird in die App getippt)
   oder Anmeldename und App-Passwort eintragen. Vorbelegt ist der Cloudstore der TU Dresden. Danach:
-  - **Anhängen** im Chat („+“ › *Aus Nextcloud*), **holen** in den Lora-Ordner (*Dateien* › ⋮ › *Aus Nextcloud holen*),
+  - **Anhängen** im Chat („+“ › *Aus Nextcloud*), **holen** in den Kana-Ordner (*Dateien* › ⋮ › *Aus Nextcloud holen*),
     **speichern** an jeder Dokumentkarte im Chat und an jeder Datei im Tab *Dateien* (*In Nextcloud speichern*, Ordner
     wählbar, Standard *Ordner für Ergebnisse*; eine gleichnamige Datei bleibt erhalten, die neue bekommt „ (2)“).
-  - Lora kann selbst nachsehen, lesen und Ergebnisse ablegen (`nextcloud_list`, `nextcloud_read`, `nextcloud_save`; das
+  - Kana kann selbst nachsehen, lesen und Ergebnisse ablegen (`nextcloud_list`, `nextcloud_read`, `nextcloud_save`; das
     Speichern läuft über die Freigaben) – nicht im Tresor und nicht in Projekten „Nur auf diesem Gerät“.
   - Technik: WebDAV über OkHttp auf beiden Plattformen – die Grundlage für den Sync unter Android (AP-28).
 - **MCP-Client** (AP-23, *Einstellungen › Verbindungen › MCP-Server*): Werkzeuge anderer Dienste über das **Model Context
@@ -1812,7 +1813,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   `.adeu-papierkorb`). Ordner lassen sich auf „nur lesen“ stellen; außerhalb kommt er nicht. Rückfragen vor Änderungen
   richten sich nach *Chat & Werkzeuge › Freigaben*.
 - **Ordner an einen Chat anhängen** (Windows): *„+“ › Ordner* hängt einen ganzen Ordner an den laufenden Chat – vorher wählst
-  du, ob Lora dort **nur lesen** oder **lesen und schreiben** darf. Ein Chip über dem Eingabefeld zeigt Ordner und Recht
+  du, ob Kana dort **nur lesen** oder **lesen und schreiben** darf. Ein Chip über dem Eingabefeld zeigt Ordner und Recht
   („Seminar · nur lesen“); ein Klick ändert das Recht im laufenden Chat, öffnet den Ordner im Explorer oder löst ihn vom
   Chat. Das Recht gilt nur für diesen Chat und geht vor einer gleichnamigen Freigabe unter *Lokale Ordner*; angehängte
   Ordner sind der Standard für die Ordner-Werkzeuge (lesen, durchsuchen, schreiben, Dokumente speichern). Nicht im Tresor.
@@ -1821,7 +1822,7 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Auswertung je Modell unter *Verbrauch*), *Weiterschreiben* bei abgeschnittenen Antworten, *Abzweigen* in einen neuen
   Chat, Chat duplizieren, Suche im Chat, temporäre Chats (werden nicht gespeichert), Archiv, Mehrfachauswahl in der
   Seitenleiste, Export und Import als JSON. Mehrere Werkzeugaufrufe werden zu einer Zeile zusammengefasst
-  („5 Werkzeuge genutzt“), auf der Startseite schlägt Lora Beispiele und Vorlagen vor.
+  („5 Werkzeuge genutzt“), auf der Startseite schlägt Kana Beispiele und Vorlagen vor.
 - **Forschung**: Codieren von Transkripten mit eigenem Kategoriensystem (Codes, Farben, Ankerbeispiele) –
   *ausschließlich von Hand*, die KI codiert nicht. Intercoder-Übereinstimmung (Cohen's κ, prozentuale Übereinstimmung,
   Abweichungsliste) und Export nach **REFI-QDA** (`.qdpx`, für MAXQDA, ATLAS.ti, NVivo) sowie als CSV. Diagramme
@@ -1839,13 +1840,13 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Zeiten (für Untertitel), **Stimmprofile**, die bekannte Sprecher:innen in neuen Aufnahmen wiedererkennen, und
   *Protokoll erstellen* aus dem Transkript.
 - **Bedienung**: **Strg+K** Befehlspalette (Bereiche, Einstellungen, Chats), **Strg+/** Übersicht der Tastenkürzel,
-  **Strg+L** Lora, Strg+Umschalt+L Literatur, Strg+D/T Dokumente, Transkription. **Breiten ziehen**: Die Linie neben der
-  Seitenleiste (links) und neben Loras Bereich und dem Browser (rechts) hat einen kleinen Griff; Ziehen macht die Leiste
+  **Strg+L** Kana, Strg+Umschalt+L Literatur, Strg+D/T Dokumente, Transkription. **Breiten ziehen**: Die Linie neben der
+  Seitenleiste (links) und neben Kanas Bereich und dem Browser (rechts) hat einen kleinen Griff; Ziehen macht die Leiste
   breiter oder schmaler, Doppelklick stellt die Standardbreite wieder her. Die Breiten bleiben über Neustarts erhalten
   und werden in kleinen Fenstern begrenzt, damit der Chat Platz behält (PC und Tablet, `ui/PanelResizer.kt`). Suche in
   den Einstellungen. **Sprache der Oberfläche** Deutsch oder Englisch
   (*Einstellungen › Darstellung*): seit AP-29 ist die ganze Oberfläche übersetzt – Einstellungen, Editoren, TU Vorlagen,
-  Modelle, Modi, Fehlermeldungen und Loras eigene Antworten; Antworten der Modelle folgen der gewählten Sprache. Loras
+  Modelle, Modi, Fehlermeldungen und Kanas eigene Antworten; Antworten der Modelle folgen der gewählten Sprache. Kanas
   Suche findet Bereiche auch mit englischen Wörtern. Ein automatischer Test prüft den Textkontrast aller Stile nach WCAG.
 - **Barrierefreiheit** (AP-30): Screenreader (TalkBack, unter Windows NVDA/JAWS über die Java Access Bridge, die die App
   für sich selbst einschaltet; macOS VoiceOver) lesen Knöpfe mit Beschriftung, Schalterzeilen als *ein* Schalter mit
@@ -1887,7 +1888,7 @@ Regeln stehen in [`desktop/testbereiche.txt`](desktop/testbereiche.txt):
 - **Nur Texte** (README, `docs/`, `tools/`, Release-Skripte): nichts zu bauen, der Check ist in unter einer Minute grün.
 - **Nur Android-Dateien**: die Android-App wird kompiliert.
 - **Sonst**: Android-App kompilieren (ohne lokale Modelle), Tests der Sprach-Engine, die Desktop-Tests der **Bereiche**,
-  die die geänderten Dateien betreffen (Dokumente, Tabellen, Folien, Gestalten, Video, PDF, Mail, Lora, Terminal,
+  die die geänderten Dateien betreffen (Dokumente, Tabellen, Folien, Gestalten, Video, PDF, Mail, Kana, Terminal,
   Transkription, Lokal, Datenschutz, Dateien, Literatur, Chat, Oberfläche), dazu jede Testklasse, die eine geänderte
   Datei direkt benutzt (aus dem kompilierten Code gelesen), und immer die schnellen **Kern**-Tests (Übersetzungen,
   Bedienelemente, Barrierefreiheit). Welche Tests liefen und warum, steht in der Zusammenfassung des Laufs.
@@ -2062,7 +2063,7 @@ Java-Laufzeit ist eingebaut. Nichts muss installiert werden, Admin-Rechte sind n
 
 Unterschiede zu Android:
 
-- **Daten** liegen im **Lora-Ordner** (Standard `Dokumente\Lora`, Daten versteckt in `.lora`, siehe *Dateien*) und
+- **Daten** liegen im **Kana-Ordner** (Standard `Dokumente\Kana`, Daten versteckt in `.lora`, siehe *Dateien*) und
   bleiben bei neuen Versionen erhalten; `%APPDATA%\ADEU LLM` behält nur, was zu diesem PC gehört. API-Key,
   GitHub-Token und Umgebungen sind mit Windows (DPAPI) verschlüsselt – nur das eigene Windows-Konto kann sie lesen.
 - **Im Hintergrund**: Schließt man das Fenster, läuft die App im Infobereich (unten rechts) weiter, Antworten werden
@@ -2097,7 +2098,7 @@ Java-Laufzeit eingebaut, ohne Admin-Rechte.
 - **Linux**: `ADEU-LLM-x.y.z-Linux.tar.gz` entpacken (z. B. nach `~/Programme`) und `ADEU LLM/bin/ADEU LLM` starten –
   so aktualisiert sich die App selbst. Alternativ `sudo apt install ./ADEU-LLM-x.y.z-Linux.deb` (Startmenü-Eintrag,
   Updates dann über die nächste .deb, da `/opt` schreibgeschützt ist).
-- **Daten**: der Lora-Ordner wie unter Windows (`Dokumente/Lora`, unter Linux der Dokumente-Ordner des Desktops, z. B.
+- **Daten**: der Kana-Ordner wie unter Windows (`Dokumente/Kana`, unter Linux der Dokumente-Ordner des Desktops, z. B.
   `~/Dokumente`); was zum Rechner gehört in `~/Library/Application Support/ADEU LLM` bzw. `~/.config/adeu-llm` und
   `~/.local/share/adeu-llm`. API-Key und Tokens sind mit AES verschlüsselt, dessen Schlüssel im **Schlüsselbund**
   (macOS) bzw. im **Secret Service** des Desktops (GNOME Schlüsselbund, KWallet) liegt; ohne beides in einer Datei, die
@@ -2284,7 +2285,7 @@ deutsche Eingaben erkennt, bleiben deutsch.
 
 ### Logo ändern
 
-Das Logo wird in `ui/Logo.kt` gezeichnet (Lora aus `ui/LoraFigure.kt`, eigene Farben in `LogoColors`). Die App-Symbole
+Das Logo wird in `ui/Logo.kt` gezeichnet (Kana aus `ui/LoraFigure.kt`, eigene Farben in `LogoColors`). Die App-Symbole
 erzeugt `./gradlew -p desktop test --tests '*LogoTest*'` nach `desktop/build/icons`: `app.ico` und `app.png` gehören nach
 `desktop/icons/`, `app.png` als `icon.png` und `tray.png` nach `desktop/src/main/resources/`, die Ordner unter `android/`
 nach `app/src/main/res/`. Das Mac-Symbol `desktop/icons/app.icns` erzeugt `python3 .github/scripts/make-icns.py` aus
@@ -2322,8 +2323,8 @@ Chats und Einstellungen erhalten bleiben).
 | `agent/Memory.kt`, `agent/MemoryLearner.kt`, `ui/MemoryUi.kt` | Gedächtnis im System-Prompt jeder Anfrage, frühere Chats (`search_chats`), Dazulernen nach dem Chat, Knopf, Dialoge und Einstellungen |
 | `agent/ModelRouter.kt` | Automatische Modellwahl (auf dem Gerät, ohne zusätzliche Anfrage) |
 | `ui/VoiceMode.kt` | Sprachmodus: Zuhören bis zur Sprechpause, Antwort vorlesen, wieder zuhören |
-| `ui/LoraFigure.kt` | Lora: Zeichnung, Aktionen und Ablauf (welche Aktion wann, passend zum aktuellen Schritt) |
-| `ui/LoraUi.kt` | Arbeitskarte mit Lora und eingeklappte Arbeitsschritte im Chat, Lora mit Sprechblase auf der Startseite |
+| `ui/LoraFigure.kt` | Kana: Zeichnung, Aktionen und Ablauf (welche Aktion wann, passend zum aktuellen Schritt) |
+| `ui/LoraUi.kt` | Arbeitskarte mit Kana und eingeklappte Arbeitsschritte im Chat, Kana mit Sprechblase auf der Startseite |
 | `ui/ChatAutoScroll.kt` | Mitlaufen beim Streamen, ohne die Lesestelle zu verschieben |
 | `update/` | Automatische Updates: `version.json` lesen, Download mit SHA-256, Popup (`ui/UpdatePrompt.kt`); Windows tauscht den App-Ordner (`desktop/…/update/UpdateApply.kt`), Android öffnet den Installer |
 | `agent/WorkFolder.kt` | Projektordner: Schreibtest, Ablage erstellter Dateien in `Ausgabe`, verständliche Fehlermeldungen |
@@ -2339,24 +2340,24 @@ Chats und Einstellungen erhalten bleiben).
 | `docs/LiveDoc.kt` | Dokumente des Editors (Art, Tabs, Versionen, Kommentare), Speicherorte mit Markdown-Kopie und Abgleich |
 | `docs/SheetEngine.kt`, `docs/SlideDeck.kt`, `docs/OfficeImport.kt` | Tabellen mit Formeln, Folienmodell, Import von .docx/.pptx/.xlsx/.csv |
 | `docs/SheetHelp.kt`, `docs/XlsxReader.kt` | Hilfe beim Tippen von Formeln; schnelles, treues Lesen von .xlsx (AP-48) |
-| `docs/ChartLinks.kt` | Verknüpfte Diagramme in Dokumenten und Folien, „Lora rechnet“ (`SheetCalc`, AP-49) |
+| `docs/ChartLinks.kt` | Verknüpfte Diagramme in Dokumenten und Folien, „Kana rechnet“ (`SheetCalc`, AP-49) |
 | `docs/PptxReader.kt`, `docs/PptxMerge.kt`, `docs/PaperDeck.kt`, `docs/SlideLook.kt`, `ui/PresentScreens.kt` (beide), `ui/SlideSuggestions.kt`, `ui/SlideCanvasEditor.kt`, `creative/CanvasText.kt`, `creative/CanvasTable.kt`, `creative/CanvasArt.kt` (beide) | Fremde .pptx lesen und ins Original schreiben, zweiter Bildschirm, Deck aus einem Paper, Folien-Vorschläge (AP-51); Folien auf der Gestalten-Leinwand, Text mit Formatierung und Tabellen auf der Leinwand (AP-50) |
 | `docs/OfficeCharts.kt`, `docs/CellRich.kt`, `ui/SheetRichText.kt` | Echte Office-Diagramme (DrawingML) für .xlsx/.docx/.pptx schreiben und lesen; Formatierung innerhalb einer Zelle (AP-48, AP-49) |
 | `agent/FolderAsk.kt` | Frag diesen Ordner: Dateien, Stellen mit Seite, Quellen der Belegprüfung (AP-58) |
 | `ui/DocsEditor.kt`, `ui/DocsText.kt`, `ui/SlidesEditor.kt`, `ui/SheetEditor.kt`, `ui/DocsAssistant.kt`, `ui/DocsList.kt` | Editor-Rahmen, Text, Folien, Tabellen, KI-Mitarbeit, Startseite der Dokumente |
 | `data/Pseudonymizer.kt`, `data/PiiDetector.kt`, `ui/PrivacySettings.kt` | Pseudonymisierung (Erkennung, öffentliche Quellen, Platzhalter, Rückersetzung, Ein-Klick-Korrektur) und Einstellungen dazu |
-| `data/CommandModel.kt`, `agent/LoraCommands.kt`, `agent/CommandSlots.kt`, `agent/ModelRouter.kt`, `data/LoraWays.kt`, `ui/CommandModelPrompt.kt`, `tools/befehle/` | Lora Befehle (Befehlsmodell) und Mischmodus (AP-71): Etiketten aus dem Code, Erkennung über die ONNX Runtime, Werte aus dem Wunsch, Ausführung, Ort je Anfrage, Zähler, Einstellungen und Dialoge; Messkorpus, Trainingsdaten, Training und Export |
-| `data/LoraCorrections.kt`, `ui/LoraCorrectionsSettings.kt`, `tools/befehle/rueckfrage.py` | Rückfrage mit zwei Knöpfen (AP-73: `CommandRecognizer.choices`, `LoraStep.Choose`) und Lora lernt aus Korrekturen (AP-72): Liste auf dem Gerät, Einstellungen, Export für das Training |
+| `data/CommandModel.kt`, `agent/LoraCommands.kt`, `agent/CommandSlots.kt`, `agent/ModelRouter.kt`, `data/LoraWays.kt`, `ui/CommandModelPrompt.kt`, `tools/befehle/` | Kana Befehle (Befehlsmodell) und Mischmodus (AP-71): Etiketten aus dem Code, Erkennung über die ONNX Runtime, Werte aus dem Wunsch, Ausführung, Ort je Anfrage, Zähler, Einstellungen und Dialoge; Messkorpus, Trainingsdaten, Training und Export |
+| `data/LoraCorrections.kt`, `ui/LoraCorrectionsSettings.kt`, `tools/befehle/rueckfrage.py` | Rückfrage mit zwei Knöpfen (AP-73: `CommandRecognizer.choices`, `LoraStep.Choose`) und Kana lernt aus Korrekturen (AP-72): Liste auf dem Gerät, Einstellungen, Export für das Training |
 | `ui/ErrorHelp.kt`, `ui/Notices.kt` | Fehlermeldungen in Klartext mit Lösungsknopf (AP-74) |
-| `data/LoraHistory.kt`, `ui/LoraRecent.kt` | Lora-Verlauf, Pfeil hoch, angeheftete Befehle in Strg+K (AP-75) |
+| `data/LoraHistory.kt`, `ui/LoraRecent.kt` | Kana-Verlauf, Pfeil hoch, angeheftete Befehle in Strg+K (AP-75) |
 | `local/LocalSpeed.kt` | Messung und Empfehlung der lokalen Sprachmodelle, Mindesttempo im Mischmodus (AP-76) |
 | `agent/DryRun.kt`, `ui/DayUndo.kt` | Probelauf, Hinweise zu Unumkehrbarem, „Alles rückgängig seit heute Morgen“ (AP-77) |
-| `data/Vocabulary.kt`, `data/LoraPackages.kt`, `ui/VocabularyUi.kt`, `tools/wissen/` | Eigene Wörter, Wissenspakete, Inhalte zum Nachladen (AP-78), Lora-Pakete teilen (AP-83) |
+| `data/Vocabulary.kt`, `data/LoraPackages.kt`, `ui/VocabularyUi.kt`, `tools/wissen/` | Eigene Wörter, Wissenspakete, Inhalte zum Nachladen (AP-78), Kana-Pakete teilen (AP-83) |
 | `docs/StyleCheck.kt`, `data/HouseStyle.kt`, `agent/StyleActions.kt` | Hausstil- und Barrierefreiheits-Prüfung mit Beheben (AP-79) |
 | `data/Roles.kt` | Rollenauswahl beim ersten Start (AP-80) |
 | `ui/MediaLook.kt`, `ui/MediaPreview.kt` | Video und Ton in der Schnellansicht (AP-82) |
 | `files/AttachmentBudget.kt`, `ui/LargeAttachment.kt` | Große Anhänge: Grenze nach Modell, passende Stellen, Zusammenfassung (AP-85) |
-| `data/PiiModel.kt`, `data/PiiRuntime.kt`, `ui/PiiModelPrompt.kt`, `tools/pii/` | Lora Namensschutz (Erkennungsmodell der Pseudonymisierung, AP-67): Tokenizer, ONNX Runtime über JNA, Download und Popup; Messkorpus, Trainingsdaten, Training und Export |
+| `data/PiiModel.kt`, `data/PiiRuntime.kt`, `ui/PiiModelPrompt.kt`, `tools/pii/` | Kana Namensschutz (Erkennungsmodell der Pseudonymisierung, AP-67): Tokenizer, ONNX Runtime über JNA, Download und Popup; Messkorpus, Trainingsdaten, Training und Export |
 | `agent/ReferenceCheck.kt`, `ui/CheckDialogs.kt` | Quellen-Check (Crossref, OpenAlex, Google Books), Dialoge für Quellen und Barrierefreiheit |
 | `docs/QtiWriter.kt` | Tests für OPAL/ONYX als IMS QTI 2.1 |
 | `docs/AccessibilityCheck.kt`, `docs/PdfAccessibility.kt`, `docs/Contrast.kt` | Barrierefreiheit prüfen, PDF-Metadaten, Farbkontrast |
@@ -2383,14 +2384,14 @@ Chats und Einstellungen erhalten bleiben).
 | `ui/TranscriptsScreen.kt`, `ui/TranscriptScreen.kt`, `ui/TranscriptStart.kt`, `ui/TranscriptionSettings.kt` | Transkription: Übersicht, Aufnahme, Start-Dialog, Transkript mit Player, Einstellungen |
 | `local/` | Lokale Sprachmodelle: `LocalCatalog` (Modelle, Hardware-Empfehlung), `LocalLlm` (Installieren, Server starten/stoppen), `LlamaHost` je Plattform; `app/llama.gradle.kts` baut llama-server für Android |
 | `data/Privacy.kt` | Datenschutzstufen der Projekte durchsetzen |
-| `data/AppTools.kt`, `ui/ToolsSettings.kt`, `ui/NavRules.kt` | Einschaltbare Werkzeuge, Seitenleiste mit „Mehr“, Loras Werkzeug-Vorschlag |
+| `data/AppTools.kt`, `ui/ToolsSettings.kt`, `ui/NavRules.kt` | Einschaltbare Werkzeuge, Seitenleiste mit „Mehr“, Kanas Werkzeug-Vorschlag |
 | `agent/ChatModes.kt`, `ui/ModeUi.kt` | Modi (Literatursuche, Quellenmodus, Exzerpt, Planungsmodus, Sprachmodus) mit einheitlichem Rahmen |
 | `agent/AskUserTool.kt`, `ui/QuestionCard.kt` | Rückfragen mit Antwortknöpfen (`ask_user`), TU Vorlagen als Fragerunde |
 | `data/MemoryMeter.kt`, `ui/MemoryUsage.kt` | Arbeitsspeicher messen und anzeigen, Modelle im Leerlauf entladen |
-| `data/AppMap.kt`, `agent/LoraAgent.kt`, `ui/LoraHelper.kt`, `ui/Spotlight.kt` | Lora als Navigatorin: Landkarte der App, lokale Suche, Agent-Schleife, Panel (Seitenleiste/Blatt) mit Ergebnis-Karten, Leuchtrahmen |
-| `agent/ToolActions.kt`, `agent/OfficeActions.kt`, `agent/MoreActions.kt`, Windows `video/VideoLora.kt` | Lora handelt in Werkzeugen (AP-38): Register der Aktionen mit Vorschau und Rückgängig, Datenschutz, Protokoll; Dateien, PDF, Dokument, Tabelle, Folien, Video, Transkript/Handout/Nextcloud |
-| `agent/LoraPrefs.kt`, `agent/LoraPlan.kt`, `ui/LoraCards.kt`, `ui/LoraTour.kt` | Vorlieben mit Rückfrage (AP-39), Abläufe mit Plan-Karte und Fortsetzen nach Neustart (AP-40), Touren mit Leuchtrahmen (AP-41), *Einstellungen › Lora › Gedächtnis* |
-| `agent/LoraSense.kt`, `ui/LoraChat.kt`, `ui/LoraFlight.kt` | Was Lora auf dem Gerät erkennt (Vorschläge je Bereich, Fristen, Tabellen, DOIs, Ort beim Tippen, Schrittzeilen), Übergabe-Karte und nächste Schritte im Chat, Flug zum Ziel und Augen, die dem Zeiger folgen |
+| `data/AppMap.kt`, `agent/LoraAgent.kt`, `ui/LoraHelper.kt`, `ui/Spotlight.kt` | Kana als Navigatorin: Landkarte der App, lokale Suche, Agent-Schleife, Panel (Seitenleiste/Blatt) mit Ergebnis-Karten, Leuchtrahmen |
+| `agent/ToolActions.kt`, `agent/OfficeActions.kt`, `agent/MoreActions.kt`, Windows `video/VideoLora.kt` | Kana handelt in Werkzeugen (AP-38): Register der Aktionen mit Vorschau und Rückgängig, Datenschutz, Protokoll; Dateien, PDF, Dokument, Tabelle, Folien, Video, Transkript/Handout/Nextcloud |
+| `agent/LoraPrefs.kt`, `agent/LoraPlan.kt`, `ui/LoraCards.kt`, `ui/LoraTour.kt` | Vorlieben mit Rückfrage (AP-39), Abläufe mit Plan-Karte und Fortsetzen nach Neustart (AP-40), Touren mit Leuchtrahmen (AP-41), *Einstellungen › Kana › Gedächtnis* |
+| `agent/LoraSense.kt`, `ui/LoraChat.kt`, `ui/LoraFlight.kt` | Was Kana auf dem Gerät erkennt (Vorschläge je Bereich, Fristen, Tabellen, DOIs, Ort beim Tippen, Schrittzeilen), Übergabe-Karte und nächste Schritte im Chat, Flug zum Ziel und Augen, die dem Zeiger folgen |
 | `Brand.kt`, `data/ChatTitles.kt` | Name und Slogan der App; kurze Chat-Titel aus der ersten Nachricht |
 | `agent/Evidence.kt`, `ui/EvidenceCard.kt` | Quellenmodus: Belege lesen, gegen die Quellen prüfen, Belegprotokoll |
 | `research/Excerpts.kt`, `agent/ExcerptTools.kt` | Exzerpt-Agent: Schemata, Seitenprüfung, `save_excerpt` |
@@ -2402,7 +2403,7 @@ Chats und Einstellungen erhalten bleiben).
 | `net/Mcp.kt`, `net/McpOAuth.kt`, `net/McpStdio.kt` (beide), `data/McpServers.kt`, `agent/McpTools.kt`, `ui/ConnectionsSettings.kt` | MCP-Client (AP-23): Streamable HTTP, OAuth mit PKCE, lokale Server (Windows), Werkzeuge je Server mit Erlauben/Fragen/Sperren, *Einstellungen › Verbindungen* |
 | `docs/PdfStage3.kt` (beide), `docs/PdfCompare.kt`, `ui/PdfStage3Ui.kt` | PDF Stufe 3 (AP-26): Schwärzen, Text/Bilder ändern, Verkleinern, PDF/A-2b, Passwort, Metadaten, PDF/UA-Prüfung, Vergleichen |
 | `net/Imap.kt`, `data/MailServer.kt` | Mail über den Server (AP-27): IMAP-Client und ImapBridge mit der Schnittstelle des klassischen Outlook |
-| `data/PhoneSync.kt` | Sync für Android (AP-28): Lora-Ordner des PCs über WebDAV spiegeln, Notiz, Konflikte, Schutz vor Massenlöschung |
+| `data/PhoneSync.kt` | Sync für Android (AP-28): Kana-Ordner des PCs über WebDAV spiegeln, Notiz, Konflikte, Schutz vor Massenlöschung |
 
 ### Windows-Version (`desktop/`)
 
@@ -2422,18 +2423,18 @@ automatisch für beide Versionen. Kleine Stellvertreter für Android-Klassen (`a
 | `data/LearningGames.kt`, `agent/GameTools.kt`, `ui/GamesScreen.kt`, `ui/GamePlatform.kt` (beide) | Lernspiele (AP-17): Sammlung mit Versionen, Abschottung (CSP), Export als HTML/ZIP, Agent-Werkzeuge, Spielen |
 | `agent/AiUseNote.kt`, `ui/AiUseNoteUi.kt` | KI-Nutzungsnachweis (AP-19): Erkennung „Text für eine Arbeit“, Nachweis in drei Formaten, Pop-up-Vorschlag |
 | `desktop/WebEngine.kt`, `desktop/WebPage.kt`, `ui/BrowserPanel.kt` | Browser neben dem Chat (AP-14): Chromium über JCEF (einmalig eingerichtet), Tabs, Seitenaktionen, Meta-Tags → Literatur |
-| `desktop/Com.kt`, `desktop/ComOutlook.kt`, `data/OutlookPlatform.kt` (gemeinsam: `data/Outlook.kt`, `data/MailBox.kt`, `agent/OutlookTools.kt`, `agent/MailAccess.kt`, `agent/LoraMail.kt`, `agent/MailSorter.kt`, `ui/MailScreen.kt`, `ui/MailView.kt`, `ui/MailSortPreview.kt`, `ui/MailLocalModel.kt`) | Mail & Kalender (AP-13, AP-68, AP-69): COM über JNA, Outlook ohne Löschen und Senden, nur lokales Modell (eine Sperre), Mailansicht, Lora sortiert, Agent-Werkzeuge, Regeln, Protokoll |
+| `desktop/Com.kt`, `desktop/ComOutlook.kt`, `data/OutlookPlatform.kt` (gemeinsam: `data/Outlook.kt`, `data/MailBox.kt`, `agent/OutlookTools.kt`, `agent/MailAccess.kt`, `agent/LoraMail.kt`, `agent/MailSorter.kt`, `ui/MailScreen.kt`, `ui/MailView.kt`, `ui/MailSortPreview.kt`, `ui/MailLocalModel.kt`) | Mail & Kalender (AP-13, AP-68, AP-69): COM über JNA, Outlook ohne Löschen und Senden, nur lokales Modell (eine Sperre), Mailansicht, Kana sortiert, Agent-Werkzeuge, Regeln, Protokoll |
 | `desktop/WindowsOcr.kt`, `desktop/OfficePdf.kt`, `docs/PdfPlatform.kt`, `docs/PdfExtras.kt` (beide; gemeinsam: `docs/PdfStage2.kt`, `docs/PdfConvert.kt`, `ui/PdfToolsMore.kt`) | PDF Stufe 2 (AP-15): Texterkennung von Windows, Office → PDF, Textebene, Unterschrift, PDF → Markdown/Word/Excel, Tabellen |
 | `data/FileLibrary.kt`, `ui/FilesScreen.kt` | Dateien (AP-18): Katalog, Ordner, Schlagwörter, Volltext-Cache und Suche, Vergleich |
-| `data/LoraDrive.kt`, `data/LoraRoot.kt` (beide), `desktop/Paths.kt`, `desktop/LoraLayout.kt`, `files/LoraMirror.kt` (beide), `ui/DriveScreen.kt`, `ui/LoraFolderUi.kt` (beide), `ui/DrivePlatform.kt` (beide) | Lora-Ordner und Tab *Dateien* (AP-16): Hochgeladen, Erstellt, Ordner, Papierkorb, Umzug der Daten, Kopie auf Android |
+| `data/LoraDrive.kt`, `data/LoraRoot.kt` (beide), `desktop/Paths.kt`, `desktop/LoraLayout.kt`, `files/LoraMirror.kt` (beide), `ui/DriveScreen.kt`, `ui/LoraFolderUi.kt` (beide), `ui/DrivePlatform.kt` (beide) | Kana-Ordner und Tab *Dateien* (AP-16): Hochgeladen, Erstellt, Ordner, Papierkorb, Umzug der Daten, Kopie auf Android |
 | `docs/DocFiles.kt`, `docs/DocxExtras.kt`, `docs/LatexOmml.kt`, `docs/SlideExtras.kt`, `docs/LocalSpelling.kt` (beide), `data/ChatFilter.kt` | Office-Ausbau (AP-16): echte Dateien und Schreiben ins Original, Überarbeitungen und Kommentare in Word, Formeln, freie Folien, Rechtschreibung, Chatfilter |
 | `creative/DesignRender.kt`, `creative/DesignExport.kt`, `creative/DesignEditorState.kt` und `creative/CanvasOps.kt` (gemeinsam, AP-50), `ui/DesignEditor.kt`, `ui/CreateDesigns.kt`, `ui/DesignPlatform.kt` (beide), `data/DesignSupport.kt` (beide), `creative/TudAssets.kt`, `resources/fonts/`, `resources/tud/` (Logos, Icons; aus `tools/tud_cd_assets.py`) (gemeinsam: `data/Designs.kt`, `data/DesignTemplates.kt`, `agent/DesignTools.kt`, `ui/CreateUi.kt`) | Erstellen › Gestalten (AP-24): Renderer mit Noto Sans, Export PNG/PDF/PowerPoint, Editor, Vorlagen, Agent-Werkzeuge |
 | `video/VideoProject.kt`, `video/Media.kt`, `video/VideoRender.kt`, `video/VideoTitles.kt`, `video/RoughCut.kt`, `video/VideoPlayer.kt`, `ui/VideoScreen.kt`, `ui/VideoLayout.kt` | Videoeditor (AP-25, Anordnung AP-70): Projekte, ffprobe/ffmpeg, Proxys, Vorschau, Titel im TUD-Design, Rohschnitt, Export |
 | `ui/VideoEase.kt`, `ui/VideoActions.kt` | Videoeditor für Einsteiger (AP-121): Startkarten, „So entsteht dein Video“, beschriftete Knöpfe, Hilfe-Menü, „Gespeichert“, Rechtsklick-Menüs; gemeinsame Aktionen für Leiste, Menüs, Schrittkarte und Dateien aus dem Explorer |
-| `ui/ExtraWindows.kt` | Lora in mehreren Fenstern: Chats, Dokumente und Loras Panel in eigenen Fenstern (AP-84) |
+| `ui/ExtraWindows.kt` | Kana in mehreren Fenstern: Chats, Dokumente und Kanas Panel in eigenen Fenstern (AP-84) |
 | `video/ExportQueue.kt` | Export-Warteschlange, übersteht einen Neustart (AP-57, AP-81) |
 | `video/VideoEdit.kt`, `video/AudioSync.kt`, `ui/VideoTimeline.kt`, `ui/VideoPanels.kt` | Videoeditor (AP-52, AP-53): Spuren, Bild-in-Bild, Schnitt (Klinge, Ripple, Roll, Slip, Einfügen/Überschreiben, Magnet), verknüpfter Ton, Synchronisieren über die Wellenform, Medienpool, Quellmonitor, Marker, Tastenkürzel |
-| `video/TextCut.kt`, `ui/VideoTranscriptPanel.kt` | Textbasierter Schnitt (AP-55): Wörter auf der Zeitleiste, Löschen = Schneiden, Absätze verschieben, Füllwörter/Pausen, Lora-Vorschläge |
+| `video/TextCut.kt`, `ui/VideoTranscriptPanel.kt` | Textbasierter Schnitt (AP-55): Wörter auf der Zeitleiste, Löschen = Schneiden, Absätze verschieben, Füllwörter/Pausen, Kana-Vorschläge |
 | `video/ScreenRecorder.kt`, `ui/ScreenRecordUi.kt`, `desktop/GlobalHotkeys.kt` | Bildschirmaufnahme (AP-56): ein ffmpeg-Prozess für Bildschirm, Webcam und Ton, Teile bei Pause, Klicks, Aufnahmeleiste, Tasten in ganz Windows |
 | `video/Encoders.kt`, `video/ExportQueue.kt`, `ui/VideoExportUi.kt` | Export (AP-57): Hardware-Encoder mit Rückfall, Warteschlange im Hintergrund, mehrere Ziele, Kapitel, Nextcloud |
 | `desktop/WindowsShell.kt`, `ui/ShellRequests.kt`, `ui/ExternalOffice.kt` (gemeinsam) | Windows-Integration (AP-59): Kontextmenü je Benutzer, Start mit Datei, Dateien nach außen ziehen/kopieren, Windows-Papierkorb, Office mit Rückweg |
@@ -2441,7 +2442,7 @@ automatisch für beide Versionen. Kleine Stellvertreter für Android-Klassen (`a
 | `docs/Diagrams.kt`, `ui/DiagramView.kt`, `ui/DiagramEditor.kt`, `docs/DiagramRaster.kt`, `ui/WhiteboardScreen.kt` | Diagramme und Whiteboard (AP-61): Modell, Mermaid, Anordnung, Zeichnen (Compose, SVG, PNG), Editor, gespeicherte Tafeln |
 | `docs/DocScanner.kt`, `ui/ScanScreen.kt` (gemeinsam), `docs/ScanImages.kt`, `ui/ScanPlatform.kt` (beide), `desktop/WiaScanner.kt` | Dokumenten-Scanner (AP-62): Kanten, Entzerren, Kontrast, PDF mit Textebene; Kamera/Fotos bzw. WIA/Bilder |
 | `data/PhoneSync.kt`, `data/Vault.kt`, `tasks/BackgroundSync.kt` (beide), `research/WebMeta.kt`, `ui/PhoneBrowser.kt` (nur Android) | Sync- und Android-Reste (AP-63): Literatur, Wissen und Tresor im Handy-Sync, Hintergrund-Sync, PIN-Kiste je Gerät, Browser mit WebView |
-| `ui/PresentScreens.kt` (beide), `ui/LoraFolderPicker.kt`, `docs/PdfStage3.kt` (Android: Verkleinern) | Android zieht nach (AP-64): zweiter Bildschirm über `Presentation`, Speichern in den Lora-Ordner |
+| `ui/PresentScreens.kt` (beide), `ui/LoraFolderPicker.kt`, `docs/PdfStage3.kt` (Android: Verkleinern) | Android zieht nach (AP-64): zweiter Bildschirm über `Presentation`, Speichern in den Kana-Ordner |
 | `audio/Dictation.kt`, `ui/DictationUi.kt` | Diktat (AP-65): Satzzeichen per Sprache, Einfügen am Cursor, Erkennung auf dem Gerät |
 | `files/FileDetails.kt`, `ui/QuickLook.kt` | Schnellansicht und Details-Spalte in Dateien (AP-66) |
 | `desktop/Extensions.kt`, `ui/ExtensionsUi.kt` (gemeinsam: `update/UpdateInfo.kt`, `update/Updates.kt`), `.github/scripts/extension-videoeditor.sh` | Nachladbare Erweiterungen (AP-25): Katalog in version.json, Einrichten, Aktualisieren, Entfernen; Bau des Videoeditor-Pakets |

@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 /**
- * Editor documents as real files in the Lora-Ordner (AP-16): a document is a .docx, a presentation a .pptx, a table an
+ * Editor documents as real files in the Kana-Ordner (AP-16): a document is a .docx, a presentation a .pptx, a table an
  * .xlsx, Markdown an .md – they open in Word, PowerPoint and Excel. The editor keeps versions, comments and the chat in
  * its data (.lora); the file is written a moment after each change.
  *
@@ -27,7 +27,7 @@ class DocFiles(private val store: DocsStore, dataDir: File, private val cache: F
     private val originals = File(dataDir, "originale")
     private val json = Json { ignoreUnknownKeys = true }
     private val tabsSer = ListSerializer(DocTab.serializer())
-    private val executor = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "Lora-Dateien").apply { isDaemon = true } }
+    private val executor = Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "Kana-Dateien").apply { isDaemon = true } }
     private val pending = HashMap<String, ScheduledFuture<*>>()
 
     /** What happened at the last write of a document (for the editor's status line). */

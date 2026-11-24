@@ -13,20 +13,20 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 /**
- * „Lora Befehle“, the command model (AP-71; up to 1.0.65 „Befehlsmodell“): a small German encoder
- * (distilbert-base-german-cased, Apache-2.0), fine-tuned and changed by us on invented wishes, maps what is typed into Lora or Strg+K to one action of the app in milliseconds on the device – or says that
+ * „Kana Befehle“, the command model (AP-71; up to 1.0.65 „Befehlsmodell“): a small German encoder
+ * (distilbert-base-german-cased, Apache-2.0), fine-tuned and changed by us on invented wishes, maps what is typed into Kana or Strg+K to one action of the app in milliseconds on the device – or says that
  * it is a free request for a language model. Built with tools/befehle (model card: resources/befehle/MODELLKARTE.md);
  * the labels come from the code ([io.github.thepytales.llmhub.agent.LoraCommands]).
  *
  * A download like the recognition model of the pseudonymization (AP-67): offered once in a popup, from the branch
  * `befehle-modell` of the public repository at a fixed commit, checked by SHA-256. Without it – or without the ONNX
- * Runtime the app ships with sherpa-onnx – Lora works as before (rules on the device, then a language model). The
+ * Runtime the app ships with sherpa-onnx – Kana works as before (rules on the device, then a language model). The
  * installed version is recognized by its SHA-256 ([VERSIONS], AP-117): an older known one keeps working with its own
  * threshold, bound and labels until the newest is downloaded (offered once as an update); then the old file is deleted.
  */
 object CommandModelInfo {
     /** The name shown in the app. */
-    const val NAME = "Lora Befehle"
+    const val NAME = "Kana Befehle"
     const val COMMIT = "6f996b1c45609fdc9e565a113cfb11bfa28e14ee"
     const val URL = "https://raw.githubusercontent.com/ADEU-TUD/Lora/$COMMIT/lora-befehle-pytales.int8.onnx.gz"
     const val GZ_SIZE = 54_943_807L
@@ -40,7 +40,7 @@ object CommandModelInfo {
     /** Below this probability of the likeliest label nothing is carried out (chosen on the Messkorpus, schwelle.json). */
     const val THRESHOLD = 0.5f
     /**
-     * Rückfrage mit zwei Knöpfen (AP-73): below [THRESHOLD], Lora asks „Meinst du … oder …?“ when the two likeliest
+     * Rückfrage mit zwei Knöpfen (AP-73): below [THRESHOLD], Kana asks „Meinst du … oder …?“ when the two likeliest
      * commands together reach this probability (chosen on the development part only, tools/befehle/rueckfrage.py and
      * modell/rueckfrage.json); otherwise the wish goes on to a language model as before.
      */
@@ -95,7 +95,7 @@ class CommandRecognizer(
 ) {
     /**
      * [sure]: confident enough to act; otherwise the wish is passed on to a language model – or, with two [choices]
-     * (the two likeliest commands, AP-73), Lora asks which one is meant.
+     * (the two likeliest commands, AP-73), Kana asks which one is meant.
      */
     data class Result(val label: String, val confidence: Float, val sure: Boolean, val choices: List<String> = emptyList()) {
         val free: Boolean get() = label.startsWith("frei.")
@@ -118,7 +118,7 @@ class CommandRecognizer(
     }
 
     fun recognize(wish: String, area: String = "app", threshold: Float = this.threshold, bound: Float = this.bound): Result {
-        val (ids, types) = encode(wish, area)
+        val (ids, types) = encode(trainedName(wish), area)
         val p = classifier.probabilities(ids, types)
         var best = 0
         for (k in labels.indices) if (p[k] > p[best]) best = k
@@ -143,6 +143,14 @@ class CommandRecognizer(
     companion object {
         const val MAX_LEN = 64
 
+        private val KANA = Regex("\\bKana\\b", RegexOption.IGNORE_CASE)
+
+        /**
+         * The model was trained when the app was still called Lora (AP-155): „Kana, öffne …“ reaches it as „Lora, öffne …“,
+         * so both names work the same.
+         */
+        fun trainedName(wish: String): String = KANA.replace(wish, io.github.thepytales.llmhub.Brand.OLD_NAME)
+
         /** What is open, as the word the model was trained with (keys: [io.github.thepytales.llmhub.agent.ActionArea.key], "app" = none). */
         val AREAS = mapOf(
             "app" to "App", "files" to "Dateien", "pdf" to "PDF", "doc" to "Dokument", "sheet" to "Tabelle", "slides" to "Folien",
@@ -157,8 +165,8 @@ class CommandRecognizer(
 }
 
 /**
- * The model on this device: download (Einstellungen › Lora or the popup), loading in the background and the recognition
- * for Lora and Strg+K, cached per wish because Strg+K asks again with every key.
+ * The model on this device: download (Einstellungen › Kana or the popup), loading in the background and the recognition
+ * for Kana and Strg+K, cached per wish because Strg+K asks again with every key.
  */
 class CommandModel(private val c: AppContainer, versions: List<ModelVersion> = CommandModelInfo.VERSIONS, private val dir: File? = null) {
     data class State(
@@ -212,7 +220,7 @@ class CommandModel(private val c: AppContainer, versions: List<ModelVersion> = C
     }
 
     private fun refresh() {
-        found = runCatching { files.detect() }.logFailure("Lora Befehle erkennen").getOrNull()
+        found = runCatching { files.detect() }.logFailure("Kana Befehle erkennen").getOrNull()
         detected = true
         _state.value = _state.value.copy(installed = installed(), old = hasOld(), version = found?.version)
         if (offerWanted) { offerWanted = false; offerIfNeeded() }
@@ -255,7 +263,7 @@ class CommandModel(private val c: AppContainer, versions: List<ModelVersion> = C
                 _state.value = _state.value.copy(progress = null, message = tr("Download abgebrochen – beim nächsten Mal wird fortgesetzt."))
             } catch (e: Exception) {
                 _state.value = _state.value.copy(progress = null, message = if (hasOld()) tr("Download von {0} fehlgeschlagen: {1}. Bis dahin arbeitet die bisherige Version weiter.", CommandModelInfo.NAME, e.message)
-                    else tr("Download von {0} fehlgeschlagen: {1}. Bis dahin arbeitet Lora wie bisher.", CommandModelInfo.NAME, e.message))
+                    else tr("Download von {0} fehlgeschlagen: {1}. Bis dahin arbeitet Kana wie bisher.", CommandModelInfo.NAME, e.message))
                 load()
             } finally {
                 if (_state.value.progress != null) _state.value = _state.value.copy(progress = null)
@@ -274,20 +282,20 @@ class CommandModel(private val c: AppContainer, versions: List<ModelVersion> = C
         }
     }
 
-    /** Loads the version on this device in the background (well under a second); until then Lora works as before. */
+    /** Loads the version on this device in the background (well under a second); until then Kana works as before. */
     fun load() {
         if (recognizer != null) return
         val f = found ?: return
         scope.launch {
             val lib = PiiRuntime.library(c)
             if (lib == null) {
-                _state.value = _state.value.copy(message = tr("Für {0} fehlt die ONNX Runtime der App (Spracherkennung) – Lora arbeitet wie bisher.", CommandModelInfo.NAME))
+                _state.value = _state.value.copy(message = tr("Für {0} fehlt die ONNX Runtime der App (Spracherkennung) – Kana arbeitet wie bisher.", CommandModelInfo.NAME))
                 return@launch
             }
             val v = f.version
             val labels = OwnModels.labels(v.labels)
             runCatching { OrtClassifier(lib, f.file, labels = labels.size, inputs = CommandModelInfo.INPUTS, perToken = false, name = "lora-befehle") }
-                .logFailure("Lora Befehle laden").getOrNull()?.let { cl ->
+                .logFailure("Kana Befehle laden").getOrNull()?.let { cl ->
                     classifier = cl
                     recognizer = CommandRecognizer({ ids, types -> cl.run(ids, types) }, WordPiece(OwnModels.vocab(v.vocab)), labels, threshold = v.threshold, bound = v.bound)
                     _state.value = _state.value.copy(ready = true)
@@ -308,7 +316,7 @@ class CommandModel(private val c: AppContainer, versions: List<ModelVersion> = C
         if (!c.settings.current.commandModel || wish.isBlank()) return null
         val key = "$area\n" + CommandRecognizer.normalize(wish)
         synchronized(cache) { cache[key] }?.let { return it }
-        val result = runCatching { r.recognize(wish, area) }.logFailure("Lora Befehle").getOrNull() ?: return null
+        val result = runCatching { r.recognize(wish, area) }.logFailure("Kana Befehle").getOrNull() ?: return null
         synchronized(cache) { cache[key] = result }
         return result
     }

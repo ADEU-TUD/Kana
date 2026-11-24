@@ -85,7 +85,7 @@ fun VaultScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: (String) -> Uni
                 VaultStore.State.LOCKED -> VaultUnlock(c)
                 VaultStore.State.UNLOCKED -> VaultContents(c, onOpenChat)
             }
-            // Room for the sleeping Lora at the bottom right.
+            // Room for the sleeping Kana at the bottom right.
             androidx.compose.foundation.layout.Spacer(Modifier.size(LORA_BUTTON_ROOM - 16.dp))
         }
     }
@@ -171,7 +171,7 @@ private fun RecoveryKeyDialog(key: String, onDone: () -> Unit) {
         confirmButton = { Button(enabled = kept, onClick = onDone) { Text(tr("Weiter")) } },
         dismissButton = {
             TextButton(onClick = {
-                clipboard.setText(AnnotatedString(tr("Lora – Wiederherstellungsschlüssel des Tresors: {0}", key)))
+                clipboard.setText(AnnotatedString(tr("Kana – Wiederherstellungsschlüssel des Tresors: {0}", key)))
                 Notices.info(tr("Kopiert – zum Ausdrucken einfügen und danach aus der Zwischenablage löschen."))
             }) { Text(tr("Kopieren")) }
         },

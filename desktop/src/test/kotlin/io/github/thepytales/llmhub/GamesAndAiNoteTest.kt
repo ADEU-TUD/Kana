@@ -70,7 +70,7 @@ class GamesAndAiNoteTest {
             ChatModes.enabledTools = { setOf(AppTool.GAMES.id) }
             assertTrue(ChatModes.GAMES in ChatModes.visible())
             assertEquals(ChatModes.GAMES, ChatModes.matching("Lernspiel").single())
-            assertEquals(AppTool.GAMES, AppTool.suggestFor("Mach mir ein Quiz zu Kapitel 2", emptySet(), android = false), "Lora schlägt das Werkzeug vor")
+            assertEquals(AppTool.GAMES, AppTool.suggestFor("Mach mir ein Quiz zu Kapitel 2", emptySet(), android = false), "Kana schlägt das Werkzeug vor")
         } finally {
             ChatModes.enabledTools = before
         }

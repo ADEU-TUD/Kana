@@ -65,16 +65,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
-/** Width of Lora in the card while the agent works. */
+/** Width of Kana in the card while the agent works. */
 private val CARD_LORA_WIDTH = 110.dp
 
 /**
  * Shown instead of the thinking and the tool steps while the agent works (Einstellungen › Chat & Werkzeuge ›
- * Arbeitsschritte einklappen): Lora, the mascot, acts out research things on a small lit stage – matching the current
- * step ([toolName], [thinking]) now and then –, next to it „Lora ist dran“ with the time so far, the current [step],
- * a small pill with the number of steps that opens them, and a fine moving line at the bottom; a tap on Lora brings a
+ * Arbeitsschritte einklappen): Kana, the mascot, acts out research things on a small lit stage – matching the current
+ * step ([toolName], [thinking]) now and then –, next to it „Kana ist dran“ with the time so far, the current [step],
+ * a small pill with the number of steps that opens them, and a fine moving line at the bottom; a tap on Kana brings a
  * little reaction. The card has a fixed height, so nothing jumps when the step changes or the pill appears. With
- * [hideLora] (Lora ausblenden) a smaller card shows the pulsing brand symbol instead.
+ * [hideLora] (Kana ausblenden) a smaller card shows the pulsing brand symbol instead.
  */
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
@@ -119,16 +119,16 @@ fun WorkingCard(
                         LoraFigure(
                             Modifier
                                 .size(CARD_LORA_WIDTH, loraHeight)
-                                // A tap: Lora waves, spins or has an idea – and then goes back to work. A long press asks
-                                // Lora, the navigator (AP-07).
+                                // A tap: Kana waves, spins or has an idea – and then goes back to work. A long press asks
+                                // Kana, the navigator (AP-07).
                                 .combinedClickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null,
-                                    onClickLabel = tr("Lora antippen"),
-                                    onLongClickLabel = tr("Lora fragen"),
+                                    onClickLabel = tr("Kana antippen"),
+                                    onLongClickLabel = tr("Kana fragen"),
                                     onLongClick = { LoraHelper.open() },
                                 ) { director.play(LORA_TAP_REACTIONS[taps++ % LORA_TAP_REACTIONS.size]) },
-                            label = tr("Lora bei der Arbeit"),
+                            label = tr("Kana bei der Arbeit"),
                             director = director,
                             hint = loraHint(toolName, thinking),
                         )
@@ -138,7 +138,7 @@ fun WorkingCard(
                 Column(Modifier.weight(1f)) {
                     Row(Modifier.fillMaxWidth().heightIn(min = 32.dp), verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            tr(if (hideLora) "Arbeitet an der Antwort" else "Lora ist dran"),
+                            tr(if (hideLora) "Arbeitet an der Antwort" else "Kana ist dran"),
                             style = MaterialTheme.typography.titleSmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -184,7 +184,7 @@ fun WorkingCard(
 internal fun elapsedLabel(seconds: Int): String =
     if (seconds < 60) "$seconds s" else "${seconds / 60} min" + if (seconds % 60 != 0) " ${seconds % 60} s" else ""
 
-/** The brand symbol, slowly pulsing (in place of Lora while Lora is hidden). */
+/** The brand symbol, slowly pulsing (in place of Kana while Kana is hidden). */
 @Composable
 private fun PulsingBrandSymbol(modifier: Modifier) {
     val pulse by rememberInfiniteTransition(label = "symbol").animateFloat(
@@ -242,19 +242,19 @@ fun StepsLine(thinking: Boolean, tools: Int, open: Boolean, onToggle: () -> Unit
     }
 }
 
-/** An idea in Lora's speech bubble on the start page: [kind] is the small heading („Idee“, „Vorlage“). */
+/** An idea in Kana's speech bubble on the start page: [kind] is the small heading („Idee“, „Vorlage“). */
 internal class LoraIdea(val label: String, val kind: String, val template: Boolean, val run: () -> Unit)
 
 /** Counts the visits of the start page, so every new chat begins with another idea. */
 private var ideaVisits = 0
 
-/** Lora dozes off after this long without a tap or typing. */
+/** Kana dozes off after this long without a tap or typing. */
 internal const val LORA_SLEEP_AFTER_MS = 45_000L
 
 /**
- * Lora on the start page: waves hello, then waits (looks around, sips coffee, reads, spins the globe …), offers one of
+ * Kana on the start page: waves hello, then waits (looks around, sips coffee, reads, spins the globe …), offers one of
  * the [ideas] in a speech bubble (tap: use it; ↻: the next one, with a flash of inspiration), takes notes while the user
- * is [typing] and dozes off after a while. A tap on Lora wakes her and opens her panel ([onTap]). Without ideas the
+ * is [typing] and dozes off after a while. A tap on Kana wakes her and opens her panel ([onTap]). Without ideas the
  * bubble is left out.
  */
 @Composable
@@ -291,7 +291,7 @@ internal fun LoraHome(ideas: List<LoraIdea>, typing: Boolean, loraHeight: Dp, mo
     }
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         if (ideas.isNotEmpty()) {
-            // The bubble keeps its place while hidden, so Lora and the greeting stay put when typing starts.
+            // The bubble keeps its place while hidden, so Kana and the greeting stay put when typing starts.
             val shown by animateFloatAsState(if (typing) 0f else 1f, tween(250), label = "bubble")
             Column(Modifier.alpha(shown), horizontalAlignment = Alignment.CenterHorizontally) {
                 IdeaBubble(ideas, index, enabled = !typing, onUse = { touches++; ideas[index.mod(ideas.size)].run() }, onNext = ::nextIdea)
@@ -300,19 +300,19 @@ internal fun LoraHome(ideas: List<LoraIdea>, typing: Boolean, loraHeight: Dp, mo
         }
         LoraFigure(
             Modifier
-                // The sky above Lora stays free: the light bulb and the stars of the telescope rise up to the bubble.
+                // The sky above Kana stays free: the light bulb and the stars of the telescope rise up to the bubble.
                 .size(loraHeight * LORA_ASPECT, loraHeight)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClickLabel = tr("Lora fragen"),
+                    onClickLabel = tr("Kana fragen"),
                 ) {
                     touches++
                     sleeping = false
                     director.play(LoraAction.WAVE)
                     onTap()
                 },
-            label = tr("Lora, das Maskottchen der App"),
+            label = tr("Kana, das Maskottchen der App"),
             director = director,
             hint = hint,
             hintEvery = 1,
@@ -321,7 +321,7 @@ internal fun LoraHome(ideas: List<LoraIdea>, typing: Boolean, loraHeight: Dp, mo
 }
 
 /**
- * The ideas without Lora (Lora ausblenden): the same bubble without the tail, e.g. below the greeting; it steps aside
+ * The ideas without Kana (Kana ausblenden): the same bubble without the tail, e.g. below the greeting; it steps aside
  * while the user is [typing].
  */
 @Composable
@@ -386,7 +386,7 @@ private fun IdeaBubble(ideas: List<LoraIdea>, index: Int, enabled: Boolean, onUs
     }
 }
 
-/** The small tail under the speech bubble, pointing down at Lora. */
+/** The small tail under the speech bubble, pointing down at Kana. */
 @Composable
 private fun BubbleTail() {
     val fill = LocalChatLook.current.card
@@ -410,8 +410,8 @@ private fun BubbleTail() {
 }
 
 /**
- * Lora's close-up ([drawLoraFace]), animated: blinks, breathes and follows the pointer with her eyes. For small places
- * (the button in the top bar, the sleeping Lora in a corner), where the whole figure would be tiny. [fps] limits how
+ * Kana's close-up ([drawLoraFace]), animated: blinks, breathes and follows the pointer with her eyes. For small places
+ * (the button in the top bar, the sleeping Kana in a corner), where the whole figure would be tiny. [fps] limits how
  * often she is redrawn – a small face needs few frames; 0 = every frame.
  */
 @Composable
@@ -441,16 +441,16 @@ fun LoraFace(
     }
 }
 
-/** Lora's close-up standing still in [action] (no animation), e.g. on small chips and cards. */
+/** Kana's close-up standing still in [action] (no animation), e.g. on small chips and cards. */
 @Composable
 fun LoraFaceStill(modifier: Modifier = Modifier, action: LoraAction = LoraAction.IDLE, timeMs: Long = LOGO_TIME_MS) {
     val colors = loraColors()
-    Canvas(modifier.semantics { contentDescription = "Lora" }) { drawLoraFace(LoraFrame(action, 0.18f, timeMs, null, 1f), timeMs, colors) }
+    Canvas(modifier.semantics { contentDescription = "Kana" }) { drawLoraFace(LoraFrame(action, 0.18f, timeMs, null, 1f), timeMs, colors) }
 }
 
-/** Lora standing still in [action] (no animation), e.g. as a small signature under answers. */
+/** Kana standing still in [action] (no animation), e.g. as a small signature under answers. */
 @Composable
 fun LoraStill(modifier: Modifier = Modifier, action: LoraAction = LoraAction.READ, timeMs: Long = LOGO_TIME_MS) {
     val colors = loraColors()
-    Canvas(modifier.semantics { contentDescription = "Lora" }) { drawLora(LoraFrame(action, 0.18f, timeMs, null, 1f), timeMs, colors) }
+    Canvas(modifier.semantics { contentDescription = "Kana" }) { drawLora(LoraFrame(action, 0.18f, timeMs, null, 1f), timeMs, colors) }
 }

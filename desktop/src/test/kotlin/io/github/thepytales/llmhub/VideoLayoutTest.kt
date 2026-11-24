@@ -169,7 +169,7 @@ class VideoLayoutTest {
         val small = fitPanels(910.dp, pool, props)
         assertNotNull(small.pool); assertNotNull(small.props)
         assertTrue(small.pool!! + small.props!! + PREVIEW_MIN_WIDTH + 20.dp <= 910.dp + 0.5.dp, "$small")
-        // With Lora's panel beside it (≈ 520 dp left): one folds in, the properties stay unless the pool was opened last.
+        // With Kana's panel beside it (≈ 520 dp left): one folds in, the properties stay unless the pool was opened last.
         assertNull(fitPanels(700.dp, pool, props).pool)
         assertEquals(320.dp, fitPanels(700.dp, pool, props).props)
         assertNull(fitPanels(700.dp, pool, props, preferPool = true).props)

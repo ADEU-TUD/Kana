@@ -26,7 +26,7 @@ import java.io.File
 class ScanSource(val label: String, val icon: ImageVector, val start: () -> Unit)
 
 /** Android: the scan works on the phone itself (camera, photos); the PDF reaches the PC through the sync. */
-val SCAN_HINT: String get() = tr("Seite flach hinlegen, von oben fotografieren – Lora findet die Kanten. Über den Sync landet das PDF auch auf dem PC.")
+val SCAN_HINT: String get() = tr("Seite flach hinlegen, von oben fotografieren – Kana findet die Kanten. Über den Sync landet das PDF auch auf dem PC.")
 
 /** Folder for the photos of a scan (the camera writes there through the FileProvider). */
 fun scanWorkDir(context: android.content.Context): File = File(context.cacheDir, "camera/scan").apply { mkdirs() }

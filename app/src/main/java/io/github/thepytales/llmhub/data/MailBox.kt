@@ -124,7 +124,7 @@ object MailGroups {
     }
 }
 
-/** The mails chosen in the mail view, for Lora's panel (AP-69): ids, how many and subjects – never the text of the mails. */
+/** The mails chosen in the mail view, for Kana's panel (AP-69): ids, how many and subjects – never the text of the mails. */
 data class MailSelection(val folder: String, val ids: List<String>, val subjects: List<String>) {
     val count: Int get() = ids.size
 }
@@ -278,7 +278,7 @@ class MailBoxModel(
 
     fun clearSelection() = _state.update { it.copy(selected = emptySet(), anchor = null) }
 
-    /** The choice for Lora's panel, or null when nothing is chosen. */
+    /** The choice for Kana's panel, or null when nothing is chosen. */
     fun selection(): MailSelection? {
         val s = _state.value
         val mails = s.selectedMails().ifEmpty { return null }

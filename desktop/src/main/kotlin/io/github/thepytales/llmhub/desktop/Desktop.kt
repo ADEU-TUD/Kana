@@ -84,7 +84,7 @@ object DesktopActions {
     }.getOrDefault(emptyList())
 
     /**
-     * Picks files; [extensions] like "pdf" (empty = all). Lora-Dateidialog (AP-42); the system dialog only when no
+     * Picks files; [extensions] like "pdf" (empty = all). Kana-Dateidialog (AP-42); the system dialog only when no
      * window of the app can show it (called on the event thread or before the window exists).
      */
     fun pickFiles(title: String, multiple: Boolean = true, extensions: List<String> = emptyList()): List<File> {

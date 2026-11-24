@@ -116,7 +116,7 @@ internal fun ServerFilesPane(term: ServerTerminal, modifier: Modifier) {
     }
 
     LaunchedEffect(files) { go(term.state.value.profile?.workDir?.takeIf { it.isNotBlank() } ?: ".") }
-    // Follows cd in the terminal: the folder from the prompt or the end of Lora's last command.
+    // Follows cd in the terminal: the folder from the prompt or the end of Kana's last command.
     LaunchedEffect(files, follow) {
         var last: String? = null
         while (follow) {
@@ -281,7 +281,7 @@ private fun saveFileDialog(name: String): File? = runCatching {
 
 /**
  * SSH keys (AP-131 a): create a new Ed25519 pair (or take an existing key file), show and copy the public key, and – when
- * connected – put it on the server as a step for approval; afterwards Lora offers to log in with the key.
+ * connected – put it on the server as a step for approval; afterwards Kana offers to log in with the key.
  * [forProfile]/[onCreated]: from the session form, the new key goes into the form.
  */
 @Composable
@@ -309,7 +309,7 @@ internal fun KeyDialog(term: ServerTerminal, onDismiss: () -> Unit, forProfile: 
         text = {
             Column(Modifier.widthIn(min = 460.dp, max = 560.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (keyFile == null) {
-                    Text(tr("Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Lora-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich."), style = MaterialTheme.typography.bodySmall)
+                    Text(tr("Ein neues Schlüsselpaar (Ed25519) entsteht auf diesem Gerät. Der private Schlüssel bleibt im Kana-Ordner und ist nur für dein Benutzerkonto lesbar; eine Passphrase schützt ihn zusätzlich."), style = MaterialTheme.typography.bodySmall)
                     OutlinedTextField(name, { name = it }, label = { Text(tr("Name des Schlüssels")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(pass, { pass = it }, label = { Text(tr("Passphrase (empfohlen)")) }, singleLine = true, visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth())
                     if (pass.isNotEmpty()) OutlinedTextField(pass2, { pass2 = it }, label = { Text(tr("Passphrase wiederholen")) }, singleLine = true, visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth(), isError = pass2.isNotEmpty() && pass2 != pass)
@@ -338,7 +338,7 @@ internal fun KeyDialog(term: ServerTerminal, onDismiss: () -> Unit, forProfile: 
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(onClick = { clipboard.setText(AnnotatedString(l)) }) { Icon(Icons.Outlined.ContentCopy, null, Modifier.size(16.dp)); Spacer(Modifier.width(6.dp)); Text(tr("Kopieren")) }
                             if (state.connected && forProfile == null) Button(onClick = {
-                                term.offer(tr("Schlüssel auf den Server legen"), SshKeys.installStep(l), tr("Lora legt den öffentlichen Schlüssel nach deinem Klick in ~/.ssh/authorized_keys."), keyFile)
+                                term.offer(tr("Schlüssel auf den Server legen"), SshKeys.installStep(l), tr("Kana legt den öffentlichen Schlüssel nach deinem Klick in ~/.ssh/authorized_keys."), keyFile)
                                 onDismiss()
                             }) { Text(tr("Auf den Server legen …")) }
                         }

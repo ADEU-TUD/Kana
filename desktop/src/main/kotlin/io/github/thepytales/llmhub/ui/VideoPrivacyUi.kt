@@ -80,7 +80,7 @@ internal fun NameGuardDialog(c: AppContainer, h: History, player: VideoPlayer, o
         title = { Text(tr("Namen im Ton schützen")) },
         text = {
             Column(Modifier.width(600.dp).heightIn(max = 620.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                HintText(tr("Lora sucht Namen im Transkript der Clips – mit dem Namensschutz und deiner Liste. Jede Stelle wird im Export und in der Vorschau überpiept, stumm geschaltet oder die Stimme verfremdet; Untertitel und Text zeigen „[Name]“. Alles bleibt auf diesem Gerät."))
+                HintText(tr("Kana sucht Namen im Transkript der Clips – mit dem Namensschutz und deiner Liste. Jede Stelle wird im Export und in der Vorschau überpiept, stumm geschaltet oder die Stimme verfremdet; Untertitel und Text zeigen „[Name]“. Alles bleibt auf diesem Gerät."))
                 OutlinedTextField(
                     own, { own = it },
                     label = { Text(tr("Eigene Namen, einer je Zeile (z. B. die Teilnehmerliste)")) },

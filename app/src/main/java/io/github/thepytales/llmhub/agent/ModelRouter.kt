@@ -54,7 +54,7 @@ object ModelRouter {
 
     // ── Mischmodus (AP-71): where a request runs ─────────────────────────────────────────────────────────────
 
-    /** Where language models may run for Lora (Einstellungen › Lora): per request, only on this device, only on the server. */
+    /** Where language models may run for Kana (Einstellungen › Kana): per request, only on this device, only on the server. */
     enum class Mode {
         MIXED, LOCAL, SERVER;
 
@@ -102,8 +102,8 @@ object ModelRouter {
         serverOk: Boolean, deviceOnly: Boolean = false,
     ): Route = when {
         deviceOnly -> localAny?.let { Route(Place.LOCAL, it, "Projekt „Nur auf diesem Gerät“") } ?: Route(Place.NONE, reason = "kein Modell auf diesem Gerät")
-        mode == Mode.LOCAL -> localAny?.let { Route(Place.LOCAL, it, "Lora arbeitet nur lokal") } ?: Route(Place.NONE, reason = "kein Modell auf diesem Gerät")
-        mode == Mode.SERVER -> if (serverOk) Route(Place.SERVER, reason = "Lora arbeitet nur über den Server") else Route(Place.NONE, reason = "kein Server-Modell erreichbar")
+        mode == Mode.LOCAL -> localAny?.let { Route(Place.LOCAL, it, "Kana arbeitet nur lokal") } ?: Route(Place.NONE, reason = "kein Modell auf diesem Gerät")
+        mode == Mode.SERVER -> if (serverOk) Route(Place.SERVER, reason = "Kana arbeitet nur über den Server") else Route(Place.NONE, reason = "kein Server-Modell erreichbar")
         localGood != null && simple && images == 0 && files == 0 && !needsServer(text) -> Route(Place.LOCAL, localGood, "kurze Aufgabe – läuft auf diesem Gerät")
         serverOk -> Route(Place.SERVER, reason = if (localGood == null) "kein passendes Modell auf diesem Gerät" else "braucht mehr als das Modell auf diesem Gerät")
         localAny != null -> Route(Place.LOCAL, localAny, "ohne Server – läuft auf diesem Gerät")

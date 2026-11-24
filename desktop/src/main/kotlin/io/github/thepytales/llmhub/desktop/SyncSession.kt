@@ -1,6 +1,7 @@
 package io.github.thepytales.llmhub.desktop
 
 import io.github.thepytales.llmhub.AppLog
+import io.github.thepytales.llmhub.Brand
 import io.github.thepytales.llmhub.BuildConfig
 import io.github.thepytales.llmhub.data.SyncGuard
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ object SyncSession {
         SyncGuard.Me(pc = computerName(), id = id, user = System.getProperty("user.name").orEmpty(), app = BuildConfig.VERSION_NAME)
     }
 
-    /** The Lora-Ordner lies in a cloud folder (and no test runs): only then is there something to guard. */
+    /** The Kana-Ordner lies in a cloud folder (and no test runs): only then is there something to guard. */
     val active: Boolean
         get() = Paths.synced
 
@@ -68,7 +69,7 @@ object SyncSession {
                 Thread.sleep(SyncGuard.HEARTBEAT_MS)
                 touch()
                 runCatching { SyncGuard.newcomer(data, me, openedAt) }.getOrNull()?.let { other ->
-                    if (newcomer.value?.id != other.id) AppLog.i("Sync: Lora wurde auch auf ${other.pc} geöffnet")
+                    if (newcomer.value?.id != other.id) AppLog.i("Sync: Kana wurde auch auf ${other.pc} geöffnet")
                     newcomer.value = other
                 }
             }
@@ -93,9 +94,9 @@ object SyncSession {
 
 /** Cloud folders found on this PC, to put the data folder in with one click (AP-12). */
 object CloudFolders {
-    /** A cloud service's folder: [name] (e.g. „OneDrive“) and where Lora's data would go. */
+    /** A cloud service's folder: [name] (e.g. „OneDrive“) and where Kana's data would go. */
     data class Place(val name: String, val root: File) {
-        val target: File get() = File(root, "Lora")
+        val target: File get() = File(root, Brand.NAME)
     }
 
     /** OneDrive (private and work), Google Drive for desktop, Nextcloud (also the TU's), Dropbox. */

@@ -147,7 +147,7 @@ class EditorRestTest {
         assertTrue("header5.xml" in rels && "footer5.xml" in rels)
         assertTrue("/word/header5.xml" in files["[Content_Types].xml"]!!.toString(Charsets.UTF_8))
         // As a file from Word it comes back with its sections (own header and footer, taken over where not set).
-        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Lora</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
+        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Kana</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
         val out = ByteArrayOutputStream()
         ZipOutputStream(out).use { z -> files.forEach { (n, b) -> z.putNextEntry(ZipEntry(n)); z.write(b); z.closeEntry() } }
         val md = OfficeImport.docx(out.toByteArray())
@@ -197,7 +197,7 @@ class EditorRestTest {
         val doc = files["word/document.xml"]!!.toString(Charsets.UTF_8)
         assertTrue("<w:tabs><w:tab w:val=\"left\" w:pos=\"2267\"/><w:tab w:val=\"center\" w:pos=\"5102\"/><w:tab w:val=\"right\" w:pos=\"9070\"/></w:tabs>" in doc, doc)
         assertTrue(Regex("<w:tab/>").findAll(doc).count() >= 3, "Tabs als w:tab")
-        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Lora</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
+        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Kana</dc:creator>", "<dc:creator>Word</dc:creator>").toByteArray()
         val out = ByteArrayOutputStream()
         ZipOutputStream(out).use { z -> files.forEach { (n, b) -> z.putNextEntry(ZipEntry(n)); z.write(b); z.closeEntry() } }
         val back = OfficeImport.docx(out.toByteArray())

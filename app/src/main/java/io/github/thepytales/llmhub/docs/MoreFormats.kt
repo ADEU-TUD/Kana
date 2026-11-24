@@ -331,7 +331,7 @@ object XlsxWriter {
                         val top = 1 + i * 18
                         append("<xdr:twoCellAnchor editAs=\"oneCell\"><xdr:from><xdr:col>$left</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>$top</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>")
                         append("<xdr:to><xdr:col>${left + 8}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${top + 16}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>")
-                        append("<xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr><xdr:cNvPr id=\"${i + 2}\" name=\"${esc(if (ch.id.isNotBlank()) "Lora-Diagramm ${ch.id}" else "Diagramm ${i + 1}")}\" descr=\"${esc(ch.alt)}\"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr>")
+                        append("<xdr:graphicFrame macro=\"\"><xdr:nvGraphicFramePr><xdr:cNvPr id=\"${i + 2}\" name=\"${esc(if (ch.id.isNotBlank()) "Kana-Diagramm ${ch.id}" else "Diagramm ${i + 1}")}\" descr=\"${esc(ch.alt)}\"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr>")
                         append("<xdr:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"0\" cy=\"0\"/></xdr:xfrm>").append(OfficeCharts.graphic("rIdC${ch.number}"))
                         append("</xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>")
                     }
@@ -510,7 +510,7 @@ object AnkiWriter {
     }.replace("&lt;br&gt;", "<br>")
 
     fun write(title: String, markdown: String): String = buildString {
-        append("#separator:tab\n#html:true\n#deck:${title.ifBlank { "Lora" }.replace('\t', ' ')}\n#columns:Vorderseite\tRückseite\n")
+        append("#separator:tab\n#html:true\n#deck:${title.ifBlank { "Kana" }.replace('\t', ' ')}\n#columns:Vorderseite\tRückseite\n")
         cards(markdown).forEach { (q, a) -> append(html(q).replace('\t', ' ')).append('\t').append(html(a).replace('\t', ' ')).append('\n') }
     }
 }

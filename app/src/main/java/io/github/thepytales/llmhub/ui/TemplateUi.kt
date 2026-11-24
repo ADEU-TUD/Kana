@@ -211,7 +211,7 @@ fun TemplateFillDialog(
     onInsert: (String) -> Unit,
     onSend: (text: String, values: Map<String, String>) -> Unit,
     onDismiss: () -> Unit,
-    /** „Mit Lora Schritt für Schritt“ (AP-06): the fields as rounds of questions in the chat instead of the form. */
+    /** „Mit Kana Schritt für Schritt“ (AP-06): the fields as rounds of questions in the chat instead of the form. */
     onInterview: ((Template, Map<String, String>) -> Unit)? = null,
 ) {
     val sender = c.settings.current.senderInfo
@@ -310,7 +310,7 @@ fun TemplateFillDialog(
                             onInterview(template, values.toMap())
                             onDismiss()
                         },
-                        label = { Text(tr("Lieber mit Lora Schritt für Schritt")) },
+                        label = { Text(tr("Lieber mit Kana Schritt für Schritt")) },
                         leadingIcon = { LoraFaceStill(Modifier.size(22.dp)) },
                     )
                 }

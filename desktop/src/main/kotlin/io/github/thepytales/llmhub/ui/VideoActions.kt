@@ -208,7 +208,7 @@ internal class VideoActions(
     }
 }
 
-/** The dialogs the actions open: which transcript, „Mit Lora kürzen“. */
+/** The dialogs the actions open: which transcript, „Mit Kana kürzen“. */
 @Composable
 internal fun VideoActionDialogs(a: VideoActions) {
     a.pickTranscript?.let { purpose ->

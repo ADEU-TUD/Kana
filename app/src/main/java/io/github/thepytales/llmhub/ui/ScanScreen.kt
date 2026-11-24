@@ -88,7 +88,7 @@ object ScanDraft {
     val pages = mutableStateListOf<ScanPage>()
     var mode: ScanMode = ScanMode.COLOR
 
-    /** Folder of the finished scans in the Lora-Ordner. */
+    /** Folder of the finished scans in the Kana-Ordner. */
     const val FOLDER = "Scans"
 
     /** Pages from new photos: the paper is looked for in each (in the background). */
@@ -106,7 +106,7 @@ private const val PREVIEW_SIDE = 1100
 /**
  * Dokumenten-Scanner (AP-62): photograph (Android) or scan (Windows, WIA) pages, see the found edges and move the
  * corners, choose colour, grey or black and white, turn, reorder, and save everything as one PDF – with text recognition,
- * so it can be searched – in the Lora-Ordner under „Scans“ (and through the sync on the other devices).
+ * so it can be searched – in the Kana-Ordner under „Scans“ (and through the sync on the other devices).
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

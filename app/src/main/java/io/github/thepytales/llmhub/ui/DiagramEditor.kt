@@ -69,12 +69,12 @@ internal enum class DiagramTool(val label: String) { SELECT(trLater("Auswählen"
 
 internal val KIND_LABELS = listOf("flow" to trLater("Flussdiagramm"), "mind" to trLater("Mindmap"), "org" to trLater("Organigramm"), "timeline" to trLater("Zeitstrahl"), "board" to trLater("Whiteboard"))
 
-/** Asks the standard model for Mermaid of [kind] from [description] and reads it (Lora zeichnet, AP-61). */
+/** Asks the standard model for Mermaid of [kind] from [description] and reads it (Kana zeichnet, AP-61). */
 suspend fun diagramFromDescription(c: io.github.thepytales.llmhub.AppContainer, kind: String, description: String): Diagram {
     val model = c.settings.current.defaultModel
     val result = c.llm.streamChat(model = model, messages = listOf(ChatMessage(role = "user", content = Diagrams.prompt(kind, description))), tools = null, thinking = ThinkingLevel.OFF) { }
-    val mermaid = Diagrams.mermaidIn(result.content) ?: error(tr("Lora konnte daraus kein Diagramm machen – bitte den Ablauf genauer beschreiben."))
-    val d = Diagrams.fromMermaid(mermaid) ?: error(tr("Lora konnte daraus kein Diagramm machen – bitte den Ablauf genauer beschreiben."))
+    val mermaid = Diagrams.mermaidIn(result.content) ?: error(tr("Kana konnte daraus kein Diagramm machen – bitte den Ablauf genauer beschreiben."))
+    val d = Diagrams.fromMermaid(mermaid) ?: error(tr("Kana konnte daraus kein Diagramm machen – bitte den Ablauf genauer beschreiben."))
     return Diagrams.arrange(if (kind == "org") d.copy(kind = "org") else d)
 }
 
@@ -82,7 +82,7 @@ suspend fun diagramFromDescription(c: io.github.thepytales.llmhub.AppContainer, 
  * Diagramm-Editor und Whiteboard (AP-61): nodes are dragged (the connectors stay on them), a double click on the empty
  * surface makes a node, on a node edits its text; „Verbinden“ draws a connector from node to node; the pen draws
  * freehand, „Notizzettel“ puts a sticky note. The surface pans (drag on empty ground) and zooms (mouse wheel, buttons).
- * „Automatisch anordnen“ lays out flow, org, mind map and timeline; the Mermaid text beside it goes both ways; Lora
+ * „Automatisch anordnen“ lays out flow, org, mind map and timeline; the Mermaid text beside it goes both ways; Kana
  * draws from a description. Strg+Z / Strg+Y, Entf deletes.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -157,9 +157,9 @@ fun DiagramEditor(initial: Diagram, modifier: Modifier = Modifier, onChange: (Di
                 TextButton(onClick = ::deleteSelected) { Text(tr("Löschen")) }
             }
         }
-        // Lora zeichnet (AP-61).
+        // Kana zeichnet (AP-61).
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(wish, { wish = it }, singleLine = true, modifier = Modifier.weight(1f), placeholder = { Text(tr("Lora zeichnet: Ablauf oder Thema beschreiben, z. B. „Antrag stellen, prüfen, bei Fehlern zurück, sonst genehmigen“")) })
+            OutlinedTextField(wish, { wish = it }, singleLine = true, modifier = Modifier.weight(1f), placeholder = { Text(tr("Kana zeichnet: Ablauf oder Thema beschreiben, z. B. „Antrag stellen, prüfen, bei Fehlern zurück, sonst genehmigen“")) })
             Spacer(Modifier.size(6.dp))
             Button(enabled = wish.isNotBlank() && !asking, onClick = {
                 asking = true

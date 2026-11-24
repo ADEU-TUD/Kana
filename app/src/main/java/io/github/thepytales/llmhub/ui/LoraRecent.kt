@@ -25,7 +25,7 @@ import io.github.thepytales.llmhub.AppContainer
 import io.github.thepytales.llmhub.data.LoraHistory
 
 /**
- * „Zuletzt“ in Lora's panel (AP-75): the last wishes – a tap puts one into the field to change it, „Nochmal“ sends it
+ * „Zuletzt“ in Kana's panel (AP-75): the last wishes – a tap puts one into the field to change it, „Nochmal“ sends it
  * as it was, the pin keeps it under a name for Strg+K.
  */
 @Composable

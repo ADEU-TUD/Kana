@@ -183,8 +183,8 @@ import kotlin.math.roundToInt
  * them as their own blocks. The document stays Markdown underneath (see RichText), so chat, exports and Word keep
  * working.
  *
- * Lora schreibt im Dokument (AP-47): „Hilf mir schreiben“ writes at the cursor (visible, highlighted, then
- * Übernehmen · Neu · Verwerfen); „Überarbeiten“ turns Lora's revision into suggestions that are accepted one by one.
+ * Kana schreibt im Dokument (AP-47): „Hilf mir schreiben“ writes at the cursor (visible, highlighted, then
+ * Übernehmen · Neu · Verwerfen); „Überarbeiten“ turns Kana's revision into suggestions that are accepted one by one.
  */
 
 /** One piece of the document: running text or a block of its own (table, picture …). */
@@ -329,7 +329,7 @@ class FlowState(markdown: String) {
     private val undoAt = ArrayDeque<Long>()
     private var lastPush = 0L
 
-    /** Lora is writing at the cursor (AP-47): what she was asked, and the running request. */
+    /** Kana is writing at the cursor (AP-47): what she was asked, and the running request. */
     var writing by mutableStateOf<String?>(null)
     var writeJob: Job? = null
     var writeError by mutableStateOf<String?>(null)
@@ -895,7 +895,7 @@ class FlowState(markdown: String) {
         changed()
     }
 
-    // ── Lora schreibt im Dokument (AP-47) ───────────────────────────────────────────────────────────
+    // ── Kana schreibt im Dokument (AP-47) ───────────────────────────────────────────────────────────
 
     /** All open suggestions of the document, as (text, number). */
     fun suggestions(): List<Pair<FlowSeg.Text, Int>> = segs.filterIsInstance<FlowSeg.Text>().flatMap { t -> t.rich.suggestions.map { t to it } }
@@ -913,7 +913,7 @@ class FlowState(markdown: String) {
         changed()
     }
 
-    /** The text Lora wrote is taken ([keep]) or removed. */
+    /** The text Kana wrote is taken ([keep]) or removed. */
     fun finishWriting(keep: Boolean) {
         segs.filterIsInstance<FlowSeg.Text>().forEach { t ->
             if (t.rich.chars.any { it.ai }) {
@@ -1006,7 +1006,7 @@ internal fun sheetFor(markdown: String, docStyle: String?, defaults: String): St
 
 /**
  * The look of the running text: Formatvorlagen of the paragraphs ([sheet]), their line spacing and indents, character
- * formats, Lora's marks and [marks] (hits of the search, commented text) as backgrounds.
+ * formats, Kana's marks and [marks] (hits of the search, commented text) as backgrounds.
  */
 internal fun flowAnnotated(
     r: RichText, base: TextStyle, accent: Color, muted: Color, codeBg: Color, density: Float,
@@ -1171,7 +1171,7 @@ fun FlowEditor(
         }
         onDispose { state.scrollTo = null }
     }
-    // Changes from outside (the model, Lora's chat, another PC) are loaded; the editor's own saves are not.
+    // Changes from outside (the model, Kana's chat, another PC) are loaded; the editor's own saves are not.
     LaunchedEffect(markdown) {
         if (markdown != state.lastMarkdown && state.writing == null && state.suggestions().isEmpty()) state.load(markdown)
     }
@@ -1184,7 +1184,7 @@ fun FlowEditor(
             val md0 = state.markdown()
             if ("](#" in md0) state.refreshCrossRefs(io.github.thepytales.llmhub.docs.DocFields.entries(md0, state.language).associate { it.id to it.label })
         }
-        // While Lora writes or suggestions are open, only the stored form (without them) counts.
+        // While Kana writes or suggestions are open, only the stored form (without them) counts.
         val md = state.markdown()
         if (md != state.lastMarkdown) {
             state.lastMarkdown = md
@@ -1198,7 +1198,7 @@ fun FlowEditor(
     }
     DisposableEffect(state) { onDispose { save() } }
 
-    // Lora im Dokument (AP-38 Stufe c, AP-47): her actions work on this editor.
+    // Kana im Dokument (AP-38 Stufe c, AP-47): her actions work on this editor.
     DisposableEffect(state) {
         io.github.thepytales.llmhub.agent.LoraFocus.docId = doc.id
         io.github.thepytales.llmhub.agent.ActionHosts.doc = object : io.github.thepytales.llmhub.agent.DocActions {
@@ -1312,7 +1312,7 @@ fun FlowEditor(
             HorizontalDivider()
         }
         if (state.findOpen) FlowFindBar(state) { seg, range -> state.show(seg, range) }
-        // Lora writes (AP-47): her request, then Übernehmen · Neu · Verwerfen.
+        // Kana writes (AP-47): her request, then Übernehmen · Neu · Verwerfen.
         LoraWriteBar(c, doc, state)
         ReviewBar(state)
         if (trackBase != null) TrackBar(state, onBase = onTrackBase, onStop = { host.onTrack?.invoke() })
@@ -1340,14 +1340,14 @@ fun FlowEditor(
     if (askWrite) {
         PromptDialog(
             title = tr("Hilf mir schreiben"),
-            hint = tr("Was soll Lora an der Cursorstelle schreiben? Zum Beispiel: Schreib eine Einleitung zu …"),
+            hint = tr("Was soll Kana an der Cursorstelle schreiben? Zum Beispiel: Schreib eine Einleitung zu …"),
             onDismiss = { askWrite = false },
         ) { prompt -> askWrite = false; startWriting(c, doc, state, prompt) }
     }
     if (askRevise) {
         PromptDialog(
-            title = tr("Mit Lora überarbeiten"),
-            hint = tr("Wie soll Lora die Markierung überarbeiten? Die Änderungen erscheinen als Vorschläge."),
+            title = tr("Mit Kana überarbeiten"),
+            hint = tr("Wie soll Kana die Markierung überarbeiten? Die Änderungen erscheinen als Vorschläge."),
             initial = tr("Sprachlich verbessern, klarer und kürzer"),
             onDismiss = { askRevise = false },
         ) { instruction -> askRevise = false; if (!startRevising(c, doc, state, "markierung", instruction)) Notices.error(tr("Bitte zuerst Text markieren.")) }
@@ -1397,7 +1397,7 @@ private fun PromptDialog(title: String, hint: String, initial: String = "", onDi
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
 }
 
-/** Lora writes at the cursor: the text appears step by step, highlighted, in the running text (AP-47). */
+/** Kana writes at the cursor: the text appears step by step, highlighted, in the running text (AP-47). */
 internal fun startWriting(c: AppContainer, doc: LiveDoc, state: FlowState, prompt: String) {
     val t = state.active ?: state.segs.filterIsInstance<FlowSeg.Text>().lastOrNull() ?: return
     state.writeJob?.cancel()
@@ -1406,7 +1406,7 @@ internal fun startWriting(c: AppContainer, doc: LiveDoc, state: FlowState, promp
     state.writing = prompt
     state.writeError = null
     val sel = t.selection
-    // A selection is replaced by what Lora writes (it stays in Rückgängig).
+    // A selection is replaced by what Kana writes (it stays in Rückgängig).
     val base = if (sel.collapsed) t.rich else t.rich.cut(sel.min, sel.max)
     val at = sel.min.coerceIn(0, base.text.length)
     // A new paragraph when the cursor is inside text.
@@ -1440,7 +1440,7 @@ internal fun startWriting(c: AppContainer, doc: LiveDoc, state: FlowState, promp
 }
 
 /**
- * Lora revises [section] (a heading's section or „markierung“) after [instruction] as suggestions (AP-47): every
+ * Kana revises [section] (a heading's section or „markierung“) after [instruction] as suggestions (AP-47): every
  * changed stretch can be accepted or rejected on its own; her reasons come as a comment at the margin. False if
  * there is nothing to revise.
  */
@@ -1482,7 +1482,7 @@ internal fun startRevising(c: AppContainer, doc: LiveDoc, state: FlowState, sect
             val newMd = answer.replace(Regex("(?im)^\\s*BEGR(Ü|UE)NDUNG:.*$"), "").trim()
             val newPlain = RichText.ofMarkdown(newMd).text
             if (newPlain == old.text) {
-                Notices.info(tr("Lora hat nichts zu ändern gefunden."))
+                Notices.info(tr("Kana hat nichts zu ändern gefunden."))
             } else {
                 state.checkpoint()
                 val suggested = RichText.suggest(RichText(old.text, t.rich.chars.subList(range.first, range.last + 1), old.paras), newPlain, state.nextSuggestion)
@@ -1490,24 +1490,24 @@ internal fun startRevising(c: AppContainer, doc: LiveDoc, state: FlowState, sect
                 t.rich = t.rich.cut(range.first, range.last + 1).insert(range.first, suggested)
                 state.reviewAt = 0
                 state.changed()
-                // Lora's reason at the margin.
+                // Kana's reason at the margin.
                 if (reason != null) c.docs.update(doc.id) { d ->
-                    d.copy(comments = d.comments + io.github.thepytales.llmhub.docs.DocComment(tabId = d.tabs.first().id.let { id -> d.tabs.firstOrNull { it.markdown.contains(old.text.take(30)) }?.id ?: id }, quote = old.text.take(200), text = reason, author = "Lora"))
+                    d.copy(comments = d.comments + io.github.thepytales.llmhub.docs.DocComment(tabId = d.tabs.first().id.let { id -> d.tabs.firstOrNull { it.markdown.contains(old.text.take(30)) }?.id ?: id }, quote = old.text.take(200), text = reason, author = "Kana"))
                 }
             }
-        }.onFailure { e -> if (e !is kotlinx.coroutines.CancellationException) Notices.error(tr("Lora konnte nicht überarbeiten: {0}", e.message.orEmpty())) }
+        }.onFailure { e -> if (e !is kotlinx.coroutines.CancellationException) Notices.error(tr("Kana konnte nicht überarbeiten: {0}", e.message.orEmpty())) }
         state.revising = false
     }
     return true
 }
 
-/** The bar while Lora writes or after she wrote (AP-47). */
+/** The bar while Kana writes or after she wrote (AP-47). */
 @Composable
 private fun LoraWriteBar(c: AppContainer, doc: LiveDoc, state: FlowState) {
     val prompt = state.writing ?: run {
         state.writeError?.let { e ->
             Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.errorContainer).padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(tr("Lora konnte nicht schreiben: {0}", e), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                Text(tr("Kana konnte nicht schreiben: {0}", e), style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
                 IconButton(onClick = { state.writeError = null }) { Icon(Icons.Outlined.Close, contentDescription = tr("Schließen")) }
             }
         }
@@ -1518,7 +1518,7 @@ private fun LoraWriteBar(c: AppContainer, doc: LiveDoc, state: FlowState) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Icon(Icons.Outlined.AutoAwesome, null, tint = LocalChatLook.current.brand, modifier = Modifier.size(18.dp))
             Column(Modifier.weight(1f)) {
-                Text(if (state.written) tr("Lora hat geschrieben") else tr("Lora schreibt …"), style = MaterialTheme.typography.labelLarge)
+                Text(if (state.written) tr("Kana hat geschrieben") else tr("Kana schreibt …"), style = MaterialTheme.typography.labelLarge)
                 Text(prompt, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
             }
             if (state.written) {
@@ -1533,7 +1533,7 @@ private fun LoraWriteBar(c: AppContainer, doc: LiveDoc, state: FlowState) {
     if (!state.written) LinearProgressIndicator(Modifier.fillMaxWidth())
 }
 
-/** The suggestions of Lora's revision, one at a time (AP-47). */
+/** The suggestions of Kana's revision, one at a time (AP-47). */
 @Composable
 private fun ReviewBar(state: FlowState) {
     val list = state.suggestions()
@@ -1819,8 +1819,8 @@ private fun FlowMenus(
         }
         menu("Extras") { close ->
             item("Hilf mir schreiben", "Strg+J", onClick = onWrite, close = close)
-            item("Markierung mit Lora überarbeiten …", onClick = onRevise, close = close)
-            item("Lora fragen", onClick = host.onAskAi, close = close)
+            item("Markierung mit Kana überarbeiten …", onClick = onRevise, close = close)
+            item("Kana fragen", onClick = host.onAskAi, close = close)
             item("Rechtschreibung prüfen", "F7", onClick = host.onSpell, close = close)
             // Überprüfen (AP-126 e), like Word.
             item((if (state.spellLive) "✓ " else "") + tr("Rechtschreibung beim Tippen"), onClick = {
@@ -2766,7 +2766,7 @@ private fun copySelection(c: AppContainer, seg: FlowSeg.Text): Boolean {
 
 /**
  * Rechtsklick-Menü im Text (AP-125, like Word and Google Docs): spelling suggestions for the word under the cursor (on
- * the device), Ausschneiden · Kopieren · Einfügen · Nur Text einfügen, Link (öffnen, entfernen), Kommentar, Lora,
+ * the device), Ausschneiden · Kopieren · Einfügen · Nur Text einfügen, Link (öffnen, entfernen), Kommentar, Kana,
  * Formatierung, Alles auswählen – with the keys beside them.
  */
 @Composable
@@ -2847,8 +2847,8 @@ private fun FlowTextMenu(
         } else entry(tr("Link …"), enabled = !sel.collapsed) { host.link?.invoke() }
         entry(tr("Kommentar")) { host.onComment(if (sel.collapsed) "" else text.substring(sel.min, sel.max)) }
         if (hasSelection) {
-            entry(tr("Mit Lora überarbeiten …")) { onRevise(null) }
-            entry(tr("Lora fragen")) { host.onAskAi() }
+            entry(tr("Mit Kana überarbeiten …")) { onRevise(null) }
+            entry(tr("Kana fragen")) { host.onAskAi() }
         } else entry(tr("Hilf mir schreiben"), tr("Strg+J")) { onWrite() }
         HorizontalDivider()
         entry(tr("Format übertragen")) { state.painter = state.formatHere() to state.paraHere() }
@@ -3270,7 +3270,7 @@ private fun FlowField(
                         cmd && !e.isAltPressed && e.key == Key.I -> { state.toggle({ it.italic }) { f, on -> f.copy(italic = on) }; true }
                         cmd && !e.isAltPressed && e.key == Key.U -> { state.toggle({ it.underline }) { f, on -> f.copy(underline = on) }; true }
                         cmd && !e.isShiftPressed && e.key == Key.J -> { onWrite(); true }
-                        // Ausrichtung (AP-125): keys that no app-wide shortcut uses (Strg+E stays the KI, Strg+L Lora,
+                        // Ausrichtung (AP-125): keys that no app-wide shortcut uses (Strg+E stays the KI, Strg+L Kana,
                         // Strg+Umschalt+L Literatur) – Zentriert and Blocksatz like Google Docs, Rechtsbündig like Word.
                         cmd && e.isShiftPressed && e.key == Key.E -> { state.paragraph { it.copy(align = Align.CENTER) }; true }
                         cmd && e.isShiftPressed && e.key == Key.J -> { state.paragraph { it.copy(align = Align.JUSTIFY) }; true }
@@ -3339,7 +3339,7 @@ private fun FlowField(
                     },
             )
         }
-        // Lora over the selection (AP-47): quick revisions as suggestions, or a comment.
+        // Kana over the selection (AP-47): quick revisions as suggestions, or a comment.
         val sel = seg.selection
         if (layout != null && state.active === seg && !sel.collapsed && state.writing == null && !state.revising && state.painter == null && state.suggestions().isEmpty()) {
             val n = layout.layoutInput.text.length
@@ -3352,7 +3352,7 @@ private fun FlowField(
                 modifier = Modifier.offset { IntOffset(box.left.roundToInt().coerceAtLeast(0), y.roundToInt()) },
             )
         }
-        // An empty document: an invitation to write or to let Lora write.
+        // An empty document: an invitation to write or to let Kana write.
         if (rich.text.isEmpty() && state.segs.count { it is FlowSeg.Text || it is FlowSeg.Raw && !isHiddenSetting(it.markdown) } == 1) {
             Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(tr("Hier schreiben – oder"), style = base, color = muted)

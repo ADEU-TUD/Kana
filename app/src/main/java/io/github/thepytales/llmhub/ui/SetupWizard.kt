@@ -69,8 +69,8 @@ import io.github.thepytales.llmhub.data.withTool
 import kotlinx.coroutines.launch
 
 /**
- * Lora einrichten Schritt für Schritt (AP-120): a friendly setup of everything that matters – at the first start as a
- * window, later through Lora („Lora einrichten“), Strg+K or Einstellungen › Lora. Written for people without technical
+ * Kana einrichten Schritt für Schritt (AP-120): a friendly setup of everything that matters – at the first start as a
+ * window, later through Kana („Kana einrichten“), Strg+K or Einstellungen › Kana. Written for people without technical
  * background: one decision per step, short sentences, the recommendation chosen, everything skippable and changeable
  * later; expert features (MCP-Server, Server-Terminal) are folded away under „Für Fortgeschrittene“. „Alles auf diesem
  * Gerät“ is offered, but clearly as the special case it is (very sensitive data, working without a server) and hands
@@ -79,7 +79,7 @@ import kotlinx.coroutines.launch
 enum class SetupPage(val title: String, val icon: ImageVector) {
     WELCOME(trLater("Willkommen"), Icons.Outlined.WavingHand),
     ROLES(trLater("Wofür"), Icons.Outlined.Work),
-    PLACE(trLater("Wo Lora arbeitet"), Icons.Outlined.Place),
+    PLACE(trLater("Wo Kana arbeitet"), Icons.Outlined.Place),
     ACCESS(trLater("Zugang"), Icons.Outlined.VpnKey),
     PRIVACY(trLater("Datenschutz"), Icons.Outlined.Security),
     TOOLS(trLater("Werkzeuge"), Icons.Outlined.Build),
@@ -87,7 +87,7 @@ enum class SetupPage(val title: String, val icon: ImageVector) {
     DONE(trLater("Fertig"), Icons.Outlined.Flag),
 }
 
-/** How Lora reaches language models – the big decision of the setup. */
+/** How Kana reaches language models – the big decision of the setup. */
 enum class SetupWay { TU, OWN, LOCAL }
 
 /** The way the settings describe now: a key of another provider only, everything local (chosen earlier), or the Uni server. */
@@ -111,7 +111,7 @@ fun SetupWizardDialog(c: AppContainer, onNavigate: (String) -> Unit) {
     }
 }
 
-/** The setup on a screen of its own (route „setup“, from Lora, Strg+K and the settings). */
+/** The setup on a screen of its own (route „setup“, from Kana, Strg+K and the settings). */
 @Composable
 fun SetupScreen(c: AppContainer, onBack: () -> Unit, onNavigate: (String) -> Unit) {
     androidx.compose.material3.Scaffold { pad ->
@@ -139,7 +139,7 @@ fun SetupWizard(c: AppContainer, onClose: () -> Unit, onNavigate: (String) -> Un
         c.settings.update { it.copy(setupStep = n + 1) }
     }
     fun later() {
-        // The first-start window does not come back; the setup can be continued from Lora, Strg+K or the settings.
+        // The first-start window does not come back; the setup can be continued from Kana, Strg+K or the settings.
         c.settings.update { it.copy(loraIntroDone = true, setupStep = index + 1) }
         onClose()
     }
@@ -151,7 +151,7 @@ fun SetupWizard(c: AppContainer, onClose: () -> Unit, onNavigate: (String) -> Un
         models.apply(c)
         if (way != SetupWay.LOCAL && c.settings.current.places.isNotBlank() && Places.profile(c) == Places.Profile.ALL_LOCAL) Places.apply(c, Places.Profile.MIXED)
         c.settings.update { it.copy(loraIntroDone = true, modelsIntroDone = true, setupStep = 0) }
-        Notices.info(tr("Lora ist eingerichtet. Alles lässt sich unter Einstellungen ändern."))
+        Notices.info(tr("Kana ist eingerichtet. Alles lässt sich unter Einstellungen ändern."))
         onClose()
         if (way == SetupWay.LOCAL) onNavigate("local-setup")
     }
@@ -162,7 +162,7 @@ fun SetupWizard(c: AppContainer, onClose: () -> Unit, onNavigate: (String) -> Un
             if (wide) {
                 // The steps on the left: done ones ticked, each one reachable.
                 Column(Modifier.width(220.dp).fillMaxHeight().padding(start = 16.dp, top = 20.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(tr("Lora einrichten"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 8.dp, bottom = 12.dp))
+                    Text(tr("Kana einrichten"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 8.dp, bottom = 12.dp))
                     pages.filter(::visible).forEach { p ->
                         val i = pages.indexOf(p)
                         val current = i == index
@@ -284,10 +284,10 @@ private fun Expert(title: String, content: @Composable () -> Unit) {
 @Composable
 private fun WelcomePage(c: AppContainer) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        LoraFigure(Modifier.size(92.dp, 64.dp), label = tr("Lora winkt"), director = rememberLoraDirector(listOf(LoraAction.WAVE, LoraAction.LOOK), LoraAction.WAVE))
+        LoraFigure(Modifier.size(92.dp, 64.dp), label = tr("Kana winkt"), director = rememberLoraDirector(listOf(LoraAction.WAVE, LoraAction.LOOK), LoraAction.WAVE))
         Spacer(Modifier.width(12.dp))
         Column {
-            Text(tr("Hallo, ich bin Lora!"), style = MaterialTheme.typography.headlineSmall)
+            Text(tr("Hallo, ich bin Kana!"), style = MaterialTheme.typography.headlineSmall)
             Text(tr(io.github.thepytales.llmhub.Brand.SLOGAN), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -296,7 +296,7 @@ private fun WelcomePage(c: AppContainer) {
         listOf(
             tr("Eine Frage je Schritt – meine Empfehlung ist schon ausgewählt."),
             tr("Du kannst jeden Schritt überspringen und alles später unter Einstellungen ändern."),
-            tr("„Später“ unterbricht – du machst dann an derselben Stelle weiter (sag mir einfach „Lora einrichten“)."),
+            tr("„Später“ unterbricht – du machst dann an derselben Stelle weiter (sag mir einfach „Kana einrichten“)."),
         ).forEach { line ->
             Row(verticalAlignment = Alignment.Top) {
                 Icon(Icons.Outlined.Check, null, Modifier.size(18.dp).padding(top = 2.dp), tint = LocalChatLook.current.success)
@@ -312,7 +312,7 @@ private fun WelcomePage(c: AppContainer) {
 private fun RolesPage(c: AppContainer, models: IntroModelChoice) {
     val s by c.settings.settings.collectAsStateWithLifecycle()
     val roles = Role.parse(s.roles)
-    PageHead(tr("Wofür nutzt du Lora vor allem?"), tr("Mehrere sind möglich. Danach schlage ich passende Werkzeuge und Vorlagen vor."))
+    PageHead(tr("Wofür nutzt du Kana vor allem?"), tr("Mehrere sind möglich. Danach schlage ich passende Werkzeuge und Vorlagen vor."))
     Role.entries.forEach { r ->
         ChoiceCard(tr(r.label), tr(r.description), r in roles) {
             val next = if (r in roles) roles - r else roles + r
@@ -333,7 +333,7 @@ private fun PlacePage(c: AppContainer, way: SetupWay, onWay: (SetupWay) -> Unit)
     ) { onWay(SetupWay.TU) }
     ChoiceCard(
         tr("Alles auf diesem Gerät"),
-        tr("Nur sinnvoll für sehr sensible Daten oder wenn Lora ganz ohne Server arbeiten soll. Langsamer und schlichter als der Uni-Server, braucht einen starken Rechner und mehrere GB Speicher für die Modelle."),
+        tr("Nur sinnvoll für sehr sensible Daten oder wenn Kana ganz ohne Server arbeiten soll. Langsamer und schlichter als der Uni-Server, braucht einen starken Rechner und mehrere GB Speicher für die Modelle."),
         way == SetupWay.LOCAL, chip = { DataPlaceChip(DataPlace.LOCAL) },
     ) { onWay(SetupWay.LOCAL) }
     if (way == SetupWay.LOCAL) {
@@ -452,7 +452,7 @@ private fun ToolsPage(c: AppContainer, onNavigate: (String) -> Unit) {
         }
     }
     Expert(tr("Für Fortgeschrittene")) {
-        if (AppTool.SERVER in tools) CheckLine(tr("Server-Terminal"), tr("Webserver über SSH pflegen, Lora schlägt Schritte vor – nur wer selbst Server betreut."), AppTool.SERVER.id in s.enabledToolIds) { on ->
+        if (AppTool.SERVER in tools) CheckLine(tr("Server-Terminal"), tr("Webserver über SSH pflegen, Kana schlägt Schritte vor – nur wer selbst Server betreut."), AppTool.SERVER.id in s.enabledToolIds) { on ->
             c.settings.update { it.withTool(AppTool.SERVER, on) }
         }
         Text(tr("MCP-Server und weitere Anbindungen (Nextcloud, GitHub, Zotero) richtest du unter Einstellungen › Anbindungen ein."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -507,7 +507,7 @@ private fun DonePage(c: AppContainer, way: SetupWay, models: IntroModelChoice, o
     val dataPlace = when (way) { SetupWay.TU -> DataPlace.TU; SetupWay.OWN -> DataPlace.CLOUD; SetupWay.LOCAL -> DataPlace.LOCAL }
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Summary(tr("Wofür"), roles) { onChange(SetupPage.ROLES) }
-        Summary(tr("Wo Lora arbeitet"), place, chip = { DataPlaceChip(dataPlace) }) { onChange(SetupPage.PLACE) }
+        Summary(tr("Wo Kana arbeitet"), place, chip = { DataPlaceChip(dataPlace) }) { onChange(SetupPage.PLACE) }
         if (way != SetupWay.LOCAL) Summary(tr("Schlüssel"), key, ok = s.hasAnyApiKey) { onChange(SetupPage.ACCESS) }
         Summary(tr("Namen ersetzen"), if (s.pseudonymize) tr("an") else tr("aus")) { onChange(SetupPage.PRIVACY) }
         Summary(tr("Werkzeuge"), tools) { onChange(SetupPage.TOOLS) }

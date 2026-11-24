@@ -73,7 +73,7 @@ private fun MailServerSection(c: AppContainer) {
     var busy by remember { mutableStateOf(false) }
     Section(tr("Mail über den Server")) {
         SettingsHint(
-            tr("Für Mail & Kalender ohne das klassische Outlook – mit dem neuen Outlook, einem anderen Mailprogramm oder auf dem Handy: Lora liest Postfach und Ordner über IMAP, sortiert und speichert Antworten als Entwurf in „Entwürfe“. Sie löscht nie und sendet nie; Kalender und Aufgaben gehen auf diesem Weg nicht (dafür braucht es Exchange mit Freigabe der IT).") +
+            tr("Für Mail & Kalender ohne das klassische Outlook – mit dem neuen Outlook, einem anderen Mailprogramm oder auf dem Handy: Kana liest Postfach und Ordner über IMAP, sortiert und speichert Antworten als Entwurf in „Entwürfe“. Sie löscht nie und sendet nie; Kalender und Aufgaben gehen auf diesem Weg nicht (dafür braucht es Exchange mit Freigabe der IT).") +
                 " " + tr("Die Zugangsdaten der TU Dresden stehen in der Anleitung des ZIH zu Exchange/IMAP.")
         )
         OutlinedTextField(value = host, onValueChange = { host = it.trim() }, singleLine = true, label = { Text(tr("IMAP-Server")) }, placeholder = { Text(tr("z. B. imap.example.org")) }, modifier = Modifier.fillMaxWidth())
@@ -99,7 +99,7 @@ private fun MailServerSection(c: AppContainer) {
         )
         if (io.github.thepytales.llmhub.data.OutlookPlatform.supported) SwitchRow(
             tr("Statt des klassischen Outlook verwenden"),
-            tr("Aus: Lora arbeitet mit dem Outlook auf diesem PC (mit Kalender). An: mit dem Mailserver."),
+            tr("Aus: Kana arbeitet mit dem Outlook auf diesem PC (mit Kalender). An: mit dem Mailserver."),
             s.mailUseServer,
             spot = "connections.mailServer",
         ) { on -> c.settings.update { it.copy(mailUseServer = on) } }
@@ -140,7 +140,7 @@ private fun McpSection(c: AppContainer) {
     var adding by remember { mutableStateOf(false) }
     Section(tr("MCP-Server")) {
         SettingsHint(
-            tr("Über das Model Context Protocol (MCP) bekommt Lora Werkzeuge anderer Dienste, z. B. ein Wiki, eine Datenbank oder ein Ticketsystem. Fern-Server laufen über das Internet (mit Token oder Anmeldung), lokale Server sind Programme auf diesem PC.") +
+            tr("Über das Model Context Protocol (MCP) bekommt Kana Werkzeuge anderer Dienste, z. B. ein Wiki, eine Datenbank oder ein Ticketsystem. Fern-Server laufen über das Internet (mit Token oder Anmeldung), lokale Server sind Programme auf diesem PC.") +
                 " " + tr("Je Werkzeug legst du fest: Erlauben (ohne Rückfrage), Fragen (über die Freigaben) oder Sperren. Fremde Werkzeuge gibt es nie im Tresor und nur in Projekten, deren Datenschutzstufe der Server einhält.")
         )
         if (servers.isEmpty()) HintText(tr("Noch kein Server verbunden."))

@@ -11,7 +11,7 @@ import io.github.thepytales.llmhub.ui.tr
 import io.github.thepytales.llmhub.ui.trLater
 
 /**
- * The open table or presentation (AP-38 Stufe c): the editor reports its Markdown here and takes a new one. Lora's
+ * The open table or presentation (AP-38 Stufe c): the editor reports its Markdown here and takes a new one. Kana's
  * actions work on the data model (rows of the sheet, slides of the deck) and keep the Markdown before for Rückgängig.
  * The editors of AP-48 and AP-51 fulfil the same interface.
  */
@@ -26,7 +26,7 @@ interface EditorDocHost {
     fun selected(): Int = 0
 }
 
-/** Pure helpers for Lora's table actions; the actions below and the tests use them. */
+/** Pure helpers for Kana's table actions; the actions below and the tests use them. */
 object SheetLora {
     /** The column [name] means: a letter (B), a number (2) or the (start of the) heading. Null when there is none. */
     fun column(rows: List<List<String>>, name: String): Int? {
@@ -83,7 +83,7 @@ object SheetLora {
     }
 
     /**
-     * Cleans the data (AP-49 „Daten bereinigen“, already here for Lora): spaces at the ends and double spaces inside,
+     * Cleans the data (AP-49 „Daten bereinigen“, already here for Kana): spaces at the ends and double spaces inside,
      * empty rows and rows that repeat an earlier one. Returns the rows and what changed.
      */
     fun clean(rows: List<List<String>>): Pair<List<List<String>>, List<String>> = cleanKeep(rows).let { (r, n, _) -> r to n }
@@ -151,7 +151,7 @@ object SheetLora {
     }
 }
 
-/** Pure helpers for Lora's slide actions. */
+/** Pure helpers for Kana's slide actions. */
 object SlidesLora {
     /** Slide number [n] (from 1) as an index, or the selected one when [n] is blank. */
     fun index(slides: List<SlideDeck.Slide>, n: String?, selected: Int): Int? {
@@ -216,7 +216,7 @@ object SlidesLora {
                 layout = if (v.image.isBlank() && s.image.isNotBlank() && !v.layout.withImage && v.layout == SlideDeck.Layout.CONTENT) SlideDeck.Layout.IMAGE_TEXT else v.layout,
                 elements = s.elements, notes = v.notes.ifBlank { s.notes }, transition = s.transition, build = s.build,
             )
-            io.github.thepytales.llmhub.docs.SlideLook.Suggestion(trLater("Vorschlag von Lora"), listOf(kept))
+            io.github.thepytales.llmhub.docs.SlideLook.Suggestion(trLater("Vorschlag von Kana"), listOf(kept))
         }.filter { it.slides.single() != s }
     }
 
@@ -256,7 +256,7 @@ object SlidesLora {
     }
 }
 
-/** Lora's actions for tables and presentations (AP-38 Stufe c). */
+/** Kana's actions for tables and presentations (AP-38 Stufe c). */
 internal object OfficeActions {
     private fun sheetHost() = ActionHosts.sheet ?: throw ActionFailed(tr("Bitte eine Tabelle öffnen."))
     private fun slidesHost() = ActionHosts.slides ?: throw ActionFailed(tr("Bitte eine Präsentation öffnen."))
@@ -341,7 +341,7 @@ internal object OfficeActions {
                 SheetLora.summary(rows)?.let { it to meta }
             }
         },
-        // Lora rechnet (AP-49): on the device, the results are formulas next to the data, with a chart.
+        // Kana rechnet (AP-49): on the device, the results are formulas next to the data, with a chart.
         ToolAction(
             "sheet.distribution", ActionArea.SHEET, trLater("Verteilung berechnen"),
             "Zählt, wie oft jeder Wert einer Spalte vorkommt (z. B. Notenverteilung), mit Anteil und Säulendiagramm; rechts neben den Daten, als Formeln.",
@@ -467,7 +467,7 @@ internal object OfficeActions {
             if (made.isEmpty()) throw ActionFailed(tr("Aus der Gliederung entstehen keine Folien – bitte Titel mit # beginnen."))
             slidesChange("slides.from_outline", tr("Legt {0} Folien an …", made.size), false, result = tr("{0} Folien angelegt.", made.size)) { list, _ -> list + made }
         },
-        // Lora baut Folien (AP-51): a whole deck in the TUD design from a document, on the device.
+        // Kana baut Folien (AP-51): a whole deck in the TUD design from a document, on the device.
         ToolAction(
             "slides.from_document", ActionArea.DOC, trLater("Präsentation aus Dokument"),
             "Baut aus einem Dokument (Titel; leer: das zuletzt bearbeitete) eine Präsentation im TUD-Design: Abschnitte, Inhaltsfolien, Tabellen, Bilder, Diagramme, lange Absätze als Sprechernotizen; Punkte erscheinen nacheinander.",
@@ -479,7 +479,7 @@ internal object OfficeActions {
                 ?: throw ActionFailed(tr("Das Dokument „{0}“ finde ich nicht.", name))
             val slides = SlideDeck.fromDocument(doc.markdown(), doc.title).mapIndexed { i, sl -> if (i > 0 && sl.layout == SlideDeck.Layout.CONTENT) sl.copy(build = true, transition = "fade") else sl }
             ActionPlan("slides.from_document", tr("Baut Folien aus „{0}“ …", doc.title), false, listOf(tr("Folien") to slides.size.toString())) {
-                val deck = io.github.thepytales.llmhub.docs.LiveDoc.create(doc.title, SlideDeck.markdown(slides), "Lora", kind = io.github.thepytales.llmhub.docs.DocKind.SLIDES).copy(vault = doc.vault)
+                val deck = io.github.thepytales.llmhub.docs.LiveDoc.create(doc.title, SlideDeck.markdown(slides), "Kana", kind = io.github.thepytales.llmhub.docs.DocKind.SLIDES).copy(vault = doc.vault)
                 c.docs.save(deck)
                 io.github.thepytales.llmhub.ui.DocsHandoff.show(deck.id)
                 ActionResult(tr("Präsentation „{0}“ mit {1} Folien angelegt.", doc.title, slides.size), undo = { c.docs.delete(deck.id); tr("Präsentation entfernt.") })
@@ -513,7 +513,7 @@ internal object OfficeActions {
                 SlideDeck.splitFull(list).let { (next, n) -> next.takeIf { n > 0 } }
             }
         },
-        // Lora baut Folien aus einem Paper (AP-51): structure, figures and tables of a PDF, on the device.
+        // Kana baut Folien aus einem Paper (AP-51): structure, figures and tables of a PDF, on the device.
         ToolAction(
             "slides.from_paper", ActionArea.PDF, trLater("Präsentation aus Paper"),
             "Baut aus einem Paper (PDF) eine Präsentation im TUD-Design: Titel und Autor:innen, Worum es geht (Abstract), Gliederung, je Abschnitt (Einleitung, Methode, Ergebnisse, Diskussion, Fazit) eine Folie mit den Kernaussagen, Abbildungen und Tabellen des Papers, Sprechernotizen; Punkte erscheinen nacheinander. Auf dem Gerät.",
@@ -527,7 +527,7 @@ internal object OfficeActions {
                 val figures = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { SlidesLora.figures(f, c.docs.baseDir(null)) }
                 val slides = io.github.thepytales.llmhub.docs.PaperDeck.slides(paper, figures)
                 val title = paper.title.ifBlank { f.nameWithoutExtension }
-                val deck = io.github.thepytales.llmhub.docs.LiveDoc.create(title, SlideDeck.markdown(slides), "Lora", kind = io.github.thepytales.llmhub.docs.DocKind.SLIDES)
+                val deck = io.github.thepytales.llmhub.docs.LiveDoc.create(title, SlideDeck.markdown(slides), "Kana", kind = io.github.thepytales.llmhub.docs.DocKind.SLIDES)
                 c.docs.save(deck)
                 io.github.thepytales.llmhub.ui.DocsHandoff.show(deck.id)
                 ActionResult(
@@ -536,7 +536,7 @@ internal object OfficeActions {
                 )
             }
         },
-        // „Folie schöner machen“ (AP-51): suggestions to tap in the editor; asked by name, Lora takes one of them.
+        // „Folie schöner machen“ (AP-51): suggestions to tap in the editor; asked by name, Kana takes one of them.
         ToolAction(
             "slides.beautify", ActionArea.SLIDES, trLater("Folie schöner machen"),
             "Macht Vorschläge für ein schöneres Layout einer Folie (zwei Spalten, Vergleich, Tabelle, Diagramm, kürzere Punkte, Bild groß …, mit Modell auch eigene Varianten) zum Antippen im Editor; mit „vorschlag“ wird dieser Vorschlag übernommen.",

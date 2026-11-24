@@ -30,7 +30,7 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * The way from a wish to the place (AP-36): when Lora leads somewhere, she flies from her panel along an arc to the
+ * The way from a wish to the place (AP-36): when Kana leads somewhere, she flies from her panel along an arc to the
  * target – the chat's input field, an entry of the side menu or the option that then glows – leaves a trail of small
  * stars and lands with a soft ring. All positions are in root coordinates; [LoraFlightLayer] lies over the whole app.
  */
@@ -41,7 +41,7 @@ object LoraFlight {
 
     val trip = MutableStateFlow<Trip?>(null)
 
-    /** Lora in the panel's header (the start of the flight). */
+    /** Kana in the panel's header (the start of the flight). */
     @Volatile
     var origin: Offset? = null
 
@@ -54,7 +54,7 @@ object LoraFlight {
     }
 }
 
-/** Where the pointer (or the last touch) is, so Lora's eyes can follow it (AP-36). */
+/** Where the pointer (or the last touch) is, so Kana's eyes can follow it (AP-36). */
 object LoraGaze {
     @Volatile
     var pointer: Offset? = null
@@ -86,7 +86,7 @@ fun Modifier.trackLoraGaze(): Modifier = pointerInput(Unit) {
 
 private val FLIGHT_EASING = CubicBezierEasing(0.45f, 0f, 0.25f, 1f)
 
-/** Lies over the app and shows Lora's flight while there is one. */
+/** Lies over the app and shows Kana's flight while there is one. */
 @Composable
 fun LoraFlightLayer() {
     val trip by LoraFlight.trip.collectAsStateWithLifecycle()
@@ -132,7 +132,7 @@ internal fun DrawScope.drawFlight(t: LoraFlight.Trip, p: Float, timeMs: Long, ca
     val pos = bezier(from, ctrl, to, p)
     val spark = colors.spark
     val star = 4.dp.toPx()
-    // The trail: small stars where Lora just was.
+    // The trail: small stars where Kana just was.
     if (!calm) {
         for (k in 1..7) {
             val q = p - k * 0.04f
@@ -141,7 +141,7 @@ internal fun DrawScope.drawFlight(t: LoraFlight.Trip, p: Float, timeMs: Long, ca
             drawStar(bezier(from, ctrl, to, q), star * (1f - k / 10f), spark.copy(alpha = 0.75f * fade))
         }
     }
-    // Lora herself: turned a little into the direction of flight, smaller towards the target.
+    // Kana herself: turned a little into the direction of flight, smaller towards the target.
     if (p < 0.98f) {
         val ahead = bezier(from, ctrl, to, (p + 0.03f).coerceAtMost(1f))
         val angle = Math.toDegrees(atan2((ahead.y - pos.y).toDouble(), (ahead.x - pos.x).toDouble())).toFloat()

@@ -136,7 +136,7 @@ class PrivacyPageTest {
         c.settings.update { it.copy(pseudonymOff = "", privacyOpen = "") }
     }
 
-    /** Lora's frame on a setting in a folded part opens it (AP-41); the main switch is in the status card. */
+    /** Kana's frame on a setting in a folded part opens it (AP-41); the main switch is in the status card. */
     @Test
     fun loraFindsEverySpotOfThePage() = ui {
         c.settings.update { it.copy(privacyOpen = "") }
@@ -165,7 +165,7 @@ class PrivacyPageTest {
     @Test
     fun statusLineAndFoldsWithoutTheScreen() {
         val s = AppSettings(pseudonymThorough = true, pseudonymAuto = false)
-        assertEquals("Aktiv: Regeln · Lora Namensschutz nicht geladen · öffentliche Quellen bleiben · Gründlich an", PrivacyPage.status(s, modelInstalled = false))
+        assertEquals("Aktiv: Regeln · Kana Namensschutz nicht geladen · öffentliche Quellen bleiben · Gründlich an", PrivacyPage.status(s, modelInstalled = false))
         assertEquals("Schutz aus – nichts wird ersetzt.", PrivacyPage.status(s.copy(pseudonymize = false), true))
         val opened = PrivacyPage.toggle(PrivacyPage.toggle(AppSettings(), PrivacyPage.TRY), PrivacyPage.LISTS)
         assertEquals("lists,try", opened.privacyOpen)

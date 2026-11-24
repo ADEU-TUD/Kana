@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/** Lora in mehreren Fenstern (AP-84). */
+/** Kana in mehreren Fenstern (AP-84). */
 class ExtraWindowsTest {
     @Test
     fun aChatIsOnlyEverOpenInOneWindow() = runBlocking {

@@ -1,4 +1,4 @@
-# Modellkarte: Lora Namensschutz (Erkennungsmodell der Pseudonymisierung, AP-67)
+# Modellkarte: Kana Namensschutz (Erkennungsmodell der Pseudonymisierung, AP-67) – bis 1.0.77 „Lora Namensschutz“
 
 Stand: 10.11.2026 · Datei `lora-namensschutz-pytales.int8.onnx` (bis 1.0.65: „Erkennungsmodell“, `pii-modell.int8.onnx`)
 
@@ -9,9 +9,9 @@ Telefon, IBAN, Matrikelnummer …) und die eigene Liste bleiben bei den Regeln v
 
 ## Herkunft
 - **Basismodell**: `deepset/gbert-base` (Version `d50cb1df9660ff2de1af8a5362d322b3d5a1a28a`) von deepset GmbH (Branden Chan, Stefan Schweter, Timo Möller), Lizenz **MIT**.
-  Lora Namensschutz ist eine abgeleitete Arbeit: Das Basismodell wurde **von uns feinabgestimmt und verändert**. Lora Namensschutz ist kein
+  Kana Namensschutz ist eine abgeleitete Arbeit: Das Basismodell wurde **von uns feinabgestimmt und verändert**. Kana Namensschutz ist kein
   Produkt der Urheber des Basismodells; sie haben es weder geprüft noch gebilligt.
-- **Lizenz von Lora Namensschutz**: Bedingungen von PyTales in `License.md` im Repository ADEU-TUD/Lora (kostenlos nutzbar;
+- **Lizenz von Kana Namensschutz**: Bedingungen von PyTales in `License.md` im Repository ADEU-TUD/Kana (kostenlos nutzbar;
   Änderungen und Weiterverbreitung nur mit Genehmigung). Das Basismodell bleibt unter seiner eigenen Lizenz (unten).
 - **Feintuning**: Token-Klassifikation (BIO), 32400 erfundene Trainingstexte, beste Epoche
   3 von 3.
@@ -43,8 +43,8 @@ Ziel AP-67 (Prüfteil, wie geplant): mindestens 98 % gefunden, höchstens 2 % f�
 gbert-base (Hugging Face: deepset/gbert-base, Version d50cb1df9660ff2de1af8a5362d322b3d5a1a28a)
 Urheber: deepset GmbH (Branden Chan, Stefan Schweter, Timo Möller). Lizenz: MIT.
 
-Lora Namensschutz ist eine abgeleitete Arbeit: Das Basismodell wurde von uns feinabgestimmt und verändert (Feintuning
-auf erfundenen Texten mit tools/pii, eigener Kopf für die Token-Klassifikation, Export als ONNX int8). Lora Namensschutz
+Kana Namensschutz ist eine abgeleitete Arbeit: Das Basismodell wurde von uns feinabgestimmt und verändert (Feintuning
+auf erfundenen Texten mit tools/pii, eigener Kopf für die Token-Klassifikation, Export als ONNX int8). Kana Namensschutz
 ist kein Produkt von deepset; die Urheber des Basismodells haben es weder geprüft noch gebilligt.
 
 MIT License

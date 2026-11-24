@@ -47,9 +47,9 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /*
- * Lora sortiert selbst (AP-69 Stufen b–d): „Geh die Mails der letzten Woche durch und ordne sie in Lehre, Forschung und
+ * Kana sortiert selbst (AP-69 Stufen b–d): „Geh die Mails der letzten Woche durch und ordne sie in Lehre, Forschung und
  * Verwaltung ein.“ The order (time, source folder, target folders) comes from the person's sentence – the rule based
- * parser below, or Lora's planner, which only sees that sentence. The mails themselves are read only by a model on this
+ * parser below, or Kana's planner, which only sees that sentence. The mails themselves are read only by a model on this
  * device (local/LocalLlm): head and beginning of each mail, a short prompt and a compact answer „Nummer|Sicherheit|Grund“.
  * Then one preview for the whole order (folder → count, each mail can be moved to another folder or left out, uncertain
  * ones apart) and one click „Einordnen“. The run goes on in the background with progress, pause and cancel, survives a
@@ -117,7 +117,7 @@ data class MailSortSpec(
     val targets: List<String> = emptyList(),
     /** „ohne Rückfrage“: no preview, uncertain mails stay where they are. */
     val noAsk: Boolean = false,
-    /** Lora suggests the folders (the person confirms them first unless [noAsk]). */
+    /** Kana suggests the folders (the person confirms them first unless [noAsk]). */
     val propose: Boolean = false,
     /** „jeden Montag“: ISO days for a scheduled task, offered after the run. */
     val repeatDays: List<Int> = emptyList(),
@@ -147,7 +147,7 @@ data class MailSortRun(
     val more: Boolean = false,
     /** The person was asked whether their corrections should be remembered. */
     val examplesAsked: Boolean = false,
-    /** Started by a scheduled task (shown at the top of Lora's panel afterwards). */
+    /** Started by a scheduled task (shown at the top of Kana's panel afterwards). */
     val taskId: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
@@ -158,11 +158,11 @@ data class MailSortRun(
     val running: Boolean get() = state in RUNNING
     val canUndo: Boolean get() = items.any { it.moved } && state in setOf(DONE, CANCELLED, FAILED)
 
-    /** Still needs the person (shown at the top of Lora's panel). */
+    /** Still needs the person (shown at the top of Kana's panel). */
     val open: Boolean get() = state !in setOf(DONE, UNDONE, CANCELLED)
 
     companion object {
-        /** Lora suggests folders from the subjects. */
+        /** Kana suggests folders from the subjects. */
         const val PROPOSING = "proposing"
 
         /** Waits for the person to confirm the suggested folders. */
@@ -199,7 +199,7 @@ interface SortModel {
     suspend fun answer(system: String, user: String): String
 }
 
-/** Reading the order from the person's sentence (rule based; also the fallback when Lora's planner is not asked). */
+/** Reading the order from the person's sentence (rule based; also the fallback when Kana's planner is not asked). */
 object MailSortWish {
     private fun norm(s: String) = Normalizer.normalize(s.lowercase(), Normalizer.Form.NFD).replace(Regex("\\p{M}"), "").replace("ß", "ss")
 
@@ -376,7 +376,7 @@ object MailSortWish {
     }
 }
 
-/** Runs, stores and undoes Lora's sort orders (AP-69 b–d). */
+/** Runs, stores and undoes Kana's sort orders (AP-69 b–d). */
 object MailSorter {
     const val ACTION_ID = "mail.sort"
 
@@ -387,7 +387,7 @@ object MailSorter {
     const val MAX_MAILS = 500
     private const val CHUNK = 10
     private const val PREVIEW_CHARS = 300
-    private const val BY = "Lora sortiert"
+    private const val BY = "Kana sortiert"
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val jobs = ConcurrentHashMap<String, Job>()
@@ -665,7 +665,7 @@ object MailSorter {
         if (proposal.isEmpty()) throw ActionFailed(tr("Mir fiel keine passende Ordnerstruktur ein – nenne mir die Ordner bitte selbst."))
         ToolActions.log("$ACTION_ID: Ordner vorgeschlagen: ${proposal.joinToString()}")
         val next = if (run.spec.noAsk) MailSortRun.CLASSIFYING else MailSortRun.FOLDERS
-        // Folders the person named stay first; Lora's suggestions come after them.
+        // Folders the person named stay first; Kana's suggestions come after them.
         move(c, run.id, MailSortRun.PROPOSING, next) { r ->
             r.copy(targets = (r.targets.map { it.path } + proposal).distinctBy { it.lowercase() }.map { p -> SortTarget(p) }, resolved = false, model = model.id)
         }
@@ -706,7 +706,7 @@ object MailSorter {
         if (done.spec.noAsk) move(c, run.id, MailSortRun.CLASSIFYING, MailSortRun.MOVING)
         else {
             move(c, run.id, MailSortRun.CLASSIFYING, MailSortRun.REVIEW)
-            notifyIfAway(c, done, tr("Lora: Vorschau fertig"), summary(get(c, run.id)!!))
+            notifyIfAway(c, done, tr("Kana: Vorschau fertig"), summary(get(c, run.id)!!))
         }
     }
 
@@ -774,7 +774,7 @@ object MailSorter {
         val done = get(c, run.id) ?: return
         move(c, run.id, MailSortRun.MOVING, MailSortRun.DONE)
         ToolActions.log("$ACTION_ID ausgeführt: ${done.movedCount} Mails eingeordnet")
-        notifyIfAway(c, done, tr("Lora: Mails eingeordnet"), summary(get(c, run.id)!!))
+        notifyIfAway(c, done, tr("Kana: Mails eingeordnet"), summary(get(c, run.id)!!))
     }
 
     private suspend fun undoAll(c: AppContainer, run: MailSortRun) {
@@ -969,23 +969,23 @@ object MailSorter {
         )
     }
 
-    /** Runs the order of a scheduled task: with preview it waits in Lora's panel, „ohne Rückfrage“ it sorts. */
+    /** Runs the order of a scheduled task: with preview it waits in Kana's panel, „ohne Rückfrage“ it sorts. */
     suspend fun runScheduled(c: AppContainer, task: ScheduledTask): String {
         val spec = task.mailSort ?: throw ActionFailed(tr("Diese Aufgabe hat keinen Sortierauftrag."))
         val run = start(c, spec.copy(propose = false), taskId = task.id)
         val end = await(c, run.id)
         return when (end.state) {
-            MailSortRun.REVIEW -> summary(end) + "\n\n" + tr("Die Vorschau wartet in Lora (rechts oben) auf „Einordnen“.")
+            MailSortRun.REVIEW -> summary(end) + "\n\n" + tr("Die Vorschau wartet in Kana (rechts oben) auf „Einordnen“.")
             MailSortRun.FAILED -> throw ActionFailed(end.message)
             else -> summary(end)
         }
     }
 
-    // ── Lora: the action (AP-38) and the wish ─────────────────────────────────────────────────────────
+    // ── Kana: the action (AP-38) and the wish ─────────────────────────────────────────────────────────
 
     private fun JsonObject.yes(key: String) = s(key)?.trim()?.lowercase() in setOf("true", "ja", "yes", "1", "an")
 
-    /** The order from the parameters of the action (Lora's planner or an Ablauf); the sentence fills the gaps. */
+    /** The order from the parameters of the action (Kana's planner or an Ablauf); the sentence fills the gaps. */
     fun specFromArgs(args: JsonObject, wish: String = ""): MailSortSpec {
         val base = MailSortWish.spec(wish)
         val range = args.s("zeitraum")?.takeIf { it.isNotBlank() }?.let { z ->
@@ -1014,7 +1014,7 @@ object MailSorter {
             "Ordnet Mails eines Zeitraums mit dem Modell auf diesem Gerät in Ordner ein und legt fehlende Ordner (auch Unterordner mit /) in Outlook an. " +
                 "Zeigt eine Vorschau für den ganzen Auftrag, außer ohne_rueckfrage. Löscht und sendet nie; als Ganzes rückgängig.",
             listOf(
-                ActionParam("ziele", "Zielordner, mit Komma getrennt, Unterordner mit /, z. B. Lehre/WS 2026-27, Forschung; leer = Lora schlägt Ordner vor", required = false),
+                ActionParam("ziele", "Zielordner, mit Komma getrennt, Unterordner mit /, z. B. Lehre/WS 2026-27, Forschung; leer = Kana schlägt Ordner vor", required = false),
                 ActionParam("zeitraum", "z. B. letzte 7 Tage, seit 1.11.2026, 1.11.2026 bis 7.11.2026, diese Woche (Standard: letzte 7 Tage)", required = false),
                 ActionParam("quelle", "Quellordner (Standard: Posteingang)", required = false),
                 ActionParam("ohne_rueckfrage", "ja = ohne Vorschau einordnen; Unsichere bleiben liegen", required = false),
@@ -1030,14 +1030,14 @@ object MailSorter {
                 val end = await(c, run.id)
                 if (end.state == MailSortRun.FAILED) throw ActionFailed(end.message)
                 ActionResult(
-                    summary(end) + if (end.state == MailSortRun.REVIEW || end.state == MailSortRun.FOLDERS) " " + tr("Die Vorschau wartet in Lora auf „Einordnen“.") else "",
+                    summary(end) + if (end.state == MailSortRun.REVIEW || end.state == MailSortRun.FOLDERS) " " + tr("Die Vorschau wartet in Kana auf „Einordnen“.") else "",
                     undo = if (end.canUndo) ({ undo(c, end.id); summary(await(c, end.id)) }) else null,
                 )
             }
         },
     )
 
-    /** Lora's planner called act_mail_sort: the run starts, its card shows the preview. Only the sentence went out. */
+    /** Kana's planner called act_mail_sort: the run starts, its card shows the preview. Only the sentence went out. */
     fun loraStep(c: AppContainer, args: JsonObject, wish: String): Pair<String, LoraStep?> {
         val spec = specFromArgs(args, wish)
         return try {

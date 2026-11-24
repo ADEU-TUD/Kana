@@ -61,8 +61,8 @@ object Secrets {
         fun store(key: ByteArray): Boolean = runCatching {
             val b64 = java.util.Base64.getEncoder().encodeToString(key)
             when {
-                Os.mac -> run(listOf("security", "add-generic-password", "-a", ACCOUNT, "-s", SERVICE, "-l", "Lora", "-U", "-w", b64)) != null
-                Os.linux -> run(listOf("secret-tool", "store", "--label=Lora", "service", SERVICE, "account", ACCOUNT), input = b64) != null
+                Os.mac -> run(listOf("security", "add-generic-password", "-a", ACCOUNT, "-s", SERVICE, "-l", "Kana", "-U", "-w", b64)) != null
+                Os.linux -> run(listOf("secret-tool", "store", "--label=Kana", "service", SERVICE, "account", ACCOUNT), input = b64) != null
                 else -> false
             } && load()?.contentEquals(key) == true
         }.getOrDefault(false)

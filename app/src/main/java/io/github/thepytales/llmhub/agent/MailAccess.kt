@@ -28,7 +28,7 @@ import kotlinx.serialization.json.JsonPrimitive
  * [io.github.thepytales.llmhub.data.OutlookBridge]. Only a model that runs on this device (llama.cpp, local/LocalLlm)
  * may; the Uni server and external providers never do, and there is no switch to lift this.
  *
- * Every way to the mailbox asks here: the agent's tools (AgentRunner), the Postfach mode (ChatModes.MAIL), Lora's
+ * Every way to the mailbox asks here: the agent's tools (AgentRunner), the Postfach mode (ChatModes.MAIL), Kana's
  * mail tasks and actions („mail.*“, see [isMailAction]), Abläufe, scheduled tasks, and code that sends mail content to a
  * model directly ([complete]). [guard] is the last line in the LLM client: a request with mail tool results never
  * leaves for a server.
@@ -58,7 +58,7 @@ object MailAccess {
     /** Tools that reach the mailbox (Outlook and IMAP share them). */
     fun isMailTool(name: String?): Boolean = name != null && (name.startsWith("outlook_") || name.startsWith("mail_"))
 
-    /** Lora actions that work on the mailbox (AP-38 register): every id „mail.…“ – they run only with the local model. */
+    /** Kana actions that work on the mailbox (AP-38 register): every id „mail.…“ – they run only with the local model. */
     fun isMailAction(actionId: String?): Boolean = actionId != null && actionId.startsWith("mail.")
 
     /** Whether the mailbox already went into [conv]: a mail tool was called or answered there. */
@@ -124,7 +124,7 @@ object MailAccess {
         return (fitting.maxByOrNull { it.needGb } ?: installed.minByOrNull { it.needGb })?.modelId
     }
 
-    /** [model] or [ActionFailed] with what to do – for Lora's mail actions and Abläufe. */
+    /** [model] or [ActionFailed] with what to do – for Kana's mail actions and Abläufe. */
     fun requireModel(c: AppContainer): String = model(c) ?: throw ActionFailed(tr(NEEDS_MODEL))
 
     /**
@@ -152,7 +152,7 @@ object MailAccess {
     // ── Tempo: short prompts, shortened mails ──────────────────────────────────────────────────────────────
 
     /** Who answers in a Postfach chat – short, local models read every token on the processor. */
-    const val IDENTITY = "Du bist Lora, die Helferin der App „Lora“ (TU Dresden), und läufst auf diesem PC. Mails verlassen den PC nicht."
+    const val IDENTITY = "Du bist Kana, die Helferin der App „Kana“ (TU Dresden), und läufst auf diesem PC. Mails verlassen den PC nicht."
 
     /** For chats with a model outside the device while the mail tool is on: where mail work happens. */
     const val REMOTE_HINT = "Auf Mails, Ordner, Termine und Aufgaben hast du keinen Zugriff: Ins Postfach darf aus Datenschutzgründen nur ein " +
@@ -226,7 +226,7 @@ object MailHandoff {
     /** The card to check, shown by the app (ui/MailLocalModel); null while none is open. */
     val pending = MutableStateFlow<Review?>(null)
 
-    /** The model a Postfach result goes to: the one for Lora's handoffs (Einstellungen › Lora), DeepSeek by default. */
+    /** The model a Postfach result goes to: the one for Kana's handoffs (Einstellungen › Kana), DeepSeek by default. */
     fun model(c: AppContainer): String = c.settings.current.loraHandoffModel.ifBlank { ModelCatalog.DEFAULT_CHAT }
         .takeIf { !Privacy.isLocal(it) } ?: ModelCatalog.DEFAULT_CHAT
 

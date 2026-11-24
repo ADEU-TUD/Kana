@@ -4,7 +4,7 @@ package io.github.thepytales.llmhub.ssh
  * Pseudonymization for the Server-Terminal (AP-118): before a request, output or command goes to a model on a server,
  * this replaces what identifies the server or opens it – host names, IP addresses, user names, e-mail addresses and the
  * application folder get placeholders (`<host-1>`, `<ip-1>`, `<benutzer-1>`, `<mail-1>`, `<app-ordner>`) that [unmask]
- * puts back into Lora's proposal; passwords, passphrases, private keys, tokens and `KEY=value` secrets become
+ * puts back into Kana's proposal; passwords, passphrases, private keys, tokens and `KEY=value` secrets become
  * `<geheim>` and are **never** put back. The app's name pseudonymization runs on top for people's names.
  */
 class ServerMask(secrets: Collection<String> = emptyList(), profile: SshProfile? = null) {

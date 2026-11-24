@@ -406,7 +406,7 @@ internal fun DocDetailsDialog(c: AppContainer, doc: io.github.thepytales.llmhub.
     val stats = remember(markdown) { io.github.thepytales.llmhub.docs.DocCounts.of(markdown) }
     val pages = FlowState.shown?.get()?.pageCount?.takeIf { it > 0 }
     val fmt = remember { java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM, java.text.DateFormat.SHORT, java.util.Locale.GERMANY) }
-    val place = remember(doc.id, doc.vault, doc.file) { c.docs.realFile(doc)?.absolutePath ?: doc.file ?: tr("In Lora (Dokumente)") }
+    val place = remember(doc.id, doc.vault, doc.file) { c.docs.realFile(doc)?.absolutePath ?: doc.file ?: tr("In Kana (Dokumente)") }
     val rows = listOfNotNull(
         tr("Titel") to doc.title,
         pages?.let { tr("Seiten") to it.toString() },

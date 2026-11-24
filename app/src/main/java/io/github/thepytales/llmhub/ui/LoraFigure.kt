@@ -40,12 +40,12 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /*
- * Lora, the mascot of the app (named after Low-Rank Adaptation): a small round robot in the brand color that keeps
+ * Kana, the mascot of the app (named after Low-Rank Adaptation): a small round robot in the brand color that keeps
  * the user company while the agent works and hangs around on the start page. Drawn on a canvas (no pictures, no
  * emoji) in a space of 80 × 56 units, so it fits any size with that aspect ratio.
  */
 
-/** What Lora does; [periodMs] is how long one round of it lasts. */
+/** What Kana does; [periodMs] is how long one round of it lasts. */
 enum class LoraAction(val periodMs: Long) {
     // While the agent works.
     WALK(4200), READ(4800), TYPE(4200), JUGGLE(4200), SEARCH(4200), DANCE(4200), THINK(4200),
@@ -88,7 +88,7 @@ internal val HOME_SEQUENCE = listOf(
 )
 
 /**
- * The start page by the time of day (AP-36): mornings Lora begins with a coffee, late evenings she is calmer and
+ * The start page by the time of day (AP-36): mornings Kana begins with a coffee, late evenings she is calmer and
  * stretches; otherwise [HOME_SEQUENCE].
  */
 internal fun homeSequence(hour: Int): List<LoraAction> = when (hour) {
@@ -97,20 +97,20 @@ internal fun homeSequence(hour: Int): List<LoraAction> = when (hour) {
     else -> HOME_SEQUENCE
 }
 
-/** Width / height of Lora's drawing space; canvases should keep this ratio. */
+/** Width / height of Kana's drawing space; canvases should keep this ratio. */
 const val LORA_ASPECT = 80f / 56f
 
-/** How long Lora takes to move from one activity into the next (pose and props blend). */
+/** How long Kana takes to move from one activity into the next (pose and props blend). */
 internal const val LORA_BLEND_MS = 500L
 
 /**
- * One moment of Lora: the [action] at [phase] (0..1) of its round, [elapsedMs] since it began; while [blend] < 1 Lora
+ * One moment of Kana: the [action] at [phase] (0..1) of its round, [elapsedMs] since it began; while [blend] < 1 Kana
  * still moves out of [previous] (which may be the same action when it repeats).
  */
 internal data class LoraFrame(val action: LoraAction, val phase: Float, val elapsedMs: Long, val previous: LoraAction?, val blend: Float)
 
 /**
- * Decides what Lora does: the [sequence] in turn, an action that fits what is going on ([hint], e.g. the web search
+ * Decides what Kana does: the [sequence] in turn, an action that fits what is going on ([hint], e.g. the web search
  * of the agent or the user typing) now and then, and [play] at once (a tap, the greeting).
  */
 class LoraDirector internal constructor(
@@ -181,7 +181,7 @@ class LoraDirector internal constructor(
     }
 }
 
-/** What Lora acts out for the current step of the agent ([tool] is the name of the running tool). */
+/** What Kana acts out for the current step of the agent ([tool] is the name of the running tool). */
 internal fun loraHint(tool: String?, thinking: Boolean): List<LoraAction> = when {
     tool == null -> if (thinking) listOf(LoraAction.THINK, LoraAction.PUZZLE, LoraAction.EUREKA) else emptyList()
     tool == "web_search" || tool == "news_search" -> listOf(LoraAction.SEARCH, LoraAction.RADAR, LoraAction.TELESCOPE, LoraAction.BINOCULARS)
@@ -213,11 +213,11 @@ internal fun loraHint(tool: String?, thinking: Boolean): List<LoraAction> = when
     else -> emptyList()
 }
 
-/** What Lora does when tapped while working: in turn a wave, a pirouette and a flash of inspiration. */
+/** What Kana does when tapped while working: in turn a wave, a pirouette and a flash of inspiration. */
 internal val LORA_TAP_REACTIONS = listOf(LoraAction.WAVE, LoraAction.TWIRL, LoraAction.EUREKA, LoraAction.CHEER, LoraAction.NOD)
 
-/** Moods Lora shows in her panel, under answers and while flying (AP-36). */
-/** Actions during which Lora's eyes follow the pointer. */
+/** Moods Kana shows in her panel, under answers and while flying (AP-36). */
+/** Actions during which Kana's eyes follow the pointer. */
 private val GAZE_ACTIONS = setOf(LoraAction.LOOK, LoraAction.IDLE, LoraAction.WAVE, LoraAction.NOD)
 
 internal val LORA_MOODS = listOf(LoraAction.FLY, LoraAction.IDLE, LoraAction.NOD, LoraAction.CHEER, LoraAction.SHRUG, LoraAction.SCRATCH, LoraAction.POINT)
@@ -249,7 +249,7 @@ internal fun loraColors(): LoraColors {
     )
 }
 
-/** Einstellungen › Lora › Ruhigere Bewegungen (AP-07): no walking, dancing or spinning. */
+/** Einstellungen › Kana › Ruhigere Bewegungen (AP-07): no walking, dancing or spinning. */
 object LoraMotion {
     @Volatile
     var calm: Boolean = false
@@ -272,7 +272,7 @@ fun rememberLoraDirector(
     LoraDirector(seq, start.takeIf { LoraMotion.allows(it) } ?: seq.first(), minDwellMs)
 }
 
-/** Lora, animated; [hint] and [hintEvery] go to [LoraDirector.hint]. */
+/** Kana, animated; [hint] and [hintEvery] go to [LoraDirector.hint]. */
 @Composable
 fun LoraFigure(
     modifier: Modifier = Modifier,
@@ -287,7 +287,7 @@ fun LoraFigure(
     }
     SideEffect { director.hint(hint, hintEvery) }
     val colors = loraColors()
-    // Where Lora is on screen, so her eyes can follow the pointer (AP-36).
+    // Where Kana is on screen, so her eyes can follow the pointer (AP-36).
     val center = remember { floatArrayOf(Float.NaN, Float.NaN) }
     Canvas(
         modifier
@@ -300,14 +300,14 @@ fun LoraFigure(
     }
 }
 
-/** How Lora's eyes look: [SOFT] half closed and content, [SPARKLE] wide with a sparkle in them, [WINK] one of them shut. */
+/** How Kana's eyes look: [SOFT] half closed and content, [SPARKLE] wide with a sparkle in them, [WINK] one of them shut. */
 internal enum class LoraEyes { OPEN, HAPPY, WIDE, CLOSED, FOCUS, SOFT, SPARKLE, WINK }
 
-/** How Lora's mouth looks: [OOH] a small round one, [TONGUE] a smile with the tip of the tongue out (concentrating). */
+/** How Kana's mouth looks: [OOH] a small round one, [TONGUE] a smile with the tip of the tongue out (concentrating). */
 internal enum class LoraMouth { SMILE, GRIN, OPEN, FLAT, NONE, OOH, TONGUE }
 
 /**
- * Lora's posture in units: [dx] sideways, [hop] up, [tilt] in degrees around the feet, eyes [lookX]/[lookY] (-1..1),
+ * Kana's posture in units: [dx] sideways, [hop] up, [tilt] in degrees around the feet, eyes [lookX]/[lookY] (-1..1),
  * [legs] swing (-1..1), arm angles in degrees from hanging down (positive = raised to the side, negative = in front),
  * [squash] of the body height, [glow] of the antenna star, [turn] of the head and body in degrees (0 = facing the
  * viewer, positive = towards the viewer's right, 180 = the back), [sway] of the body sideways over feet that stay where
@@ -406,7 +406,7 @@ private fun travel(p: Float, a: Float, b: Float): Float {
 }
 
 /**
- * Where a point of Lora's face is on the stage (units from the middle, units above the ground) when her body stands
+ * Where a point of Kana's face is on the stage (units from the middle, units above the ground) when her body stands
  * at [x] (dx + sway), leans by [tilt] and is turned by [turn] degrees: [fx] units right of the middle of the face,
  * [fy] units below the top of her head. So a thing she looks into can stand exactly where her eye will be.
  */
@@ -441,7 +441,7 @@ private fun quadO(a: Offset, c: Offset, b: Offset, t: Float) = Offset(
 )
 
 /*
- * Places of the tool actions in "body units": x from the middle of Lora (to the viewer's right), y from the bottom of
+ * Places of the tool actions in "body units": x from the middle of Kana (to the viewer's right), y from the bottom of
  * her body (up is negative) while she stands; the ground is at y = 5. The scene draws the same places.
  */
 
@@ -529,7 +529,7 @@ private fun talk(s: Float): LoraMouth = when ((s * 6.5f).toInt() % 4) {
     else -> LoraMouth.OPEN
 }
 
-/** Lora's posture during [a] at phase [p] (0..1) and [s] seconds. */
+/** Kana's posture during [a] at phase [p] (0..1) and [s] seconds. */
 internal fun loraPose(a: LoraAction, p: Float, s: Float): LoraPose = when (a) {
     LoraAction.WALK -> {
         // Strolls to one side, turns round, across to the other side and home – at an even pace, seen from three
@@ -550,7 +550,7 @@ internal fun loraPose(a: LoraAction, p: Float, s: Float): LoraPose = when (a) {
         )
     }
     LoraAction.READ -> {
-        // Reads line by line (from Lora's left to right, so from the viewer's right to left), comes across something
+        // Reads line by line (from Kana's left to right, so from the viewer's right to left), comes across something
         // remarkable, and peeks over the book once with a wink.
         val peek = bump(p, 0.5f, 0.58f, 0.7f, 0.78f)
         val gasp = bump(p, 0.22f, 0.26f, 0.34f, 0.4f)
@@ -754,7 +754,7 @@ internal fun loraPose(a: LoraAction, p: Float, s: Float): LoraPose = when (a) {
         )
     }
     LoraAction.FOLDER -> {
-        // A sheet drops into the folder, the cover closes, Lora hugs the folder and rocks it.
+        // A sheet drops into the folder, the cover closes, Kana hugs the folder and rocks it.
         val hug = ramp(p, 0.64f, 0.72f) * (1 - ramp(p, 0.9f, 0.98f))
         LoraPose(
             lookY = mix(-0.3f + 1.1f * ramp(p, 0.1f, 0.3f), -0.1f, hug), hop = hug * abs(wave(s, 1.2f)) * 0.8f, tilt = 4 * hug * wave(s, 0.6f),
@@ -1070,7 +1070,7 @@ internal fun loraPose(a: LoraAction, p: Float, s: Float): LoraPose = when (a) {
         )
     }
     LoraAction.NET -> {
-        // Pages flutter by; Lora follows one, crouches, swings the net with a jump and catches it.
+        // Pages flutter by; Kana follows one, crouches, swings the net with a jump and catches it.
         val swing = ramp(p, 0.38f, 0.5f)
         val caught = ramp(p, 0.5f, 0.58f)
         val follow = ramp(p, 0.05f, 0.45f)
@@ -1206,7 +1206,7 @@ internal fun loraPose(a: LoraAction, p: Float, s: Float): LoraPose = when (a) {
     }
 }
 
-/** Lora's pose in [frame] at [s] seconds: blended out of the previous action, with a small hop into the new one. */
+/** Kana's pose in [frame] at [s] seconds: blended out of the previous action, with a small hop into the new one. */
 private fun posed(frame: LoraFrame, s: Float): LoraPose {
     val now = loraPose(frame.action, frame.phase, s)
     val prev = frame.previous ?: return now
@@ -1215,7 +1215,7 @@ private fun posed(frame: LoraFrame, s: Float): LoraPose {
     return if (prev == frame.action) mixed else mixed.copy(hop = mixed.hop + 1.8f * sin(PI * frame.blend).toFloat())
 }
 
-/** How far back Lora looks to feel her motion: [TRAIL] moments, [TRAIL_MS] apart. */
+/** How far back Kana looks to feel her motion: [TRAIL] moments, [TRAIL_MS] apart. */
 private const val TRAIL = 9
 private const val TRAIL_MS = 40L
 
@@ -1229,7 +1229,7 @@ private val JELLY: FloatArray = run {
 }
 
 /**
- * How far something soft that rides on Lora (the tip of the antenna, her arms, her own weight) is ahead of her (+) or
+ * How far something soft that rides on Kana (the tip of the antenna, her arms, her own weight) is ahead of her (+) or
  * behind (−): it stays behind when she starts, swings on when she stops and dies out. [value] is where she was
  * [TRAIL_MS] × k ago (0 = now); the answer has its unit. Steady motion gives 0 – only changes of speed swing.
  */
@@ -1252,7 +1252,7 @@ private class LoraGeo(
     val cx0: Float,
     val oy: Float,
     val ground: Float,
-    /** Lora's body: center (with the sideways step), top, bottom and size. */
+    /** Kana's body: center (with the sideways step), top, bottom and size. */
     val cx: Float,
     val top: Float,
     val bottom: Float,
@@ -1260,7 +1260,7 @@ private class LoraGeo(
     val bh: Float,
     /** How far the face moved sideways with the turn of the head. */
     val faceDx: Float,
-    /** How far Lora leans (degrees around the middle of her feet). */
+    /** How far Kana leans (degrees around the middle of her feet). */
     val tilt: Float = 0f,
 ) {
     /** A point given in units from the top center of the 80 × 56 space. */
@@ -1271,7 +1271,7 @@ private class LoraGeo(
 
     fun at2(spot: Offset) = at2(spot.x, spot.y)
 
-    /** Where a point of Lora's leaning frame (a hand) is on the stage, for things painted [upright]. */
+    /** Where a point of Kana's leaning frame (a hand) is on the stage, for things painted [upright]. */
     fun onStage(p: Offset): Offset {
         val r = Math.toRadians(tilt.toDouble())
         val vx = p.x - cx
@@ -1293,10 +1293,10 @@ private val StampRed = Color(0xFFD32F2F)
 private val Tick = Color(0xFF34A853)
 private val Clay = Color(0xFFD9825B)
 
-/** A four-pointed sparkle like the one on Lora's antenna. */
+/** A four-pointed sparkle like the one on Kana's antenna. */
 /**
  * A round bar from [a] to [b], [w] thick: [color] with a darker under side and a streak of light along its upper side,
- * so tubes, handles and legs of things look round like Lora herself.
+ * so tubes, handles and legs of things look round like Kana herself.
  */
 private fun DrawScope.bar(a: Offset, b: Offset, w: Float, color: Color, cap: StrokeCap = StrokeCap.Round) {
     drawLine(color.shade(-0.28f), a, b, w, cap)
@@ -1307,17 +1307,17 @@ private fun DrawScope.bar(a: Offset, b: Offset, w: Float, color: Color, cap: Str
     drawLine(Color.White.copy(alpha = 0.3f * color.alpha), a + n * (w * 0.25f), b + n * (w * 0.25f), w * 0.14f, StrokeCap.Round)
 }
 
-/** The soft shadow of a thing that stands on the ground from [x0] to [x1] (units from the middle), like Lora's own. */
+/** The soft shadow of a thing that stands on the ground from [x0] to [x1] (units from the middle), like Kana's own. */
 private fun DrawScope.groundShadow(g: LoraGeo, c: LoraColors, a: Float, x0: Float, x1: Float) {
     val u = g.u
     drawOval(c.shadow.fade(0.5f * a), Offset(g.cx0 + x0 * u, g.ground - 1f * u), Size((x1 - x0) * u, 2f * u))
     drawOval(c.shadow.fade(a), Offset(g.cx0 + (x0 + (x1 - x0) * 0.11f) * u, g.ground - 0.75f * u), Size((x1 - x0) * 0.78f * u, 1.5f * u))
 }
 
-/** Paints things that stand on the stage (they do not lean with Lora) from inside her leaning frame, between her body and her hands. */
+/** Paints things that stand on the stage (they do not lean with Kana) from inside her leaning frame, between her body and her hands. */
 private inline fun DrawScope.upright(g: LoraGeo, block: DrawScope.() -> Unit) = rotate(-g.tilt, Offset(g.cx, g.bottom), block)
 
-/** Where Lora's body is while she looks into the microscope (sideways, leaning, turned) and where her eye is then. */
+/** Where Kana's body is while she looks into the microscope (sideways, leaning, turned) and where her eye is then. */
 private const val MICRO_X = 3f
 private const val MICRO_TILT = 14f
 private const val MICRO_TURN = 34f
@@ -1334,7 +1334,7 @@ private val TELE_EYE = eyeSpot(TELE_X, TELE_TILT, TELE_TURN, 1, 0.9f, -0.3f)
 
 private fun teleTube(k: Float) = Offset(TELE_EYE.x + 0.819f * k, TELE_EYE.y + 0.574f * k)
 
-/** SEARCH: how far the magnifying glass is up at Lora's eye (0 = held out in front of her). */
+/** SEARCH: how far the magnifying glass is up at Kana's eye (0 = held out in front of her). */
 private fun searchGlass(p: Float) = ramp(p, 0.24f, 0.32f) * (1 - ramp(p, 0.88f, 0.96f))
 
 /** NOTES: how long the lines on the clipboard are, and where the tip of the pencil is (units from the board's top left corner). */
@@ -1351,19 +1351,19 @@ private fun notesTip(p: Float): Offset {
     else mixO(end, Offset(2.2f, 3.1f + (i + 1) * 2.1f), ease((t - 0.8f) / 0.2f))
 }
 
-/** NOTES: the top left corner of the clipboard (units from the middle of Lora's feet, down is positive). */
+/** NOTES: the top left corner of the clipboard (units from the middle of Kana's feet, down is positive). */
 private fun notesBoard(p: Float) = Offset(-6.4f, -8.4f - 1.4f * ramp(p, 0.84f, 0.9f))
 
-/** LOCK: the middle of the padlock and where the key is (its bow end; units from the middle of Lora's feet, down is positive). */
+/** LOCK: the middle of the padlock and where the key is (its bow end; units from the middle of Kana's feet, down is positive). */
 private val LOCK_AT = Offset(-0.6f, -4.8f)
 
 private fun lockKey(p: Float) = mixO(Offset(10f, -4.6f), Offset(LOCK_AT.x + 2.3f, LOCK_AT.y + 0.7f), ramp(p, 0.12f, 0.42f))
 
-/** Earth of the mound Lora digs in. */
+/** Earth of the mound Kana digs in. */
 private val Earth = Color(0xFFA9795A)
 
 /**
- * SHELF: where Lora's hand is on the stage (units from the middle, above the ground): it runs along the backs of the
+ * SHELF: where Kana's hand is on the stage (units from the middle, above the ground): it runs along the backs of the
  * books on the upper board, stops at the one she takes and goes with it as it tips out.
  */
 private fun shelfHand(p: Float, s: Float): Offset {
@@ -1465,7 +1465,7 @@ private class PuzzleBoard(g: LoraGeo, c: LoraColors) {
     fun cell(i: Int) = Offset(x0 + margin + (i % 2) * cw, y0 + margin + (i / 2) * ch)
 }
 
-/** Things that stand on the ground next to Lora or fly around (behind the body, not tilted with it). */
+/** Things that stand on the ground next to Kana or fly around (behind the body, not tilted with it). */
 private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float, g: LoraGeo, c: LoraColors) {
     if (a <= 0f) return
     val u = g.u
@@ -1674,7 +1674,7 @@ private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float
         }
         LoraAction.MICROSCOPE -> {
             // The stand of the microscope: foot, bent arm with the wheel, the table with the glass slide and the lamp
-            // under it. Its tube is painted with Lora (drawHeld), so that it lies before her eye.
+            // under it. Its tube is painted with Kana (drawHeld), so that it lies before her eye.
             groundShadow(g, c, a, 18.6f, 33.4f)
             val arm = Path().apply {
                 val p0 = g.at2(29.6f, 2.2f); val p1 = g.at2(31.8f, 9f); val p2 = g.at2(29.6f, 15f); val p3 = g.at2(21.6f, 10.2f)
@@ -1743,13 +1743,13 @@ private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float
             drawCircle(Ocean.shade(-0.35f).fade(a), r, center, style = Stroke(0.5f * u))
         }
         LoraAction.TELESCOPE -> {
-            // The tripod; the tube is painted with Lora (drawHeld), so that its eyepiece lies before her eye.
+            // The tripod; the tube is painted with Kana (drawHeld), so that its eyepiece lies before her eye.
             val head = teleTube(8.6f)
             groundShadow(g, c, a, head.x - 6.5f, head.x + 6.5f)
             for (foot in listOf(-5f, 5f, 0.9f)) bar(g.at2(head.x, 11.5f), g.at2(head.x + foot, 0.3f), 1.3f * u, line)
             bar(g.at2(head.x, 10.5f), g.at2(head.x, head.y - 1.2f), 1.7f * u, line)
             drawCircle(line.shade(-0.2f), 1.5f * u, g.at2(head.x, 11.3f))
-            // Stars that twinkle, and a shooting star when Lora looks up.
+            // Stars that twinkle, and a shooting star when Kana looks up.
             listOf(Offset(23f, 7f), Offset(32f, 14f), Offset(13f, 4.5f), Offset(35f, 4f)).forEachIndexed { i, (x, y) ->
                 val tw = 0.5f + 0.5f * wave(s * (0.9f + i * 0.2f) + i * 0.3f, 1f)
                 star(g.at(x, y), 1.4f * u * (0.45f + 0.55f * tw), c.spark.fade(a))
@@ -1835,7 +1835,7 @@ private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float
             val boxTop = ground - 7 * u
             val found = ramp(p, 0.58f, 0.66f)
             val tabs = listOf(c.spark, c.blush, Ocean, Land)
-            // Index cards, back to front; the one under Lora's fingers pops up, the found one is gone.
+            // Index cards, back to front; the one under Kana's fingers pops up, the found one is gone.
             val up = if (p in 0.14f..0.58f) (((p - 0.14f) / 0.44f) * 10).toInt() % 6 else -1
             for (i in 0 until 6) {
                 if (i == 3 && found > 0f) continue
@@ -1857,7 +1857,7 @@ private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float
             val middle = ground - 12.5f * u
             drawRect(c.line.fade(a * 0.12f), Offset(x0, topY), Size(x1 - x0, ground - topY))
             val colors = listOf(c.prop, c.spark, Land, c.blush, Ocean, Potion)
-            // Books on the upper and the lower board: (width, height); the fifth one above is the one Lora takes.
+            // Books on the upper and the lower board: (width, height); the fifth one above is the one Kana takes.
             val pull = ramp(p, 0.42f, 0.5f)
             var x = x0 + 0.9f * u
             listOf(2.4f to 9f, 2f to 10f, 2.8f to 8.5f, 2.2f to 9.5f, 2.6f to 10.2f, 2.4f to 9.2f).forEachIndexed { i, (w, h) ->
@@ -2003,7 +2003,7 @@ private fun DrawScope.drawScene(action: LoraAction, p: Float, s: Float, a: Float
 }
 
 /**
- * Things Lora holds or that float around Lora (tilted with the body). [front] is the second pass after the hands:
+ * Things Kana holds or that float around Kana (tilted with the body). [front] is the second pass after the hands:
  * the lid of the laptop is in front of them.
  */
 private fun DrawScope.drawHeld(
@@ -2073,7 +2073,7 @@ private fun DrawScope.drawHeld(
     }
     when (action) {
         LoraAction.READ -> {
-            // The open book faces Lora: the viewer sees the covers, the spine in the middle and the top edges of the pages.
+            // The open book faces Kana: the viewer sees the covers, the spine in the middle and the top edges of the pages.
             val peek = bump(p, 0.5f, 0.58f, 0.7f, 0.78f)
             val bt = top + 13.6f * u + peek * 2.6f * u
             val bb = bt + 8.6f * u
@@ -2086,7 +2086,7 @@ private fun DrawScope.drawHeld(
                 drawPath(edge, Ivory.fade(a))
                 drawPath(edge, c.line.fade(a * 0.45f), style = Stroke(0.3f * u, join = StrokeJoin.Round))
             }
-            // A page turns: it rises over the top edge, from Lora's right (the viewer's left) to the other side.
+            // A page turns: it rises over the top edge, from Kana's right (the viewer's left) to the other side.
             val turn = (s % 1.8f) / 1.8f
             if (turn < 0.4f) {
                 val k = turn / 0.4f
@@ -2605,7 +2605,7 @@ private fun DrawScope.drawHeld(
         }
         LoraAction.SHELF -> {
             if (p >= 0.5f) {
-                // The book: first its spine (as on the shelf), then its cover once Lora holds it to the chest.
+                // The book: first its spine (as on the shelf), then its cover once Kana holds it to the chest.
                 val hug = ramp(p, 0.6f, 0.7f)
                 // In her hand it is still tipped as it came out of the shelf, then she turns it upright.
                 val carry = ramp(p, 0.5f, 0.6f)
@@ -2794,7 +2794,7 @@ private fun DrawScope.drawHeld(
     }
 }
 
-/** Music notes rising on both sides of Lora ([speed] rounds per second). */
+/** Music notes rising on both sides of Kana ([speed] rounds per second). */
 private fun DrawScope.notes(s: Float, a: Float, cx: Float, top: Float, g: LoraGeo, c: LoraColors, speed: Float) {
     val u = g.u
     for (i in 0..1) {
@@ -2822,7 +2822,7 @@ private fun Color.tint(other: Color, k: Float) = Color(red + (other.red - red) *
 /** How bright a color is (0 = black, 1 = white). */
 private fun Color.brightness() = 0.299f * red + 0.587f * green + 0.114f * blue
 
-/** Lora's body: a dome at the head, rounder than the seat. */
+/** Kana's body: a dome at the head, rounder than the seat. */
 private fun bodyPath(cx: Float, top: Float, bw: Float, bh: Float, u: Float): Path {
     val l = cx - bw / 2
     val r = cx + bw / 2
@@ -2854,7 +2854,7 @@ private fun DrawScope.drawBody(shape: Path, cx: Float, top: Float, bw: Float, bh
     )
     val light = Offset(cx - bw * 0.2f - sideways * 2.5f * u, top + bh * 0.2f)
     drawPath(shape, Brush.radialGradient(listOf(Color.White.copy(alpha = 0.26f * c.body.alpha), Color.White.copy(alpha = 0f)), light, bw * 0.55f))
-    // The gloss follows the round of the head (it slides the other way when Lora turns).
+    // The gloss follows the round of the head (it slides the other way when Kana turns).
     val r = min(10.5f * u, bh * 0.5f) - 1.5f * u
     if (r > 2 * u) {
         val center = Offset(cx - bw / 2 + 1.5f * u + r - sideways * 2 * u, top + 1.5f * u + r)
@@ -2896,12 +2896,12 @@ private fun DrawScope.limb(a: Offset, c: Offset, b: Offset, wa: Float, wb: Float
     drawCircle(color, wb / 2, b)
 }
 
-/** Stride of Lora's walk (units from one footprint to the next of the same foot) and the part of it a foot is in the air. */
+/** Stride of Kana's walk (units from one footprint to the next of the same foot) and the part of it a foot is in the air. */
 private const val STRIDE = 11f
 private const val SWING = 0.4f
 
 /**
- * Walking: where a foot is relative to Lora once she has come [q] strides (the other foot is half a stride ahead).
+ * Walking: where a foot is relative to Kana once she has come [q] strides (the other foot is half a stride ahead).
  * It stays where it was put down while she moves on, then swings forward to its next place – so feet never slide.
  * In strides; [stepLift] is how high it is on the way (0..1).
  */
@@ -3028,18 +3028,18 @@ private fun faceOf(trail: Array<LoraPose>): LoraFaceShape {
     return LoraFaceShape(eye, mouth)
 }
 
-/** Lora's pose of the last moments, the newest first ([TRAIL] steps of [TRAIL_MS] back). */
+/** Kana's pose of the last moments, the newest first ([TRAIL] steps of [TRAIL_MS] back). */
 private fun trailOf(frame: LoraFrame, s: Float, now: LoraPose): Array<LoraPose> =
     Array(TRAIL + 1) { k -> if (k == 0) now else posed(earlier(frame, k * TRAIL_MS), s - k * TRAIL_MS / 1000f) }
 
-/** Draws Lora at [timeMs] (seconds drive the small motions, [frame] the activity); runs without an animation clock. */
+/** Draws Kana at [timeMs] (seconds drive the small motions, [frame] the activity); runs without an animation clock. */
 internal fun DrawScope.drawLora(frame: LoraFrame, timeMs: Long, c: LoraColors, gaze: Offset? = null) {
     val s = timeMs / 1000f
     val prev = frame.previous
     val same = prev == frame.action
     val b = ease(frame.blend)
     val base = posed(frame, s)
-    // The motion of the last moments: Lora leans into it and settles after a stop, stretches in the air and gives in
+    // The motion of the last moments: Kana leans into it and settles after a stop, stretches in the air and gives in
     // the knees on landing, her arms and the antenna swing behind. Calmer with "Ruhigere Bewegungen".
     val trail = trailOf(frame, s, base)
     val lively = if (LoraMotion.calm) 0.35f else 1f
@@ -3261,8 +3261,8 @@ private const val FACE_SPACE = 30f
 private const val FACE_CHIN = 28.6f
 
 /**
- * Lora as a close-up (the head with antenna and face, no legs, arms or scene) in a square: for small places like the
- * button in the top bar or the sleeping Lora in a corner, where the whole figure would be tiny. Eyes and mouth follow
+ * Kana as a close-up (the head with antenna and face, no legs, arms or scene) in a square: for small places like the
+ * button in the top bar or the sleeping Kana in a corner, where the whole figure would be tiny. Eyes and mouth follow
  * the activity of [frame] (happy while waving, closed while sleeping), she breathes, blinks and tilts her head a little;
  * while waving a hand waves at the side, while sleeping small z's rise. Everything stays inside the canvas: the face from
  * the antenna's star to the chin is centred in the square ([FACE_CHIN]), so in round buttons and pills she sits in the
@@ -3338,11 +3338,11 @@ internal fun DrawScope.drawLoraFace(frame: LoraFrame, timeMs: Long, c: LoraColor
 }
 
 /**
- * Lora's visor with eyes, cheeks and mouth; she blinks now and then, sometimes twice. The glass sits a little inside
+ * Kana's visor with eyes, cheeks and mouth; she blinks now and then, sometimes twice. The glass sits a little inside
  * the body (a shade above, a light edge below), [face] gives the look of eyes and mouth, [slosh] moves them with her
  * motion.
  */
-/** Lora's face in a dark look of the app: the glass stays white, eyes and mouth dark (as in the light look). */
+/** Kana's face in a dark look of the app: the glass stays white, eyes and mouth dark (as in the light look). */
 private val FaceGlass = Color(0xFFF6F6F9)
 private val FaceInk = Color(0xFF16161D)
 
@@ -3451,7 +3451,7 @@ private val Wood = Color(0xFFB5835A)
 /** A pop-in: grows a little past full size and settles. */
 private fun pop(k: Float): Float = if (k <= 0f) 0f else overshoot(k)
 
-/** The small side desk to Lora's right (stamping, stapling): its top seen slightly from above, two legs. */
+/** The small side desk to Kana's right (stamping, stapling): its top seen slightly from above, two legs. */
 private fun DrawScope.sideDesk(g: LoraGeo, c: LoraColors, a: Float) {
     val u = g.u
     val l = g.cx0 + 13 * u
@@ -3529,7 +3529,7 @@ private fun DrawScope.sheet(tl: Offset, br: Offset, u: Float, c: LoraColors, a: 
 /** Scissors whose blades meet at [tip], pointing along [angle] (degrees; 180 = to the left), [open] 0..1. */
 private fun DrawScope.scissors(tip: Offset, angle: Float, open: Float, u: Float, c: LoraColors, a: Float) {
     if (a <= 0f) return
-    // Big enough to read and with red handles, so that they show before Lora's body.
+    // Big enough to read and with red handles, so that they show before Kana's body.
     rotate(angle - 180f, tip) {
         val pivot = Offset(tip.x + 4.8f * u, tip.y)
         for (sgn in listOf(-1f, 1f)) {
@@ -3564,7 +3564,7 @@ private fun DrawScope.calendarPage(g: LoraGeo, c: LoraColors, a: Float, x0: Floa
     }
 }
 
-/** A speech bubble above Lora at [x] (units from the middle): two lines of text and a small flag (German or English). */
+/** A speech bubble above Kana at [x] (units from the middle): two lines of text and a small flag (German or English). */
 private fun DrawScope.speechBubble(g: LoraGeo, c: LoraColors, a: Float, x: Float, scale: Float, german: Boolean) {
     if (a <= 0f || scale <= 0f) return
     val u = g.u
@@ -3592,7 +3592,7 @@ private fun DrawScope.speechBubble(g: LoraGeo, c: LoraColors, a: Float, x: Float
     }
 }
 
-/** Lora's colors faded to [a] (e.g. at the end of her flight). */
+/** Kana's colors faded to [a] (e.g. at the end of her flight). */
 internal fun LoraColors.faded(a: Float): LoraColors = if (a >= 1f) this else LoraColors(
     body = body.fade(a), visor = visor.fade(a), eye = eye.fade(a), line = line.fade(a), prop = prop.fade(a),
     spark = spark.fade(a), blush = blush.fade(a), shadow = shadow.fade(a),

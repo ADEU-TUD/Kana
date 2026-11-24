@@ -79,7 +79,7 @@ object DesignExport {
             }
             val images = HashMap<String, PDImageXObject?>()
             doc.documentInformation.title = d.title
-            doc.documentInformation.creator = "Lora"
+            doc.documentInformation.creator = "Kana"
             d.pages.forEach { page ->
                 val wMm = d.width + 2 * (extra + marks)
                 val hMm = d.height + 2 * (extra + marks)
@@ -577,9 +577,9 @@ object DesignExport {
             val now = java.time.Instant.now().truncatedTo(java.time.temporal.ChronoUnit.SECONDS).toString()
             put("docProps/core.xml", XML + "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" " +
                 "xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                "<dc:title>${esc(d.title)}</dc:title><dc:language>de-DE</dc:language><dc:creator>Lora</dc:creator>" +
+                "<dc:title>${esc(d.title)}</dc:title><dc:language>de-DE</dc:language><dc:creator>Kana</dc:creator>" +
                 "<dcterms:created xsi:type=\"dcterms:W3CDTF\">$now</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">$now</dcterms:modified></cp:coreProperties>")
-            put("docProps/app.xml", XML + "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\"><Application>Lora</Application><Slides>${slides.size}</Slides></Properties>")
+            put("docProps/app.xml", XML + "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\"><Application>Kana</Application><Slides>${slides.size}</Slides></Properties>")
             put("ppt/presentation.xml", buildString {
                 append(XML).append("<p:presentation $NS saveSubsetFonts=\"1\">")
                 append("<p:sldMasterIdLst><p:sldMasterId id=\"2147483648\" r:id=\"rIdMaster\"/></p:sldMasterIdLst><p:sldIdLst>")

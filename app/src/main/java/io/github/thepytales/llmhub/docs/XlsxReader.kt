@@ -59,7 +59,7 @@ object XlsxReader {
 
     /**
      * The charts in the drawing of the sheet at [sheetPath] (AP-48), each with the sheet its data is on: Excel's
-     * column, bar, line, pie and scatter charts; histograms and box plots written by Lora come back from their
+     * column, bar, line, pie and scatter charts; histograms and box plots written by Kana come back from their
      * alternative text. Charts whose series do not point at the cells of one sheet are left out.
      */
     private fun charts(files: Map<String, ByteArray>, sheetPath: String, sheetName: String): List<Pair<String, SheetChart>> {
@@ -78,7 +78,7 @@ object XlsxReader {
             } ?: return@mapNotNull null
             val chartPath = drawingRels[rid] ?: return@mapNotNull null
             val read = OfficeCharts.read(files[chartPath]) ?: return@mapNotNull null
-            val id = Regex("^Lora-Diagramm (\\S+)$").find(pr?.attr("name").orEmpty())?.groupValues?.get(1)
+            val id = Regex("^Kana-Diagramm (\\S+)$").find(pr?.attr("name").orEmpty())?.groupValues?.get(1)
                 ?: java.util.UUID.randomUUID().toString().take(8)
             val alt = pr?.attr("descr").orEmpty()
             Regex("^(Histogramm|Boxplot) von ([A-Z]+[0-9]+:[A-Z]+[0-9]+)$").find(alt)?.let { m ->

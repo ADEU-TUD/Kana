@@ -3,7 +3,7 @@ package io.github.thepytales.llmhub.ui
 import io.github.thepytales.llmhub.net.ApiException
 
 /**
- * Fehlermeldungen in Klartext (AP-74): one catalog for the chat, Lora's panel and the banners. Every error becomes one
+ * Fehlermeldungen in Klartext (AP-74): one catalog for the chat, Kana's panel and the banners. Every error becomes one
  * sentence a user can act on plus the matching step as a button ([Fix]); the technical message stays foldable. Works
  * on the device without a language model, also for the error texts already stored in older chats.
  */
@@ -15,7 +15,7 @@ object ErrorHelp {
         CHANGE_MODEL(trLater("Modell wechseln"), "models"),
         NEW_CHAT(trLater("Neuen Chat beginnen"), "chat"),
         LOCAL_MODELS(trLater("Modelle auf diesem Gerät"), "local-models"),
-        /** Wo Lora arbeitet (AP-112): the setup „Alles lokal“ loads what is missing. */
+        /** Wo Kana arbeitet (AP-112): the setup „Alles lokal“ loads what is missing. */
         LOCAL_SETUP(trLater("Einrichtung öffnen"), "local-setup"),
         ENABLE_TOOL(trLater("Werkzeuge einschalten"), "settings/tools"),
         CONNECTIONS(trLater("Verbindungen öffnen"), "settings/connections"),
@@ -45,9 +45,9 @@ object ErrorHelp {
         rule("postfach-lokal", Fix.LOCAL_MODELS, { tr("Ins Postfach darf nur ein Modell auf diesem Gerät. Bitte ein lokales Modell laden oder wählen.") }) { _, raw ->
             has(raw, "nur ein Modell auf diesem Gerät", "only a model on this device")
         },
-        // Wo Lora arbeitet (AP-112): the request must stay on this device – the message itself says what is missing.
+        // Wo Kana arbeitet (AP-112): the request must stay on this device – the message itself says what is missing.
         rule("nur-auf-diesem-geraet", Fix.LOCAL_SETUP, { "" }) { e, raw ->
-            e.isA<io.github.thepytales.llmhub.data.OnDeviceOnly>() || has(raw, "Wo Lora arbeitet › Einrichtung")
+            e.isA<io.github.thepytales.llmhub.data.OnDeviceOnly>() || has(raw, "Wo Kana arbeitet › Einrichtung")
         },
         rule("kein-schluessel", Fix.CHECK_KEY, { tr("Es ist noch kein API-Schlüssel eingetragen. Ohne ihn erreicht die App den Uni-Server nicht.") }) { _, raw ->
             has(raw, "Kein API-Key hinterlegt", "No API key")

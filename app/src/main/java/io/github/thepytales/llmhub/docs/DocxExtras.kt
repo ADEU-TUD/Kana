@@ -39,7 +39,7 @@ object DocxExtras {
     fun write(file: File, doc: LiveDoc, theme: DocTheme, base: File?): Map<String, String> {
         val now = markdown(doc, base)
         val old = baseText(doc)?.let { markdown(doc, base, it) }
-        if (old != null && old != now) MarkdownDocx.writeTracked(file, doc.title, markdown(doc, base, baseText(doc)!!, tables = true), markdown(doc, base, tables = true), theme, author = "Lora")
+        if (old != null && old != now) MarkdownDocx.writeTracked(file, doc.title, markdown(doc, base, baseText(doc)!!, tables = true), markdown(doc, base, tables = true), theme, author = "Kana")
         else MarkdownDocx.write(file, doc.title, now, theme)
         val open = doc.comments.filter { !it.resolved }
         if (open.isEmpty()) return emptyMap()

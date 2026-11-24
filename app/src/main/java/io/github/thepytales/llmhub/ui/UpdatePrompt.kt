@@ -42,7 +42,7 @@ fun UpdatePrompt(c: AppContainer) {
     var whatsNew by remember { mutableStateOf<Pair<String, String>?>(null) }
     LaunchedEffect(Unit) {
         Updates.start(context) { v, notes ->
-            if (notes == null) Notices.info(tr("Lora wurde auf Version {0} aktualisiert.", v)) else whatsNew = v to notes
+            if (notes == null) Notices.info(tr("Kana wurde auf Version {0} aktualisiert.", v)) else whatsNew = v to notes
         }
     }
     whatsNew?.let { (v, notes) ->
@@ -79,7 +79,7 @@ fun UpdatePrompt(c: AppContainer) {
         is State.Downloading -> if (!background) AlertDialog(
             onDismissRequest = {},
             icon = { Icon(Icons.Outlined.SystemUpdate, contentDescription = null) },
-            title = { Text(tr("Lora {0} wird geladen", s.info.version)) },
+            title = { Text(tr("Kana {0} wird geladen", s.info.version)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     LinearProgressIndicator(progress = { s.progress }, modifier = Modifier.fillMaxWidth())
@@ -89,7 +89,7 @@ fun UpdatePrompt(c: AppContainer) {
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
-                        if (windows) tr("Danach startet Lora kurz neu. Zum Weiterarbeiten „Im Hintergrund“ wählen – die App fragt dann vor dem Neustart.")
+                        if (windows) tr("Danach startet Kana kurz neu. Zum Weiterarbeiten „Im Hintergrund“ wählen – die App fragt dann vor dem Neustart.")
                         else tr("Danach fragt Android, ob die App aktualisiert werden soll – einfach „Aktualisieren“ tippen."),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -108,8 +108,8 @@ fun UpdatePrompt(c: AppContainer) {
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            if (windows) tr("Lora {0} ist heruntergeladen. Zum Installieren startet die App kurz neu – Chats und Einstellungen bleiben erhalten.", s.info.version)
-                            else tr("Lora {0} ist heruntergeladen. Android fragt gleich, ob die App aktualisiert werden soll – einfach „Aktualisieren“ tippen.", s.info.version),
+                            if (windows) tr("Kana {0} ist heruntergeladen. Zum Installieren startet die App kurz neu – Chats und Einstellungen bleiben erhalten.", s.info.version)
+                            else tr("Kana {0} ist heruntergeladen. Android fragt gleich, ob die App aktualisiert werden soll – einfach „Aktualisieren“ tippen.", s.info.version),
                         )
                         if (busy) Text(tr("Gerade wird noch eine Antwort geschrieben – sie wird beim Neustart abgebrochen."), color = MaterialTheme.colorScheme.error)
                         s.note?.let { Text(it, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold) }
@@ -151,13 +151,13 @@ fun UpdatePrompt(c: AppContainer) {
 @Composable
 private fun UpdateText(info: UpdateInfo) {
     Column(Modifier.heightIn(max = 380.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(tr("Lora {0} ist da (installiert: {1}).", info.version, Updates.installed))
+        Text(tr("Kana {0} ist da (installiert: {1}).", info.version, Updates.installed))
         if (info.notes.isNotBlank()) {
             Text(tr("Neu"), style = MaterialTheme.typography.titleSmall)
             Text(info.notes, style = MaterialTheme.typography.bodyMedium)
         }
         Text(
-            if (windows) tr("Das Update dauert etwa eine Minute. Danach startet Lora von selbst neu – Chats, Einstellungen und API-Key bleiben erhalten.")
+            if (windows) tr("Das Update dauert etwa eine Minute. Danach startet Kana von selbst neu – Chats, Einstellungen und API-Key bleiben erhalten.")
             else tr("Danach fragt Android einmal nach („Aktualisieren“). Chats, Einstellungen und API-Key bleiben erhalten."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -175,7 +175,7 @@ fun UpdateSection(c: AppContainer) {
     var auto by remember { mutableStateOf(Updates.autoCheck(context)) }
     var source by remember { mutableStateOf(Updates.ownSource(context)) }
     Section(tr("Version")) {
-        Text(tr("Installiert: Lora {0}", Updates.installed), style = MaterialTheme.typography.titleSmall)
+        Text(tr("Installiert: Kana {0}", Updates.installed), style = MaterialTheme.typography.titleSmall)
         if (!UpdatePlatform.supported) {
             SettingsHint(
                 tr("Automatische Updates gibt es in der installierten Windows-Version („ADEU LLM.exe“) und in der Android-App. ") +

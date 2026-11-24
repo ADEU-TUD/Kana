@@ -524,7 +524,7 @@ class Transcription(private val c: AppContainer, private val root: File, private
     fun defaultOptions(folderId: String? = null): StartOptions {
         val s = _settings.value
         val mode = enumValues<TranscriptionMode>().firstOrNull { it.name == s.mode } ?: TranscriptionMode.LOCAL
-        // „Lokal“ under Wo Lora arbeitet (AP-112): no silent detour to the server when no model is loaded.
+        // „Lokal“ under Wo Kana arbeitet (AP-112): no silent detour to the server when no model is loaded.
         val strict = !io.github.thepytales.llmhub.data.Places.serverAllowed(c, io.github.thepytales.llmhub.data.Area.TRANSCRIPTION)
         val useServer = mode == TranscriptionMode.SERVER && serverAllowed(folderId) || localModel() == null && serverAllowed(folderId) && !strict
         return StartOptions(

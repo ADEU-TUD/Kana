@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Lora-Verlauf mit „Nochmal“ (AP-75): the last 20 wishes, Pfeil hoch, pinned commands in Strg+K. */
+/** Kana-Verlauf mit „Nochmal“ (AP-75): the last 20 wishes, Pfeil hoch, pinned commands in Strg+K. */
 class LoraHistoryTest {
     @Test
     fun keepsTheLastTwentyNewestFirstAndEachOnlyOnce() {
