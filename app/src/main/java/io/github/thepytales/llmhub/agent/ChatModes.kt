@@ -9,7 +9,7 @@ enum class ModeTool { RESEARCH, WEB, DOCUMENTS, GAMES, MAIL, DESIGN, PROPOSAL }
 /**
  * A special way of working in a chat (AP-05). Every mode looks the same: a chip above the input with ✕, below it one
  * line „what happens here · Daten: …“, and in an empty chat an [example] to tap. A new mode only needs a definition
- * here – it is offered by the /command, the command palette (Strg+K), the start page and Lora.
+ * here – it is offered by the /command, the command palette (Strg+K), the start page and Kana.
  */
 data class ChatMode(
     val id: String,
@@ -57,7 +57,7 @@ object ChatModes {
         id = "planning",
         name = trLater("Planungsmodus"),
         icon = "plan",
-        explain = trLater("Lora klärt dein Vorhaben in kurzen Fragerunden mit Antwortknöpfen und schreibt daraus einen Plan als Dokument."),
+        explain = trLater("Kana klärt dein Vorhaben in kurzen Fragerunden mit Antwortknöpfen und schreibt daraus einen Plan als Dokument."),
         data = trLater("Wie im normalen Chat: an das gewählte Modell, Namen pseudonymisiert."),
         example = trLater("Ich möchte ein Seminar „Digitale Medien im Sachunterricht“ für das Sommersemester planen."),
         command = "Planen",
@@ -116,7 +116,7 @@ object ChatModes {
         id = "design",
         name = trLater("Gestalten"),
         icon = "design",
-        explain = trLater("Lora gestaltet im TUD-Design Poster, Flyer, Aushänge, Einladungskarten, Social-Media-Beiträge, Kursbanner und Titelbilder – z. B. ein Tagungsposter aus dem angehängten Paper. Danach unter „Erstellen“ bearbeiten und als PNG, PDF oder PowerPoint exportieren."),
+        explain = trLater("Kana gestaltet im TUD-Design Poster, Flyer, Aushänge, Einladungskarten, Social-Media-Beiträge, Kursbanner und Titelbilder – z. B. ein Tagungsposter aus dem angehängten Paper. Danach unter „Erstellen“ bearbeiten und als PNG, PDF oder PowerPoint exportieren."),
         data = trLater("Inhalte gehen an das gewählte Modell, Namen pseudonymisiert; Bildbeschreibungen an das Bildmodell des Uni-Servers."),
         example = trLater("Mach aus dem angehängten Paper ein Tagungsposter (A1) mit Einleitung, Methode, Ergebnissen und Fazit."),
         command = "Gestalten",
@@ -150,7 +150,7 @@ object ChatModes {
         id = "proposal",
         name = trLater("Antrag"),
         icon = "plan",
-        explain = trLater("Lora liest die Ausschreibung, legt Checkliste, Fristen und Gliederung in der Antrags-Werkstatt an, plant Arbeitspakete und Budget, schreibt Abschnitte im Umfang und macht auf Wunsch einen Probelauf als Gutachter:in."),
+        explain = trLater("Kana liest die Ausschreibung, legt Checkliste, Fristen und Gliederung in der Antrags-Werkstatt an, plant Arbeitspakete und Budget, schreibt Abschnitte im Umfang und macht auf Wunsch einen Probelauf als Gutachter:in."),
         data = trLater("Ausschreibung und Antrag gehen an das gewählte Modell, Namen pseudonymisiert."),
         example = trLater("Hier ist die Ausschreibung (PDF). Lege den Antrag an und sag mir, was ich bis wann brauche."),
         command = "Antrag",

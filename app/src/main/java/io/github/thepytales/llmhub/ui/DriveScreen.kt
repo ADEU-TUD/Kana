@@ -184,7 +184,7 @@ data class DriveItem(
 private val WHEN = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
 /**
- * Der Tab „Dateien“ (AP-16 Stufe 0) – like Google Drive: the Lora-Ordner with the fixed folders „Hochgeladen“ and
+ * Der Tab „Dateien“ (AP-16 Stufe 0) – like Google Drive: the Kana-Ordner with the fixed folders „Hochgeladen“ and
  * „Erstellt“ and own folders, grid with previews or list, sorting, the big „+“ for new folders, documents and uploads,
  * moving (dragging onto a folder or „Verschieben nach …“), renaming, the Papierkorb, stars, Schlagwörter and the
  * full-text search of AP-18 over everything (also storage locations, project folders and the knowledge collection).
@@ -270,7 +270,7 @@ fun DriveScreen(c: AppContainer, onBack: () -> Unit, onOpenDoc: (String) -> Unit
         }
     }
 
-    // Full-text search (AP-18) over the Lora-Ordner, storage locations, project folders and the knowledge collection.
+    // Full-text search (AP-18) over the Kana-Ordner, storage locations, project folders and the knowledge collection.
     val indexing by c.fileLibrary.indexing.collectAsState()
     val all by produceState<List<FileItem>?>(null, docs, metas, changes, query.isNotBlank()) {
         if (query.isBlank()) return@produceState
@@ -405,7 +405,7 @@ fun DriveScreen(c: AppContainer, onBack: () -> Unit, onOpenDoc: (String) -> Unit
         }
     }
 
-    // Lora handelt in Dateien (AP-38): she knows the open folder and what is chosen.
+    // Kana handelt in Dateien (AP-38): she knows the open folder and what is chosen.
     SideEffect {
         io.github.thepytales.llmhub.agent.LoraFocus.folder = currentDir
         if (selection.isNotEmpty()) io.github.thepytales.llmhub.agent.LoraFocus.files = selection.values.map { it.file }
@@ -538,7 +538,7 @@ fun DriveScreen(c: AppContainer, onBack: () -> Unit, onOpenDoc: (String) -> Unit
                         IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
                         DropdownMenu(menu, { menu = false }) {
                             if (LORA_FOLDER_OPENS) DropdownMenuItem(text = { Text(tr("Im Explorer öffnen")) }, leadingIcon = { Icon(Icons.Outlined.FolderOpen, null) }, onClick = { menu = false; openLoraFolder(currentDir) })
-                            DropdownMenuItem(text = { Text(tr("Lora-Ordner …")) }, leadingIcon = { Icon(Icons.Outlined.Settings, null) }, onClick = { menu = false; folderSettings = true })
+                            DropdownMenuItem(text = { Text(tr("Kana-Ordner …")) }, leadingIcon = { Icon(Icons.Outlined.Settings, null) }, onClick = { menu = false; folderSettings = true })
                             DropdownMenuItem(text = { Text(tr("Wissenssammlung")) }, onClick = { menu = false; onNavigate("settings/knowledge") })
                             if (settings.hasNextcloud) DropdownMenuItem(text = { Text(tr("Aus Nextcloud holen …")) }, leadingIcon = { Icon(Icons.Outlined.Cloud, null) }, onClick = { menu = false; fromNextcloud = true })
                             else DropdownMenuItem(text = { Text(tr("Nextcloud verbinden …")) }, leadingIcon = { Icon(Icons.Outlined.Cloud, null) }, onClick = { menu = false; onNavigate("settings/connections") })
@@ -680,7 +680,7 @@ fun DriveScreen(c: AppContainer, onBack: () -> Unit, onOpenDoc: (String) -> Unit
             moving = null
             val moved = runCatching { drive.move(list.map { it.file }, target) }.onFailure { Notices.error(tr("Verschieben ging nicht: {0}", it.message)) }.getOrDefault(emptyList())
             selection.clear()
-            if (moved.isNotEmpty()) Notices.info(tr("{0} nach „{1}“ verschoben", moved.size, target.name.ifBlank { tr("Lora-Ordner") }))
+            if (moved.isNotEmpty()) Notices.info(tr("{0} nach „{1}“ verschoben", moved.size, target.name.ifBlank { tr("Kana-Ordner") }))
         }
     }
     if (newFolder) TextDialog(tr("Neuer Ordner"), tr("Neuer Ordner"), confirm = tr("Erstellen"), onDismiss = { newFolder = false }) { name ->
@@ -703,15 +703,15 @@ fun DriveScreen(c: AppContainer, onBack: () -> Unit, onOpenDoc: (String) -> Unit
     }
     if (folderSettings) AlertDialog(
         onDismissRequest = { folderSettings = false },
-        title = { Text(tr("Lora-Ordner")) },
+        title = { Text(tr("Kana-Ordner")) },
         text = { Column(Modifier.heightIn(max = 520.dp)) { LoraFolderSettings() } },
         confirmButton = { TextButton(onClick = { folderSettings = false }) { Text(tr("Fertig")) } },
     )
 }
 
-private val FileLibraryPlace = trLater("Lora-Ordner")
+private val FileLibraryPlace = trLater("Kana-Ordner")
 
-/** Formats the editor opens in place (and writes back into) when they lie in the Lora-Ordner. */
+/** Formats the editor opens in place (and writes back into) when they lie in the Kana-Ordner. */
 private val EDITABLE = setOf("docx", "pptx", "xlsx", "xlsm", "md", "markdown")
 
 private fun chatTitle(c: AppContainer, id: String?): String = id?.let { c.chats.conversations.value.firstOrNull { it.id == id }?.title } ?: tr("Aus dem Chat")
@@ -734,7 +734,7 @@ private class DriveActions(
     val open: (DriveItem) -> Unit,
     /** Opens a PDF in the PDF-Werkzeugkasten (switched on if needed). */
     val editPdf: (DriveItem) -> Unit,
-    /** The item the user works with (its menu opened): Lora's actions use it when no file is named (AP-38). */
+    /** The item the user works with (its menu opened): Kana's actions use it when no file is named (AP-38). */
     val focus: (DriveItem) -> Unit,
     val rename: (DriveItem) -> Unit,
     val move: (DriveItem) -> Unit,
@@ -863,7 +863,7 @@ private fun DriveRow(c: AppContainer, item: DriveItem, actions: DriveActions, dr
             if (item.starred) Icon(Icons.Outlined.Star, contentDescription = tr("Markiert"), tint = Color(0xFFF2B01E), modifier = Modifier.size(18.dp))
             // In Word/Excel/PowerPoint geöffnet (AP-59).
             if (!item.dir && ExternalOffice.isOpen(item.file)) HintText(tr("in {0} geöffnet", ExternalOffice.program(item.file) ?: "Office"))
-            // Out of Lora into the Explorer, a mail or another program (AP-59, Windows).
+            // Out of Kana into the Explorer, a mail or another program (AP-59, Windows).
             if (!item.fixed) FileDragHandle { if (actions.selected(item)) actions.selectedFiles() else listOf(item.file) }
             IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
         }
@@ -1223,7 +1223,7 @@ private fun TextDialog(title: String, initial: String, confirm: String, onDismis
     )
 }
 
-/** „Verschieben nach …“: all folders of the Lora-Ordner (or of the place that is open), with a new folder on the way. */
+/** „Verschieben nach …“: all folders of the Kana-Ordner (or of the place that is open), with a new folder on the way. */
 @Composable
 private fun MoveDialog(drive: LoraDrive, items: List<DriveItem>, placeRoot: File?, onDismiss: () -> Unit, onMove: (File) -> Unit) {
     val base = placeRoot ?: drive.root
@@ -1375,7 +1375,7 @@ private fun PlacesList(c: AppContainer, onOpen: (File) -> Unit) {
         value = withContext(Dispatchers.IO) { runCatching { c.fileLibrary.roots().filter { (_, d) -> d.absoluteFile != c.drive.root.absoluteFile } }.getOrDefault(emptyList()) }
     }
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = LORA_BUTTON_ROOM), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        item { HintText(tr("Ordner außerhalb des Lora-Ordners, die Lora kennt: Ablageorte und Projektordner. Ihre Dateien lassen sich hier öffnen, umbenennen, verschieben und löschen."), Modifier.padding(8.dp)) }
+        item { HintText(tr("Ordner außerhalb des Kana-Ordners, die Kana kennt: Ablageorte und Projektordner. Ihre Dateien lassen sich hier öffnen, umbenennen, verschieben und löschen."), Modifier.padding(8.dp)) }
         if (places.isEmpty()) item { HintText(tr("Noch keine – Ablageorte unter Einstellungen › Speicherorte, Projektordner am Projekt."), Modifier.padding(8.dp)) }
         items(places) { (name, dir) ->
             Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).clickable { onOpen(dir) }.padding(10.dp), verticalAlignment = Alignment.CenterVertically) {

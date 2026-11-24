@@ -114,7 +114,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
 
     var input by rememberSaveable { mutableStateOf("") }
-    /** A question Lora prepared (Übergaben erst zeigen): its context and card go along with the next message. */
+    /** A question Kana prepared (Übergaben erst zeigen): its context and card go along with the next message. */
     var loraHandoff by remember { mutableStateOf<ChatHandoff.Content?>(null) }
     /** A mode handed over from the palette, the start page or another screen; started once the screen is ready (AP-05). */
     var pendingMode by remember { mutableStateOf<String?>(null) }
@@ -174,7 +174,7 @@ fun ChatScreen(
     LaunchedEffect(vm.chatId, handedOver) {
         ChatHandoff.takeFor(vm.chatId)?.let { h ->
             files.addAll(h.files)
-            // A wish about this chat from Lora („Fasse diesen Chat zusammen“) is sent right away.
+            // A wish about this chat from Kana („Fasse diesen Chat zusammen“) is sent right away.
             if (h.send && h.text.isNotBlank() && !vm.running.value) {
                 follow.value = true
                 vm.send(h.text, emptyList(), h.files, instructions = h.instructions, handoff = h.handoff)
@@ -224,7 +224,7 @@ fun ChatScreen(
                 // Postfach (AP-68): the mode and its local model are set before anything is sent.
                 val deviceOnly = io.github.thepytales.llmhub.agent.ChatModes.byId(h.mode)?.onDevice == true
                 if (deviceOnly) vm.enterMode(h.mode)
-                // Lora chose the model: the chat keeps it (no automatic switch afterwards).
+                // Kana chose the model: the chat keeps it (no automatic switch afterwards).
                 h.model?.takeIf { m -> vm.state.value?.let { conv -> Privacy.allows(c, Privacy.level(c, conv), m) } != false }?.let { m ->
                     vm.setModel(m)
                     vm.setAutoModel(false)
@@ -332,7 +332,7 @@ fun ChatScreen(
     }
 
     val hasMessages = current.messages.isNotEmpty()
-    // Lora knows which chat is open (for „Fasse diesen Chat zusammen“ and the privacy level of its project).
+    // Kana knows which chat is open (for „Fasse diesen Chat zusammen“ and the privacy level of its project).
     LaunchedEffect(current.id, hasMessages, current.folderId) {
         LoraHelper.chatId = current.id
         LoraHelper.chatHasMessages = hasMessages
@@ -433,7 +433,7 @@ fun ChatScreen(
                     }
                 },
                 actions = {
-                    // Lora, the helper (Strg+L): her panel with suggestions for this chat – „Frag Lora“ with her face; only the
+                    // Kana, the helper (Strg+L): her panel with suggestions for this chat – „Frag Kana“ with her face; only the
                     // face on narrow windows with a chat title.
                     LoraTopBarButton(c, current.folderId, compact = hasMessages && narrow)
                     if (!hasMessages) {
@@ -572,7 +572,7 @@ fun ChatScreen(
                     if (io.github.thepytales.llmhub.agent.MailAccess.locked(current)) {
                         MailModelNotice(c, current.model, onModel = { vm.setModel(it); vm.setAutoModel(false) }, onOpenModels = { onNavigate("local-models") })
                     }
-                    // Prepared by Lora (Übergaben erst zeigen): what goes along, with ✕ to leave it out.
+                    // Prepared by Kana (Übergaben erst zeigen): what goes along, with ✕ to leave it out.
                     loraHandoff?.let { h -> LoraPreparedBanner(h.handoff.orEmpty()) { loraHandoff = null } }
                     // While typing: the place of the app that fits („dunkles Design“ → Darstellung › Helligkeit).
                     LoraTypingHint(c, input, onUsed = { input = "" })

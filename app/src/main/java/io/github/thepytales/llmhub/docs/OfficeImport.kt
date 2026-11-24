@@ -325,8 +325,8 @@ object OfficeImport {
         return io.github.thepytales.llmhub.docs.text.ParaFormat(kind = kind, align = align, spacing = spacing, left = if (left >= 2) left else 0, first = if (kotlin.math.abs(first) >= 2) first else 0, tabs = tabs)
     }
 
-    /** Lora's own Word files (their header and footer come from the page setup, with date and page numbers). */
-    private fun isOwn(files: Map<String, ByteArray>) = files["docProps/core.xml"]?.toString(Charsets.UTF_8)?.contains("<dc:creator>Lora</dc:creator>") == true
+    /** Kana's own Word files (their header and footer come from the page setup, with date and page numbers). */
+    private fun isOwn(files: Map<String, ByteArray>) = files["docProps/core.xml"]?.toString(Charsets.UTF_8)?.let { x -> io.github.thepytales.llmhub.Brand.NAMES.any { "<dc:creator>$it</dc:creator>" in x } } == true
 
     /**
      * The marker of a section break before section [next]: its own header and footer when it has references to them
@@ -338,7 +338,7 @@ object OfficeImport {
         val hasFooter = next.children().any { it.localName == "footerReference" }
         val continuous = next.child("type")?.attr("val") == "continuous"
         if (continuous && !hasHeader && !hasFooter) return null
-        // Lora's own files: header and footer parts also hold date, footer line and page numbers – not read back.
+        // Kana's own files: header and footer parts also hold date, footer line and page numbers – not read back.
         val header = if (hasHeader && !own) headerText(next, "headerReference", "default", files, rels) else null
         val footer = if (hasFooter && !own) headerText(next, "footerReference", "default", files, rels) else null
         return DocMarkup.sectionMarker(DocMarkup.Section(header, footer))
@@ -360,7 +360,7 @@ object OfficeImport {
     /** Header, footer and margins of section [sect]; null if it has none worth keeping. */
     private fun pageSetup(sect: Element, files: Map<String, ByteArray>, rels: Map<String, String>): DocMarkup.PageSetup? {
         fun part(kind: String, type: String = "default"): String = headerText(sect, kind, type, files, rels)
-        // Lora's own files carry date, footer line and page numbers there from the page setup and the settings: not again.
+        // Kana's own files carry date, footer line and page numbers there from the page setup and the settings: not again.
         val own = isOwn(files)
         val header = if (own) "" else part("headerReference")
         val footer = if (own) "" else part("footerReference")
@@ -529,7 +529,7 @@ object OfficeImport {
     // ── PowerPoint ──
 
     /**
-     * PowerPoint as slides: Lora's own decks by their TUD shapes, foreign ones (also the TUD-Präsentationsvorlage)
+     * PowerPoint as slides: Kana's own decks by their TUD shapes, foreign ones (also the TUD-Präsentationsvorlage)
      * with masters, layouts, placeholders, theme colours, groups, tables, charts and pictures; see [PptxReader].
      */
     fun pptx(bytes: ByteArray, media: MutableMap<String, ByteArray> = LinkedHashMap()): String = PptxReader.read(bytes, media)

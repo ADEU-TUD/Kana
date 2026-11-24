@@ -19,13 +19,13 @@ import java.io.File
 
 /**
  * Sync für Android (AP-28): the phone takes part in the simple sync of AP-12 through the Nextcloud. On the PC the
- * Lora-Ordner (visible files plus the app's data in `.lora`) lies in a Nextcloud folder; the phone has no Nextcloud
+ * Kana-Ordner (visible files plus the app's data in `.lora`) lies in a Nextcloud folder; the phone has no Nextcloud
  * client of its own for the app, so it mirrors that folder over WebDAV:
  *
  * - `<Ordner>/.lora/` ↔ the phone's data: chats (`conversations/`), projects, memory, Kurztexte, own TU Vorlagen,
  *   contacts, the literature with its excerpts, the knowledge collection and the vault (encrypted, AP-63) – the stores
  *   that can be read again while the app runs ([SYNCED_FILES], [SYNCED_DIRS]);
- * - `<Ordner>/…` (without `.lora`) ↔ the phone's Lora-Ordner (Hochgeladen, Erstellt, own folders).
+ * - `<Ordner>/…` (without `.lora`) ↔ the phone's Kana-Ordner (Hochgeladen, Erstellt, own folders).
  *
  * It keeps the rules of AP-12: one device at a time (the phone writes a note like a PC; while a PC has the folder open,
  * the phone waits), changes in both places are kept both (a chat becomes a „zweite Fassung“, other files go to
@@ -76,7 +76,7 @@ class PhoneSync(
     private fun remote(root: String, key: String): String =
         if (key.startsWith("d:")) WebDavClient.join(remoteData(root), key.drop(2)) else WebDavClient.join(root, key.drop(2))
 
-    /** Local files that take part: the synced stores and the visible Lora-Ordner. */
+    /** Local files that take part: the synced stores and the visible Kana-Ordner. */
     private fun localFiles(): Map<String, File> {
         val out = linkedMapOf<String, File>()
         SYNCED_FILES.map { File(data, it) }.filter { it.isFile }.forEach { out["d:" + it.name] = it }
@@ -123,7 +123,7 @@ class PhoneSync(
             .filter { it.id != me.id }.groupBy { it.id }.map { (_, l) -> l.maxBy { it.aliveAt } }
     }
 
-    /** Whether the folder in [root] is a Lora-Ordner of a PC (has `.lora`). */
+    /** Whether the folder in [root] is a Kana-Ordner of a PC (has `.lora`). */
     suspend fun looksLikeLoraFolder(root: String): Boolean = runCatching { dav().list(root).any { it.folder && it.name == DATA } }.getOrDefault(false)
 
     /**
@@ -245,7 +245,7 @@ class PhoneSync(
     }
 
     companion object {
-        /** The app's data inside the Lora-Ordner of a PC (desktop/LoraLayout). */
+        /** The app's data inside the Kana-Ordner of a PC (desktop/LoraLayout). */
         const val DATA = ".lora"
         /** Stores of single files that the app can read again while it runs. */
         val SYNCED_FILES = setOf("folders.json", "memory.json", "snippets.json", "templates.json", "contacts.json", "literature.json")
@@ -306,7 +306,7 @@ class PhoneSyncService(private val c: AppContainer) {
         }
     }
 
-    /** Chats and lists that came from the PC are read again; the Lora-Ordner shows its new files. */
+    /** Chats and lists that came from the PC are read again; the Kana-Ordner shows its new files. */
     private fun apply(r: PhoneSync.Result) {
         val keys = r.down + r.conflicts
         val chatIds = File(c.appContext.filesDir, "conversations").listFiles { f -> f.extension == "json" }.orEmpty().map { it.nameWithoutExtension }

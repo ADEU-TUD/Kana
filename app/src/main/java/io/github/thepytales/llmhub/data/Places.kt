@@ -21,11 +21,11 @@ enum class Place(val label: String) {
 }
 
 /**
- * The areas of „Wo Lora arbeitet“ (AP-112) with the places they can have. [fixed] areas have one place only (the
+ * The areas of „Wo Kana arbeitet“ (AP-112) with the places they can have. [fixed] areas have one place only (the
  * Postfach on this device, Bilder erzeugen only over an API …); [reasons] say why a place is not possible.
  */
 enum class Area(val title: String, val what: String, val places: Set<Place>, val reasons: Map<Place, String> = emptyMap()) {
-    LORA(trLater("Lora"), trLater("Antworten, Werkzeuge und Abläufe"), Place.entries.toSet()),
+    LORA(trLater("Kana"), trLater("Antworten, Werkzeuge und Abläufe"), Place.entries.toSet()),
     CHAT(
         trLater("Chat"), trLater("Fragen, Schreiben, Zusammenfassen, Übersetzen, Code"), setOf(Place.LOCAL, Place.API),
         mapOf(Place.MIXED to trLater("Ein Chat nutzt ein Modell – im Chat kannst du es jederzeit wechseln.")),
@@ -35,11 +35,11 @@ enum class Area(val title: String, val what: String, val places: Set<Place>, val
         mapOf(Place.MIXED to trLater("Ins Postfach darf nur ein Modell auf diesem Gerät (fest)."), Place.API to trLater("Ins Postfach darf nur ein Modell auf diesem Gerät (fest).")),
     ),
     DOCS(
-        trLater("Dokumente, Tabellen, Folien"), trLater("Bearbeiten immer hier; Lora schreibt mit"), setOf(Place.LOCAL, Place.API),
+        trLater("Dokumente, Tabellen, Folien"), trLater("Bearbeiten immer hier; Kana schreibt mit"), setOf(Place.LOCAL, Place.API),
         mapOf(Place.MIXED to trLater("Ein Modell je Dokument-Hilfe – Lokal oder API.")),
     ),
     TRANSCRIPTION(trLater("Transkription"), trLater("Aufnahmen und Interviews in Text"), Place.entries.toSet()),
-    DICTATION(trLater("Spracheingabe und Diktat"), trLater("Sprechen statt tippen, im Chat und bei Lora"), Place.entries.toSet()),
+    DICTATION(trLater("Spracheingabe und Diktat"), trLater("Sprechen statt tippen, im Chat und bei Kana"), Place.entries.toSet()),
     SEARCH(trLater("Suche nach Bedeutung"), trLater("Wissenssammlung und Projekte"), Place.entries.toSet()),
     SPEECH(
         trLater("Vorlesen und Sprachmodus"), trLater("Antworten vorlesen"), setOf(Place.LOCAL, Place.API),
@@ -52,7 +52,7 @@ enum class Area(val title: String, val what: String, val places: Set<Place>, val
     ),
     COMMANDS(
         trLater("Befehle verstehen"), trLater("Bereich öffnen, Einstellung umstellen"), setOf(Place.LOCAL),
-        mapOf(Place.MIXED to trLater("Lora Befehle läuft immer auf diesem Gerät."), Place.API to trLater("Lora Befehle läuft immer auf diesem Gerät.")),
+        mapOf(Place.MIXED to trLater("Kana Befehle läuft immer auf diesem Gerät."), Place.API to trLater("Kana Befehle läuft immer auf diesem Gerät.")),
     ),
     IMAGES(
         trLater("Bilder erzeugen"), trLater("Bilder und Grafiken aus einer Beschreibung"), setOf(Place.API),
@@ -72,7 +72,7 @@ enum class Area(val title: String, val what: String, val places: Set<Place>, val
 }
 
 /**
- * Where a request may go (AP-112), set around requests of other areas than the chat – Lora, Dokumente, Transkription,
+ * Where a request may go (AP-112), set around requests of other areas than the chat – Kana, Dokumente, Transkription,
  * Bilder verstehen. [LlmClient][io.github.thepytales.llmhub.net.LlmClient] reads it; without it a request counts as Chat.
  */
 class PlaceScope(val area: Area) : AbstractCoroutineContextElement(Key) {
@@ -83,8 +83,8 @@ class PlaceScope(val area: Area) : AbstractCoroutineContextElement(Key) {
 class OnDeviceOnly(message: String) : IOException(message)
 
 /**
- * „Wo Lora arbeitet“ (AP-112): the place of each area, what runs on this device and why not, the quick choice
- * (Alles lokal · Gemischt · Alles über API) and the gate that keeps requests on the device. Lora, Vorlesen, Transkription
+ * „Wo Kana arbeitet“ (AP-112): the place of each area, what runs on this device and why not, the quick choice
+ * (Alles lokal · Gemischt · Alles über API) and the gate that keeps requests on the device. Kana, Vorlesen, Transkription
  * and Suche keep their own settings (they are read and written here); Chat, Dokumente, Diktat and Bilder verstehen are
  * stored in [AppSettings.places].
  */
@@ -140,7 +140,7 @@ object Places {
         return p
     }
 
-    /** Lora's mode for the router (AP-71), after [effective]. */
+    /** Kana's mode for the router (AP-71), after [effective]. */
     fun loraMode(c: AppContainer): io.github.thepytales.llmhub.agent.ModelRouter.Mode = when (effective(c, Area.LORA)) {
         Place.LOCAL -> io.github.thepytales.llmhub.agent.ModelRouter.Mode.LOCAL
         Place.API -> io.github.thepytales.llmhub.agent.ModelRouter.Mode.SERVER
@@ -274,12 +274,12 @@ object Places {
                 else tr("Nur über API – braucht einen API-Schlüssel. Alles andere geht ohne."),
             )
             Area.NAMES -> local(
-                c.piiModel.installed(), tr("Lora Namensschutz und die Regeln ersetzen Namen auf diesem Gerät."),
-                tr("Die Regeln laufen schon; Lora Namensschutz findet mehr Namen."), SetupStep.HELPERS,
+                c.piiModel.installed(), tr("Kana Namensschutz und die Regeln ersetzen Namen auf diesem Gerät."),
+                tr("Die Regeln laufen schon; Kana Namensschutz findet mehr Namen."), SetupStep.HELPERS,
             )
             Area.COMMANDS -> local(
-                c.commandModel.installed(), tr("Lora Befehle erkennt Befehle in Millisekunden."),
-                tr("Lora Befehle laden – bis dahin erkennt Lora Befehle an Wörtern."), SetupStep.HELPERS,
+                c.commandModel.installed(), tr("Kana Befehle erkennt Befehle in Millisekunden."),
+                tr("Kana Befehle laden – bis dahin erkennt Kana Befehle an Wörtern."), SetupStep.HELPERS,
             )
             Area.MAIL -> local(language, tr("{0} liest das Postfach.", modelName), tr("Braucht ein Sprachmodell auf diesem Gerät."), SetupStep.LANGUAGE, languageMissing(hw))
             Area.LORA, Area.CHAT, Area.DOCS -> when (place) {
@@ -350,7 +350,7 @@ object Places {
             Area.VISION -> tr("dafür fehlt noch ein Sprachmodell mit Bildteil")
             else -> tr("dafür fehlt noch ein Sprachmodell")
         }
-        return tr("{0} – {1}. Einstellungen › Wo Lora arbeitet › Einrichtung lädt es (oder dort einen API-Schlüssel eintragen).", why, what)
+        return tr("{0} – {1}. Einstellungen › Wo Kana arbeitet › Einrichtung lädt es (oder dort einen API-Schlüssel eintragen).", why, what)
     }
 
     /**
@@ -375,7 +375,7 @@ object Places {
     }
 
     /**
-     * Speech of a short recording as text (chat, Lora, Diktat): on this device first, the Uni-Server only where
+     * Speech of a short recording as text (chat, Kana, Diktat): on this device first, the Uni-Server only where
      * Spracheingabe may use it ([deviceOnly]: a project „Nur auf diesem Gerät“). Throws with a plain message otherwise.
      */
     suspend fun recognize(c: AppContainer, file: java.io.File, deviceOnly: Boolean = false): Pair<String, Boolean> {

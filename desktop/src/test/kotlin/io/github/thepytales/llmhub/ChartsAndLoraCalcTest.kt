@@ -19,7 +19,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** AP-49 Diagramme und Lora rechnet: chart types from ranges, linked charts in documents, distribution, groups, explanations. */
+/** AP-49 Diagramme und Kana rechnet: chart types from ranges, linked charts in documents, distribution, groups, explanations. */
 class ChartsAndLoraCalcTest {
     private val grades = listOf(
         listOf("Name", "Gruppe", "Punkte", "Note"),

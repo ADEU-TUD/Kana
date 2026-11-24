@@ -39,7 +39,7 @@ data class ExecResult(val exitCode: Int?, val output: String, val timedOut: Bool
 /**
  * One SSH connection of the Server-Terminal (AP-118) with Apache MINA SSHD: logs in with a key file (OpenSSH or PuTTY)
  * or a password, accepts the server only when [KnownHosts] knows its key, and offers commands with captured output for
- * Lora's steps ([exec]) and an interactive shell with PTY for the terminal ([shell]). Nothing from `~/.ssh` is used –
+ * Kana's steps ([exec]) and an interactive shell with PTY for the terminal ([shell]). Nothing from `~/.ssh` is used –
  * neither keys nor `config` nor `known_hosts` – so the app does exactly what the saved session says.
  */
 class SshConnection private constructor(val profile: SshProfile, private val client: SshClient, val session: ClientSession) : Closeable {

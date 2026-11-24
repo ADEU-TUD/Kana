@@ -1,18 +1,18 @@
 package io.github.thepytales.llmhub.ssh
 
 /**
- * Reads along what the server prints into the terminal (AP-131 d), so Lora can run a command **in the visible
- * terminal** and still know when it ended, with which exit code and what it printed. The command Lora types ends with
+ * Reads along what the server prints into the terminal (AP-131 d), so Kana can run a command **in the visible
+ * terminal** and still know when it ended, with which exit code and what it printed. The command Kana types ends with
  * [suffix]: `; printf '\033]133;D;%s;%s\007' "$?" "$PWD"` – the shell prints an OSC 133 sequence (the same marker
  * VS Code and other terminals use for „command finished“) that the terminal does not show. The echo of the typed line
  * contains the text `\033`, never the real escape character, so it cannot be mistaken for the end.
  *
- * Also notices full-screen programs (vim, top, less – alternate screen), in which Lora must not type, and keeps the last
- * lines of the screen as plain text (escape sequences removed) for Lora's context. Nothing typed by the user passes
+ * Also notices full-screen programs (vim, top, less – alternate screen), in which Kana must not type, and keeps the last
+ * lines of the screen as plain text (escape sequences removed) for Kana's context. Nothing typed by the user passes
  * here – a password typed at a `sudo` prompt is not echoed by the server and so never seen.
  */
 class TerminalTap(private val keep: Int = 64_000) {
-    /** A command Lora typed has ended. */
+    /** A command Kana typed has ended. */
     data class Finished(val exitCode: Int?, val cwd: String?, val output: String)
 
     private val raw = StringBuilder()
@@ -69,7 +69,7 @@ class TerminalTap(private val keep: Int = 64_000) {
         f?.invoke(Finished(code, dir, output))
     }
 
-    /** From now on, waits for the end of the command Lora is about to type. */
+    /** From now on, waits for the end of the command Kana is about to type. */
     @Synchronized
     fun watch(onEnd: (Finished) -> Unit) {
         watchFrom = seen
@@ -96,7 +96,7 @@ class TerminalTap(private val keep: Int = 64_000) {
         return plain(raw.substring(start)).takeLast(limit)
     }
 
-    /** The last [chars] characters of the terminal as plain text – what Lora gets as „Terminal zuletzt“. */
+    /** The last [chars] characters of the terminal as plain text – what Kana gets as „Terminal zuletzt“. */
     @Synchronized
     fun screen(chars: Int = 2000): String = plain(raw.takeLast(chars * 3).toString()).takeLast(chars)
 
@@ -106,7 +106,7 @@ class TerminalTap(private val keep: Int = 64_000) {
         ?.let { PROMPT.find(it.trimEnd())?.groupValues?.get(1) }
 
     companion object {
-        /** Appended to every command Lora types: prints the end marker with exit code and folder. */
+        /** Appended to every command Kana types: prints the end marker with exit code and folder. */
         const val SUFFIX = "; printf '\\033]133;D;%s;%s\\007' \"\$?\" \"\$PWD\""
 
         fun line(command: String): String = command.trim() + SUFFIX

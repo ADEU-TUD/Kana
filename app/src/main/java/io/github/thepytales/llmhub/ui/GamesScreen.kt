@@ -75,10 +75,10 @@ fun GamesScreen(c: AppContainer, onBack: () -> Unit) {
         Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.TopCenter) {
             if (games.isEmpty()) {
                 Column(Modifier.widthIn(max = 520.dp).padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    LoraFace(Modifier.size(72.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.PUZZLE, LoraAction.CARDS), LoraAction.PUZZLE))
+                    LoraFace(Modifier.size(72.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.PUZZLE, LoraAction.CARDS), LoraAction.PUZZLE))
                     Text(tr("Noch keine Lernspiele"), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        tr("Beschreibe im Chat ein Spiel – z. B. „Mach ein Zuordnungsspiel zu Kapitel 3 des angehängten Skripts“. Lora baut daraus ein Browserspiel, das du hier testest und als HTML oder ZIP in OPAL oder Moodle hochlädst. Die Spiele laufen abgeschottet, ohne Internet."),
+                        tr("Beschreibe im Chat ein Spiel – z. B. „Mach ein Zuordnungsspiel zu Kapitel 3 des angehängten Skripts“. Kana baut daraus ein Browserspiel, das du hier testest und als HTML oder ZIP in OPAL oder Moodle hochlädst. Die Spiele laufen abgeschottet, ohne Internet."),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center,
                     )
                     Button(onClick = { newGameChat() }) { Text(tr("Lernspiel bauen lassen")) }

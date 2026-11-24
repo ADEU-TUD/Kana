@@ -110,7 +110,7 @@ data class Funder(
 
 /**
  * Built-in funders. The outlines follow the usual templates of the funders (state of 2026) and are only a start: the call
- * read by Lora wins, and the checklist says to check the current template.
+ * read by Kana wins, and the checklist says to check the current template.
  */
 object Funders {
     private fun s(title: String, guidance: String = "", pages: Double? = null) = ProposalSection(title = title, guidance = guidance, limitPages = pages)

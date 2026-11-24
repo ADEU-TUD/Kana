@@ -12,7 +12,7 @@ import java.security.MessageDigest
 object FileDownload {
     /**
      * Loads [url] into [part] ([total] bytes expected); throws [InterruptedException] when [cancelled]. Models of the
-     * Lora Edition come from our mirror first and from the original if it fails ([ModelMirror]).
+     * Kana Edition come from our mirror first and from the original if it fails ([ModelMirror]).
      */
     fun fetch(url: String, part: File, total: Long, cancelled: () -> Boolean, progress: (Double) -> Unit) {
         var last: Exception? = null

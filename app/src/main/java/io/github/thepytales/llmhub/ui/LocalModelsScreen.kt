@@ -219,7 +219,7 @@ internal fun DeviceProfileCard(c: AppContainer, hw: Hardware, state: LocalState)
                 ).joinToString(" · ").ifBlank { tr("Speicherbandbreite und Befehlssätze sind hier nicht lesbar – die Kurzmessung misst sie.") },
             )
             HintText(
-                tr("Wie schnell ein Modell schreibt, hängt vor allem an der Speicherbandbreite und daran, wie viele Parameter es je Wort rechnet; das Einlesen langer Texte am Prozessor bzw. an der Grafik. Daraus sagt Lora das Tempo jedes Modells vorher. Die Kurzmessung (etwa 20 Sekunden, mit dem kleinsten installierten Modell) macht die Vorhersage genauer; „Messen“ unten misst danach die echten Werte und korrigiert weiter."),
+                tr("Wie schnell ein Modell schreibt, hängt vor allem an der Speicherbandbreite und daran, wie viele Parameter es je Wort rechnet; das Einlesen langer Texte am Prozessor bzw. an der Grafik. Daraus sagt Kana das Tempo jedes Modells vorher. Die Kurzmessung (etwa 20 Sekunden, mit dem kleinsten installierten Modell) macht die Vorhersage genauer; „Messen“ unten misst danach die echten Werte und korrigiert weiter."),
             )
             if (state.installed.isEmpty()) HintText(tr("Ohne installiertes Modell misst die Kurzmessung nur den Speicher – die Werte bleiben geschätzt."))
             if (checks.isNotEmpty()) {
@@ -400,7 +400,7 @@ internal fun LocalSpeedCard(c: AppContainer, installed: List<LocalModel>) {
     AppCard {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             HintText(
-                tr("Lora misst auf Wunsch, wie schnell die installierten Modelle auf diesem Gerät wirklich schreiben – etwa eine halbe Minute je Modell. Danach empfiehlt sie das passende Modell, und der Mischmodus nimmt für kurze Aufgaben nur Modelle, die schnell genug sind."),
+                tr("Kana misst auf Wunsch, wie schnell die installierten Modelle auf diesem Gerät wirklich schreiben – etwa eine halbe Minute je Modell. Danach empfiehlt sie das passende Modell, und der Mischmodus nimmt für kurze Aufgaben nur Modelle, die schnell genug sind."),
             )
             installed.forEach { m ->
                 val r = here[m.modelId]

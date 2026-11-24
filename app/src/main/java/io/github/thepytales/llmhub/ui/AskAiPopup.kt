@@ -110,7 +110,7 @@ fun AskAiPopup(target: IntRect, active: Boolean = false, onSend: (String) -> Uni
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     LoraFaceStill(Modifier.size(22.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(tr("Lora fragen"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+                    Text(tr("Kana fragen"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
                     IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) { Icon(Icons.Outlined.Close, contentDescription = tr("Schließen (Esc)"), modifier = Modifier.size(16.dp)) }
                 }
                 Row(Modifier.padding(end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -131,7 +131,7 @@ fun AskAiPopup(target: IntRect, active: Boolean = false, onSend: (String) -> Uni
                                     }
                                 },
                                 decorationBox = { inner ->
-                                    if (text.isEmpty()) Text(tr("Was soll Lora mit der Markierung machen?"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
+                                    if (text.isEmpty()) Text(tr("Was soll Kana mit der Markierung machen?"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.outline)
                                     inner()
                                 },
                             )

@@ -68,11 +68,11 @@ import kotlinx.serialization.json.put
 import java.io.File
 
 /**
- * Lora in the chat (AP-33, AP-35): the card above a question she handed over, next steps under the last answer, the
+ * Kana in the chat (AP-33, AP-35): the card above a question she handed over, next steps under the last answer, the
  * hint while typing, and her little signature that cheers when an answer is done.
  */
 
-/** Above a message Lora handed over: „Von Lora übergeben · Modell · Grund“, lands with a soft glow. */
+/** Above a message Kana handed over: „Von Kana übergeben · Modell · Grund“, lands with a soft glow. */
 @Composable
 fun LoraHandoffCard(m: ChatMessage) {
     val line = m.handoff ?: return
@@ -92,11 +92,11 @@ fun LoraHandoffCard(m: ChatMessage) {
                 LoraFaceStill(Modifier.size(24.dp), action = LoraAction.WAVE)
                 Spacer(Modifier.width(8.dp))
                 Column(Modifier.weight(1f, fill = false)) {
-                    Text(tr("Von Lora übergeben"), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                    Text(tr("Von Kana übergeben"), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
                     Text(line, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (!m.instructions.isNullOrBlank()) {
-                    Icon(if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore, contentDescription = tr(if (open) "Einklappen" else "Was Lora schon weiß"), modifier = Modifier.padding(start = 6.dp).size(16.dp))
+                    Icon(if (open) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore, contentDescription = tr(if (open) "Einklappen" else "Was Kana schon weiß"), modifier = Modifier.padding(start = 6.dp).size(16.dp))
                 }
             }
             if (open) {
@@ -111,7 +111,7 @@ fun LoraHandoffCard(m: ChatMessage) {
     }
 }
 
-/** Above the input while the user sends a question Lora prepared (Übergaben erst zeigen). */
+/** Above the input while the user sends a question Kana prepared (Übergaben erst zeigen). */
 @Composable
 fun LoraPreparedBanner(line: String, onRemove: () -> Unit) {
     val brand = LocalChatLook.current.brand
@@ -125,16 +125,16 @@ fun LoraPreparedBanner(line: String, onRemove: () -> Unit) {
             LoraFaceStill(Modifier.size(22.dp), action = LoraAction.WAVE)
             Spacer(Modifier.width(8.dp))
             Text(
-                tr("Von Lora vorbereitet – ihr Wissen geht mit") + if (line.isNotBlank()) " · $line" else "",
+                tr("Von Kana vorbereitet – ihr Wissen geht mit") + if (line.isNotBlank()) " · $line" else "",
                 style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f),
             )
-            IconButton(onClick = onRemove, modifier = Modifier.size(36.dp)) { Icon(Icons.Outlined.Close, contentDescription = tr("Ohne Loras Wissen senden"), modifier = Modifier.size(16.dp)) }
+            IconButton(onClick = onRemove, modifier = Modifier.size(36.dp)) { Icon(Icons.Outlined.Close, contentDescription = tr("Ohne Kanas Wissen senden"), modifier = Modifier.size(16.dp)) }
         }
     }
 }
 
 /**
- * While typing (AP-35): when the text clearly means a place of the app („dunkles Design“), Lora shows it above the
+ * While typing (AP-35): when the text clearly means a place of the app („dunkles Design“), Kana shows it above the
  * input – a tap opens it, ✕ hides the hint for this text. Never for real questions; found on the device.
  */
 @Composable
@@ -169,7 +169,7 @@ fun LoraTypingHint(c: AppContainer, input: String, onUsed: () -> Unit) {
                 LoraFaceStill(Modifier.size(22.dp), action = LoraAction.LOOK)
                 Spacer(Modifier.width(8.dp))
                 Column(Modifier.weight(1f).padding(vertical = 6.dp)) {
-                    Text(tr("Lora: Meinst du") + " „${t.title}“?", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(tr("Kana: Meinst du") + " „${t.title}“?", style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Text(t.path, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 IconButton(onClick = { dismissed = input; hint = null }, modifier = Modifier.size(36.dp)) {
@@ -181,7 +181,7 @@ fun LoraTypingHint(c: AppContainer, input: String, onUsed: () -> Unit) {
 }
 
 /**
- * Under the last answer (AP-35): at most three next steps Lora noticed on the device – deadlines for the calendar, a
+ * Under the last answer (AP-35): at most three next steps Kana noticed on the device – deadlines for the calendar, a
  * table as Excel, literature for the collection, a long text as Word document. Each runs on the device in one tap.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -220,7 +220,7 @@ fun LoraNextSteps(c: AppContainer, answer: String, chatId: String?) {
                     when (step) {
                         is LoraSense.NextStep.Calendar -> run(i) {
                             withContext(Dispatchers.IO) {
-                                c.loraCalendar(step.deadlines.map { it.title to it.date }, note = tr("Aus dem Chat") + " „${conv()?.title ?: "Lora"}“ – " + tr("von Lora eingetragen."))
+                                c.loraCalendar(step.deadlines.map { it.title to it.date }, note = tr("Aus dem Chat") + " „${conv()?.title ?: "Kana"}“ – " + tr("von Kana eingetragen."))
                             }
                         }
                         is LoraSense.NextStep.Excel -> run(i) {
@@ -275,14 +275,14 @@ private fun NextStepPill(icon: ImageVector, label: String, state: String?, onCli
 }
 
 /**
- * Lora's signature next to the model under an answer: still, but for a moment she cheers when the answer has just
+ * Kana's signature next to the model under an answer: still, but for a moment she cheers when the answer has just
  * been finished ([justDone]).
  */
 @Composable
 fun LoraSignature(justDone: Boolean) {
     if (justDone && !LoraMotion.calm) {
         val director = rememberLoraDirector(sequence = listOf(LoraAction.CHEER), start = LoraAction.CHEER)
-        LoraFigure(Modifier.padding(end = 4.dp).size(30.dp, 21.dp), label = tr("Lora freut sich"), director = director)
+        LoraFigure(Modifier.padding(end = 4.dp).size(30.dp, 21.dp), label = tr("Kana freut sich"), director = director)
     } else {
         LoraFaceStill(Modifier.padding(end = 4.dp).size(24.dp).alpha(0.95f))
     }

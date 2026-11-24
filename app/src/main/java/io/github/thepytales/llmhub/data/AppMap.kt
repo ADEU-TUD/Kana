@@ -11,7 +11,7 @@ enum class MapKind(val label: String) {
 }
 
 /**
- * A place in the app Lora can lead to (AP-07): an area, a settings page, a single option on it (with [spot], the id the
+ * A place in the app Kana can lead to (AP-07): an area, a settings page, a single option on it (with [spot], the id the
  * screen highlights), a mode, a TU Vorlage or a big tool. [path] is how a person finds it by hand.
  */
 data class AppTarget(
@@ -44,12 +44,12 @@ object AppMap {
         AppTarget("area.chat", MapKind.AREA, trLater("Neuer Chat"), trLater("Seitenleiste › Neuer Chat"), trLater("Ein neues Gespräch mit dem gewählten Modell."), "neu chat gespräch frage stellen", "chat"),
         AppTarget(
             "area.templates", MapKind.AREA, trLater("Erstellen"), trLater("Seitenleiste › Erstellen"),
-            trLater("Neues erstellen: TU Vorlagen für Briefe, Mails, Protokolle, Bescheinigungen, Lehre und Forschung; unter Windows außerdem Gestalten (Poster, Flyer, Aushänge, Social Media, Kursbanner, Titelbilder) und Meine Designs. Oder Lora sagen, was entstehen soll."),
+            trLater("Neues erstellen: TU Vorlagen für Briefe, Mails, Protokolle, Bescheinigungen, Lehre und Forschung; unter Windows außerdem Gestalten (Poster, Flyer, Aushänge, Social Media, Kursbanner, Titelbilder) und Meine Designs. Oder Kana sagen, was entstehen soll."),
             "erstellen tu vorlagen vorlagen vorlage prompt brief formular lehre forschung verwaltung gestalten design poster tagungsposter flyer aushang plakat einladungskarte social media instagram kursbanner titelbild kreativ kreativbereich canva meine designs", "templates",
         ),
         AppTarget("area.literature", MapKind.AREA, trLater("Literatur"), trLater("Seitenleiste › Literatur"), trLater("Literatursammlung: Einträge importieren, zitieren, Literaturverzeichnis, Zotero, Exzerpte."), "literatur quellen bibliografie literaturverzeichnis zitieren bibtex ris zotero exzerpt", "literature"),
         AppTarget("area.transcripts", MapKind.AREA, trLater("Transkription"), trLater("Seitenleiste › Transkription"), trLater("Audio und Interviews verschriften, Sprecher erkennen, codieren."), "transkription transkribieren audio interview aufnahme diktat verschriften", "transcripts"),
-        AppTarget("area.files", MapKind.AREA, trLater("Dateien"), trLater("Seitenleiste › Dateien"), trLater("Alle Dateien wie in Google Drive: Hochgeladen, Erstellt, eigene Ordner, Dokumente, Präsentationen und Tabellen als Word-, PowerPoint- und Excel-Dateien – Raster und Liste, neue Dokumente über das große Plus, verschieben, Papierkorb, Volltextsuche, Lora-Ordner."),
+        AppTarget("area.files", MapKind.AREA, trLater("Dateien"), trLater("Seitenleiste › Dateien"), trLater("Alle Dateien wie in Google Drive: Hochgeladen, Erstellt, eigene Ordner, Dokumente, Präsentationen und Tabellen als Word-, PowerPoint- und Excel-Dateien – Raster und Liste, neue Dokumente über das große Plus, verschieben, Papierkorb, Volltextsuche, Kana-Ordner."),
             "dateien dokumente dokument editor entwurf word tabelle excel präsentation folien powerpoint dateiverwaltung datei finden ordner hochgeladen erstellt papierkorb verschieben schlagwort schlagwörter tag tags volltextsuche suchen durchsuchen zuletzt bearbeitet versionen vergleichen wo ist lora-ordner speicherort", "files"),
         AppTarget(
             "area.scan", MapKind.AREA, trLater("Scannen"), trLater("Dateien › + › Scannen"),
@@ -61,9 +61,9 @@ object AppMap {
         AppTarget("area.models", MapKind.AREA, trLater("Modellübersicht"), trLater("Einstellungen › Modellübersicht"), trLater("Alle Modelle des Uni-Servers mit Stärken und Einsatzzweck."), "modelle modell liste welches modell", "models"),
         AppTarget("area.compare", MapKind.AREA, trLater("Modelle vergleichen"), trLater("Einstellungen › Modelle vergleichen"), trLater("Zwei Modelle beantworten dieselbe Frage nebeneinander."), "vergleichen vergleich nebeneinander zwei modelle", "compare"),
         // AP-120: die ganze Einrichtung Schritt für Schritt.
-        AppTarget("area.setup", MapKind.AREA, trLater("Lora einrichten"), trLater("Einstellungen › Lora › Lora Schritt für Schritt einrichten"), trLater("Rolle, Uni-Server oder alles lokal, Schlüssel, Datenschutz, Werkzeuge und Aussehen – Schritt für Schritt."), "lora einrichten einrichtung assistent erster start ersteinrichtung schritt für schritt neu einrichten api schlüssel eintragen", "setup"),
-        // AP-112: „Alles lokal“ Schritt für Schritt (Einstellungen › Wo Lora arbeitet › Einrichtung).
-        AppTarget("area.local-setup", MapKind.AREA, trLater("Alles lokal einrichten"), trLater("Einstellungen › Wo Lora arbeitet › Einrichtung"), trLater("Schritt für Schritt alle Modelle für dieses Gerät laden – ohne API-Schlüssel."), "einrichtung assistent offline ohne schlüssel ohne api alles lokal modelle laden schritt für schritt", "local-setup"),
+        AppTarget("area.setup", MapKind.AREA, trLater("Kana einrichten"), trLater("Einstellungen › Kana › Kana Schritt für Schritt einrichten"), trLater("Rolle, Uni-Server oder alles lokal, Schlüssel, Datenschutz, Werkzeuge und Aussehen – Schritt für Schritt."), "lora einrichten einrichtung assistent erster start ersteinrichtung schritt für schritt neu einrichten api schlüssel eintragen kana", "setup"),
+        // AP-112: „Alles lokal“ Schritt für Schritt (Einstellungen › Wo Kana arbeitet › Einrichtung).
+        AppTarget("area.local-setup", MapKind.AREA, trLater("Alles lokal einrichten"), trLater("Einstellungen › Wo Kana arbeitet › Einrichtung"), trLater("Schritt für Schritt alle Modelle für dieses Gerät laden – ohne API-Schlüssel."), "einrichtung assistent offline ohne schlüssel ohne api alles lokal modelle laden schritt für schritt", "local-setup"),
         AppTarget("area.local", MapKind.AREA, trLater("Modelle auf diesem Gerät"), trLater("Einstellungen › Modelle auf diesem Gerät"), trLater("Sprachmodelle offline auf dem Gerät – für vertrauliche Daten."), "lokal offline gerät herunterladen lokales modell", "local-models"),
         AppTarget("area.usage", MapKind.AREA, trLater("Verbrauch"), trLater("Einstellungen › Verbrauch"), trLater("Anfragen und Tokens pro Tag, Bewertungen."), "verbrauch kosten token statistik anfragen", "usage"),
         AppTarget("area.environments", MapKind.AREA, trLater("Umgebungen"), trLater("Einstellungen › Umgebungen"), trLater("Variablen und Netzwerkzugriff für Agenten."), "umgebung variablen netzwerk agent", "environments"),
@@ -76,7 +76,7 @@ object AppMap {
             "verbindungen verbindung nextcloud cloudstore cloud webdav mcp model context protocol server werkzeuge anbinden integration schnittstelle connector"),
         settings("chat", trLater("Chat & Werkzeuge"), trLater("Standardmodell, Denkstufe, Werkzeuge, Freigaben und Agent."), "chat werkzeuge standardmodell freigaben agent websuche"),
         settings("tools", trLater("Werkzeuge"), trLater("Große Werkzeuge ein- und ausschalten, Seitenleiste ordnen."), "werkzeuge einschalten ausschalten seitenleiste mehr reihenfolge"),
-        settings("lora", trLater("Lora"), trLater("Wo Lora erscheint, Modell, ruhigere Bewegungen, Hinweise."), "lora maskottchen helfer navigator assistentin"),
+        settings("lora", trLater("Kana"), trLater("Wo Kana erscheint, Modell, ruhigere Bewegungen, Hinweise."), "lora maskottchen helfer navigator assistentin kana"),
         settings("privacy", trLater("Datenschutz"), trLater("Pseudonymisierung, Nie-ersetzen-Liste, gründliche Erkennung."), "datenschutz pseudonymisierung anonym namen ersetzen dsgvo"),
         settings("memory", trLater("Gedächtnis"), trLater("Was sich die App über dich merkt."), "gedächtnis erinnerung merken memory"),
         settings("knowledge", trLater("Wissenssammlung"), trLater("Eigene Dokumente durchsuchbar machen."), "wissen wissenssammlung dokumente durchsuchen rag"),
@@ -92,7 +92,7 @@ object AppMap {
         settings("sync", trLater("Synchronisation"), trLater("Datenordner in OneDrive, Google Drive oder Nextcloud – am Büro-PC beginnen, am Laptop weiterarbeiten."), "sync synchronisieren synchronisation cloud onedrive google drive nextcloud zweiter pc laptop büro mehrere rechner", android = false),
         settings("storage", trLater("Speicherorte"), trLater("Eigene Ordner für Dokumente, z. B. in Google Drive."), "speicherort ablage ordner google drive onedrive", android = false),
         settings("updates", trLater("Updates"), trLater("Version, nach Updates suchen, automatische Suche."), "update aktualisieren neue version installieren"),
-        settings("downloads", trLater("Inhalte zum Nachladen"), trLater("Modelle, Spracherkennung, Videoeditor und Wissenspakete laden oder löschen."), "nachladen herunterladen download modelle wissenspaket lehramt paket befehlsmodell erkennungsmodell lora befehle namensschutz"),
+        settings("downloads", trLater("Inhalte zum Nachladen"), trLater("Modelle, Spracherkennung, Videoeditor und Wissenspakete laden oder löschen."), "nachladen herunterladen download modelle wissenspaket lehramt paket befehlsmodell erkennungsmodell lora befehle namensschutz kana"),
         settings("checks", trLater("Prüfungen am Gerät"), trLater("Neue Funktionen Schritt für Schritt am Gerät prüfen: Passt / Passt nicht, Notiz, Bildschirmfoto, Bericht."), "prüfen prüfung prüfliste testen am gerät passt nicht bericht abnahme"),
         settings("help", trLater("Problem melden"), trLater("Fehler beschreiben und anonymes Protokoll senden."), "problem fehler melden bug feedback absturz"),
     )
@@ -117,14 +117,14 @@ object AppMap {
         option("chat.web", "chat", trLater("Websuche"), trLater("Chat & Werkzeuge › Websuche, Webseiten & Quellen-Check"), trLater("Im Web suchen und Links lesen."), "websuche internet suchen web"),
         option("chat.collapse", "chat", trLater("Arbeitsschritte einklappen"), trLater("Chat & Werkzeuge › Arbeitsschritte einklappen"), trLater("Werkzeugschritte eingeklappt lassen."), "arbeitsschritte einklappen schritte werkzeugschritte"),
         option("chat.approvals", "chat", trLater("Freigaben"), trLater("Chat & Werkzeuge › Freigaben"), trLater("Wann der Agent vor Änderungen fragt."), "freigabe fragen bestätigen genehmigen"),
-        option("lora.mode", "lora", trLater("Lora ein- oder ausblenden"), trLater("Lora › Wo Lora erscheint"), trLater("Überall, nur im Chat oder aus."),
-            "lora ausblenden ausschalten verstecken weg maskottchen figur einblenden"),
-        option("lora.place", "lora", trLater("Wo Lora arbeitet"), trLater("Lora › Wo Lora arbeitet"), trLater("Gemischt, nur lokal oder nur über den Server; Lora Befehle."),
-            "gemischt mischmodus lokal server offline gerät befehlsmodell befehle wo arbeitet lora"),
+        option("lora.mode", "lora", trLater("Kana ein- oder ausblenden"), trLater("Kana › Wo Kana erscheint"), trLater("Überall, nur im Chat oder aus."),
+            "lora ausblenden ausschalten verstecken weg maskottchen figur einblenden kana"),
+        option("lora.place", "lora", trLater("Wo Kana arbeitet"), trLater("Kana › Wo Kana arbeitet"), trLater("Gemischt, nur lokal oder nur über den Server; Kana Befehle."),
+            "gemischt mischmodus lokal server offline gerät befehlsmodell befehle wo arbeitet lora kana"),
         // AP-112: per area on this device, mixed or over an API; the quick choice „Alles lokal“.
-        option("places.profile", "places", trLater("Alles lokal, Gemischt oder alles über API"), trLater("Wo Lora arbeitet"), trLater("Je Bereich Lokal, Gemischt oder API, mit Einrichtung Schritt für Schritt."),
+        option("places.profile", "places", trLater("Alles lokal, Gemischt oder alles über API"), trLater("Wo Kana arbeitet"), trLater("Je Bereich Lokal, Gemischt oder API, mit Einrichtung Schritt für Schritt."),
             "alles lokal offline ohne internet ohne server ohne schlüssel ohne api profil alles auf diesem gerät uni-server weg"),
-        option("lora.calm", "lora", trLater("Ruhigere Bewegungen"), trLater("Lora › Ruhigere Bewegungen"), trLater("Lora bewegt sich weniger."), "animation ruhig weniger bewegung reduziert"),
+        option("lora.calm", "lora", trLater("Ruhigere Bewegungen"), trLater("Kana › Ruhigere Bewegungen"), trLater("Kana bewegt sich weniger."), "animation ruhig weniger bewegung reduziert"),
         option("privacy.pseudonymize", "privacy", trLater("Pseudonymisierung"), trLater("Datenschutz › Pseudonymisierung"), trLater("Namen und persönliche Angaben vor dem Senden ersetzen."),
             "pseudonymisierung pseudonym anonym anonymisieren namen ersetzen platzhalter"),
         option("privacy.never", "privacy", trLater("Nie ersetzen"), trLater("Datenschutz › Nie ersetzen"), trLater("Namen, die nie ersetzt werden."), "nie ersetzen ausnahme erlaubt liste"),
@@ -140,19 +140,19 @@ object AppMap {
         option("memory.learn", "memory", trLater("Nach dem Chat dazulernen"), trLater("Gedächtnis › Nach dem Chat dazulernen"), trLater("Dauerhafte Angaben aus Chats vorschlagen oder merken."), "dazulernen lernen gedächtnis automatisch merken"),
         option("memory.chats", "memory", trLater("Frühere Chats einbeziehen"), trLater("Gedächtnis › Frühere Chats einbeziehen"), trLater("Das Modell durchsucht frühere Chats, wenn du dich darauf beziehst."), "frühere chats einbeziehen letztes mal verlauf"),
         option("memory.suggestions", "memory", trLater("Vorschläge aus meinem Wissen"), trLater("Gedächtnis › Vorschläge aus meinem Wissen"), trLater("Vorlagen schlagen unter jedem Feld passende Angaben vor."), "vorschläge felder ausfüllen vorlagen wissen"),
-        option("lora.handoffReview", "lora", trLater("Übergaben erst zeigen"), trLater("Lora › Übergaben erst zeigen"), trLater("Übergebene Fragen landen zuerst im Eingabefeld."), "übergabe zeigen selbst senden"),
-        option("lora.nextSteps", "lora", trLater("Nächste Schritte unter Antworten"), trLater("Lora › Nächste Schritte unter Antworten"), trLater("Fristen, Excel, Literatur unter der letzten Antwort anbieten."), "nächste schritte vorschläge antwort"),
-        option("lora.aiUse", "lora", trLater("KI-Nutzungsnachweis vorschlagen"), trLater("Lora › KI-Nutzungsnachweis vorschlagen"), trLater("Bei Arbeiten einen KI-Nutzungsnachweis anbieten."), "ki nutzungsnachweis erklärung hausarbeit"),
-        option("lora.typing", "lora", trLater("Hinweise beim Tippen"), trLater("Lora › Hinweise beim Tippen"), trLater("Beim Tippen im Chat den passenden Ort zeigen."), "hinweise tippen eingabe"),
-        option("lora.hints", "lora", trLater("Hinweise erlaubt"), trLater("Lora › Hinweise erlaubt"), trLater("Lora darf einmal je Bereich auf etwas hinweisen."), "hinweise tipps lora"),
-        option("lora.tours", "lora", trLater("Touren anbieten"), trLater("Lora › Touren anbieten"), trLater("Beim ersten Öffnen eines Werkzeugs eine kurze Tour anbieten."), "tour touren rundgang einführung zeig mir wie das geht erklärung"),
-        option("lora.memory", "lora", trLater("Was Lora über dich weiß"), trLater("Lora › Gedächtnis"), trLater("Vorlieben je Werkzeug ansehen, ändern, löschen."), "vorlieben gedächtnis lora merken vergessen was weißt du"),
-        option("lora.log", "lora", trLater("Protokoll der Lora-Aktionen"), trLater("Lora › Protokoll"), trLater("Was Lora in den Werkzeugen getan hat."), "protokoll aktionen verlauf was hat lora gemacht"),
+        option("lora.handoffReview", "lora", trLater("Übergaben erst zeigen"), trLater("Kana › Übergaben erst zeigen"), trLater("Übergebene Fragen landen zuerst im Eingabefeld."), "übergabe zeigen selbst senden"),
+        option("lora.nextSteps", "lora", trLater("Nächste Schritte unter Antworten"), trLater("Kana › Nächste Schritte unter Antworten"), trLater("Fristen, Excel, Literatur unter der letzten Antwort anbieten."), "nächste schritte vorschläge antwort"),
+        option("lora.aiUse", "lora", trLater("KI-Nutzungsnachweis vorschlagen"), trLater("Kana › KI-Nutzungsnachweis vorschlagen"), trLater("Bei Arbeiten einen KI-Nutzungsnachweis anbieten."), "ki nutzungsnachweis erklärung hausarbeit"),
+        option("lora.typing", "lora", trLater("Hinweise beim Tippen"), trLater("Kana › Hinweise beim Tippen"), trLater("Beim Tippen im Chat den passenden Ort zeigen."), "hinweise tippen eingabe"),
+        option("lora.hints", "lora", trLater("Hinweise erlaubt"), trLater("Kana › Hinweise erlaubt"), trLater("Kana darf einmal je Bereich auf etwas hinweisen."), "hinweise tipps lora kana"),
+        option("lora.tours", "lora", trLater("Touren anbieten"), trLater("Kana › Touren anbieten"), trLater("Beim ersten Öffnen eines Werkzeugs eine kurze Tour anbieten."), "tour touren rundgang einführung zeig mir wie das geht erklärung"),
+        option("lora.memory", "lora", trLater("Was Kana über dich weiß"), trLater("Kana › Gedächtnis"), trLater("Vorlieben je Werkzeug ansehen, ändern, löschen."), "vorlieben gedächtnis lora merken vergessen was weißt du kana"),
+        option("lora.log", "lora", trLater("Protokoll der Kana-Aktionen"), trLater("Kana › Protokoll"), trLater("Was Kana in den Werkzeugen getan hat."), "protokoll aktionen verlauf was hat lora gemacht kana"),
         option("connections.mailServer", "connections", trLater("Mailserver statt Outlook"), trLater("Verbindungen › Statt des klassischen Outlook verwenden"), trLater("Mit dem Mailserver statt mit Outlook arbeiten."), "mailserver imap outlook mail", android = false),
         option("desktop.tray", "windows", trLater("Im Infobereich weiterlaufen"), trLater("Windows › Beim Schließen im Infobereich weiterlaufen"), trLater("Antworten und Aufgaben laufen weiter, wenn das Fenster zu ist."), "infobereich tray hintergrund schließen weiterlaufen", android = false),
-        option("desktop.autostart", "windows", trLater("Mit Windows starten"), trLater("Windows › Mit Windows starten"), trLater("Lora startet nach der Anmeldung im Infobereich."), "autostart windows starten anmeldung", android = false),
-        option("desktop.contextmenu", "windows", trLater("Lora im Explorer-Kontextmenü"), trLater("Windows › „Mit Lora öffnen“ und „Lora fragen“ im Explorer"), trLater("Rechtsklick auf eine Datei im Explorer öffnet sie in Lora oder fragt Lora."), "kontextmenü explorer rechtsklick mit lora öffnen lora fragen", android = false),
-        option("desktop.trash", "windows", trLater("Windows-Papierkorb"), trLater("Windows › Gelöschte Dateien in den Windows-Papierkorb"), trLater("Gelöschte Dateien landen im Papierkorb von Windows statt im Lora-Papierkorb."), "papierkorb windows löschen", android = false),
+        option("desktop.autostart", "windows", trLater("Mit Windows starten"), trLater("Windows › Mit Windows starten"), trLater("Kana startet nach der Anmeldung im Infobereich."), "autostart windows starten anmeldung", android = false),
+        option("desktop.contextmenu", "windows", trLater("Kana im Explorer-Kontextmenü"), trLater("Windows › „Mit Kana öffnen“ und „Kana fragen“ im Explorer"), trLater("Rechtsklick auf eine Datei im Explorer öffnet sie in Kana oder fragt Kana."), "kontextmenü explorer rechtsklick mit lora öffnen lora fragen kana", android = false),
+        option("desktop.trash", "windows", trLater("Windows-Papierkorb"), trLater("Windows › Gelöschte Dateien in den Windows-Papierkorb"), trLater("Gelöschte Dateien landen im Papierkorb von Windows statt im Kana-Papierkorb."), "papierkorb windows löschen", android = false),
         option("desktop.browser", "windows", trLater("Links neben dem Chat öffnen"), trLater("Windows › Links neben dem Chat öffnen"), trLater("Links öffnen als Tabs rechts neben der App."), "browser links tabs neben chat", android = false),
     )
 
@@ -160,7 +160,7 @@ object AppMap {
     private val PLACES = listOf(
         place("files.search", "files", trLater("Dateien durchsuchen"), trLater("Dateien › Suchfeld"), trLater("Namen, Schlagwörter und Inhalt durchsuchen."), "suchen durchsuchen volltext datei finden"),
         place("files.new", "files", trLater("Neu in Dateien"), trLater("Dateien › +"), trLater("Ordner, Dokument, Tabelle, Präsentation, aus Vorlage oder hochladen."), "neu neuer ordner neues dokument hochladen upload plus"),
-        place("files.places", "files", trLater("Orte in Dateien"), trLater("Dateien › Seitenspalte"), trLater("Lora-Ordner, Hochgeladen, Erstellt, Markiert, Papierkorb."), "orte hochgeladen erstellt papierkorb markiert"),
+        place("files.places", "files", trLater("Orte in Dateien"), trLater("Dateien › Seitenspalte"), trLater("Kana-Ordner, Hochgeladen, Erstellt, Markiert, Papierkorb."), "orte hochgeladen erstellt papierkorb markiert"),
         place("files.sort", "files", trLater("Dateien sortieren"), trLater("Dateien › Sortieren"), trLater("Nach Name, Datum oder Größe sortieren."), "sortieren reihenfolge name datum größe"),
         place("scan.capture", "scan", trLater("Seite fotografieren oder einscannen"), trLater("Scannen › Foto aufnehmen / Vom Scanner"), trLater("Eine Seite fotografieren (Handy) oder mit dem Scanner einlesen (Windows)."), "foto aufnehmen kamera scanner einscannen seite hinzufügen"),
         place("scan.save", "scan", trLater("Scan als PDF speichern"), trLater("Scannen › Als PDF speichern"), trLater("Alle Seiten als durchsuchbares PDF in Dateien › Scans."), "als pdf speichern scan fertig texterkennung ocr"),
@@ -168,22 +168,22 @@ object AppMap {
         place("pdf.modes", "pdf", trLater("Modi des PDF-Werkzeugkastens"), trLater("PDF-Werkzeugkasten › Ansehen, Seiten, Markieren …"), trLater("Ansehen, Seiten, Markieren, Formular, Unterschreiben, Umwandeln, KI, Bearbeiten."), "seiten markieren unterschreiben umwandeln formular modus", tool = "pdf"),
         place("pdf.merge", "pdf", trLater("PDFs zusammenfügen"), trLater("PDF-Werkzeugkasten › Seiten › Zusammenfügen"), trLater("Mehrere PDFs zu einem zusammenfügen."), "zusammenfügen zusammenführen merge pdfs verbinden", tool = "pdf"),
         place("pdf.save", "pdf", trLater("PDF speichern unter"), trLater("PDF-Werkzeugkasten › Speichern unter / Teilen"), trLater("Das bearbeitete PDF speichern oder teilen."), "speichern unter teilen exportieren", tool = "pdf"),
-        place("create.lora", "templates", trLater("Mit Lora erstellen"), trLater("Erstellen › Feld oben"), trLater("Lora sagen, was entstehen soll."), "erstellen lora wunsch neu entstehen"),
+        place("create.lora", "templates", trLater("Mit Kana erstellen"), trLater("Erstellen › Feld oben"), trLater("Kana sagen, was entstehen soll."), "erstellen lora wunsch neu entstehen kana"),
         place("create.templates", "templates", trLater("TU Vorlagen"), trLater("Erstellen › TU Vorlagen"), trLater("Briefe, Protokolle, Bescheinigungen im Corporate Design."), "vorlagen tu vorlagen brief protokoll"),
-        place("create.diagrams", "templates", trLater("Diagramme & Whiteboard"), trLater("Erstellen › Diagramme & Whiteboard"), trLater("Flussdiagramm, Mindmap, Organigramm, Zeitstrahl oder eine freie Tafel – Lora zeichnet aus einer Beschreibung, Mermaid geht hin und zurück."), "diagramm flussdiagramm mindmap organigramm zeitstrahl whiteboard tafel mermaid ablauf", android = false),
+        place("create.diagrams", "templates", trLater("Diagramme & Whiteboard"), trLater("Erstellen › Diagramme & Whiteboard"), trLater("Flussdiagramm, Mindmap, Organigramm, Zeitstrahl oder eine freie Tafel – Kana zeichnet aus einer Beschreibung, Mermaid geht hin und zurück."), "diagramm flussdiagramm mindmap organigramm zeitstrahl whiteboard tafel mermaid ablauf", android = false),
         place("create.new", "templates", trLater("Neue Vorlage"), trLater("Erstellen › Neue Vorlage"), trLater("Eine eigene Vorlage anlegen."), "neue vorlage eigene vorlage anlegen"),
         place("video.new", "video", trLater("Neues Videoprojekt"), trLater("Video › Neues Projekt"), trLater("Ein neues Videoprojekt anlegen."), "neues projekt video anlegen", android = false, tool = "video"),
         place("video.titles", "video", trLater("Titel und Bauchbinde"), trLater("Video › Titel & Bauchbinde"), trLater("Titel, Bauchbinde, Einblendung, Abspann im TUD-Design."), "titel bauchbinde einblendung abspann", android = false, tool = "video"),
         place("video.subtitles", "video", trLater("Untertitel"), trLater("Video › Untertitel"), trLater("Untertitel aus der Transkription oder SRT."), "untertitel srt vtt", android = false, tool = "video"),
-        place("video.roughcut", "video", trLater("Rohschnitt"), trLater("Video › Rohschnitt"), trLater("Pausen und Füllwörter herausschneiden, mit Lora kürzen."), "rohschnitt kürzen pausen füllwörter", android = false, tool = "video"),
+        place("video.roughcut", "video", trLater("Rohschnitt"), trLater("Video › Rohschnitt"), trLater("Pausen und Füllwörter herausschneiden, mit Kana kürzen."), "rohschnitt kürzen pausen füllwörter", android = false, tool = "video"),
         place("video.record", "video", trLater("Bildschirm aufnehmen"), trLater("Video › Bildschirm aufnehmen"), trLater("Screencast mit Webcam, Mikrofon und Systemton aufnehmen – danach als Projekt mit getrennten Spuren im Videoeditor."), "bildschirmaufnahme screencast aufnehmen webcam mikrofon systemton bildschirm aufzeichnen", android = false, tool = "video"),
-        place("video.transcript", "video", trLater("Im Transkript schneiden"), trLater("Video › Transkript"), trLater("Das Video über den Text schneiden: Wörter löschen schneidet, Absätze verschieben verschiebt Clips, Lora schlägt Schnitte vor."), "transkript text schneiden descript füllwörter pausen absatz", android = false, tool = "video"),
+        place("video.transcript", "video", trLater("Im Transkript schneiden"), trLater("Video › Transkript"), trLater("Das Video über den Text schneiden: Wörter löschen schneidet, Absätze verschieben verschiebt Clips, Kana schlägt Schnitte vor."), "transkript text schneiden descript füllwörter pausen absatz", android = false, tool = "video"),
         place("video.pip", "video", trLater("Bild-in-Bild"), trLater("Video › Bild-in-Bild"), trLater("Webcam oder zweites Video als Ecke über das Bild legen, auf eigenen Videospuren."), "bild in bild webcam ecke overlay spur ebene", android = false, tool = "video"),
         place("video.tools", "video", trLater("Schnittwerkzeuge"), trLater("Video › Werkzeuge"), trLater("Auswahl (A), Klinge (B), Trimmen (T) und Magnet über der Zeitleiste."), "werkzeug auswahl klinge trimmen magnet schneiden roll slip", android = false, tool = "video"),
         place("video.layout", "video", trLater("Anordnung des Videoeditors"), trLater("Video › Anordnung"), trLater("Bereiche ziehen, Medienpool und Eigenschaften einklappen, Vorschau groß oder im Vollbild, Spurhöhe – und die Anordnung zurücksetzen."), "anordnung zurücksetzen layout medienpool eigenschaften einklappen vorschau groß vollbild spurhöhe spuren einklappen seitenleiste", android = false, tool = "video"),
         place("video.guide", "video", trLater("So entsteht dein Video"), trLater("Video › Erste Schritte"), trLater("Die Schritte zum fertigen Video – Schneiden, Titel und Untertitel, Musik, Exportieren – mit Knöpfen, die sie ausführen."), "erste schritte anleitung hilfe wie geht schritt für schritt anfänger einsteiger so entsteht", android = false, tool = "video"),
         place("video.cut", "video", trLater("Stück herausschneiden"), trLater("Video › Schneiden"), trLater("Am Abspielkopf teilen, Anfang und Ende eines Stücks markieren und herausschneiden, Anfang oder Ende eines Clips kürzen."), "teilen herausschneiden stück entfernen anfang ende kürzen markieren in out bereich löschen", android = false, tool = "video"),
-        place("video.help", "video", trLater("Hilfe im Videoeditor"), trLater("Video › Hilfe"), trLater("Erste Schritte, Tour, Tastenkürzel und Lora fragen."), "hilfe tastenkürzel tour fragen tasten", android = false, tool = "video"),
+        place("video.help", "video", trLater("Hilfe im Videoeditor"), trLater("Video › Hilfe"), trLater("Erste Schritte, Tour, Tastenkürzel und Kana fragen."), "hilfe tastenkürzel tour fragen tasten", android = false, tool = "video"),
         place("video.export", "video", trLater("Video exportieren"), trLater("Video › Exportieren"), trLater("MP4 für OPAL oder YouTube."), "exportieren mp4 opal youtube rendern", android = false, tool = "video"),
     )
 
@@ -287,7 +287,7 @@ object AppMap {
         return best.target.takeIf { best.score >= 8 && best.score >= second + 4 }
     }
 
-    /** Short list for the model: the places that may fit [query] (keeps Lora's prompt small). */
+    /** Short list for the model: the places that may fit [query] (keeps Kana's prompt small). */
     fun candidatesText(query: String, targets: List<AppTarget>, limit: Int = 14): String {
         val hits = search(query, targets, limit).map { it.target }
         val base = targets.filter { it.kind == MapKind.SETTINGS || it.kind == MapKind.AREA || it.kind == MapKind.TOOL }

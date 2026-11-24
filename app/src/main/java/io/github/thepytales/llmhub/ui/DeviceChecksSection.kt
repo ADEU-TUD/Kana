@@ -192,7 +192,7 @@ private fun StepCard(
         Labeled(tr("So geht's"), step.todo)
         Labeled(tr("Das soll passieren"), step.expected)
         if (old != null) Hint(
-            if (old.ok) tr("Zuletzt: passt (Lora {0})", old.version) else tr("Zuletzt: passt nicht (Lora {0})", old.version)
+            if (old.ok) tr("Zuletzt: passt (Kana {0})", old.version) else tr("Zuletzt: passt nicht (Kana {0})", old.version)
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (place != null && device == here) OutlinedButton(onClick = { openTarget(place, onNavigate) }) { Text(tr("Hingehen")) }

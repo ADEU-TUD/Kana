@@ -40,7 +40,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Wo Lora arbeitet (AP-112) as pictures (build/orte-*.png): the page at the width of a Windows window and of an Android
+ * Wo Kana arbeitet (AP-112) as pictures (build/orte-*.png): the page at the width of a Windows window and of an Android
  * phone, the setup step by step, the first start without a key. Rendered with the Compose interface of the desktop
  * version – the Android app uses the same screens.
  */

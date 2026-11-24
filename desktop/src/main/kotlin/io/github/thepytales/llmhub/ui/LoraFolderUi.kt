@@ -27,18 +27,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Where the Lora-Ordner is, in one line (Dateien tab, settings). */
+/** Where the Kana-Ordner is, in one line (Dateien tab, settings). */
 fun loraFolderLabel(): String = Paths.root.absolutePath + (CloudFolders.serviceOf(Paths.root)?.let { " ($it)" } ?: "")
 
-/** The Lora-Ordner can be shown in the Explorer (Windows). */
+/** The Kana-Ordner can be shown in the Explorer (Windows). */
 const val LORA_FOLDER_OPENS = true
 
 fun openLoraFolder(dir: File? = null) = DesktopActions.open(dir ?: Paths.root)
 
 /**
- * Lora-Ordner (AP-16), Windows: one folder for everything like an Obsidian vault – the user's files, and hidden in it
- * the app's data (chats, settings). Put it where it is needed: move it here (copied, Lora restarts there), or move it in
- * the Explorer and then show Lora the new place.
+ * Kana-Ordner (AP-16), Windows: one folder for everything like an Obsidian vault – the user's files, and hidden in it
+ * the app's data (chats, settings). Put it where it is needed: move it here (copied, Kana restarts there), or move it in
+ * the Explorer and then show Kana the new place.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -60,9 +60,9 @@ fun LoraFolderSettings() {
             }
             OutlinedButton(onClick = {
                 scope.launch {
-                    val picked = FolderAccess.pick(tr("Wohin soll der Lora-Ordner?"))?.let(::File) ?: return@launch
-                    // An empty folder or one named „Lora“ is used as it is; otherwise „Lora“ inside it.
-                    val dir = if (picked.name.equals("Lora", true) || picked.listFiles().isNullOrEmpty()) picked else File(picked, "Lora")
+                    val picked = FolderAccess.pick(tr("Wohin soll der Kana-Ordner?"))?.let(::File) ?: return@launch
+                    // An empty folder or one named „Kana“ (or „Lora“, the old name) is used as it is; otherwise „Kana“ inside it.
+                    val dir = if (io.github.thepytales.llmhub.Brand.NAMES.any { picked.name.equals(it, true) } || picked.listFiles().isNullOrEmpty()) picked else File(picked, io.github.thepytales.llmhub.Brand.NAME)
                     target = dir to false
                 }
             }) {
@@ -71,25 +71,25 @@ fun LoraFolderSettings() {
                 Text(tr("Verschieben …"))
             }
             OutlinedButton(onClick = {
-                scope.launch { FolderAccess.pick(tr("Vorhandenen Lora-Ordner wählen"))?.let { target = File(it) to true } }
-            }) { Text(tr("Anderen Lora-Ordner wählen …")) }
+                scope.launch { FolderAccess.pick(tr("Vorhandenen Kana-Ordner wählen"))?.let { target = File(it) to true } }
+            }) { Text(tr("Anderen Kana-Ordner wählen …")) }
             TextButton(onClick = { Navigation.openRoute.value = "settings/sync" }) { Text(tr("Synchronisation …")) }
         }
         HintText(
-            tr("Selbst verschieben geht auch: Lora beenden, den Ordner im Explorer verschieben, Lora starten – sie fragt dann, wo er jetzt liegt."),
+            tr("Selbst verschieben geht auch: Kana beenden, den Ordner im Explorer verschieben, Kana starten – sie fragt dann, wo er jetzt liegt."),
         )
     }
     target?.let { (dir, existing) ->
         val hasData = existing && Paths.hasData(dir)
         AlertDialog(
             onDismissRequest = { target = null },
-            title = { Text(if (existing) tr("Lora-Ordner wechseln") else tr("Lora-Ordner verschieben")) },
+            title = { Text(if (existing) tr("Kana-Ordner wechseln") else tr("Kana-Ordner verschieben")) },
             text = {
                 Text(
                     when {
-                        existing && hasData -> tr("In „{0}“ liegt schon ein Lora-Ordner. Lora startet neu und arbeitet dort weiter.", dir.absolutePath)
-                        existing -> tr("„{0}“ enthält noch keinen Lora-Ordner. Lora startet dort neu und leer – zum Mitnehmen deiner Daten „Verschieben …“ nehmen.", dir.absolutePath)
-                        else -> tr("Alles wird nach „{0}“ kopiert, dann startet Lora neu und arbeitet dort. Der bisherige Ordner bleibt als Sicherung – ", dir.absolutePath) +
+                        existing && hasData -> tr("In „{0}“ liegt schon ein Kana-Ordner. Kana startet neu und arbeitet dort weiter.", dir.absolutePath)
+                        existing -> tr("„{0}“ enthält noch keinen Kana-Ordner. Kana startet dort neu und leer – zum Mitnehmen deiner Daten „Verschieben …“ nehmen.", dir.absolutePath)
+                        else -> tr("Alles wird nach „{0}“ kopiert, dann startet Kana neu und arbeitet dort. Der bisherige Ordner bleibt als Sicherung – ", dir.absolutePath) +
                             tr("löschen, sobald alles da ist.")
                     },
                 )

@@ -68,7 +68,7 @@ fun NextcloudSection(c: AppContainer) {
 
     Section(tr("Nextcloud")) {
         SettingsHint(
-            tr("Dateien aus der Nextcloud (z. B. dem Cloudstore der TU Dresden) direkt öffnen, an Chats anhängen und Ergebnisse dort speichern – auf dem PC und dem Handy. Lora kann dort auch selbst nachsehen, wenn du sie bittest.")
+            tr("Dateien aus der Nextcloud (z. B. dem Cloudstore der TU Dresden) direkt öffnen, an Chats anhängen und Ergebnisse dort speichern – auf dem PC und dem Handy. Kana kann dort auch selbst nachsehen, wenn du sie bittest.")
         )
         if (s.hasNextcloud) {
             StatusLine(true, tr("Verbunden als") + " ${s.nextcloudUser} · ${WebDavClient.serverBase(s.nextcloudServer)}")
@@ -156,7 +156,7 @@ fun NextcloudSection(c: AppContainer) {
 }
 
 /**
- * Sync für Android (AP-28): the phone mirrors the PC's Lora-Ordner in the Nextcloud – chats, projects, memory, Kurztexte,
+ * Sync für Android (AP-28): the phone mirrors the PC's Kana-Ordner in the Nextcloud – chats, projects, memory, Kurztexte,
  * own TU Vorlagen and the visible files. Shown on Android once Nextcloud is connected.
  */
 @Composable
@@ -170,11 +170,11 @@ fun PhoneSyncSection(c: AppContainer) {
     var hint by remember { mutableStateOf<String?>(null) }
     Section(tr("Mit dem PC synchronisieren")) {
         SettingsHint(
-            tr("Am PC liegt der Lora-Ordner in der Nextcloud (Einstellungen › Synchronisation am PC). Das Handy holt sich darüber Chats, Projekte, Gedächtnis, Kurztexte, eigene TU Vorlagen, Literatur mit Exzerpten, die Wissenssammlung, den Tresor (verschlüsselt) und die Dateien des Lora-Ordners und lädt eigene Änderungen hoch – beim Öffnen der App, alle fünf Minuten, beim Wechsel in den Hintergrund und auf Wunsch auch bei geschlossener App.") +
+            tr("Am PC liegt der Kana-Ordner in der Nextcloud (Einstellungen › Synchronisation am PC). Das Handy holt sich darüber Chats, Projekte, Gedächtnis, Kurztexte, eigene TU Vorlagen, Literatur mit Exzerpten, die Wissenssammlung, den Tresor (verschlüsselt) und die Dateien des Kana-Ordners und lädt eigene Änderungen hoch – beim Öffnen der App, alle fünf Minuten, beim Wechsel in den Hintergrund und auf Wunsch auch bei geschlossener App.") +
                 " " + tr("Wie zwischen zwei PCs gilt: immer nur ein Gerät zur Zeit. Ist der Ordner am PC geöffnet, wartet das Handy; Änderungen auf beiden Seiten bleiben beide erhalten.")
         )
         if (s.phoneSyncRoot.isBlank()) {
-            Button(onClick = { picking = true }) { Text(tr("Lora-Ordner in der Nextcloud wählen")) }
+            Button(onClick = { picking = true }) { Text(tr("Kana-Ordner in der Nextcloud wählen")) }
         } else {
             StatusLine(true, tr("Synchronisiert mit") + " ${s.phoneSyncRoot}")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -184,7 +184,7 @@ fun PhoneSyncSection(c: AppContainer) {
             }
             SwitchRow(
                 tr("Auch im Hintergrund synchronisieren"),
-                tr("Etwa alle {0} Minuten, auch wenn Lora geschlossen ist – ein am PC angelegter Literatureintrag ist dann schon da, wenn du die App öffnest.", io.github.thepytales.llmhub.tasks.BackgroundSync.MINUTES),
+                tr("Etwa alle {0} Minuten, auch wenn Kana geschlossen ist – ein am PC angelegter Literatureintrag ist dann schon da, wenn du die App öffnest.", io.github.thepytales.llmhub.tasks.BackgroundSync.MINUTES),
                 s.phoneSyncBackground, spot = "sync.background",
             ) { on -> c.settings.update { it.copy(phoneSyncBackground = on) } }
             if (s.phoneSyncBackground) SwitchRow(tr("Im Hintergrund nur im WLAN"), tr("Keine mobilen Daten für den Sync bei geschlossener App."), s.phoneSyncWifiOnly) { on ->
@@ -195,13 +195,13 @@ fun PhoneSyncSection(c: AppContainer) {
         HintText(tr("Transkripte und Einstellungen bleiben auf dem jeweiligen Gerät; API-Schlüssel gehen nie in den Ordner. Den Tresor öffnet jedes Gerät mit eigener PIN – auf einem neuen Gerät einmal mit dem Wiederherstellungsschlüssel."))
     }
     if (picking) NextcloudBrowser(
-        c, tr("Lora-Ordner des PCs wählen"), start = "/", pickFolder = true, confirm = tr("Diesen Ordner nehmen"),
+        c, tr("Kana-Ordner des PCs wählen"), start = "/", pickFolder = true, confirm = tr("Diesen Ordner nehmen"),
         onDismiss = { picking = false },
         onFolder = { folder ->
             picking = false
             scope.launch {
                 if (!c.phoneSync.looksLikeLoraFolder(folder)) {
-                    hint = tr("In {0} liegt kein Lora-Ordner (es fehlt „.lora“).", folder) + " " + tr("Am PC unter Einstellungen › Synchronisation den Ordner in die Nextcloud legen und warten, bis er hochgeladen ist.")
+                    hint = tr("In {0} liegt kein Kana-Ordner (es fehlt „.lora“).", folder) + " " + tr("Am PC unter Einstellungen › Synchronisation den Ordner in die Nextcloud legen und warten, bis er hochgeladen ist.")
                 } else {
                     c.settings.update { it.copy(phoneSyncRoot = folder) }
                     hint = c.phoneSync.syncNow()

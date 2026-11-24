@@ -16,8 +16,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Android zieht nach (AP-64): what the phone gets of the new tools – saving into the Lora-Ordner where the Android dialog
- * does not reach, „Verkleinern“ as Lora action, the scanner's tour, presenting on a second screen – and what stays
+ * Android zieht nach (AP-64): what the phone gets of the new tools – saving into the Kana-Ordner where the Android dialog
+ * does not reach, „Verkleinern“ as Kana action, the scanner's tour, presenting on a second screen – and what stays
  * Windows only (video, Gestalten, the rest of PDF Stufe 3).
  */
 class AndroidCatchUpTest {

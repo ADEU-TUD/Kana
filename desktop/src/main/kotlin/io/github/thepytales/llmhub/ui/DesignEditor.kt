@@ -241,7 +241,7 @@ private fun EditorTopBar(c: AppContainer, state: DesignEditorState, onClose: () 
                 chatId = d.chatId?.takeIf { cid -> c.chats.conversations.value.any { it.id == cid } },
             )
             ChatHandoff.open.value = d.chatId?.takeIf { cid -> c.chats.conversations.value.any { it.id == cid } }.orEmpty()
-        }) { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Mit Lora ändern")) }
+        }) { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Mit Kana ändern")) }
         Spacer(Modifier.size(8.dp))
         Box {
             Button(onClick = { exportMenu = true }, enabled = busy == null) {

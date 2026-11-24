@@ -19,8 +19,8 @@ object PdfAccessibility {
             catalog.language = "de-DE"
             doc.documentInformation.apply {
                 if (title.isNotBlank()) this.title = title
-                creator = "Lora"
-                producer = "Lora"
+                creator = "Kana"
+                producer = "Kana"
             }
             val prefs = catalog.viewerPreferences ?: PDViewerPreferences(COSDictionary())
             prefs.setDisplayDocTitle(true)

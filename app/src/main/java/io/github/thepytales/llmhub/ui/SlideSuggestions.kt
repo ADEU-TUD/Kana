@@ -32,7 +32,7 @@ import io.github.thepytales.llmhub.agent.ToolActions
 import io.github.thepytales.llmhub.docs.SlideDeck
 import io.github.thepytales.llmhub.docs.SlideLook
 
-/** The open slide editor's „Folie schöner machen“, for Lora's action slides.beautify (null when no deck is open). */
+/** The open slide editor's „Folie schöner machen“, for Kana's action slides.beautify (null when no deck is open). */
 object SlideSuggestionsHost {
     @Volatile
     var open: ((Int) -> Unit)? = null
@@ -69,7 +69,7 @@ fun SlideSuggestionsDialog(c: AppContainer, slides: List<SlideDeck.Slide>, index
                 )
                 if (thinking) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                    Text(tr("Lora entwirft eigene Varianten …"), style = MaterialTheme.typography.bodySmall)
+                    Text(tr("Kana entwirft eigene Varianten …"), style = MaterialTheme.typography.bodySmall)
                 }
                 if (all.isEmpty() && !thinking) Text(tr("Für diese Folie habe ich keinen Vorschlag – sie sieht schon gut aus."))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {

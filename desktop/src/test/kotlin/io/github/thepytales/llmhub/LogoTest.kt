@@ -25,7 +25,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * The logo (Lora reading on a light tile): renders every stage of the start animation (build/logo-frames, for
+ * The logo (Kana reading on a light tile): renders every stage of the start animation (build/logo-frames, for
  * checking by eye) and exports the app icons to build/icons – Windows .ico, the PNGs of the window and the tray, and
  * the Android launcher and notification icons. After a change of the logo, copy them over (see README › Logo).
  */
@@ -42,11 +42,11 @@ class LogoTest {
                 File(dir, "frame%02d.png".format(i)).writeBytes(png)
                 if (i == frames) {
                     val bmp = org.jetbrains.skia.Bitmap.makeFromImage(img)
-                    // Lora's bright face shows on the tile (white glass with a faint tint towards its lower edge), the
+                    // Kana's bright face shows on the tile (white glass with a faint tint towards its lower edge), the
                     // corners stay transparent (rounded tile).
                     val face = (0 until 240).flatMap { x -> (0 until 240).map { y -> bmp.getColor(x, y) } }
                         .count { (it ushr 24) == 0xFF && (it shr 16 and 0xFF) >= 0xF0 && (it shr 8 and 0xFF) >= 0xF0 && (it and 0xFF) >= 0xF0 }
-                    assertTrue(face > 1500, "Loras helles Gesicht: $face Pixel")
+                    assertTrue(face > 1500, "Kanas helles Gesicht: $face Pixel")
                     assertTrue((bmp.getColor(1, 1) ushr 24) == 0, "Ecke transparent")
                 }
             }
@@ -61,7 +61,7 @@ class LogoTest {
         File(out, "app.ico").writeBytes(ico(icoSizes.map { it to png(render(it)) }))
         ImageIO.write(render(512), "png", File(out, "app.png"))
         ImageIO.write(render(64), "png", File(out, "tray.png"))
-        // Android: adaptive icon foreground (Lora in the safe zone, no tile), monochrome layer and notification icon.
+        // Android: adaptive icon foreground (Kana in the safe zone, no tile), monochrome layer and notification icon.
         val densities = listOf("mdpi" to 1f, "hdpi" to 1.5f, "xhdpi" to 2f, "xxhdpi" to 3f, "xxxhdpi" to 4f)
         for ((name, f) in densities) {
             val fg = (108 * f).toInt()

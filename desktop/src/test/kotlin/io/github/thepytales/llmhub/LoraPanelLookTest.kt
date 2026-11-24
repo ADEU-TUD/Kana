@@ -48,7 +48,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Pictures of Lora's panel and her parts in the chat (AP-33–AP-35), for the pull request and by eye:
+ * Pictures of Kana's panel and her parts in the chat (AP-33–AP-35), for the pull request and by eye:
  * build/lora-panel-*.png, build/lora-chat-parts.png.
  */
 @OptIn(ExperimentalTestApi::class)
@@ -63,7 +63,7 @@ class LoraPanelLookTest {
         override val lifecycle: androidx.lifecycle.Lifecycle get() = registry
     }
 
-    /** The app's theme with a lifecycle (Lora's parts collect the settings with it). */
+    /** The app's theme with a lifecycle (Kana's parts collect the settings with it). */
     @androidx.compose.runtime.Composable
     private fun Themed(settings: AppSettings = AppSettings(), content: @androidx.compose.runtime.Composable () -> Unit) {
         androidx.compose.runtime.CompositionLocalProvider(androidx.lifecycle.compose.LocalLifecycleOwner provides owner) {
@@ -147,7 +147,7 @@ class LoraPanelLookTest {
     fun partsInTheChat() = ui(520, 520) {
         val handed = ChatMessage(
             role = "user", content = "Suche im Web nach Ausschreibungen für Forschung und Lehre in den Geistes- und Sozialwissenschaften mit Frist in den nächsten 4 Wochen.",
-            instructions = "Kontext aus dem Gespräch mit Lora, der Helferin der App (nicht vom Nutzer getippt, nicht wörtlich wiederholen): Fachrichtung Geistes-/Sozialwissenschaften.",
+            instructions = "Kontext aus dem Gespräch mit Kana, der Helferin der App (nicht vom Nutzer getippt, nicht wörtlich wiederholen): Fachrichtung Geistes-/Sozialwissenschaften.",
             handoff = "Qwen3.8 27B · kann im Web suchen",
         )
         val answer = "| Fördergeber | Programm | Frist |\n|---|---|---|\n| BMFTR | Generative KI | 30.11.2026 |\n| Wübben Stiftung | Sandpit | 15.12.2026 |\n\nMehr unter doi:10.1007/s11618-023-01170-3."
@@ -167,8 +167,8 @@ class LoraPanelLookTest {
     }
 
     /**
-     * Lora's entries as close-ups (the whole figure would be tiny there): „Frag Lora“ in the top bar (wide and compact),
-     * the sleeping Lora in the corner and the face in a few moods – build/lora-entries.png.
+     * Kana's entries as close-ups (the whole figure would be tiny there): „Frag Kana“ in the top bar (wide and compact),
+     * the sleeping Kana in the corner and the face in a few moods – build/lora-entries.png.
      */
     @Test
     fun entriesShowHerFace() = ui(520, 260) {
@@ -190,7 +190,7 @@ class LoraPanelLookTest {
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        listOf(24, 32, 40).forEach { d -> LoraFace(Modifier.size(d.dp), label = "Lora") }
+                        listOf(24, 32, 40).forEach { d -> LoraFace(Modifier.size(d.dp), label = "Kana") }
                     }
                 }
             }

@@ -66,7 +66,7 @@ internal fun wireExportQueue(c: AppContainer) {
 
 /**
  * Exportieren (AP-25, AP-57): one or more targets at once (OPAL, YouTube, as the project, only the sound, subtitle files,
- * chapters for YouTube), into the Lora-Ordner („Erstellt“), a folder of one's own or also to Nextcloud; the graphics
+ * chapters for YouTube), into the Kana-Ordner („Erstellt“), a folder of one's own or also to Nextcloud; the graphics
  * card encodes where there is one. The exports go into the queue and run in the background.
  */
 @Composable
@@ -119,14 +119,14 @@ internal fun ExportDialog(
                 else HintText(tr("Marker mit Häkchen „Kapitel“ werden zu Kapiteln im MP4 und für YouTube."))
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
                 Text(tr("Wohin?"), style = MaterialTheme.typography.labelLarge)
-                RadioRow(tr("Lora-Ordner › Erstellt"), target == "lora") { target = "lora" }
+                RadioRow(tr("Kana-Ordner › Erstellt"), target == "lora") { target = "lora" }
                 RadioRow(tr("Eigener Ordner") + (folder?.let { ": " + it.absolutePath } ?: " …"), target == "folder") {
                     scope.launch {
                         val f = withContext(Dispatchers.IO) { DesktopActions.pickFolder(tr("Ordner für die Exporte")) }
                         if (f != null) { folder = f; target = "folder" }
                     }
                 }
-                if (nextcloud) RadioRow(tr("Lora-Ordner und Nextcloud ({0})", WebDavClient.join(c.nextcloud.resultFolder, "Videos")), target == "nextcloud") { target = "nextcloud" }
+                if (nextcloud) RadioRow(tr("Kana-Ordner und Nextcloud ({0})", WebDavClient.join(c.nextcloud.resultFolder, "Videos")), target == "nextcloud") { target = "nextcloud" }
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.Memory, null, Modifier.size(18.dp))

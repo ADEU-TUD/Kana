@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * Lora in mehreren Fenstern (AP-84): chats, documents and Lora's panel in windows of their own beside the main window –
+ * Kana in mehreren Fenstern (AP-84): chats, documents and Kana's panel in windows of their own beside the main window –
  * one process, the same data. Each window has its own view model, so two chats answer at the same time; a chat is only
  * ever open in one window (the main window shows a note for it instead of a second input); closing a window ends
  * nothing else. Size and place are remembered per kind of window.
@@ -57,7 +57,7 @@ object ExtraWindows {
 
     fun chatOpen(id: String): Boolean = _open.value.any { it.kind == Kind.CHAT && it.target == id }
 
-    /** Connects the menus of the shared screens (drawer, files, Lora) with the windows. */
+    /** Connects the menus of the shared screens (drawer, files, Kana) with the windows. */
     fun wire() {
         WindowHooks.openChat = { id, title ->
             show(Spec(Kind.CHAT, id, title))
@@ -67,7 +67,7 @@ object ExtraWindows {
         WindowHooks.openDoc = { id, title -> show(Spec(Kind.DOC, id, title)) }
         WindowHooks.openLora = {
             LoraHelper.close()
-            show(Spec(Kind.LORA, "lora", "Lora"))
+            show(Spec(Kind.LORA, "lora", "Kana"))
         }
         WindowHooks.chatInWindow = ::chatOpen
         WindowHooks.focusChat = { id -> focus.tryEmit(Spec(Kind.CHAT, id, "").key) }
@@ -102,7 +102,7 @@ fun ApplicationScope.ExtraWindowsHost(c: AppContainer) {
             ExtraWindows.Memory.save(spec.kind, state.size, state.position)
             ExtraWindows.close(spec.key)
         }
-        Window(onCloseRequest = ::close, state = state, title = spec.title.ifBlank { "Lora" } + " – Lora", icon = painterResource("icon.png")) {
+        Window(onCloseRequest = ::close, state = state, title = spec.title.ifBlank { "Kana" } + " – Kana", icon = painterResource("icon.png")) {
             LaunchedEffect(spec.key) { ExtraWindows.focus.collect { k -> if (k == spec.key) { window.toFront(); window.requestFocus() } } }
             // Own view models per window: two chats answer at the same time, closing clears only this window's.
             val owner = remember { object : ViewModelStoreOwner { override val viewModelStore = ViewModelStore() } }

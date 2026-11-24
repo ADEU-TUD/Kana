@@ -82,7 +82,7 @@ private val TASK_PRESETS = listOf(
 )
 
 /**
- * Stapel & Massenkontrolle (AP-20): the jobs with Lora's progress card („23 von 80“), a new job from files, a folder, a
+ * Stapel & Massenkontrolle (AP-20): the jobs with Kana's progress card („23 von 80“), a new job from files, a folder, a
  * ZIP or the Nextcloud, the results and – for the Massenkontrolle – calibration, decisions with protocol, outliers,
  * result table and feedback per person.
  */
@@ -108,7 +108,7 @@ fun BatchScreen(c: AppContainer, onBack: () -> Unit) {
             when {
                 open != null -> BatchDetail(c, open)
                 jobs.isEmpty() -> Column(Modifier.widthIn(max = 560.dp).padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    LoraFace(Modifier.size(72.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.FOLDER, LoraAction.STAMP, LoraAction.STAPLER), LoraAction.FOLDER))
+                    LoraFace(Modifier.size(72.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.FOLDER, LoraAction.STAMP, LoraAction.STAPLER), LoraAction.FOLDER))
                     Text(tr("Noch keine Stapel"), style = MaterialTheme.typography.titleMedium)
                     Text(
                         tr("Ein Stapel bearbeitet viele Dateien mit demselben Auftrag – nacheinander im Hintergrund, mit Pause und Fortsetzen, auch nach einem Neustart. Die Massenkontrolle bewertet Abgaben nach deinem Raster vor: Die KI schlägt vor, du entscheidest."),
@@ -174,7 +174,7 @@ private fun RunButton(c: AppContainer, j: BatchJob) {
     }
 }
 
-/** Lora's card while a batch works: she files folders and stamps, with „23 von 80“. */
+/** Kana's card while a batch works: she files folders and stamps, with „23 von 80“. */
 @Composable
 private fun BatchProgressCard(c: AppContainer, j: BatchJob) {
     val current by c.batchRunner.current.collectAsStateWithLifecycle()
@@ -182,8 +182,8 @@ private fun BatchProgressCard(c: AppContainer, j: BatchJob) {
     val working = j.state == BatchJob.RUNNING && current?.jobId == j.id
     Surface(shape = MaterialTheme.shapes.medium, color = LocalChatLook.current.card, border = boxBorder(), modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (working) LoraFace(Modifier.size(64.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.FOLDER, LoraAction.STAMP, LoraAction.STAPLER, LoraAction.READ), LoraAction.FOLDER))
-            else LoraFace(Modifier.size(64.dp), label = "Lora", director = rememberLoraDirector(listOf(if (j.state == BatchJob.DONE) LoraAction.CHEER else LoraAction.IDLE, LoraAction.LOOK), if (j.state == BatchJob.DONE) LoraAction.CHEER else LoraAction.IDLE))
+            if (working) LoraFace(Modifier.size(64.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.FOLDER, LoraAction.STAMP, LoraAction.STAPLER, LoraAction.READ), LoraAction.FOLDER))
+            else LoraFace(Modifier.size(64.dp), label = "Kana", director = rememberLoraDirector(listOf(if (j.state == BatchJob.DONE) LoraAction.CHEER else LoraAction.IDLE, LoraAction.LOOK), if (j.state == BatchJob.DONE) LoraAction.CHEER else LoraAction.IDLE))
             Spacer(Modifier.size(14.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text("${j.done} " + tr("von") + " ${j.items.size}" + " · " + tr(stateLabel(j)), style = MaterialTheme.typography.titleMedium)

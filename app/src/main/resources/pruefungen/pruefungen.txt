@@ -15,16 +15,16 @@
 # hier heraus. Der Titel eines Schritts ist sein Schlüssel: wer ihn ändert, lässt den Schritt neu prüfen.
 # PruefungenTest prüft, dass die Datei fehlerfrei ist und jeder Ort existiert.
 
-== AP-120 Lora einrichten Schritt für Schritt
+== AP-120 Kana einrichten Schritt für Schritt
 geräte: alle
 vorher: Jemand ohne Vorwissen, dem du zuschaust (z. B. eine neue Kollegin).
 - Einrichtung ohne Vorwissen
-  tun: Die Person öffnet *Lora einrichten* (Strg+K › „Lora einrichten“) und geht alle Schritte allein durch. Du schaust
+  tun: Die Person öffnet *Kana einrichten* (Strg+K › „Kana einrichten“) und geht alle Schritte allein durch. Du schaust
     nur zu und hilfst nicht.
   erwartet: Sie kommt ohne Nachfrage bis zum Ende. Stellen, an denen sie gestockt hat, kommen in die Notiz.
   ort: area.setup
 - Schmales Fenster und große Schrift
-  tun: *Lora einrichten* in einem schmalen Fenster (PC) bzw. mit großer Schrift (Android) öffnen und jeden Schritt ansehen.
+  tun: *Kana einrichten* in einem schmalen Fenster (PC) bzw. mit großer Schrift (Android) öffnen und jeden Schritt ansehen.
   erwartet: Nichts ist abgeschnitten oder überlappt; alle Knöpfe sind erreichbar.
   ort: area.setup
 
@@ -53,22 +53,22 @@ vorher: Windows-Anzeige auf 150 % (Einstellungen › System › Anzeige › Skal
   erwartet: Das klappt ohne Nachfrage. Unklare Texte der Schrittkarte kommen in die Notiz.
   ort: video.guide
 
-== AP-122 Lora: neues Aussehen und Animationen
+== AP-122 Kana: neues Aussehen und Animationen
 geräte: windows, android
 - Arbeitskarte im Chat
-  tun: Lora im Chat etwas Längeres geben (z. B. „Fasse diese PDF zusammen“ mit einer langen PDF) und zusehen.
-  erwartet: Die Arbeitskarte mit Lora ist gut zu erkennen, bewegt sich ruhig und flackert nicht.
+  tun: Kana im Chat etwas Längeres geben (z. B. „Fasse diese PDF zusammen“ mit einer langen PDF) und zusehen.
+  erwartet: Die Arbeitskarte mit Kana ist gut zu erkennen, bewegt sich ruhig und flackert nicht.
   ort: area.chat
 - Startseite im dunklen Design
   tun: *Darstellung* auf Dunkel stellen und zur Startseite gehen.
-  erwartet: Lora und alle Texte sind gut zu sehen, kein heller Rand um Lora.
+  erwartet: Kana und alle Texte sind gut zu sehen, kein heller Rand um Kana.
   ort: settings.appearance
 - App-Symbole
   tun: Symbol ansehen – Windows: Taskleiste, Startmenü, Infobereich; Android: Startbildschirm und Benachrichtigung.
   erwartet: Überall das neue Symbol, scharf und nicht abgeschnitten.
 - Ruhigere Bewegungen
-  tun: *Ruhigere Bewegungen* einschalten und Lora wecken.
-  erwartet: Lora bewegt sich deutlich ruhiger, nichts springt oder blinkt.
+  tun: *Ruhigere Bewegungen* einschalten und Kana wecken.
+  erwartet: Kana bewegt sich deutlich ruhiger, nichts springt oder blinkt.
   ort: settings.lora
 
 == AP-123 Bedienelemente aus einem Guss
@@ -100,7 +100,7 @@ geräte: windows
 vorher: Ein neues Dokument in *Dateien* (+ › Dokument).
 - Rechtsklick-Menü im Text
   tun: Ein Wort markieren und rechts klicken; dann ein falsch geschriebenes Wort („Haus aufgabe“) rechts anklicken.
-  erwartet: Ausschneiden, Kopieren, Einfügen, *Nur Text einfügen*, Link, Kommentar, Lora fragen; beim falschen Wort
+  erwartet: Ausschneiden, Kopieren, Einfügen, *Nur Text einfügen*, Link, Kommentar, Kana fragen; beim falschen Wort
     stehen Vorschläge oben, dazu *Zum Wörterbuch hinzufügen* und *Ignorieren*.
   ort: area.files
 - Autokorrektur beim Tippen
@@ -127,7 +127,7 @@ vorher: Ein neues Dokument in *Dateien* (+ › Dokument).
   ort: area.files
 - Austausch mit Word
   tun: Das Dokument mit Überschrift, Liste, Tabelle und umflossenem Bild als .docx speichern und in Word öffnen.
-  erwartet: Überschriften, Liste, Tabelle und Bild mit Umfluss stehen in Word wie in Lora.
+  erwartet: Überschriften, Liste, Tabelle und Bild mit Umfluss stehen in Word wie in Kana.
   ort: area.files
 
 == AP-126 Dokumente: Funktionsumfang wie Word und Google Docs
@@ -143,7 +143,7 @@ geräte: windows
 - Beschriftungen und Verzeichnisse
   tun: Zwei Bilder mit Beschriftung einfügen, einen Querverweis setzen und ein Abbildungsverzeichnis einfügen; als .docx
     speichern und in Word mit F9 aktualisieren.
-  erwartet: Nummern, Querverweis und Verzeichnis stimmen in Lora und bleiben in Word richtig.
+  erwartet: Nummern, Querverweis und Verzeichnis stimmen in Kana und bleiben in Word richtig.
   ort: area.files
 
 == AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva
@@ -206,26 +206,26 @@ vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten 
   erwartet: Bild und Ton laufen gleichmäßig, ohne Hänger.
   ort: tool.video
 
-== AP-131 Server-Terminal: Lora im Terminal, Dateien, Tabs
+== AP-131 Server-Terminal: Kana im Terminal, Dateien, Tabs
 geräte: windows, macos, linux
 vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.
-- Lora fragt den Speicher ab
-  tun: Mit dem Server verbinden und in Loras Spalte „Wie viel Speicher ist frei?“ schreiben; den Befehl mit *Ausführen*
+- Kana fragt den Speicher ab
+  tun: Mit dem Server verbinden und in Kanas Spalte „Wie viel Speicher ist frei?“ schreiben; den Befehl mit *Ausführen*
     bestätigen.
-  erwartet: Der Befehl erscheint im Terminal und läuft; Lora sagt danach in einem Satz, wie viel frei ist – passend zur
+  erwartet: Der Befehl erscheint im Terminal und läuft; Kana sagt danach in einem Satz, wie viel frei ist – passend zur
     Ausgabe.
   ort: tool.server
 - Deploy wie immer
-  tun: In Loras Spalte „Deploy wie immer“ schreiben und Schritt für Schritt bestätigen.
-  erwartet: Jeder Schritt wartet auf einen Klick; nach dem letzten sagt Lora, was herauskam.
+  tun: In Kanas Spalte „Deploy wie immer“ schreiben und Schritt für Schritt bestätigen.
+  erwartet: Jeder Schritt wartet auf einen Klick; nach dem letzten sagt Kana, was herauskam.
   ort: tool.server
 - sudo mit Passwort
-  tun: Lora einen Befehl mit `sudo` vorschlagen lassen und ausführen.
+  tun: Kana einen Befehl mit `sudo` vorschlagen lassen und ausführen.
   erwartet: Die Karte sagt „wartet auf deine Eingabe“, der Fokus springt ins Terminal; das Passwort tippst du dort, es
     ist nirgends zu sehen.
   ort: tool.server
 - Eigene Eingabeaufforderung
-  tun: Auf einem Server mit eigener Eingabeaufforderung (nicht `user@host:/pfad$`) einen Schritt von Lora ausführen.
+  tun: Auf einem Server mit eigener Eingabeaufforderung (nicht `user@host:/pfad$`) einen Schritt von Kana ausführen.
   erwartet: Der Schritt endet trotzdem von allein (bei fish/csh: über *Ist fertig*).
   ort: tool.server
 - Schlüssel einrichten

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 /**
- * „Alles rückgängig seit heute Morgen“ (AP-77): Lora's actions of the day, newest first – one by one or all at once
+ * „Alles rückgängig seit heute Morgen“ (AP-77): Kana's actions of the day, newest first – one by one or all at once
  * zurücknehmen. Lines from before a restart of the app say that they can no longer be taken back.
  */
 @Composable
@@ -38,7 +38,7 @@ internal fun DayUndoCard() {
     val time = remember { DateTimeFormatter.ofPattern("HH:mm") }
     ResultCard(icon = Icons.Outlined.History, title = tr("Heute erledigt"), subtitle = tr("{0} Aktion(en) seit heute Morgen", entries.size)) {
         Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)) {
-            if (entries.isEmpty()) HintText(tr("Heute hat Lora noch nichts in den Werkzeugen erledigt."))
+            if (entries.isEmpty()) HintText(tr("Heute hat Kana noch nichts in den Werkzeugen erledigt."))
             entries.take(30).forEach { e ->
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {

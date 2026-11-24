@@ -99,7 +99,7 @@ data class AppSettings(
     val pseudonymOff: String = "",
     /** Windows: closing the window keeps the app running in the notification area (for answers and tasks). */
     val closeToTray: Boolean = true,
-    /** Windows (AP-59): files deleted in Dateien go into the Windows Papierkorb instead of the Lora-Papierkorb. */
+    /** Windows (AP-59): files deleted in Dateien go into the Windows Papierkorb instead of the Kana-Papierkorb. */
     val systemTrash: Boolean = false,
     /** Short animation of the logo when the app starts. */
     val startAnimation: Boolean = true,
@@ -116,9 +116,9 @@ data class AppSettings(
     val uiLanguage: String = "de",
     /** Name or initials of the person coding transcripts (intercoder agreement). */
     val coderName: String = "",
-    /** While the agent works, thinking and tool steps are folded away behind Lora, the animated mascot (see ui/LoraFigure). */
+    /** While the agent works, thinking and tool steps are folded away behind Kana, the animated mascot (see ui/LoraFigure). */
     val collapseSteps: Boolean = true,
-    /** Lora, the mascot, nowhere (start page, working card, voice mode): a calm symbol of the style instead. */
+    /** Kana, the mascot, nowhere (start page, working card, voice mode): a calm symbol of the style instead. */
     val hideLora: Boolean = false,
     /** After a chat, a small model looks for lasting details about the user and suggests them (see agent/MemoryLearner). */
     val memoryLearn: Boolean = true,
@@ -136,38 +136,38 @@ data class AppSettings(
     val drawerTop: String = DEFAULT_DRAWER_TOP,
     /** „Mehr“ in the side menu is unfolded. */
     val drawerMoreOpen: Boolean = false,
-    /** Areas hidden from the side menu (ids of ui/DrawerArea, one per line); still reachable with Strg+K and Lora. */
+    /** Areas hidden from the side menu (ids of ui/DrawerArea, one per line); still reachable with Strg+K and Kana. */
     val drawerHidden: String = "",
-    /** Where Lora appears: EVERYWHERE (start page, chat, settings …), CHAT (only in the chat) or OFF. */
+    /** Where Kana appears: EVERYWHERE (start page, chat, settings …), CHAT (only in the chat) or OFF. */
     val loraMode: String = "EVERYWHERE",
-    /** Model of Lora, the navigator (short answers, thinking off). */
+    /** Model of Kana, the navigator (short answers, thinking off). */
     val loraModel: String = ModelCatalog.FAST_CHAT,
-    /** Lora moves less (no hopping, no walking across the card). */
+    /** Kana moves less (no hopping, no walking across the card). */
     val loraCalm: Boolean = false,
-    /** Lora may give a one-time hint per area (e.g. that a tool exists). */
+    /** Kana may give a one-time hint per area (e.g. that a tool exists). */
     val loraHints: Boolean = true,
     /**
-     * Where Lora thinks in the Server-Terminal (AP-131 e): "LOCAL" (model on this device) or "TU_SERVER" (Uni-Server of
+     * Where Kana thinks in the Server-Terminal (AP-131 e): "LOCAL" (model on this device) or "TU_SERVER" (Uni-Server of
      * the TU Dresden, pseudonymized); empty = not chosen yet – the terminal asks once. External cloud providers never.
      */
     val serverTerminalModel: String = "",
-    /** The two questions of the first start (Lora, visible tools) were answered or skipped. */
+    /** The two questions of the first start (Kana, visible tools) were answered or skipped. */
     val loraIntroDone: Boolean = false,
-    /** AP-41: Lora offers a short tour on the first visit of a tool. */
+    /** AP-41: Kana offers a short tour on the first visit of a tool. */
     val loraTours: Boolean = true,
     /** AP-41: tours offered already (ids, one per line) – each is offered once. */
     val loraToursSeen: String = "",
-    /** Model of the chats Lora hands questions to (AP-33): DeepSeek by default, "auto" = chosen per question. */
+    /** Model of the chats Kana hands questions to (AP-33): DeepSeek by default, "auto" = chosen per question. */
     val loraHandoffModel: String = ModelCatalog.DEFAULT_CHAT,
-    /** A question Lora hands to a chat lands in the input field first instead of being sent right away (AP-33). */
+    /** A question Kana hands to a chat lands in the input field first instead of being sent right away (AP-33). */
     val loraHandoffReview: Boolean = false,
-    /** Lora offers next steps under answers (reminder for a deadline, table as Excel …), found on the device (AP-35). */
+    /** Kana offers next steps under answers (reminder for a deadline, table as Excel …), found on the device (AP-35). */
     val loraNextSteps: Boolean = true,
-    /** While typing in the chat, Lora points to a matching place of the app (AP-35). */
+    /** While typing in the chat, Kana points to a matching place of the app (AP-35). */
     val loraTyping: Boolean = true,
     /** Windows (AP-14): links open as tabs in the browser beside the chat instead of the system browser. */
     val browserPanel: Boolean = true,
-    /** Android (AP-16): folder from the system dialog that gets a copy of the Lora-Ordner (content:// tree), "" = none. */
+    /** Android (AP-16): folder from the system dialog that gets a copy of the Kana-Ordner (content:// tree), "" = none. */
     val loraTree: String = "",
     /** Dateien tab (AP-16): grid instead of list. */
     val filesGrid: Boolean = false,
@@ -184,7 +184,7 @@ data class AppSettings(
     val pseudonymModel: Boolean = true,
     /** Offer the download of the recognition model in a popup (off after „Nicht mehr fragen“). */
     val pseudonymModelAsk: Boolean = true,
-    /** Offer the new version of Lora Namensschutz to who still has the model of 1.0.65 (off after „Nicht mehr fragen“). */
+    /** Offer the new version of Kana Namensschutz to who still has the model of 1.0.65 (off after „Nicht mehr fragen“). */
     val pseudonymModelUpdateAsk: Boolean = true,
     /** AP-117: SHA-256 of the version whose update got „Nicht mehr fragen“ – a newer version is offered again. */
     val pseudonymModelUpdateDeclined: String = "",
@@ -192,32 +192,32 @@ data class AppSettings(
     val privacyOpen: String = "",
     /** Suche nach Bedeutung auf dem Gerät (AP-107): the Wissenssammlung uses the embedding model on this device once it is loaded. */
     val semanticLocal: Boolean = true,
-    /** Where Lora works (AP-71): MIXED (per request), LOCAL (only on this device) or SERVER (language models only on the server). */
+    /** Where Kana works (AP-71): MIXED (per request), LOCAL (only on this device) or SERVER (language models only on the server). */
     val loraPlace: String = "MIXED",
     /**
-     * Wo Lora arbeitet (AP-112): the place of the areas that have no setting of their own, „CHAT=LOCAL;VISION=MIXED“
-     * (see data/Places); Lora, Vorlesen, Transkription and Suche keep their settings and are only stricter here.
+     * Wo Kana arbeitet (AP-112): the place of the areas that have no setting of their own, „CHAT=LOCAL;VISION=MIXED“
+     * (see data/Places); Kana, Vorlesen, Transkription and Suche keep their settings and are only stricter here.
      */
     val places: String = "",
     /** Einrichtung „Alles lokal“ (AP-112): the step to continue at (1 …), 0 = not started or finished. */
     val localSetupStep: Int = 0,
-    /** Lora einrichten Schritt für Schritt (AP-120): the step to continue at (1 …), 0 = not started or finished. */
+    /** Kana einrichten Schritt für Schritt (AP-120): the step to continue at (1 …), 0 = not started or finished. */
     val setupStep: Int = 0,
     /** Rückfall (AP-112): when the question „Uni-Server nicht mehr erreichbar“ was last answered with „Später“; -1 = never again. */
     val uniFallbackAsked: Long = 0,
-    /** Befehlsmodell (AP-71): Lora and Strg+K understand commands on the device once it is downloaded. */
+    /** Befehlsmodell (AP-71): Kana and Strg+K understand commands on the device once it is downloaded. */
     val commandModel: Boolean = true,
     /** Offer the download of the command model in a popup (off after „Nicht mehr fragen“). */
     val commandModelAsk: Boolean = true,
-    /** Offer the new version of Lora Befehle to who still has the model of 1.0.65 (off after „Nicht mehr fragen“). */
+    /** Offer the new version of Kana Befehle to who still has the model of 1.0.65 (off after „Nicht mehr fragen“). */
     val commandModelUpdateAsk: Boolean = true,
     /** AP-117: SHA-256 of the version whose update got „Nicht mehr fragen“ – a newer version is offered again. */
     val commandModelUpdateDeclined: String = "",
-    /** Lora lernt aus Korrekturen (AP-72): corrected wishes are remembered on this device (Einstellungen › Lora). */
+    /** Kana lernt aus Korrekturen (AP-72): corrected wishes are remembered on this device (Einstellungen › Kana). */
     val loraLearn: Boolean = true,
-    /** Lora-Verlauf (AP-75): the last wishes to Lora are kept on this device. */
+    /** Kana-Verlauf (AP-75): the last wishes to Kana are kept on this device. */
     val loraHistory: Boolean = true,
-    /** Rollenauswahl (AP-80): „TEACHING,RESEARCH“ … – what Lora is used for, from the first start; empty = not asked. */
+    /** Rollenauswahl (AP-80): „TEACHING,RESEARCH“ … – what Kana is used for, from the first start; empty = not asked. */
     val roles: String = "",
     /** The question „Welche Modelle sollen auf dieses Gerät?“ was answered (first start, or once for those who used the app before AP-71). */
     val modelsIntroDone: Boolean = false,
@@ -228,7 +228,7 @@ data class AppSettings(
     val nextcloudUser: String = "",
     val nextcloudPassword: String = "",
     val nextcloudFolder: String = "/Lora",
-    /** Sync für Android (AP-28): the Lora-Ordner of the PC in the Nextcloud („/Lora“); empty = off. */
+    /** Sync für Android (AP-28): the Kana-Ordner of the PC in the Nextcloud („/Lora“); empty = off. */
     val phoneSyncRoot: String = "",
     /** Sync für Android also in the background, without the app open (AP-63, WorkManager every 30 minutes). */
     val phoneSyncBackground: Boolean = true,
@@ -534,7 +534,7 @@ class SettingsStore(context: Context) {
             },
             drawerMoreOpen = prefs.getBoolean("drawerMoreOpen", d.drawerMoreOpen),
             drawerHidden = prefs.getString("drawerHidden", d.drawerHidden) ?: d.drawerHidden,
-            // „Lora ausblenden“ became Lora: aus.
+            // „Kana ausblenden“ became Kana: aus.
             loraMode = prefs.getString("loraMode", null) ?: if (prefs.getBoolean("hideLora", false)) "OFF" else d.loraMode,
             loraModel = prefs.getString("loraModel", d.loraModel) ?: d.loraModel,
             loraCalm = prefs.getBoolean("loraCalm", d.loraCalm),

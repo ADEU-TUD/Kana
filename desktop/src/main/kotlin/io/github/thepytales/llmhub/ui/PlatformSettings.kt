@@ -44,7 +44,7 @@ val DEVICE_VOICE_TITLE: String get() = tr("Windows-Stimme")
 val DEVICE_VOICE_DESCRIPTION: String get() = tr("Sprachausgabe von Windows – nichts verlässt den PC.")
 val NO_DEVICE_VOICES: String get() = tr("Keine Windows-Stimmen gefunden. Unter Windows-Einstellungen › Zeit und Sprache › Sprache lässt sich eine deutsche Stimme hinzufügen.")
 
-/** Einstellungen › Lora › Server-Terminal (AP-131 e): where Lora thinks in the terminal. */
+/** Einstellungen › Kana › Server-Terminal (AP-131 e): where Kana thinks in the terminal. */
 @Composable
 fun PlatformLoraSettings(c: AppContainer) = ServerTerminalLoraSettings(c)
 
@@ -64,7 +64,7 @@ private fun WindowsSection(c: AppContainer) {
         ) { v -> c.settings.update { it.copy(closeToTray = v) } }
         SwitchRow(
             tr("Mit Windows starten"),
-            if (Autostart.supported) tr("Startet Lora nach der Anmeldung unsichtbar im Infobereich – für geplante Aufgaben. Keine Admin-Rechte nötig.")
+            if (Autostart.supported) tr("Startet Kana nach der Anmeldung unsichtbar im Infobereich – für geplante Aufgaben. Keine Admin-Rechte nötig.")
             else tr("Nur in der Windows-Version verfügbar."),
             autostart,
             spot = "desktop.autostart",
@@ -79,7 +79,7 @@ private fun WindowsSection(c: AppContainer) {
         SwitchRow(
             tr("Links neben dem Chat öffnen"),
             tr("Links aus Chat, Literatur und Dokumenten öffnen sich als Tabs rechts neben der App – mit Fragen zur Seite, Zusammenfassung " +
-                "und Übernahme in die Literatur. Beim ersten Mal richtet Lora dafür einmalig Chromium ein (ca. 170 MB). Aus: im normalen Browser."),
+                "und Übernahme in die Literatur. Beim ersten Mal richtet Kana dafür einmalig Chromium ein (ca. 170 MB). Aus: im normalen Browser."),
             s.browserPanel,
             spot = "desktop.browser",
         ) { v -> c.settings.update { it.copy(browserPanel = v) } }
@@ -88,8 +88,8 @@ private fun WindowsSection(c: AppContainer) {
     var menu by remember { mutableStateOf(io.github.thepytales.llmhub.desktop.ExplorerMenu.installed()) }
     Section(tr("Explorer und Papierkorb")) {
         SwitchRow(
-            tr("„Mit Lora öffnen“ und „Lora fragen“ im Explorer"),
-            if (io.github.thepytales.llmhub.desktop.ExplorerMenu.supported) tr("Rechtsklick auf eine Datei im Explorer öffnet sie in Lora oder startet einen Chat mit ihr; auf einem Ordner „Frag diesen Ordner“. Nur für dein Windows-Konto, ohne Admin-Rechte (unter Windows 11 bei „Weitere Optionen anzeigen“).")
+            tr("„Mit Kana öffnen“ und „Kana fragen“ im Explorer"),
+            if (io.github.thepytales.llmhub.desktop.ExplorerMenu.supported) tr("Rechtsklick auf eine Datei im Explorer öffnet sie in Kana oder startet einen Chat mit ihr; auf einem Ordner „Frag diesen Ordner“. Nur für dein Windows-Konto, ohne Admin-Rechte (unter Windows 11 bei „Weitere Optionen anzeigen“).")
             else tr("Nur in der installierten Windows-Version verfügbar."),
             menu,
             spot = "desktop.contextmenu",
@@ -100,11 +100,11 @@ private fun WindowsSection(c: AppContainer) {
         }
         SwitchRow(
             tr("Gelöschte Dateien in den Windows-Papierkorb"),
-            if (io.github.thepytales.llmhub.desktop.FileTransfer.systemTrashSupported) tr("Statt in den Papierkorb von Lora (30 Tage, Wiederherstellen in Dateien) – zurückholen dann über den Papierkorb auf dem Desktop.")
+            if (io.github.thepytales.llmhub.desktop.FileTransfer.systemTrashSupported) tr("Statt in den Papierkorb von Kana (30 Tage, Wiederherstellen in Dateien) – zurückholen dann über den Papierkorb auf dem Desktop.")
             else tr("Auf diesem System nicht verfügbar."),
             s.systemTrash,
             spot = "desktop.trash",
         ) { v -> c.settings.update { it.copy(systemTrash = v) } }
     }
-    Section(tr("Lora-Ordner")) { LoraFolderSettings() }
+    Section(tr("Kana-Ordner")) { LoraFolderSettings() }
 }

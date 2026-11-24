@@ -96,7 +96,7 @@ internal val CHAT_EXAMPLES = listOf(
 )
 
 /**
- * Start of a new chat: Lora waves and offers ideas (the favourite or suggested templates and a few examples of what
+ * Start of a new chat: Kana waves and offers ideas (the favourite or suggested templates and a few examples of what
  * the app can do) in a speech bubble – a tap on her opens her panel –, below the greeting, the chosen model and the
  * activities as chips; a chip opens concrete starts in place of the chips.
  */
@@ -113,9 +113,9 @@ internal fun EmptyChat(
     onAllTemplates: () -> Unit,
     onOpen: (String) -> Unit,
     onExample: (ChatExample) -> Unit = {},
-    /** Something is typed in the input: Lora takes notes and the bubble steps aside. */
+    /** Something is typed in the input: Kana takes notes and the bubble steps aside. */
     typing: Boolean = false,
-    /** Lora ausblenden: the brand symbol instead of Lora, the ideas in a bubble below the greeting. */
+    /** Kana ausblenden: the brand symbol instead of Kana, the ideas in a bubble below the greeting. */
     hideLora: Boolean = false,
     /** Below the greeting, e.g. the invitation to set up the memory. */
     extra: @Composable () -> Unit = {},
@@ -133,7 +133,7 @@ internal fun EmptyChat(
     val look = LocalChatLook.current
     // Templates and examples take turns, the whole library comes last.
     val ideas = buildList {
-        // Favourites have their own row below; Lora's bubble offers the other suggestions and the examples, one at a time.
+        // Favourites have their own row below; Kana's bubble offers the other suggestions and the examples, one at a time.
         val templates = suggestions.filter { t -> favorites.none { it.id == t.id } }.map { t -> LoraIdea(tr(t.name), tr("Vorlage"), template = true) { onTemplate(t) } }
         val examples = CHAT_EXAMPLES.map { e -> LoraIdea(tr(e.label), tr("Idee"), template = false) { onExample(e) } }
         for (i in 0 until maxOf(templates.size, examples.size)) {
@@ -147,7 +147,7 @@ internal fun EmptyChat(
     LaunchedEffect(typing) { if (typing) opened = null }
     val open = actions.firstOrNull { it.label == opened }
     BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-        // Lora shrinks with the space (keyboard open) and while the starts of an activity are open; the bubble needs room.
+        // Kana shrinks with the space (keyboard open) and while the starts of an activity are open; the bubble needs room.
         val loraHeight = if (!hasApiKey) 72.dp else if (open != null) (maxHeight * 0.14f).coerceIn(64.dp, 96.dp) else (maxHeight * 0.22f).coerceIn(72.dp, 132.dp)
         val bubble = hasApiKey && maxHeight >= (if (open != null) 560.dp else 380.dp)
         val roomForTiles = maxHeight >= 420.dp

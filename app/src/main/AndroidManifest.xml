@@ -33,7 +33,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Long press on the icon: "Lora fragen" and "Neuer Chat" -->
+            <!-- Long press on the icon: "Kana fragen" and "Neuer Chat" -->
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />

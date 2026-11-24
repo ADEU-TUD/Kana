@@ -6,7 +6,7 @@ import io.github.thepytales.llmhub.ui.tr
 import io.github.thepytales.llmhub.ui.trLater
 
 /**
- * Hausstil-Prüfung und Barrierefreiheits-Check (AP-79) als Lora-Aktionen im offenen Dokument und in der offenen
+ * Hausstil-Prüfung und Barrierefreiheits-Check (AP-79) als Kana-Aktionen im offenen Dokument und in der offenen
  * Präsentation: „Prüfen“ zeigt die Funde mit Fundstelle, „Beheben“ ändert, was automatisch geht – mit Vorschau
  * (vorher → nachher) und Rückgängig.
  */

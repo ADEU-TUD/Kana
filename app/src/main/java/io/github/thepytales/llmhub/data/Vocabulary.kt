@@ -12,8 +12,8 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
- * Eigene Wörter und Wissenspakete (AP-78): Lora versteht die Sprache der Professur. A [Term] is a word with its
- * explanation and other ways to say it – own entries (Einstellungen › Lora › Eigene Wörter) and the entries of installed
+ * Eigene Wörter und Wissenspakete (AP-78): Kana versteht die Sprache der Professur. A [Term] is a word with its
+ * explanation and other ways to say it – own entries (Einstellungen › Kana › Eigene Wörter) and the entries of installed
  * [KnowledgePacks]. The command model gets the canonical word for a synonym, the search and Strg+K find through them,
  * and language models get the matching ones as a short context (with source and date for pack entries).
  */
@@ -169,7 +169,7 @@ object Vocabulary {
 /**
  * Wissenspakete zum Nachladen (AP-78): small databases like „Lehramt an der TU Dresden“, delivered like the models – a
  * file of this repository at a fixed commit, checked by SHA-256 –, installed into the data folder, updated when the
- * catalog has a newer version, deleted when not needed. Shared Lora-Pakete (AP-83) use the same format and appear here
+ * catalog has a newer version, deleted when not needed. Shared Kana-Pakete (AP-83) use the same format and appear here
  * too (without a download address).
  */
 object KnowledgePacks {
@@ -182,7 +182,7 @@ object KnowledgePacks {
         val version: Int = 1,
         @SerialName("stand") val date: String = "",
         @SerialName("eintraege") val entries: List<Term> = emptyList(),
-        /** Shared Lora-Paket (AP-83): own commands, own words, templates and house rules of a colleague. */
+        /** Shared Kana-Paket (AP-83): own commands, own words, templates and house rules of a colleague. */
         @SerialName("befehle") val commands: List<LoraHistory.Entry> = emptyList(),
         @SerialName("vorlagen") val templates: List<Template> = emptyList(),
         @SerialName("hausstil") val houseRules: List<HouseRule> = emptyList(),
@@ -243,7 +243,7 @@ object KnowledgePacks {
     /**
      * Downloads [offer] (blocking, on an IO thread), checks it and installs it. One download per pack at a time: the
      * setup wizard loads recommended packs in the background, and a click on „Laden“ meanwhile used to write into the
-     * same part file – the pack arrived broken („Prüfsumme stimmt nicht“, Lora 1.0.76). Each try now has its own
+     * same part file – the pack arrived broken („Prüfsumme stimmt nicht“, Kana 1.0.76). Each try now has its own
      * file, a second caller waits and finds the pack installed, and a transfer that arrives broken is tried once more.
      */
     fun download(c: AppContainer, offer: Offer, progress: (Double) -> Unit = {}) = synchronized(locks.getOrPut(offer.id) { Any() }) {

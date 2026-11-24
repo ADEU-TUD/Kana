@@ -81,8 +81,8 @@ private fun settingsTitleDe(section: String?): String = when (section) {
     "github" -> "GitHub"
     "chat" -> tr("Chat & Werkzeuge")
     "tools" -> "Werkzeuge"
-    "lora" -> "Lora"
-    "places" -> "Wo Lora arbeitet"
+    "lora" -> "Kana"
+    "places" -> "Wo Kana arbeitet"
     "ram" -> "Arbeitsspeicher"
     "privacy" -> "Datenschutz"
     "appearance" -> "Darstellung"
@@ -176,14 +176,14 @@ fun SettingsOverview(c: AppContainer, onNavigate: (String) -> Unit, deviceItem: 
         "Assistent",
         listOfNotNull(
             // AP-112: per area on this device, mixed or over an API.
-            SettingsItem("settings/places", Icons.Outlined.Memory, tr("Wo Lora arbeitet"), placesSummary(c)),
+            SettingsItem("settings/places", Icons.Outlined.Memory, tr("Wo Kana arbeitet"), placesSummary(c)),
             SettingsItem("settings/chat", Icons.Outlined.ChatBubbleOutline, tr("Chat & Werkzeuge"), tr("Standardmodell, Werkzeuge · Freigaben: ") + ApprovalMode.of(s.approvalMode).label),
             SettingsItem(
                 "settings/tools", Icons.Outlined.Handyman, tr("Werkzeuge"),
                 s.enabledToolIds.size.let { if (it == 0) tr("Große Werkzeuge ein- und ausschalten, Seitenleiste ordnen") else "$it eingeschaltet" },
             ),
             SettingsItem(
-                "settings/lora", Icons.Outlined.AutoAwesome, "Lora",
+                "settings/lora", Icons.Outlined.AutoAwesome, "Kana",
                 when (s.loraMode) { "CHAT" -> tr("Nur im Chat"); "OFF" -> tr("Aus"); else -> tr("Überall · Navigatorin für Einstellungen und Bereiche") },
             ),
             SettingsItem("settings/privacy", Icons.Outlined.Shield, tr("Datenschutz"), if (s.pseudonymize) tr("Pseudonymisierung an") else tr("Pseudonymisierung aus")),
@@ -247,7 +247,7 @@ fun SettingsOverview(c: AppContainer, onNavigate: (String) -> Unit, deviceItem: 
         onNavigate,
     )
     Text(
-        tr("Lora {0} · Inoffizielle App, nicht mit der Universität verbunden.", BuildConfig.VERSION_NAME),
+        tr("Kana {0} · Inoffizielle App, nicht mit der Universität verbunden.", BuildConfig.VERSION_NAME),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )

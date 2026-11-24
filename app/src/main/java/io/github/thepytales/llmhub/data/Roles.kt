@@ -3,9 +3,9 @@ package io.github.thepytales.llmhub.data
 import io.github.thepytales.llmhub.ui.trLater
 
 /**
- * Rollenauswahl beim ersten Start (AP-80): „Wofür nutzt du Lora vor allem?“ – Lehre, Forschung, Verwaltung, Studium,
- * mehrere möglich. Daraus folgen die vorgeschlagenen Werkzeuge, die Reihenfolge der TU Vorlagen, Loras Vorschläge auf
- * der Startseite und die empfohlenen Inhalte zum Nachladen (AP-78). Später änderbar unter Einstellungen › Lora; eine
+ * Rollenauswahl beim ersten Start (AP-80): „Wofür nutzt du Kana vor allem?“ – Lehre, Forschung, Verwaltung, Studium,
+ * mehrere möglich. Daraus folgen die vorgeschlagenen Werkzeuge, die Reihenfolge der TU Vorlagen, Kanas Vorschläge auf
+ * der Startseite und die empfohlenen Inhalte zum Nachladen (AP-78). Später änderbar unter Einstellungen › Kana; eine
  * Rolle schaltet Werkzeuge nur ein, nie aus.
  */
 enum class Role(val label: String, val description: String) {

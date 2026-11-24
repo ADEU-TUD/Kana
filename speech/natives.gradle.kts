@@ -17,7 +17,7 @@ import java.security.MessageDigest
 
 val sherpaVersion = "1.13.8"
 val sherpa = "https://github.com/k2-fsa/sherpa-onnx/releases/download"
-/** Our mirror of the models on Hugging Face (Lora Edition). */
+/** Our mirror of the models on Hugging Face (Kana Edition). */
 val mirror = "https://huggingface.co/thepytales"
 
 /** url(s), sha256 */

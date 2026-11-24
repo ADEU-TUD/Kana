@@ -10,7 +10,7 @@ fun PlatformSettingsSection(c: AppContainer, section: String?): Boolean = false
 
 fun platformSettingsItem(): SettingsItem? = null
 
-/** Einstellungen › Lora › Server-Terminal (AP-131 e) is desktop-only – Android has no Server-Terminal. */
+/** Einstellungen › Kana › Server-Terminal (AP-131 e) is desktop-only – Android has no Server-Terminal. */
 @Suppress("UNUSED_PARAMETER")
 @Composable
 fun PlatformLoraSettings(c: AppContainer) = Unit

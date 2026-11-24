@@ -29,7 +29,7 @@ fun WelcomeCard(onApiKey: () -> Unit, onNavigate: (String) -> Unit) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(tr("Willkommen! So geht es los:"), style = MaterialTheme.typography.titleMedium)
             // AP-120: the whole setup step by step.
-            Button(onClick = { onNavigate("setup") }, modifier = Modifier.fillMaxWidth()) { Text(tr("Lora Schritt für Schritt einrichten")) }
+            Button(onClick = { onNavigate("setup") }, modifier = Modifier.fillMaxWidth()) { Text(tr("Kana Schritt für Schritt einrichten")) }
             Step(1, tr("API-Key holen"), tr("Im Self-Service-Portal der TU Dresden unter „ScaDS.AI LLM“ einen Schlüssel erzeugen (beginnt mit „sk-“)."))
             Step(2, tr("Eintragen"), tr("Er wird verschlüsselt nur auf diesem Gerät gespeichert."))
             Step(3, tr("Loslegen"), tr("Frage stellen, Datei anhängen oder eine Vorlage wählen."))
@@ -40,13 +40,13 @@ fun WelcomeCard(onApiKey: () -> Unit, onNavigate: (String) -> Unit) {
             }
             // AP-112: the second way – everything on this device, without a key and without the Uni-Server.
             Text(tr("Oder ganz ohne Schlüssel: alles auf diesem Gerät"), style = MaterialTheme.typography.titleSmall)
-            HintText(tr("Lora lädt Schritt für Schritt Modelle, die zu diesem Gerät passen – für Chat, Lora, Postfach, Suche, Diktat und Vorlesen. Nichts verlässt das Gerät; nur Bilder erzeugen geht ohne Schlüssel nicht."))
+            HintText(tr("Kana lädt Schritt für Schritt Modelle, die zu diesem Gerät passen – für Chat, Kana, Postfach, Suche, Diktat und Vorlesen. Nichts verlässt das Gerät; nur Bilder erzeugen geht ohne Schlüssel nicht."))
             OutlinedButton(onClick = { onNavigate("local-setup") }, modifier = Modifier.fillMaxWidth()) {
                 Text(tr("Alles auf diesem Gerät einrichten"))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = { onNavigate("transcripts") }) { Text(tr("Transkription")) }
-                TextButton(onClick = { onNavigate("settings/places") }) { Text(tr("Wo Lora arbeitet")) }
+                TextButton(onClick = { onNavigate("settings/places") }) { Text(tr("Wo Kana arbeitet")) }
             }
         }
     }

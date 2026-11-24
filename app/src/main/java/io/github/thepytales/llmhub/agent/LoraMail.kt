@@ -10,13 +10,13 @@ import io.github.thepytales.llmhub.ui.ChatHandoff
 import io.github.thepytales.llmhub.ui.tr
 
 /**
- * Lora und das Postfach (AP-68): Lora answers with a model on the Uni server, so she never reads mails. She leads to the
+ * Kana und das Postfach (AP-68): Kana answers with a model on the Uni server, so she never reads mails. She leads to the
  * Postfach and takes on mail tasks (summarize, sort, draft an answer, deadlines) – the model on this device carries them
  * out in a Postfach chat, and the step line says „läuft auf diesem Gerät“. Her handoff from a Postfach chat takes only
  * what the local model wrote, on the card to check first ([MailHandoff]).
  */
 object LoraMail {
-    /** Lora's tool for mail tasks: hands the wording of the user (never mail content) to the model on this device. */
+    /** Kana's tool for mail tasks: hands the wording of the user (never mail content) to the model on this device. */
     val TOOL = ToolDef(
         "postfach_auftrag",
         "Gibt einen Auftrag zu Mails, Kalender oder Aufgaben (zusammenfassen, sortieren, Antwort entwerfen, Fristen finden) an das " +
@@ -24,14 +24,14 @@ object LoraMail {
         listOf(Param("auftrag", "Der Auftrag in den Worten des Nutzers, z. B. „Was ist seit gestern wichtig?“")),
     )
 
-    /** One line for Lora's system prompt while the mail tool is on. */
+    /** One line for Kana's system prompt while the mail tool is on. */
     const val PROMPT = "Mails, Kalender und Aufgaben liest du nie selbst: Aufträge dazu gibst du mit postfach_auftrag an das Modell auf diesem Gerät " +
         "(Datenschutz: ins Postfach darf nur ein lokales Modell)."
 
-    /** Whether Lora offers mail tasks: the tool „Mail & Kalender“ is on and there is a mailbox. */
+    /** Whether Kana offers mail tasks: the tool „Mail & Kalender“ is on and there is a mailbox. */
     fun available(c: AppContainer): Boolean = c.settings.current.toolOn(AppTool.MAIL.id) && Outlook.supported
 
-    /** What Lora's model hears after a mail task or mail action: no title, no content, no result. */
+    /** What Kana's model hears after a mail task or mail action: no title, no content, no result. */
     const val TOOL_OUTPUT = "Läuft im Postfach mit dem Modell auf diesem Gerät; das Ergebnis sieht nur der Nutzer. Sag kurz, dass es dort weitergeht."
 
     private val MAIL = Regex("\\b(e ?mails?|mails?|postfach|posteingang|outlook|inbox)\\b")
@@ -74,8 +74,8 @@ object LoraMail {
     }
 
     /**
-     * Lora's handoff from the Postfach chat [chatId]: the last answer of the model on this device (with [request] of
-     * Lora's model as the question) on the card to check. Null when the local model has not answered yet.
+     * Kana's handoff from the Postfach chat [chatId]: the last answer of the model on this device (with [request] of
+     * Kana's model as the question) on the card to check. Null when the local model has not answered yet.
      */
     fun handoff(c: AppContainer, chatId: String, request: String): LoraStep.Action? {
         val chat = c.chats.get(chatId) ?: return null

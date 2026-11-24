@@ -28,7 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** The Fließtext-Editor (AP-44) and the Lora-Dateidialog (AP-42) render and react (pictures in build/flow-look). */
+/** The Fließtext-Editor (AP-44) and the Kana-Dateidialog (AP-42) render and react (pictures in build/flow-look). */
 @OptIn(ExperimentalTestApi::class)
 class FlowEditorUiTest {
     private val out = File("build/flow-look").apply { mkdirs() }
@@ -76,7 +76,7 @@ class FlowEditorUiTest {
     /**
      * Seitenansicht of a document longer than one page at Windows scale 100 %: the label „Seite 2“ sits in the right
      * margin (20 mm = 75.6 px, wider than the 60 px it used to be measured into) – that crashed with
-     * „maxWidth(-15) must be >= than minWidth(0)“ while Lora wrote a long document.
+     * „maxWidth(-15) must be >= than minWidth(0)“ while Kana wrote a long document.
      */
     /**
      * Gliederung, Formatvorlagen-Satz, Kommentare am Rand, Suchen und Ersetzen und ein Seitenumbruch (AP-43 bis AP-46):
@@ -433,7 +433,7 @@ class FlowEditorUiTest {
         repeat(6) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
         waitForIdle()
         ImageIO.write(onRoot().captureToImage().toAwtImage(), "png", File(out, "dialog.png"))
-        assertTrue(onAllNodesWithText("Lora-Ordner").fetchSemanticsNodes().isNotEmpty(), "Seitenspalte")
+        assertTrue(onAllNodesWithText("Kana-Ordner").fetchSemanticsNodes().isNotEmpty(), "Seitenspalte")
         assertTrue(onAllNodesWithText("Dieser PC").fetchSemanticsNodes().isNotEmpty(), "Dieser PC")
         onAllNodesWithText("Bericht.pdf")[0].performClick()
         onAllNodesWithText("Öffnen")[0].performClick()

@@ -111,7 +111,7 @@ private fun DiagramsRow(c: AppContainer) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Spot("create.diagrams") { Text(tr("Diagramme & Whiteboard"), style = MaterialTheme.typography.titleMedium) }
-                Text(tr("Flussdiagramme, Mindmaps, Organigramme und Zeitstrahlen – Verbinder haften an den Formen, Lora zeichnet aus einer Beschreibung; dazu eine freie Tafel für Notizzettel und Freihand."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(tr("Flussdiagramme, Mindmaps, Organigramme und Zeitstrahlen – Verbinder haften an den Formen, Kana zeichnet aus einer Beschreibung; dazu eine freie Tafel für Notizzettel und Freihand."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 STARTS.forEach { (kind, label) ->

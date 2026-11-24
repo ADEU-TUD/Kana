@@ -321,7 +321,7 @@ fun UserBubble(
     val clipboard = LocalClipboardManager.current
     var menu by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
-        // Handed over by Lora (AP-33): who chose the model and why; what Lora already knew opens with a tap.
+        // Handed over by Kana (AP-33): who chose the model and why; what Kana already knew opens with a tap.
         LoraHandoffCard(m)
         m.template?.let { name ->
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 4.dp, end = 4.dp)) {
@@ -519,7 +519,7 @@ fun AssistantMessage(
     val m = item.m
     val clipboard = LocalClipboardManager.current
     val context = LocalContext.current
-    // The answer was just finished: Lora's signature cheers for a moment.
+    // The answer was just finished: Kana's signature cheers for a moment.
     val justDone = rememberJustFinished(item.isLast && (running || streaming))
     if (m.error) {
         Column {
@@ -666,7 +666,7 @@ fun AssistantMessage(
                 }
                 VersionSwitcher(item.head, item.versions, !running, onSelectVersion)
                 Spacer(Modifier.weight(1f))
-                // Lora signs the answer next to the model that wrote it – and cheers for a moment when it is done.
+                // Kana signs the answer next to the model that wrote it – and cheers for a moment when it is done.
                 if (!io.github.thepytales.llmhub.App.container.settings.current.hideLora) LoraSignature(justDone)
                 m.model?.let {
                     Text(
@@ -678,7 +678,7 @@ fun AssistantMessage(
                     )
                 }
             }
-            // Lora's next steps under the last answer (AP-35): deadlines, tables, literature, Word.
+            // Kana's next steps under the last answer (AP-35): deadlines, tables, literature, Word.
             if (item.isLast && !running && text.isNotBlank()) LoraNextSteps(io.github.thepytales.llmhub.App.container, text, chatId)
             // Stopped at the length limit: continue where it ended.
             if (item.isLast && !running && item.turn.ifEmpty { listOf(m) }.any { it.truncated }) {

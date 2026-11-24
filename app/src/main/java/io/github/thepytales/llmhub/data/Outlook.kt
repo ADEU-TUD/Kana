@@ -184,7 +184,7 @@ interface OutlookBridge {
      */
     fun saveAttachment(id: String, index: Int, dir: File): File = throw OutlookException(tr("Anhänge lassen sich in diesem Postfach nicht speichern."))
 
-    // ── AP-69 b/c: Lora sortiert selbst (agent/MailSorter). Defaults, so every bridge has them; Outlook (COM) and the
+    // ── AP-69 b/c: Kana sortiert selbst (agent/MailSorter). Defaults, so every bridge has them; Outlook (COM) and the
     // mail server (IMAP) do it properly. Still nothing that deletes or sends. ──
 
     /**
@@ -255,7 +255,7 @@ data class MailPage(val mails: List<MailHeader>, val total: Int, val next: Int) 
     val hasMore: Boolean get() = next < total
 }
 
-/** A fixed rule for sorting (made by the user or confirmed from Lora's suggestion); applied only on request. */
+/** A fixed rule for sorting (made by the user or confirmed from Kana's suggestion); applied only on request. */
 @Serializable
 data class MailRule(
     val id: String = UUID.randomUUID().toString().take(8),
@@ -280,8 +280,8 @@ data class OutlookAction(
     /** „Verschoben“, „Entwurf“, „Termin“, „Aufgabe“, „Ordner“, „Regel“ … */
     val what: String,
     val detail: String,
-    /** „Lora im Chat“, „Regel …“, „Sie“. */
-    val by: String = "Lora im Chat",
+    /** „Kana im Chat“, „Regel …“, „Sie“. */
+    val by: String = "Kana im Chat",
     val chatId: String? = null,
 )
 

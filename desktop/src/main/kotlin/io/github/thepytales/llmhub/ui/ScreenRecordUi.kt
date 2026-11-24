@@ -66,7 +66,7 @@ internal fun screens(): List<Pair<String, ScreenRecorder.Area>> = runCatching {
     }
 }.getOrDefault(emptyList())
 
-/** Folder of new recordings: „Aufnahmen“ in the Lora-Ordner. */
+/** Folder of new recordings: „Aufnahmen“ in the Kana-Ordner. */
 internal fun recordingFolder(c: AppContainer): File = ScreenRecorder.folder(runCatching { c.drive.root }.getOrElse { c.appContext.filesDir })
 
 /**

@@ -227,7 +227,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
     if (crash == null) UpdatePrompt(c)
     // The recognition model of the pseudonymization, offered once (AP-67).
     if (crash == null) PiiModelPrompt(c)
-    // AP-71: the command model for Lora and Strg+K, offered the same way.
+    // AP-71: the command model for Kana and Strg+K, offered the same way.
     if (crash == null) CommandModelPrompt(c)
     if (crash == null) ModelsIntroDialog(c)
 
@@ -273,7 +273,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         )
     }
     if (shortcuts) ShortcutsDialog(onDismiss = { shortcuts = false })
-    // Lora (AP-07, AP-34): answers wishes, leads to places, and the two questions of the first start. She knows where
+    // Kana (AP-07, AP-34): answers wishes, leads to places, and the two questions of the first start. She knows where
     // the user is, so her suggestions fit the screen.
     LoraHelperHost(c) { r -> if (r == "chat" || r.startsWith("chat?")) nav.openChat(r) else nav.navigate(r) }
     LaunchedEffect(entry.route) { LoraHelper.route.value = entry.route }
@@ -325,7 +325,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
                     }
                 }
                 Box(Modifier.weight(1f)) { screen() }
-                // The browser beside the chat (AP-14) and Lora's panel; the app gets narrower instead of covered.
+                // The browser beside the chat (AP-14) and Kana's panel; the app gets narrower instead of covered.
                 BrowserSidePanel(c)
                 LoraSidePanel(c)
             }
@@ -334,7 +334,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
             BrowserOverlay(c)
             LoraSheet(c)
         }
-        // Lora flying from her panel to the place she leads to.
+        // Kana flying from her panel to the place she leads to.
         LoraFlightLayer()
         // Touren (AP-41): the offer on the first visit of a tool and the step card.
         LoraTourLayer(c)
@@ -423,7 +423,7 @@ private fun CrashDialog(report: String, onDismiss: () -> Unit) {
     val clipboard = LocalClipboardManager.current
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(tr("Lora ist abgestürzt")) },
+        title = { Text(tr("Kana ist abgestürzt")) },
         text = {
             Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
                 Text(

@@ -15,7 +15,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Lora als Navigator (AP-07): the map of the app, the local answers and the settings Lora may change. */
+/** Kana als Navigator (AP-07): the map of the app, the local answers and the settings Kana may change. */
 class LoraNavigatorTest {
     private val targets = AppMap.build(android = false)
 
@@ -48,7 +48,7 @@ class LoraNavigatorTest {
         assertEquals("voice.engine", nav("Wo stelle ich die Stimme um?")?.spot)
         assertEquals("appearance.textsize", nav("Schrift größer")?.spot)
         assertEquals("privacy.pseudonymize", nav("Pseudonymisierung")?.spot)
-        assertEquals("lora.mode", nav("Lora ausblenden")?.spot)
+        assertEquals("lora.mode", nav("Kana ausblenden")?.spot)
         assertEquals("settings/backup", nav("Backup machen")?.route)
     }
 
@@ -110,7 +110,7 @@ class LoraNavigatorTest {
     fun loraSettingsResolveSpokenValues() {
         val lora = LoraAgent.SETTINGS.first { it.id == "lora" }
         assertEquals("OFF", lora.resolve("aus"))
-        assertTrue(lora.set(AppSettings(), "OFF").hideLora, "„Aus“ blendet Lora aus wie der alte Schalter")
+        assertTrue(lora.set(AppSettings(), "OFF").hideLora, "„Aus“ blendet Kana aus wie der alte Schalter")
         val web = LoraAgent.SETTINGS.first { it.id == "web" }
         assertEquals("false", web.resolve("ausschalten"))
         LoraAgent.SETTING_SPOTS.forEach { (id, spot) ->

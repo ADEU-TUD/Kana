@@ -14,9 +14,9 @@ import io.github.thepytales.llmhub.ui.trLater
  * Befehle auf dem Gerät (AP-71): the labels of the command model and what each of them means in the app. Nothing is
  * kept twice – the labels come from the registers that exist anyway:
  *  - `ort:<id>`   a place of the [AppMap] (area, settings page, option, button, mode, tool; also every Strg+K entry),
- *  - `stell:<id>` a setting Lora may change ([LoraAgent.SETTINGS]); the value is read from the wish ([CommandSlots]),
+ *  - `stell:<id>` a setting Kana may change ([LoraAgent.SETTINGS]); the value is read from the wish ([CommandSlots]),
  *  - `tu:<id>`    an action of the open tool ([ToolActions]) whose parameters the device can read from the wish,
- *  - `lora:<id>`  what Lora does herself (tour, earlier chats, deadline, help, remember, Postfach),
+ *  - `lora:<id>`  what Kana does herself (tour, earlier chats, deadline, help, remember, Postfach),
  *  - `vorlage`    a TU Vorlage (which one is found by the search in the templates – they change, the model stays),
  *  - `frei.einfach` / `frei.komplex`  no command: goes to a language model as before.
  * tools/befehle (Python, not part of the app) trains the model on these labels; CommandLabelsTest keeps both together.
@@ -56,13 +56,13 @@ object LoraCommands {
         "video.export", "video.subtitles", "video.split", "video.rough_cut", "video.faces", "video.speed", "video.shorten",
     )
 
-    /** What Lora does herself: id → what it is. */
+    /** What Kana does herself: id → what it is. */
     val LORA_ACTIONS = listOf(
         "tour" to "Tour durch ein Werkzeug („Zeig mir, wie das geht“)",
         "chats" to "Frühere Chats finden („Wo hatte ich …“, „meine letzten Chats“)",
         "frist" to "Frist oder Erinnerung in den Kalender eintragen",
         "hilfe" to "„Wie geht …?“ zur App: Antwort aus der eingebauten Hilfe",
-        "merken" to "Eine Vorliebe merken („Merk dir, dass …“) – Lora fragt nach",
+        "merken" to "Eine Vorliebe merken („Merk dir, dass …“) – Kana fragt nach",
         "postfach" to "Auftrag fürs Postfach (Mails, Termine): läuft nur mit dem Modell auf diesem Gerät",
     )
 
@@ -94,7 +94,7 @@ object LoraCommands {
         return if (id == SETTINGS_OVERVIEW.id) SETTINGS_OVERVIEW else targets.firstOrNull { it.id == id }
     }
 
-    /** Lora leads to [t]: a tool that is switched off is offered first, a mode starts a chat, everything else opens. */
+    /** Kana leads to [t]: a tool that is switched off is offered first, a mode starts a chat, everything else opens. */
     fun open(t: AppTarget, enabledTools: Set<String>): LoraReply {
         val off = t.tool?.let { AppTool.byId(it) }?.takeIf { it.id !in enabledTools && !it.planned }
             ?: (if (t.kind == MapKind.TOOL) AppTool.byId(t.id.removePrefix("tool.")) else null)?.takeIf { it.id !in enabledTools && !it.planned }
@@ -158,7 +158,7 @@ object LoraCommands {
     }
 
     /**
-     * What Lora does for the command [label] the model is sure of (AP-71) – on the device, without a language model.
+     * What Kana does for the command [label] the model is sure of (AP-71) – on the device, without a language model.
      * Null hands the wish on: a value is missing, the place does not exist on this platform, or nothing fits.
      * Settings, tools and risky actions still wait for the user's yes, as with the language model.
      */
@@ -172,7 +172,7 @@ object LoraCommands {
             label.startsWith(ACT) -> {
                 val action = ToolActions.byId(label.removePrefix(ACT))?.takeIf { !android || it.android } ?: return null
                 if (action !in ToolActions.forArea(area, android)) {
-                    // The tool is not open: Lora leads there instead of acting on files she cannot see.
+                    // The tool is not open: Kana leads there instead of acting on files she cannot see.
                     val t = home(action, targets) ?: return null
                     return open(t, settings.enabledToolIds).let { r -> if (r.steps.singleOrNull() is LoraStep.Navigate) r.copy(text = tr("Das geht hier: {0}.", tr(t.path))) else r }
                 }
@@ -205,7 +205,7 @@ object LoraCommands {
                 }
             }
             label == LORA + "postfach" ->
-                // AP-68: the mailbox is read by the model on this device only; Lora hands the task over and reads nothing.
+                // AP-68: the mailbox is read by the model on this device only; Kana hands the task over and reads nothing.
                 if (LoraMail.available(c)) LoraReply(tr("Das übernimmt das Modell auf diesem Gerät im Postfach – ich lese keine Mails."), listOf(LoraMail.task(c, wish)))
                 else targets.firstOrNull { it.id == "tool.mail" }?.let { open(it, settings.enabledToolIds) }
             else -> null
@@ -237,7 +237,7 @@ object LoraCommands {
         label.startsWith(SET) -> LoraAgent.SETTINGS.firstOrNull { it.id == label.removePrefix(SET) }?.let { st ->
             CommandSlots.settingValue(st, wish, st.get(current))?.let { v -> tr("Einstellung: {0} → {1}", tr(st.label), tr(st.labelOf(v))) } ?: tr("Einstellung: {0}", tr(st.label))
         }
-        label.startsWith(ACT) -> ToolActions.byId(label.removePrefix(ACT))?.let { tr("Lora macht das: {0}", tr(it.title)) }
+        label.startsWith(ACT) -> ToolActions.byId(label.removePrefix(ACT))?.let { tr("Kana macht das: {0}", tr(it.title)) }
         label == TEMPLATE -> tr("TU Vorlage suchen")
         label == LORA + "tour" -> tr("Tour starten")
         label == LORA + "chats" -> tr("Frühere Chats suchen")

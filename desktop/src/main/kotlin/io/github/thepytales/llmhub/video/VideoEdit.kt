@@ -3,7 +3,7 @@ package io.github.thepytales.llmhub.video
 import kotlin.math.abs
 
 /**
- * Editing of a [VideoProject] (AP-52, AP-53) as pure functions – the editor, Lora and the tests use the same ones:
+ * Editing of a [VideoProject] (AP-52, AP-53) as pure functions – the editor, Kana and the tests use the same ones:
  * the blade, insert and overwrite from the source monitor, ripple, roll and slip trimming, the magnet timeline
  * (everything after an edit on V1 moves along, deleting closes the gap), picture-in-picture, linking picture and sound
  * and synchronising a second sound source.

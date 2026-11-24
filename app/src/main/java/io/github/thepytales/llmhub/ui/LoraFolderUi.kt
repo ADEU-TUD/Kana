@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Where the Lora-Ordner is, in one line (Dateien tab, settings). */
+/** Where the Kana-Ordner is, in one line (Dateien tab, settings). */
 fun loraFolderLabel(): String {
     val tree = App.container.settings.current.loraTree
     return if (tree.isBlank()) tr("In der App (noch kein Ordner gewählt)") else tr("Kopie in ") + LoraMirror.label(tree)
@@ -35,7 +35,7 @@ const val LORA_FOLDER_OPENS = false
 fun openLoraFolder(dir: File? = null) {}
 
 /**
- * Lora-Ordner (AP-16), Android: the files live inside the app; a folder chosen once in the system dialog (e.g.
+ * Kana-Ordner (AP-16), Android: the files live inside the app; a folder chosen once in the system dialog (e.g.
  * Dokumente/Lora) gets a copy of them and gives back what was changed there. Chats and settings stay in the app.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -66,7 +66,7 @@ fun LoraFolderSettings() {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             tr("Deine Dateien (Hochgeladen, Erstellt, eigene Ordner, Dokumente als Word-, Excel- und PowerPoint-Dateien) liegen in der App. " +
-                "Wähle einen Ordner auf dem Handy, z. B. „Dokumente/Lora“ – dann liegt dort eine Kopie, und Änderungen dort kommen zurück. " +
+                "Wähle einen Ordner auf dem Handy, z. B. „Dokumente/Kana“ – dann liegt dort eine Kopie, und Änderungen dort kommen zurück. " +
                 "Chats und Einstellungen bleiben in der App."),
             style = MaterialTheme.typography.bodySmall,
         )

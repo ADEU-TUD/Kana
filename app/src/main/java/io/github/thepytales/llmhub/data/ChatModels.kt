@@ -30,7 +30,7 @@ data class FileAttachment(
      * public, see data/Pseudonymizer.isPublic). The user can switch it at the attachment (AP-03).
      */
     val public: Boolean? = null,
-    /** Copy of the uploaded file in the Lora-Ordner („Hochgeladen“, AP-16). */
+    /** Copy of the uploaded file in the Kana-Ordner („Hochgeladen“, AP-16). */
     val stored: String? = null,
     /**
      * Große Anhänge (AP-85): how the file goes along when it does not fit the model – "ganz", "stellen" (the passages that
@@ -81,8 +81,8 @@ data class ChatMessage(
     /** The answer stopped at the model's length limit; "Weiterschreiben" continues it. */
     val truncated: Boolean = false,
     /**
-     * Handed over by Lora (AP-33): the line shown on the card above the message, e.g. "Qwen3.8 27B · kann im Web
-     * suchen". What Lora already found out goes along as [instructions], not into the text.
+     * Handed over by Kana (AP-33): the line shown on the card above the message, e.g. "Qwen3.8 27B · kann im Web
+     * suchen". What Kana already found out goes along as [instructions], not into the text.
      */
     val handoff: String? = null,
 )

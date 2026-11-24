@@ -19,8 +19,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Lora lernt aus Korrekturen (AP-72): the list on this device, what may be learned, the Tresor, the export for
- * tools/befehle – and Lora carrying out a corrected wish the second time without a language model.
+ * Kana lernt aus Korrekturen (AP-72): the list on this device, what may be learned, the Tresor, the export for
+ * tools/befehle – and Kana carrying out a corrected wish the second time without a language model.
  */
 class LoraCorrectionsTest {
     private fun container(): AppContainer {
@@ -126,7 +126,7 @@ class LoraCorrectionsTest {
         val c = container()
         LoraHelper.route.value = "chat"
         val agent = LoraAgent(c)
-        // No API key, no command model: Lora only searches in the app.
+        // No API key, no command model: Kana only searches in the app.
         val first = agent.ask("wo liegt mein krempel")
         assertTrue(first.steps.none { it is LoraStep.Navigate && it.target.id == "area.files" })
         // „Nein, ich meinte Dateien“: the rest is answered on the device and remembered for the wish before.

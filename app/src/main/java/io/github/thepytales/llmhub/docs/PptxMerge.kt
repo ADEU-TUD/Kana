@@ -16,11 +16,11 @@ import java.util.zip.ZipOutputStream
  * other part of the package. A slide whose text changed but not its structure gets only the text replaced. New or
  * restructured slides come from the editor's own export ([PptxWriter], passed as [merge]'s `generated`): they are added
  * with their pictures, notes and charts, hide the master's graphics (they bring the TUD design along) and name their
- * cSld [OWN_SLIDE], so [PptxReader] reads them the way Lora wrote them. Deleted slides leave the package (also the
+ * cSld [OWN_SLIDE], so [PptxReader] reads them the way Kana wrote them. Deleted slides leave the package (also the
  * sections and custom shows), the order follows the editor.
  */
 object PptxMerge {
-    /** cSld name of the slides Lora added to a foreign deck. */
+    /** cSld name of the slides Kana added to a foreign deck. */
     const val OWN_SLIDE = "Lora"
 
     private const val REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"

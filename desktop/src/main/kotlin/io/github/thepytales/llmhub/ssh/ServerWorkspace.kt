@@ -7,7 +7,7 @@ import java.io.File
 
 /**
  * Several sessions side by side in tabs (AP-131 c): each tab is its own [ServerTerminal] with its own connection,
- * terminal, files and Lora – Lora always helps in the tab that is open. A line goes to several sessions only through
+ * terminal, files and Kana – Kana always helps in the tab that is open. A line goes to several sessions only through
  * [broadcast], which the screen calls after the user confirmed the exact list.
  */
 class ServerWorkspace(val dir: File, private val helper: () -> ServerHelper? = { null }) {

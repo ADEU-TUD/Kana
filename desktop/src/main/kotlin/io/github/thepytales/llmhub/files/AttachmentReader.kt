@@ -85,7 +85,7 @@ object AttachmentReader {
                 looksLikeText(bytes) -> text(name, mime, decode(bytes))
                 else -> ReadResult(error = tr("„{0}“: Dieser Dateityp wird nicht unterstützt (PDF, Word, PowerPoint, Excel, Text und Code gehen).", name))
             }.let { r -> r.copy(file = r.file?.copy(name = name)) }
-                // Lora-Ordner (AP-16): a copy of the file goes into „Hochgeladen“.
+                // Kana-Ordner (AP-16): a copy of the file goes into „Hochgeladen“.
                 .let { r -> if (r.error == null && r.file != null) r.copy(file = io.github.thepytales.llmhub.data.UploadSink.stored(name, bytes, r.file)) else r }
         } catch (e: CancellationException) {
             throw e

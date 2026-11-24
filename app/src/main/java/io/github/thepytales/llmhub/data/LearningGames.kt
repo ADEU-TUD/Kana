@@ -115,7 +115,7 @@ class LearningGameStore(files: File) {
                 ("${game.title}${if (game.kind.isNotBlank()) " (${game.kind})" else ""}\n\n" +
                     "Ein eigenständiges Lernspiel: index.html im Browser öffnen – es braucht kein Internet und lädt nichts nach.\n" +
                     "OPAL: Kursbaustein „Einzelne Seite“ oder „Ressourcenordner“, ZIP hochladen und index.html als Startseite wählen.\n" +
-                    "Moodle: Material „Datei“ (index.html) oder „Verzeichnis“ (ZIP entpacken).\n\nErstellt mit Lora.\n").toByteArray(Charsets.UTF_8),
+                    "Moodle: Material „Datei“ (index.html) oder „Verzeichnis“ (ZIP entpacken).\n\nErstellt mit Kana.\n").toByteArray(Charsets.UTF_8),
             )
             zip.closeEntry()
         }

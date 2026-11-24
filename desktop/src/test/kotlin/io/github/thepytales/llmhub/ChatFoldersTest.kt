@@ -13,7 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/** Ganze Ordner am Chat (Windows): Lora liest nur oder schreibt auch – das Recht gilt je Chat und lässt sich ändern. */
+/** Ganze Ordner am Chat (Windows): Kana liest nur oder schreibt auch – das Recht gilt je Chat und lässt sich ändern. */
 class ChatFoldersTest {
     private val base = Files.createTempDirectory("adeu-chatordner").toFile()
     private val dir = File(base, "Seminar").apply { mkdirs(); File(this, "Plan.txt").writeText("Sitzung 1: Einführung") }
@@ -41,7 +41,7 @@ class ChatFoldersTest {
         val denied = runCatching { c.localFolderTools.execute("write_local_file", """{"path":"neu.txt","content":"x"}""", ctx).text }
         assertTrue(denied.isFailure || denied.getOrNull().orEmpty().contains("nur zum Lesen"), denied.toString())
         assertFalse(File(dir, "neu.txt").exists())
-        // Changed during the chat: now Lora may write.
+        // Changed during the chat: now Kana may write.
         c.chats.save(conv.copy(folders = listOf(folder.copy(write = true))))
         c.localFolderTools.execute("write_local_file", """{"path":"neu.txt","content":"Hallo"}""", ctx)
         assertTrue(File(dir, "neu.txt").readText().contains("Hallo"))

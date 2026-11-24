@@ -10,7 +10,7 @@ import java.util.Locale
 
 /**
  * Rohschnitt aus dem Transkript (AP-25): a clip becomes the parts in which something is said – long pauses shrink,
- * filler words („äh“, „ähm“) go where the transcript has measured word times. „Mit Lora kürzen“ lets the language
+ * filler words („äh“, „ähm“) go where the transcript has measured word times. „Mit Kana kürzen“ lets the language
  * model choose the passages for a wish („nur die Erklärung zu X, höchstens 5 Minuten“). Subtitles come from the same
  * transcript.
  */
@@ -77,7 +77,7 @@ object RoughCut {
     fun saved(from: Double, to: Double, parts: List<Pair<Double, Double>>) = (to - from) - parts.sumOf { it.second - it.first }
 
     /**
-     * „Mit Lora kürzen“: the model gets the numbered passages of the clip with their times and the wish, and answers with
+     * „Mit Kana kürzen“: the model gets the numbered passages of the clip with their times and the wish, and answers with
      * the numbers to keep. Returns the parts in source seconds (passages next to each other joined).
      */
     suspend fun withLora(c: AppContainer, t: Transcript, from: Double, to: Double, wish: String): List<Pair<Double, Double>> {
@@ -90,7 +90,7 @@ object RoughCut {
         val model = c.settings.current.defaultModel
         val result = c.llm.streamChat(model = model, messages = listOf(ChatMessage(role = "user", content = prompt)), tools = null, thinking = ThinkingLevel.OFF) { }
         val keep = numbers(result.content, segs.size)
-        require(keep.isNotEmpty()) { tr("Lora hat keine Abschnitte ausgewählt.") }
+        require(keep.isNotEmpty()) { tr("Kana hat keine Abschnitte ausgewählt.") }
         val parts = keep.sorted().map { i -> segs[i - 1].start.coerceAtLeast(from) to segs[i - 1].end.coerceAtMost(to) }
         val merged = mutableListOf<Pair<Double, Double>>()
         for (pp in parts) {

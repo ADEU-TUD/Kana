@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-/** „Erstellen“ (AP-24) shows Lora's field, the design templates and the TU Vorlagen; a design opens in the editor (pictures in build/creative-look). */
+/** „Erstellen“ (AP-24) shows Kana's field, the design templates and the TU Vorlagen; a design opens in the editor (pictures in build/creative-look). */
 @OptIn(ExperimentalTestApi::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 class CreativeScreenTest {
     @Test
@@ -67,7 +67,7 @@ class CreativeScreenTest {
             ImageIO.write(onRoot().captureToImage().toAwtImage(), "png", File(out, "$name.png"))
         }
         assertTrue(onAllNodesWithText("Tagungsposter").fetchSemanticsNodes().isNotEmpty(), "Gestaltungsvorlagen")
-        assertTrue(onAllNodesWithText("Was möchtest du erstellen?").fetchSemanticsNodes().isNotEmpty(), "Lora-Feld")
+        assertTrue(onAllNodesWithText("Was möchtest du erstellen?").fetchSemanticsNodes().isNotEmpty(), "Kana-Feld")
         assertTrue(onAllNodesWithText("TU Vorlagen").fetchSemanticsNodes().isNotEmpty(), "TU Vorlagen darunter")
         shot("bildschirm-erstellen")
         editing = poster.id

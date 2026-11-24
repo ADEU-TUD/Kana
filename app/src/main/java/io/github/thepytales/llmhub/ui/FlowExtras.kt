@@ -67,7 +67,7 @@ import kotlin.math.roundToInt
 
 /**
  * The parts of the Fließtext-Editor around the text (AP-44/46): Gliederung on the left, Suchen und Ersetzen, the
- * Lineal with margins and indents, comments at the margin and Lora's small menu over a selection (AP-47).
+ * Lineal with margins and indents, comments at the margin and Kana's small menu over a selection (AP-47).
  */
 
 // ── Gliederung (AP-46) ──────────────────────────────────────────────────────────────────────────
@@ -400,7 +400,7 @@ internal fun FlowMarginComments(c: AppContainer, doc: LiveDoc, state: FlowState,
                 ) {
                     Column(Modifier.padding(8.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(if (cm.author == "Lora") Icons.Outlined.AutoAwesome else Icons.Outlined.AddComment, null, Modifier.size(14.dp), tint = LocalChatLook.current.brand)
+                            Icon(if (cm.author in io.github.thepytales.llmhub.Brand.NAMES) Icons.Outlined.AutoAwesome else Icons.Outlined.AddComment, null, Modifier.size(14.dp), tint = LocalChatLook.current.brand)
                             Spacer(Modifier.width(4.dp))
                             Text(if (cm.author == "Sie") tr("Sie") else cm.author, style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1f), maxLines = 1)
                             IconButton(onClick = {
@@ -433,9 +433,9 @@ internal fun FlowMarginComments(c: AppContainer, doc: LiveDoc, state: FlowState,
 internal fun openComments(doc: LiveDoc, tabId: String?): List<DocComment> =
     doc.comments.filter { !it.resolved && (tabId == null || it.tabId == tabId) && it.quote.isNotBlank() }
 
-// ── Lora über der Markierung (AP-47) ────────────────────────────────────────────────────────────
+// ── Kana über der Markierung (AP-47) ────────────────────────────────────────────────────────────
 
-/** Lora's small menu over a selection in the running text: quick revisions as suggestions, or a comment. */
+/** Kana's small menu over a selection in the running text: quick revisions as suggestions, or a comment. */
 @Composable
 internal fun FlowSelectionMenu(onRevise: (String?) -> Unit, onComment: () -> Unit, modifier: Modifier = Modifier) {
     Surface(shape = RoundedCornerShape(18.dp), shadowElevation = 4.dp, tonalElevation = 2.dp, modifier = modifier.border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(18.dp))) {

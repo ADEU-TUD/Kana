@@ -3,7 +3,7 @@ package io.github.thepytales.llmhub.docs
 import kotlin.math.abs
 
 /**
- * Lora baut Folien aus einem Paper (AP-51), auf dem Gerät: a deck in the TUD design from the text of a PDF – title
+ * Kana baut Folien aus einem Paper (AP-51), auf dem Gerät: a deck in the TUD design from the text of a PDF – title
  * slide with the authors, „Worum es geht“ from the abstract, Gliederung, one slide per section (Einleitung, Methode,
  * Ergebnisse, Diskussion …; subsections get their own slide), figures as picture slides, tables as table slides,
  * „Fazit“ and „Vielen Dank!“; the long text of each section goes into the speaker notes. Points appear one by one.

@@ -51,7 +51,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 /*
- * Lora sortiert Mails (AP-69 b–d): the card of a sort run in Lora's panel – progress with Pause/Abbrechen while the model
+ * Kana sortiert Mails (AP-69 b–d): the card of a sort run in Kana's panel – progress with Pause/Abbrechen while the model
  * on this device reads, then one preview for the whole order (folder → count, each folder and each mail to open, mails
  * moved to another folder or left out, uncertain ones apart) and one click „Einordnen“; afterwards Rückgängig for the
  * whole run, the offer to remember corrections, fixed rules and a scheduled repeat. The new mail view can show the same
@@ -76,13 +76,13 @@ fun MailSortCard(c: AppContainer, runId: String) {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 4.dp).fillMaxWidth()) {
             when (run.state) {
                 MailSortRun.PROPOSING -> {
-                    Working(tr("Lora liest die Betreffzeilen und überlegt passende Ordner …"), null)
+                    Working(tr("Kana liest die Betreffzeilen und überlegt passende Ordner …"), null)
                     PauseCancel(c, run)
                 }
                 MailSortRun.FOLDERS -> FolderEditor(c, run)
                 MailSortRun.CLASSIFYING -> {
                     Working(
-                        if (!run.loaded) tr("Lora holt die Mails aus dem Postfach …") else tr("{0} von {1} Mails gelesen", run.classifiedCount, run.items.size),
+                        if (!run.loaded) tr("Kana holt die Mails aus dem Postfach …") else tr("{0} von {1} Mails gelesen", run.classifiedCount, run.items.size),
                         if (run.items.isEmpty()) null else run.classifiedCount.toFloat() / run.items.size,
                     )
                     PauseCancel(c, run)
@@ -123,7 +123,7 @@ fun MailSortCard(c: AppContainer, runId: String) {
     }
 }
 
-/** Sort runs that wait or work without a card in Lora's conversation (after a restart, from a scheduled task). */
+/** Sort runs that wait or work without a card in Kana's conversation (after a restart, from a scheduled task). */
 @Composable
 fun OpenMailSorts(c: AppContainer, shown: Set<String> = emptySet()) {
     val runs by MailSorter.runs(c).collectAsStateWithLifecycle()
@@ -154,7 +154,7 @@ private fun PauseCancel(c: AppContainer, run: MailSortRun) {
     }
 }
 
-/** Lora's suggested folders: take some out, add others, then reading starts. */
+/** Kana's suggested folders: take some out, add others, then reading starts. */
 @Composable
 private fun FolderEditor(c: AppContainer, run: MailSortRun) {
     val paths = remember(run.id) { mutableStateListOf<String>().apply { addAll(run.targets.map { it.path }) } }
@@ -199,7 +199,7 @@ private fun Preview(c: AppContainer, run: MailSortRun) {
     if (left.isNotEmpty()) Group(key = "${run.id}/left", label = tr("Ausgelassen – bleibt in „{0}“", source), note = null, items = left, run = run, c = c, muted = true)
     if (run.more) HintText(tr("Es waren mehr als {0} Mails – die neuesten {0} sind dabei; den Rest danach mit einem neuen Auftrag.", MailSorter.MAX_MAILS))
     if (examples.isNotEmpty()) Row(verticalAlignment = Alignment.CenterVertically) {
-        HintText(tr("Lora nutzt {0} gemerkte Beispiele (nur auf diesem Gerät).", examples.size), Modifier.weight(1f))
+        HintText(tr("Kana nutzt {0} gemerkte Beispiele (nur auf diesem Gerät).", examples.size), Modifier.weight(1f))
         TextButton(onClick = { MailSorter.forgetExamples(c) }) { Text(tr("Vergessen")) }
     }
     val n = run.toMove.size
@@ -343,7 +343,7 @@ private fun ScheduleDialog(c: AppContainer, run: MailSortRun, onDismiss: () -> U
         title = { Text(tr("Regelmäßig einordnen")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                HintText(tr("Lora ordnet dann die Mails seit dem letzten Mal in dieselben Ordner ein – mit dem Modell auf diesem Gerät, während die App läuft (Geplante Aufgaben)."))
+                HintText(tr("Kana ordnet dann die Mails seit dem letzten Mal in dieselben Ordner ein – mit dem Modell auf diesem Gerät, während die App läuft (Geplante Aufgaben)."))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     (1..7).forEach { d ->
                         FilterChip(d in days, { if (d in days) days.remove(d) else days += d }, label = { Text(DayOfWeek.of(d).getDisplayName(TextStyle.SHORT, locale)) })
@@ -355,7 +355,7 @@ private fun ScheduleDialog(c: AppContainer, run: MailSortRun, onDismiss: () -> U
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text(tr("Ohne Rückfrage"), style = MaterialTheme.typography.bodyMedium)
-                        HintText(tr(if (noAsk) "Ordnet gleich ein; Unsichere bleiben liegen. Rückgängig im Lora-Panel." else "Die Vorschau wartet im Lora-Panel auf „Einordnen“."))
+                        HintText(tr(if (noAsk) "Ordnet gleich ein; Unsichere bleiben liegen. Rückgängig im Kana-Panel." else "Die Vorschau wartet im Kana-Panel auf „Einordnen“."))
                     }
                     Switch(noAsk, { noAsk = it })
                 }

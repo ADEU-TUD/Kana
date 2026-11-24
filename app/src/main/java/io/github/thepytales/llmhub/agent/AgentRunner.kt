@@ -98,7 +98,7 @@ class AgentRunner(private val c: AppContainer) {
             excerptTools.takeIf { conv.mode == ChatModes.EXCERPT.id },
             // Lernspiele (AP-17): while the tool is switched on (and always in the Lernspiel mode).
             c.gameTools.takeIf { ModeTool.GAMES in mode || settings.toolOn(io.github.thepytales.llmhub.data.AppTool.GAMES.id) },
-            // Erstellen › Gestalten (AP-24): on Windows in every chat – „Lora, mach mir ein Poster“ works anywhere.
+            // Erstellen › Gestalten (AP-24): on Windows in every chat – „Kana, mach mir ein Poster“ works anywhere.
             c.designTools.takeIf { io.github.thepytales.llmhub.data.DesignSupport.EDITOR },
             mail,
             // Nextcloud (AP-22): once it is set up, in every chat that may use the network (not in the vault).
@@ -137,7 +137,7 @@ class AgentRunner(private val c: AppContainer) {
         val voice = start.thread().lastOrNull { it.role == "user" }?.voice == true
         /** Sprachmodus: the quick voice model, unless the project's privacy level does not allow it. */
         val picked = settings.voiceModel.takeIf { voice && it.isNotBlank() && Privacy.blockReason(c, start, it) == null } ?: start.model
-        // Wo Lora arbeitet (AP-112): where the chat works on this device, the run is a run on this device from the start –
+        // Wo Kana arbeitet (AP-112): where the chat works on this device, the run is a run on this device from the start –
         // with the limits of AP-116 (few steps, thinking off, time limit), not only its single requests.
         val area = coroutineContext[io.github.thepytales.llmhub.data.PlaceScope]?.area ?: io.github.thepytales.llmhub.data.Area.CHAT
         val startModel = try {
@@ -301,7 +301,7 @@ class AgentRunner(private val c: AppContainer) {
             host.persist()
             if (finalAnswer) {
                 if (splitThinking(result.content).second.isBlank()) {
-                    stopWith(host, tr("Lora hat in {0} Werkzeugschritten keine Antwort gefunden. Eine engere Frage stellen oder „weiter“ schreiben.", totalSteps))
+                    stopWith(host, tr("Kana hat in {0} Werkzeugschritten keine Antwort gefunden. Eine engere Frage stellen oder „weiter“ schreiben.", totalSteps))
                 }
                 return
             }
@@ -328,7 +328,7 @@ class AgentRunner(private val c: AppContainer) {
             // AP-116: a model on this device stops after a few steps and answers with what it has.
             if (limits != null && steps >= minOf(maxSteps, limits.maxSteps)) {
                 finalAnswer = true
-                host.notice(tr("{0} Werkzeugschritte – Lora antwortet jetzt mit dem, was sie hat.", totalSteps))
+                host.notice(tr("{0} Werkzeugschritte – Kana antwortet jetzt mit dem, was sie hat.", totalSteps))
                 continue
             }
             if (steps >= maxSteps) {
@@ -487,7 +487,7 @@ class AgentRunner(private val c: AppContainer) {
     /**
      * The request: a system prompt that stays the same during a chat (the server can reuse its cache for it),
      * the summary of older messages if there is one, then the history with shortened old tool results. [model] answers
-     * the request (Lora names it when asked).
+     * the request (Kana names it when asked).
      */
     internal fun buildApiMessages(
         conv: Conversation,
@@ -506,7 +506,7 @@ class AgentRunner(private val c: AppContainer) {
         val documentsFull = c.documentTools in providers && needsGuide(conv, Guides.documents)
         val mailbox = MailAccess.locked(conv)
         val system = listOfNotNull(
-            // Who answers: Lora; an own system prompt or a persona below may give another role. In the Postfach short (AP-68).
+            // Who answers: Kana; an own system prompt or a persona below may give another role. In the Postfach short (AP-68).
             if (mailbox) MailAccess.IDENTITY else identityPrompt(ModelCatalog.info(model).displayName),
             settings.systemPrompt.ifBlank { null },
             // The memory goes along with every request, also without tools (see Memory).
@@ -594,14 +594,14 @@ class AgentRunner(private val c: AppContainer) {
 
     companion object {
         /**
-         * Lora, the research assistant of the app (and its mascot), introduces itself by that name; asked for the model,
+         * Kana, the research assistant of the app (and its mascot), introduces itself by that name; asked for the model,
          * it names [modelName], the one answering right now.
          */
         internal fun identityPrompt(modelName: String) =
-            "Du bist Lora, der KI-Forschungsassistent der App „Lora“ (TU Dresden) – benannt nach Low-Rank " +
-                "Adaptation, in der App ein kleiner runder Roboter. Du unterstützt bei Forschung, Lehre und Verwaltung: " +
+            "Du bist Kana, der KI-Forschungsassistent der App „Kana“ (TU Dresden), in der App ein kleiner runder " +
+                "Roboter. Früher hießt du Lora – wer dich so nennt, meint dich. Du unterstützt bei Forschung, Lehre und Verwaltung: " +
                 "Literatur finden und prüfen, Texte und Dokumente schreiben, Daten auswerten, Lehrveranstaltungen planen. " +
-                "Fragt jemand, wie du heißt oder wer du bist, stellst du dich als Lora vor, der Forschungsassistent dieser " +
+                "Fragt jemand, wie du heißt oder wer du bist, stellst du dich als Kana vor, der Forschungsassistent dieser " +
                 "App. Nach dem Sprachmodell gefragt, sagst du, dass im Hintergrund gerade $modelName antwortet (in der App " +
                 "wählbar). Weist dir eine Anweisung weiter unten eine andere Rolle oder einen anderen Namen zu, gilt diese."
 

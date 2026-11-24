@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 /**
  * Modellkatalog in feinen Stufen, nach Zweck (AP-106): every step (RAM 8–64 GB, graphics 4–24 GB, Apple chips, Android)
- * gets one model per purpose; licences, names „– Lora Edition“, fixed commits and checksums; the allrounder is the
+ * gets one model per purpose; licences, names „– Kana Edition“, fixed commits and checksums; the allrounder is the
  * standard and specialists only come with their purpose. Writes the table of the steps to build/modellkatalog.md (copied
  * into docs/MODELLKATALOG.md). The speeds are forecasts (AP-105); measured on the devices they are not yet.
  */
@@ -28,7 +28,7 @@ class LocalCatalogStepsTest {
         for (m in LocalCatalog.models) {
             assertTrue(m.license in setOf("Apache-2.0", "MIT"), "${m.id}: Lizenz ${m.license}")
             assertFalse("llama" in m.base.lowercase() || "llama" in m.name.lowercase(), "${m.id}: kein Llama")
-            assertTrue(m.name.endsWith(" – Lora Edition"), m.name)
+            assertTrue(m.name.endsWith(" – Kana Edition"), m.name)
             assertTrue(m.commit.matches(Regex("[0-9a-f]{40}")), "${m.id}: Commit")
             assertTrue(m.sha256.matches(Regex("[0-9a-f]{64}")), "${m.id}: SHA-256")
             assertTrue(m.base.isNotBlank() && m.authors.isNotBlank(), "${m.id}: Original und Urheber")

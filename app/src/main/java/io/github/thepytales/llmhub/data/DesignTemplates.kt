@@ -296,7 +296,7 @@ object DesignTemplates {
 
     /**
      * Whether a wish („Mach mir einen Aushang für …“) is about a design rather than a text document – then „Erstellen“
-     * hands it to Lora in the Gestalten mode. Letters, minutes and certificates stay TU Vorlagen.
+     * hands it to Kana in the Gestalten mode. Letters, minutes and certificates stay TU Vorlagen.
      */
     fun fits(text: String): Boolean {
         val t = text.lowercase()

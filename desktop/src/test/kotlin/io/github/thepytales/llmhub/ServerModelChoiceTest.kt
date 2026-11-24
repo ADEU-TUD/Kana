@@ -10,7 +10,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Where Lora thinks in the Server-Terminal (AP-131 e): the recommendation follows this PC – a strong, fast local model
+ * Where Kana thinks in the Server-Terminal (AP-131 e): the recommendation follows this PC – a strong, fast local model
  * stays local, a small or slow one gives way to the TU-Server – and both ways name their risks. External providers are
  * never an option.
  */

@@ -105,7 +105,7 @@ fun PlaceNote(c: AppContainer, area: Area, modifier: Modifier = Modifier, onSetu
 private fun Places.Profile?.label(): String = this?.label ?: trLater("Eigene Auswahl")
 
 /**
- * Einstellungen › Wo Lora arbeitet (AP-112): the quick choice „Alles lokal · Gemischt (empfohlen) · Alles über API“, the
+ * Einstellungen › Wo Kana arbeitet (AP-112): the quick choice „Alles lokal · Gemischt (empfohlen) · Alles über API“, the
  * setup step by step, and one row per area with Lokal / Gemischt / API (what is not possible is greyed out with its
  * reason) and what that means on this device.
  */
@@ -114,7 +114,7 @@ fun PlacesSettings(c: AppContainer, onNavigate: (String) -> Unit) {
     placesTick(c)
     val s = c.settings.current
     val profile = Places.profile(c)
-    Section(tr("Wo Lora arbeitet")) {
+    Section(tr("Wo Kana arbeitet")) {
         Spot("places.profile") {
             Segmented(
                 Places.Profile.entries.map { it as Places.Profile? to tr(it.label) },
@@ -130,8 +130,8 @@ fun PlacesSettings(c: AppContainer, onNavigate: (String) -> Unit) {
         }
         HintText(
             when (profile) {
-                Places.Profile.ALL_LOCAL -> tr("Alles auf diesem Gerät: Lora, Chats, Postfach, Suche, Sprache und Bilder verstehen laufen hier. Internet nur für Web, Literatur, Nextcloud und Updates; Bilder erzeugen geht nur über API. Was doch hinausgeht, wird vorher pseudonymisiert.")
-                Places.Profile.MIXED -> tr("Befehle, Namensschutz und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server bzw. den gewählten Anbieter. So arbeitet Lora bisher.")
+                Places.Profile.ALL_LOCAL -> tr("Alles auf diesem Gerät: Kana, Chats, Postfach, Suche, Sprache und Bilder verstehen laufen hier. Internet nur für Web, Literatur, Nextcloud und Updates; Bilder erzeugen geht nur über API. Was doch hinausgeht, wird vorher pseudonymisiert.")
+                Places.Profile.MIXED -> tr("Befehle, Namensschutz und kurze Aufgaben auf diesem Gerät, alles Anspruchsvolle über den Uni-Server bzw. den gewählten Anbieter. So arbeitet Kana bisher.")
                 Places.Profile.ALL_API -> tr("Sprachmodelle, Spracherkennung, Suche und Stimme über den Server – am genauesten, braucht immer Internet. Postfach, Befehle und Namensschutz bleiben auf diesem Gerät.")
                 null -> tr("Eigene Auswahl – je Bereich unten eingestellt.")
             },
@@ -256,7 +256,7 @@ private const val FALLBACK_LATER_MS = 3 * 24 * 3_600_000L
 
 /**
  * Rückfall, wenn der Uni-Server wegfällt (AP-112): once access is gone for good ([io.github.thepytales.llmhub.data.UniWatch]),
- * Lora offers to work on this device or to enter the key of another provider – the chats, files and settings stay;
+ * Kana offers to work on this device or to enter the key of another provider – the chats, files and settings stay;
  * old chats continue with the new model.
  */
 @Composable
@@ -278,7 +278,7 @@ fun UniFallbackDialog(c: AppContainer, go: (String) -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     if (c.uniWatch.state.refused) tr("Seit {0} nimmt der Uni-Server den API-Schlüssel nicht mehr an. Vielleicht ist er abgelaufen oder das Pilotprojekt beendet.", since)
-                    else tr("Seit {0} erreicht Lora den Uni-Server nicht, obwohl das Internet geht. Vielleicht ist das Pilotprojekt beendet.", since),
+                    else tr("Seit {0} erreicht Kana den Uni-Server nicht, obwohl das Internet geht. Vielleicht ist das Pilotprojekt beendet.", since),
                 )
                 Text(tr("Wie soll es weitergehen? Deine Chats, Dateien und Einstellungen bleiben in jedem Fall erhalten; bisherige Chats laufen mit dem neuen Modell weiter."), style = MaterialTheme.typography.bodySmall)
             }

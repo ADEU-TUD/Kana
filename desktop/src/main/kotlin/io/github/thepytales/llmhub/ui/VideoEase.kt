@@ -305,7 +305,7 @@ internal fun SavedBadge(saved: Boolean, labelled: Boolean) {
     }
 }
 
-/** The help of the editor (AP-121): the step card, Lora's tour, the keys, Lora. */
+/** The help of the editor (AP-121): the step card, Kana's tour, the keys, Kana. */
 @Composable
 internal fun HelpButton(guideShown: Boolean, onGuide: () -> Unit, onKeys: () -> Unit, onDismiss: () -> Unit) {
     var menu by remember { mutableStateOf(false) }
@@ -322,7 +322,7 @@ internal fun HelpButton(guideShown: Boolean, onGuide: () -> Unit, onKeys: () -> 
             })
             DropdownMenuItem(text = { Text(tr("Tastenkürzel") + " (?)") }, leadingIcon = { Icon(Icons.Outlined.Keyboard, null) }, onClick = { menu = false; onKeys() })
             HorizontalDivider()
-            DropdownMenuItem(text = { Text(tr("Lora fragen") + " (Strg+L)") }, leadingIcon = { LoraFaceStill(Modifier.size(20.dp)) }, onClick = { menu = false; LoraHelper.open() })
+            DropdownMenuItem(text = { Text(tr("Kana fragen") + " (Strg+L)") }, leadingIcon = { LoraFaceStill(Modifier.size(20.dp)) }, onClick = { menu = false; LoraHelper.open() })
         }
     }
 }

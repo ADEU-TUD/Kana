@@ -29,7 +29,7 @@ object FileDetails {
         Files.readAttributes(f.toPath(), BasicFileAttributes::class.java).creationTime().toMillis()
     }.getOrNull()?.takeIf { it > 0 }
 
-    /** Where [f] lies: „Dateien › Erstellt › Briefe“ inside [root] (the Lora-Ordner), else its folder on the disk. */
+    /** Where [f] lies: „Dateien › Erstellt › Briefe“ inside [root] (the Kana-Ordner), else its folder on the disk. */
     fun place(f: File, root: File?): String {
         val parent = f.absoluteFile.parentFile ?: return ""
         val r = root?.absoluteFile?.normalize()

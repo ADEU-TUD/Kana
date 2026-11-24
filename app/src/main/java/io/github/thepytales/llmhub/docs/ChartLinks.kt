@@ -67,7 +67,7 @@ object ChartLinks {
 }
 
 /**
- * Calculations Lora does on the device (AP-49 „Lora rechnet“): distribution of a column, key figures per group and a
+ * Calculations Kana does on the device (AP-49 „Kana rechnet“): distribution of a column, key figures per group and a
  * plain explanation of a formula. Results are formulas, so they follow later changes of the data.
  */
 object SheetCalc {

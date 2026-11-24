@@ -188,7 +188,7 @@ class EditorCoreTest {
         MarkdownDocx.write(f, "Antrag", "# Antrag\n\nErster Absatz.\n\n## Teil A\n\nZweiter Absatz.\n")
         val files = unzip(f.readBytes())
         f.delete()
-        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Lora</dc:creator>", "<dc:creator>Sekretariat</dc:creator>").toByteArray()
+        files["docProps/core.xml"] = files["docProps/core.xml"]!!.toString(Charsets.UTF_8).replace("<dc:creator>Kana</dc:creator>", "<dc:creator>Sekretariat</dc:creator>").toByteArray()
         var doc = files["word/document.xml"]!!.toString(Charsets.UTF_8)
         val box = "<w:p><w:r><w:t>Anker</w:t></w:r><w:r><mc:AlternateContent xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"><mc:Choice Requires=\"wps\"><w:drawing><wps:txbx xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\"><w:txbxContent><w:p><w:r><w:t>Im Textfeld</w:t></w:r></w:p></w:txbxContent></wps:txbx></w:drawing></mc:Choice>" +
             "<mc:Fallback><w:pict><v:textbox xmlns:v=\"urn:schemas-microsoft-com:vml\"><w:txbxContent><w:p><w:r><w:t>Im Textfeld</w:t></w:r></w:p></w:txbxContent></v:textbox></w:pict></mc:Fallback></mc:AlternateContent></w:r></w:p>"

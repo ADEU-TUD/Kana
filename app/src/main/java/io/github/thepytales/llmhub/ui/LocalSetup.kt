@@ -42,7 +42,7 @@ import java.util.Locale
 /**
  * „Alles lokal“ einrichten (AP-112): a setup that takes one by the hand – measure the device (AP-105), choose the
  * purpose (AP-80/AP-106), one model per step with size, speed and purpose, loading with progress, a short try
- * („Frag Lora etwas“), on to the next area. *Später* keeps the step ([AppSettings.localSetupStep]) and the setup
+ * („Frag Kana etwas“), on to the next area. *Später* keeps the step ([AppSettings.localSetupStep]) and the setup
  * continues there; at the end an overview of what now runs here, and the profile „Alles auf diesem Gerät“.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +74,7 @@ fun LocalSetupScreen(c: AppContainer, onBack: () -> Unit, onNavigate: (String) -
                     SetupStep.HELPERS -> HelpersStep(c)
                     SetupStep.SEARCH -> SimpleStep(
                         c, Area.SEARCH,
-                        tr("Lora findet in der Wissenssammlung und in Projekten, was zur Frage passt – auch mit anderen Worten. Das Suchmodell multilingual-e5-small (123 MB, MIT) rechnet auf diesem Gerät, etwa 40 ms je Abschnitt."),
+                        tr("Kana findet in der Wissenssammlung und in Projekten, was zur Frage passt – auch mit anderen Worten. Das Suchmodell multilingual-e5-small (123 MB, MIT) rechnet auf diesem Gerät, etwa 40 ms je Abschnitt."),
                         installed = c.localEmbedding.installed(), progress = c.localEmbedding.state.collectAsState().value.progress,
                         load = c.localEmbedding::install,
                     )
@@ -103,7 +103,7 @@ fun LocalSetupScreen(c: AppContainer, onBack: () -> Unit, onNavigate: (String) -
                     }) { Text(tr("Alles auf diesem Gerät nutzen")) }
                 }
             }
-            HintText(tr("„Später“ merkt sich diesen Schritt – unter Einstellungen › Wo Lora arbeitet geht es hier weiter. Downloads laufen im Hintergrund weiter."))
+            HintText(tr("„Später“ merkt sich diesen Schritt – unter Einstellungen › Wo Kana arbeitet geht es hier weiter. Downloads laufen im Hintergrund weiter."))
         }
     }
 }
@@ -131,12 +131,12 @@ private fun DeviceStep(c: AppContainer) {
     val scope = rememberCoroutineScope()
     var line by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
-    StepText(tr("Lora schaut sich dieses Gerät an und misst kurz sein Tempo. Danach sagt sie für jedes Modell vorher, wie schnell es hier schreibt und liest – und schlägt nur vor, was hier gut läuft. Nichts verlässt das Gerät."))
+    StepText(tr("Kana schaut sich dieses Gerät an und misst kurz sein Tempo. Danach sagt sie für jedes Modell vorher, wie schnell es hier schreibt und liest – und schlägt nur vor, was hier gut läuft. Nichts verlässt das Gerät."))
     Text(hw?.describe() ?: tr("Gerät wird geprüft …"), style = MaterialTheme.typography.titleSmall)
     hw?.memDetail?.takeIf { it.isNotBlank() }?.let { HintText(it) }
     val measured = hw?.let { DeviceBench.here(c, it).at } ?: 0L
     if (measured > 0) HintText(tr("Gemessen am {0}.", java.text.SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY).format(java.util.Date(measured))))
-    else if (stored != null) HintText(tr("Noch nicht gemessen. Ohne Sprachmodell misst Lora erst den Speicher; das Tempo folgt nach dem ersten Modell von selbst."))
+    else if (stored != null) HintText(tr("Noch nicht gemessen. Ohne Sprachmodell misst Kana erst den Speicher; das Tempo folgt nach dem ersten Modell von selbst."))
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedButton(enabled = !busy && hw != null, onClick = {
             busy = true
@@ -147,20 +147,20 @@ private fun DeviceStep(c: AppContainer) {
         }) { Text(if (measured > 0) tr("Neu messen") else tr("Gerät messen (≈ 20 s)")) }
         line?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
-    Places.languageMissing(hw)?.let { SettingsHint(tr("Hinweis: {0} Lora Befehle, Namensschutz, Suche und Sprache gehen trotzdem.", it)) }
+    Places.languageMissing(hw)?.let { SettingsHint(tr("Hinweis: {0} Kana Befehle, Namensschutz, Suche und Sprache gehen trotzdem.", it)) }
 }
 
-/** Step 2: what Lora is used for – the allrounder is always there, specialists only when needed (AP-106). */
+/** Step 2: what Kana is used for – the allrounder is always there, specialists only when needed (AP-106). */
 @Composable
 private fun PurposeStep(c: AppContainer) {
     val s by c.settings.settings.collectAsState()
     val purposes = LocalCatalog.purposes(s.localPurposes, s.roles)
-    StepText(tr("Wofür nutzt du Lora vor allem? Der Allrounder ist immer dabei. Für Texte, Code oder das Postfach schlägt Lora einen Spezialisten vor, der nur bei Bedarf geladen wird – ein Wechsel kostet 10 bis 30 Sekunden."))
+    StepText(tr("Wofür nutzt du Kana vor allem? Der Allrounder ist immer dabei. Für Texte, Code oder das Postfach schlägt Kana einen Spezialisten vor, der nur bei Bedarf geladen wird – ein Wechsel kostet 10 bis 30 Sekunden."))
     PurposeChips(c, purposes)
     purposes.filter { it != Purpose.ALLROUND }.forEach { HintText(tr(it.label) + ": " + tr(it.hint)) }
 }
 
-/** Step 3: the language model for Lora, Chat, Postfach and Dokumente – with size, speed and purpose – and a short try. */
+/** Step 3: the language model for Kana, Chat, Postfach and Dokumente – with size, speed and purpose – and a short try. */
 @Composable
 private fun LanguageStep(c: AppContainer) {
     val s by c.settings.settings.collectAsState()
@@ -171,7 +171,7 @@ private fun LanguageStep(c: AppContainer) {
     Places.languageMissing(h)?.let { StepText(it); return }
     val purposes = LocalCatalog.purposes(s.localPurposes, s.roles)
     val picks = remember(h, purposes, local.installed) { LocalCatalog.picks(h, purposes) { DeviceBench.forecast(c, it, h) } }
-    StepText(tr("Ein Sprachmodell auf diesem Gerät beantwortet Lora, Chats, das Postfach und die Hilfe in Dokumenten. Lora empfiehlt das stärkste Modell, das hier flüssig schreibt (mindestens 8 Wörter je Sekunde)."))
+    StepText(tr("Ein Sprachmodell auf diesem Gerät beantwortet Kana, Chats, das Postfach und die Hilfe in Dokumenten. Kana empfiehlt das stärkste Modell, das hier flüssig schreibt (mindestens 8 Wörter je Sekunde)."))
     picks.forEach { p -> ModelChoice(c, p.model, h, tr(p.purpose.label), p.fastEnough) }
     // Smaller or larger: the other models that fit, for who wants to choose.
     var more by remember { mutableStateOf(false) }
@@ -209,14 +209,14 @@ private fun ModelChoice(c: AppContainer, m: LocalModel, hw: io.github.thepytales
     if (local.retry == m.id) local.message?.let { SettingsHint(it) }
 }
 
-/** „Frag Lora etwas“: a short question to the model on this device, with the time it took. */
+/** „Frag Kana etwas“: a short question to the model on this device, with the time it took. */
 @Composable
 private fun TryLora(c: AppContainer) {
     val scope = rememberCoroutineScope()
     var question by remember { mutableStateOf(tr("Erkläre in zwei Sätzen, was du auf diesem Gerät für mich tun kannst.")) }
     var answer by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
-    Text(tr("Kurz ausprobieren: Frag Lora etwas"), style = MaterialTheme.typography.titleSmall)
+    Text(tr("Kurz ausprobieren: Frag Kana etwas"), style = MaterialTheme.typography.titleSmall)
     OutlinedTextField(value = question, onValueChange = { question = it }, modifier = Modifier.fillMaxWidth(), singleLine = false, maxLines = 3)
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(enabled = !busy && question.isNotBlank(), onClick = {
@@ -233,7 +233,7 @@ private fun TryLora(c: AppContainer) {
                 }.getOrElse { e -> if (e is kotlinx.coroutines.CancellationException) throw e; ErrorHelp.explain(e).text }
                 busy = false
             }
-        }) { Text(if (busy) tr("Lora denkt …") else tr("Fragen")) }
+        }) { Text(if (busy) tr("Kana denkt …") else tr("Fragen")) }
         if (busy) TextButton(onClick = { c.llm.abortLocal() }) { Text(tr("Stopp")) }
     }
     if (answer.isNotBlank()) Text(answer, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.widthIn(max = 640.dp))
@@ -244,7 +244,7 @@ private fun TryLora(c: AppContainer) {
 private fun HelpersStep(c: AppContainer) {
     val cmd by c.commandModel.state.collectAsState()
     val pii by c.piiModel.state.collectAsState()
-    StepText(tr("Zwei kleine Modelle nur für Lora: Lora Befehle erkennt in Millisekunden, was du meinst – einen Bereich öffnen, eine Einstellung umstellen. Lora Namensschutz findet Namen, Schulen und Orte, bevor etwas das Gerät doch verlässt."))
+    StepText(tr("Zwei kleine Modelle nur für Kana: Kana Befehle erkennt in Millisekunden, was du meinst – einen Bereich öffnen, eine Einstellung umstellen. Kana Namensschutz findet Namen, Schulen und Orte, bevor etwas das Gerät doch verlässt."))
     HelperLine(tr("{0}: Befehle verstehen ({1} MB)", CommandModelInfo.NAME, CommandModelInfo.MEGABYTES), c.commandModel.installed(), cmd.progress, c.commandModel.available) { c.commandModel.install() }
     HelperLine(tr("{0}: Namen schützen ({1} MB)", PiiModelInfo.NAME, PiiModelInfo.MEGABYTES), c.piiModel.installed(), pii.progress, true) { c.piiModel.install() }
 }
@@ -281,7 +281,7 @@ private fun SimpleStep(c: AppContainer, area: Area, text: String, installed: Boo
 @Composable
 private fun SpeechInStep(c: AppContainer) {
     val st by c.transcription.state.collectAsState()
-    StepText(tr("Ein Erkennungsmodell macht aus Sprache Text – für Diktat, Spracheingabe im Chat und bei Lora und für Transkriptionen. Kleinere sind schneller, größere genauer."))
+    StepText(tr("Ein Erkennungsmodell macht aus Sprache Text – für Diktat, Spracheingabe im Chat und bei Kana und für Transkriptionen. Kleinere sind schneller, größere genauer."))
     PlaceNote(c, Area.DICTATION)
     val models = st.models.sortedBy { it.size }
     if (models.isEmpty()) HintText(tr("Die Spracherkennung startet … einen Moment."))
@@ -335,7 +335,7 @@ private fun VisionStep(c: AppContainer) {
 /** The end: what now runs on this device, and what does not (with the reason). */
 @Composable
 private fun DoneStep(c: AppContainer) {
-    StepText(tr("Das läuft jetzt auf diesem Gerät. Mit „Alles auf diesem Gerät nutzen“ stellt Lora jeden Bereich, der eine Wahl hat, auf Lokal – ändern lässt sich das jederzeit unter Einstellungen › Wo Lora arbeitet."))
+    StepText(tr("Das läuft jetzt auf diesem Gerät. Mit „Alles auf diesem Gerät nutzen“ stellt Kana jeden Bereich, der eine Wahl hat, auf Lokal – ändern lässt sich das jederzeit unter Einstellungen › Wo Kana arbeitet."))
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Area.entries.forEach { a ->
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(10.dp)) {

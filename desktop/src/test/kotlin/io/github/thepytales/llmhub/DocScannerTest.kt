@@ -31,7 +31,7 @@ import kotlin.test.assertTrue
 
 /**
  * Dokumenten-Scanner (AP-62): pages photographed at a slant on a desk are found, straightened and made clean, and three
- * of them become one searchable PDF in the Lora-Ordner under „Scans“.
+ * of them become one searchable PDF in the Kana-Ordner under „Scans“.
  */
 class DocScannerTest {
     private val base = Files.createTempDirectory("scanner").toFile()
@@ -143,7 +143,7 @@ class DocScannerTest {
         }
     }
 
-    /** Fertig, wenn: drei fotografierte Seiten ergeben ein durchsuchbares PDF im Lora-Ordner. */
+    /** Fertig, wenn: drei fotografierte Seiten ergeben ein durchsuchbares PDF im Kana-Ordner. */
     @Test
     fun threePhotographedPagesBecomeOneSearchablePdfInTheLoraFolder() = runBlocking {
         val lora = File(base, "Lora").apply { mkdirs() }

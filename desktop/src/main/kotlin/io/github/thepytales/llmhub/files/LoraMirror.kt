@@ -3,7 +3,7 @@ package io.github.thepytales.llmhub.files
 import android.content.Context
 import java.io.File
 
-/** Android's copy of the Lora-Ordner in a folder of the system dialog; Windows uses the folder itself (AP-16). */
+/** Android's copy of the Kana-Ordner in a folder of the system dialog; Windows uses the folder itself (AP-16). */
 object LoraMirror {
     const val SUPPORTED = false
 

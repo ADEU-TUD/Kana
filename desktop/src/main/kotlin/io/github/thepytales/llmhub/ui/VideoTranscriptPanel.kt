@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * What the transcript panel has selected (AP-55): tokens [from]..[to] of the current text, and the Lora proposals with
+ * What the transcript panel has selected (AP-55): tokens [from]..[to] of the current text, and the Kana proposals with
  * whether each is accepted. Kept by the editor, so Entf in the editor cuts the selected words.
  */
 internal class TextCutState {
@@ -102,7 +102,7 @@ internal suspend fun projectTranscripts(c: AppContainer, p: VideoProject): Map<S
 /**
  * Textbasierter Schnitt (AP-55): the transcript of V1 as text beside the timeline. A click on a word jumps there,
  * Umschalt+Klick or dragging selects, Entf cuts the selection out of the video. Paragraphs move up and down (their clip
- * moves), filler words and long pauses are marked and go with one click, and Lora proposes passages to cut for a wish.
+ * moves), filler words and long pauses are marked and go with one click, and Kana proposes passages to cut for a wish.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -143,9 +143,9 @@ internal fun TranscriptCutPanel(
             OutlinedButton(onClick = { namesOpen = true }) { Text(if (p.bleeps.isEmpty()) tr("Namen im Ton schützen …") else tr("Namen im Ton ({0}) …", p.bleeps.size)) }
             if (state.hasSelection) Button(onClick = { state.deleteSelection(h) }) { Icon(Icons.Outlined.ContentCut, null, Modifier.size(16.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Herausschneiden") + " (Entf)") }
         }
-        // Lora as editing assistant.
+        // Kana as editing assistant.
         Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(wish, { wish = it }, singleLine = true, modifier = Modifier.weight(1f).typing(), placeholder = { Text(tr("Wunsch an Lora, z. B. „Kürze auf 10 Minuten“")) })
+            OutlinedTextField(wish, { wish = it }, singleLine = true, modifier = Modifier.weight(1f).typing(), placeholder = { Text(tr("Wunsch an Kana, z. B. „Kürze auf 10 Minuten“")) })
             IconButton(enabled = wish.isNotBlank() && !asking, onClick = {
                 asking = true
                 scope.launch {
@@ -153,17 +153,17 @@ internal fun TranscriptCutPanel(
                     asking = false
                     result.onSuccess { list ->
                         state.proposals = list; state.accepted = list.map { it.id }.toSet()
-                        if (list.isEmpty()) Notices.info(tr("Lora schlägt nichts zum Schneiden vor."))
+                        if (list.isEmpty()) Notices.info(tr("Kana schlägt nichts zum Schneiden vor."))
                     }.onFailure { Notices.error(it.message ?: it.javaClass.simpleName) }
                 }
-            }) { if (asking) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Icon(Icons.Outlined.AutoAwesome, contentDescription = tr("Lora schlägt Schnitte vor")) }
+            }) { if (asking) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Icon(Icons.Outlined.AutoAwesome, contentDescription = tr("Kana schlägt Schnitte vor")) }
         }
         if (state.proposals.isNotEmpty()) {
             Surface(shape = RoundedCornerShape(8.dp), color = look.card, border = boxBorder(), modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     val sel = state.proposals.filter { it.id in state.accepted }
                     val gain = TextCut.seconds(p, sel.flatMap { TextCut.ranges(doc, it.from, it.to) })
-                    Text(tr("Lora schlägt {0} Schnitt(e) vor – spart {1}", state.proposals.size, clock(gain)), style = MaterialTheme.typography.labelLarge)
+                    Text(tr("Kana schlägt {0} Schnitt(e) vor – spart {1}", state.proposals.size, clock(gain)), style = MaterialTheme.typography.labelLarge)
                     state.proposals.forEach { pr ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(pr.id in state.accepted, { on -> state.accepted = if (on) state.accepted + pr.id else state.accepted - pr.id })

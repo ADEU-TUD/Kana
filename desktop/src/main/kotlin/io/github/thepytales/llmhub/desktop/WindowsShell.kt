@@ -15,7 +15,7 @@ import java.io.File
 import kotlin.concurrent.thread
 
 /**
- * Windows-Integration (AP-59): the Explorer context menu „Mit Lora öffnen“ / „Lora fragen“ (per user, no admin rights),
+ * Windows-Integration (AP-59): the Explorer context menu „Mit Kana öffnen“ / „Kana fragen“ (per user, no admin rights),
  * starts of the app with a file, files out of the app into the Explorer, a mail or another program (dragging and the
  * clipboard), the Windows Papierkorb, and Word/Excel/PowerPoint with the way back.
  */
@@ -25,16 +25,16 @@ object ExplorerMenu {
 
     private const val BASE = "Software\\Classes"
 
-    /** The entries for [exe]: files get „Mit Lora öffnen“ and „Lora fragen“, folders „Frag diesen Ordner“ (AP-58). */
+    /** The entries for [exe]: files get „Mit Kana öffnen“ and „Kana fragen“, folders „Frag diesen Ordner“ (AP-58). */
     fun keys(exe: File): List<Key> {
         val e = exe.absolutePath
         fun cmd(flag: String) = "\"$e\" $flag \"%1\""
         return listOf(
-            Key("$BASE\\*\\shell\\Lora.Open", mapOf("" to tr("Mit Lora öffnen"), "Icon" to "\"$e\",0")),
+            Key("$BASE\\*\\shell\\Lora.Open", mapOf("" to tr("Mit Kana öffnen"), "Icon" to "\"$e\",0")),
             Key("$BASE\\*\\shell\\Lora.Open\\command", mapOf("" to cmd(ShellArgs.OPEN))),
-            Key("$BASE\\*\\shell\\Lora.Ask", mapOf("" to tr("Lora fragen"), "Icon" to "\"$e\",0")),
+            Key("$BASE\\*\\shell\\Lora.Ask", mapOf("" to tr("Kana fragen"), "Icon" to "\"$e\",0")),
             Key("$BASE\\*\\shell\\Lora.Ask\\command", mapOf("" to cmd(ShellArgs.ASK))),
-            Key("$BASE\\Directory\\shell\\Lora.Ask", mapOf("" to tr("Frag diesen Ordner (Lora)"), "Icon" to "\"$e\",0")),
+            Key("$BASE\\Directory\\shell\\Lora.Ask", mapOf("" to tr("Frag diesen Ordner (Kana)"), "Icon" to "\"$e\",0")),
             Key("$BASE\\Directory\\shell\\Lora.Ask\\command", mapOf("" to cmd(ShellArgs.ASK_FOLDER))),
         )
     }
@@ -145,7 +145,7 @@ object FileTransfer {
     }.getOrDefault(false)
 
     /**
-     * Moves [file] into the Papierkorb of Windows (or macOS) instead of the Lora-Papierkorb (AP-59); false where the
+     * Moves [file] into the Papierkorb of Windows (or macOS) instead of the Kana-Papierkorb (AP-59); false where the
      * system has none, the file stays then.
      */
     fun moveToSystemTrash(file: File): Boolean = runCatching {
@@ -158,7 +158,7 @@ object FileTransfer {
 }
 
 /**
- * In Word/Excel/PowerPoint öffnen und zurück (AP-59): a file opened from Lora in its Office program is watched –
+ * In Word/Excel/PowerPoint öffnen und zurück (AP-59): a file opened from Kana in its Office program is watched –
  * „in Word geöffnet“ while Office holds its owner file („~$Bericht.docx“), and a save there comes back into the app at
  * once (within a second instead of the 4 s round of the store).
  */

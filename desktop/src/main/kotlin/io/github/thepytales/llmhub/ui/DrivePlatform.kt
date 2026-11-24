@@ -27,7 +27,7 @@ fun DroppedFilesEffect(onFiles: (List<File>) -> Unit) {
 const val DRAG_TO_MOVE = true
 
 /**
- * Out of Lora into the Explorer, an Outlook mail or another program (AP-59): a handle to drag the file (or the
+ * Out of Kana into the Explorer, an Outlook mail or another program (AP-59): a handle to drag the file (or the
  * selection) by; it arrives there as a copy.
  */
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)

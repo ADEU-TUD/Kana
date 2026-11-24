@@ -57,7 +57,7 @@ internal fun RememberCard(c: AppContainer, turn: LoraTurn, i: Int, step: LoraSte
     val state = turn.state[i]
     ResultCard(icon = Icons.Outlined.Psychology, title = step.text, subtitle = tr("Vorliebe · {0}", LoraPrefs.toolLabel(step.tool))) {
         when {
-            state?.startsWith("done:") == true -> DoneRow(tr("Gemerkt – zu sehen unter Einstellungen › Lora › Gedächtnis")) {
+            state?.startsWith("done:") == true -> DoneRow(tr("Gemerkt – zu sehen unter Einstellungen › Kana › Gedächtnis")) {
                 TextButton(onClick = { c.memory.delete(state.removePrefix("done:")); turn.state[i] = "undone" }) { Text(tr("Rückgängig")) }
             }
             state == "undone" -> HintText(tr("Wieder vergessen."))
@@ -74,7 +74,7 @@ internal fun RememberCard(c: AppContainer, turn: LoraTurn, i: Int, step: LoraSte
     }
 }
 
-/** A tour Lora offers (AP-41). */
+/** A tour Kana offers (AP-41). */
 @Composable
 internal fun TourCard(turn: LoraTurn, i: Int, step: LoraStep.Tour, go: (String) -> Unit) {
     val tour = LoraTours.byId(step.tourId) ?: return
@@ -216,8 +216,8 @@ internal fun OpenFlows(c: AppContainer, shown: Set<String>, go: (String) -> Unit
 }
 
 /**
- * Einstellungen › Lora › Gedächtnis (AP-39): „Was Lora über dich weiß“ – preferences grouped by tool, each changeable
- * and deletable, „Alles vergessen“; the protocol of Lora's actions (AP-38); tours (AP-41).
+ * Einstellungen › Kana › Gedächtnis (AP-39): „Was Kana über dich weiß“ – preferences grouped by tool, each changeable
+ * and deletable, „Alles vergessen“; the protocol of Kana's actions (AP-38); tours (AP-41).
  */
 @Composable
 internal fun LoraMemorySection(c: AppContainer) {
@@ -226,11 +226,11 @@ internal fun LoraMemorySection(c: AppContainer) {
     var editing by remember { mutableStateOf<MemoryEntry?>(null) }
     var adding by remember { mutableStateOf(false) }
     var forget by remember { mutableStateOf(false) }
-    Section(tr("Gedächtnis – was Lora über dich weiß")) {
+    Section(tr("Gedächtnis – was Kana über dich weiß")) {
         Spot("lora.memory") {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                HintText(tr("Vorlieben je Werkzeug, z. B. „Hochgeladenes nach Semester ordnen“ oder „Videos für OPAL in 720p“. Lora fragt immer, bevor sie sich etwas merkt, und nutzt es danach als Standard. Aus dem Tresor merkt sie sich nichts."))
-                if (prefs.isEmpty()) HintText(tr("Noch keine Vorlieben. Sag Lora zum Beispiel: „Merk dir, dass ich Handouts zweispaltig möchte.“"))
+                HintText(tr("Vorlieben je Werkzeug, z. B. „Hochgeladenes nach Semester ordnen“ oder „Videos für OPAL in 720p“. Kana fragt immer, bevor sie sich etwas merkt, und nutzt es danach als Standard. Aus dem Tresor merkt sie sich nichts."))
+                if (prefs.isEmpty()) HintText(tr("Noch keine Vorlieben. Sag Kana zum Beispiel: „Merk dir, dass ich Handouts zweispaltig möchte.“"))
                 LoraPrefs.TOOLS.forEach { (key, label) ->
                     val inTool = prefs.filter { it.tool.orEmpty() == key }.sortedBy { it.createdAt }
                     if (inTool.isEmpty()) return@forEach
@@ -239,7 +239,7 @@ internal fun LoraMemorySection(c: AppContainer) {
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable(onClickLabel = tr("Ändern")) { editing = e }) {
                             Column(Modifier.weight(1f).padding(vertical = 4.dp)) {
                                 Text(e.text)
-                                e.value?.let { Text(tr("Standard für Lora: {0}", it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                                e.value?.let { Text(tr("Standard für Kana: {0}", it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                             }
                             IconButton(onClick = { c.memory.delete(e.id); Notices.undo(tr("Vergessen: {0}", e.text.take(40)), restore = { c.memory.upsert(e) }) }) {
                                 Icon(Icons.Outlined.Delete, contentDescription = tr("Löschen"))
@@ -257,7 +257,7 @@ internal fun LoraMemorySection(c: AppContainer) {
     if (forget) AlertDialog(
         onDismissRequest = { forget = false },
         title = { Text(tr("Alles vergessen?")) },
-        text = { Text(tr("Lora vergisst alle {0} Vorlieben. Die übrigen Einträge unter Einstellungen › Gedächtnis bleiben.", prefs.size)) },
+        text = { Text(tr("Kana vergisst alle {0} Vorlieben. Die übrigen Einträge unter Einstellungen › Gedächtnis bleiben.", prefs.size)) },
         confirmButton = {
             TextButton(onClick = {
                 val gone = LoraPrefs.forgetAll(c)
@@ -272,7 +272,7 @@ internal fun LoraMemorySection(c: AppContainer) {
 
     Section(tr("Touren")) {
         val s by c.settings.settings.collectAsStateWithLifecycle()
-        SwitchRow(tr("Touren anbieten"), tr("Beim ersten Öffnen eines Werkzeugs bietet Lora eine kurze Tour an (Leuchtrahmen und eine Zeile Text)."), s.loraTours, spot = "lora.tours") { v ->
+        SwitchRow(tr("Touren anbieten"), tr("Beim ersten Öffnen eines Werkzeugs bietet Kana eine kurze Tour an (Leuchtrahmen und eine Zeile Text)."), s.loraTours, spot = "lora.tours") { v ->
             c.settings.update { it.copy(loraTours = v) }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -281,15 +281,15 @@ internal fun LoraMemorySection(c: AppContainer) {
         if (s.loraToursSeen.isNotBlank()) TextButton(onClick = { c.settings.update { it.copy(loraToursSeen = "") } }) { Text(tr("Touren wieder anbieten")) }
     }
 
-    // Alles rückgängig seit heute Morgen (AP-77): also reachable by asking Lora („Mach alles von heute rückgängig“).
+    // Alles rückgängig seit heute Morgen (AP-77): also reachable by asking Kana („Mach alles von heute rückgängig“).
     Section(tr("Heute erledigt")) { DayUndoCard() }
 
-    Section(tr("Protokoll der Lora-Aktionen")) {
+    Section(tr("Protokoll der Kana-Aktionen")) {
         var tick by remember { mutableStateOf(0) }
         val lines = remember(tick) { ActionLog.recent(30) }
         Spot("lora.log") {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                HintText(tr("Was Lora in den Werkzeugen geplant, ausgeführt und zurückgenommen hat – auf diesem Gerät gespeichert."))
+                HintText(tr("Was Kana in den Werkzeugen geplant, ausgeführt und zurückgenommen hat – auf diesem Gerät gespeichert."))
                 if (lines.isEmpty()) HintText(tr("Noch keine Aktionen."))
                 lines.forEach { Text(it, style = MaterialTheme.typography.labelSmall, maxLines = 2, overflow = TextOverflow.Ellipsis) }
                 if (lines.isNotEmpty()) Row {
@@ -311,14 +311,14 @@ private fun PrefDialog(c: AppContainer, entry: MemoryEntry?, onDismiss: () -> Un
         title = { Text(tr(if (entry == null) "Vorliebe hinzufügen" else "Vorliebe ändern")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(text, { text = it }, label = { Text(tr("Was soll Lora wissen?")) }, minLines = 2, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(text, { text = it }, label = { Text(tr("Was soll Kana wissen?")) }, minLines = 2, modifier = Modifier.fillMaxWidth())
                 DropdownField(
                     label = tr("Werkzeug"),
                     value = LoraPrefs.toolLabel(tool),
                     options = LoraPrefs.TOOLS.map { tr(it.second) },
                     onSelect = { v -> tool = LoraPrefs.TOOLS.firstOrNull { tr(it.second) == v }?.first.orEmpty() },
                 )
-                if (entry?.pref != null) HintText(tr("Ändert sich der Text, bleibt der Standardwert für Lora „{0}“ – zum Ändern löschen und neu wählen.", entry.value.orEmpty()))
+                if (entry?.pref != null) HintText(tr("Ändert sich der Text, bleibt der Standardwert für Kana „{0}“ – zum Ändern löschen und neu wählen.", entry.value.orEmpty()))
             }
         },
         confirmButton = {

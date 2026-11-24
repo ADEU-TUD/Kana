@@ -5,7 +5,7 @@ import io.github.thepytales.llmhub.ui.trLater
 /**
  * „Folie schöner machen“ und Sprechertexte (AP-51) without a model: layouts that suit the content of a slide (two
  * columns, comparison, table, chart, quote, picture large, shorter points, points one by one), each a suggestion to
- * tap; and speaker notes written from the points. Lora's actions add the model's suggestions when one is allowed.
+ * tap; and speaker notes written from the points. Kana's actions add the model's suggestions when one is allowed.
  */
 object SlideLook {
     /** A suggestion: what it does and the slide(s) that replace the slide. */

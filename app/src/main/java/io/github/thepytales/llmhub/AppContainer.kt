@@ -110,7 +110,7 @@ class AppContainer(context: Context) {
     val outlookTools = io.github.thepytales.llmhub.agent.OutlookTools(this)
     /** Dateiverwaltung (AP-18): folders, Schlagwörter and the full-text search over documents, storage locations and knowledge. */
     val fileLibrary by lazy { io.github.thepytales.llmhub.data.FileLibrary(this, appContext) }
-    /** Der Lora-Ordner (AP-16): Hochgeladen, Erstellt, own folders, the Papierkorb. */
+    /** Der Kana-Ordner (AP-16): Hochgeladen, Erstellt, own folders, the Papierkorb. */
     val drive by lazy { io.github.thepytales.llmhub.data.LoraDrive(this, appContext) }
     /** Unterschriften for PDFs (AP-15): drawn or from a picture, kept for the next form. */
     val signatures = ListStore<io.github.thepytales.llmhub.docs.Signature>(FileBackend(File(files, "signatures.json")), io.github.thepytales.llmhub.docs.Signature.serializer(), { it.id })
@@ -168,7 +168,7 @@ class AppContainer(context: Context) {
         PrefsBackend(settings.prefs, "mcpServers"), io.github.thepytales.llmhub.data.McpServer.serializer(), { it.id },
     )
     val mcp = io.github.thepytales.llmhub.agent.McpHub(this)
-    /** Sync für Android (AP-28): the phone mirrors the PC's Lora-Ordner in the Nextcloud. */
+    /** Sync für Android (AP-28): the phone mirrors the PC's Kana-Ordner in the Nextcloud. */
     val phoneSync = io.github.thepytales.llmhub.data.PhoneSyncService(this)
     /** What the background sync was last planned with (on, Wi-Fi only). */
     private var plannedSync: Pair<Boolean, Boolean>? = null
@@ -238,14 +238,14 @@ class AppContainer(context: Context) {
         io.github.thepytales.llmhub.data.SemanticSearch.attach(File(appContext.cacheDir, "suche-vektoren"), { emb.active }) { texts, passage -> emb.embed(texts, passage) }
     }
 
-    /** Befehlsmodell (AP-71): Lora and Strg+K understand commands on the device. */
+    /** Befehlsmodell (AP-71): Kana and Strg+K understand commands on the device. */
     val commandModel = io.github.thepytales.llmhub.data.CommandModel(this)
 
     /** Rückfall, wenn der Uni-Server wegfällt (AP-112). */
     val uniWatch = io.github.thepytales.llmhub.data.UniWatch(File(files, "uni_watch.json"))
 
     init {
-        // Wo Lora arbeitet (AP-112): requests of an area that must stay on this device go to the model here.
+        // Wo Kana arbeitet (AP-112): requests of an area that must stay on this device go to the model here.
         llm.placeRoute = { area, model, images -> io.github.thepytales.llmhub.data.Places.route(this, area, model, images) }
         llm.placeCheck = { area ->
             if (!io.github.thepytales.llmhub.data.Places.serverAllowed(this, area)) {
@@ -272,7 +272,7 @@ class AppContainer(context: Context) {
         }
     }
 
-    /** Android (AP-16): the copy of the Lora-Ordner in the chosen folder should be brought up to date. */
+    /** Android (AP-16): the copy of the Kana-Ordner in the chosen folder should be brought up to date. */
     @Volatile
     private var mirrorDue = false
 
@@ -281,7 +281,7 @@ class AppContainer(context: Context) {
         val tree = settings.current.loraTree.takeIf { it.isNotBlank() } ?: return
         runCatching { io.github.thepytales.llmhub.files.LoraMirror.sync(appContext, drive.root, tree) }
             .onSuccess { r -> if (r.down > 0 || r.removed > 0) drive.changed() }
-            .onFailure { io.github.thepytales.llmhub.ErrorLog.record("Lora-Ordner abgleichen", it) }
+            .onFailure { io.github.thepytales.llmhub.ErrorLog.record("Kana-Ordner abgleichen", it) }
     }
 
     /** Background work of the container itself (memory care, AP-04). */
@@ -297,11 +297,11 @@ class AppContainer(context: Context) {
         scope.launch {
             batchRunner.active.collect { on -> if (on) io.github.thepytales.llmhub.agent.AgentService.start(appContext) }
         }
-        // Lora-Abläufe (AP-40): plans that were running carry on after the start.
+        // Kana-Abläufe (AP-40): plans that were running carry on after the start.
         scope.launch {
             kotlinx.coroutines.delay(4000)
-            runCatching { io.github.thepytales.llmhub.agent.LoraFlows.resume(this@AppContainer) }.logFailure("Lora-Abläufe fortsetzen")
-            // AP-69: Lora's sort runs (reading, moving, undoing) carry on as well.
+            runCatching { io.github.thepytales.llmhub.agent.LoraFlows.resume(this@AppContainer) }.logFailure("Kana-Abläufe fortsetzen")
+            // AP-69: Kana's sort runs (reading, moving, undoing) carry on as well.
             runCatching { io.github.thepytales.llmhub.agent.MailSorter.resumeAll(this@AppContainer) }.logFailure("Sortierläufe fortsetzen")
         }
         // AP-28: only on Android – Windows syncs with the cloud service's own client (AP-12).
@@ -326,7 +326,7 @@ class AppContainer(context: Context) {
                 vault.lockIfIdle()
             }
         }
-        // Lora-Ordner (AP-16): documents are real files there, uploads are kept, the files of before come over once.
+        // Kana-Ordner (AP-16): documents are real files there, uploads are kept, the files of before come over once.
         docs.root = drive.root
         docs.createdFolder = io.github.thepytales.llmhub.data.LoraDrive.CREATED
         docs.files = io.github.thepytales.llmhub.docs.DocFiles(docs, files, context.cacheDir) { d ->

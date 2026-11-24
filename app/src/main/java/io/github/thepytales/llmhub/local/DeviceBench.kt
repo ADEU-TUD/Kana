@@ -247,7 +247,7 @@ object DeviceBench {
     fun protocol(c: AppContainer, hw: Hardware): String = buildString {
         val s = here(c, hw)
         val samples = samples(c, hw)
-        appendLine("Lora – Geräteprofil und Messung (AP-105)")
+        appendLine("Kana – Geräteprofil und Messung (AP-105)")
         appendLine("Gerät: ${hw.describe()}")
         appendLine("Prozessor: ${hw.cpuName.ifBlank { "?" }} · Befehlssätze: ${hw.cpuFeatures.sorted().joinToString(", ").ifBlank { "?" }}")
         appendLine("Speicher: ${hw.memDetail.ifBlank { "?" }} · Bandbreite: ${fmt(hw.memBandwidthGbs)} GB/s · in Java gemessen: ${fmt(s.javaGbs)} GB/s")

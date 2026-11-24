@@ -476,7 +476,7 @@ private fun TagsCard(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit) {
     var language by remember { mutableStateOf("de-DE") }
     var report by remember(tab.file) { mutableStateOf<PdfTagReport?>(null) }
     SettingsCard(tr("Tags erzeugen (PDF/UA)")) {
-        SettingsHint(tr("Für PDFs ohne Tags: Überschriften (nach Schriftgröße), Absätze, Listen und Abbildungen werden ausgezeichnet, Linien und Seitenzahlen als Dekoration. Tabellen erkennt Lora noch nicht – sie werden zu Absätzen."))
+        SettingsHint(tr("Für PDFs ohne Tags: Überschriften (nach Schriftgröße), Absätze, Listen und Abbildungen werden ausgezeichnet, Linien und Seitenzahlen als Dekoration. Tabellen erkennt Kana noch nicht – sie werden zu Absätzen."))
         if (images == null) OutlinedButton(onClick = { scope.launch { images = work { PdfStage3.images(tab.file) } } }) { Text(tr("Abbildungen beschreiben …")) }
         images?.let { list ->
             if (list.isEmpty()) HintText(tr("Keine Abbildungen."))

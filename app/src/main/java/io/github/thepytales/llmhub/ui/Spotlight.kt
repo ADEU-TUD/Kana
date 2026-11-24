@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
- * The glowing frame Lora puts around an option after leading there (AP-07): [show] marks an option id (see
+ * The glowing frame Kana puts around an option after leading there (AP-07): [show] marks an option id (see
  * data/AppMap, e.g. "appearance.theme"); the screen that has a [Spot] with that id scrolls it into view and lets the
  * frame pulse for a few seconds.
  */
@@ -45,11 +45,11 @@ object Spotlight {
     @Volatile
     var hold: Boolean = false
 
-    /** Where each spot is on screen (root coordinates), so Lora can fly there (ui/LoraFlight). */
+    /** Where each spot is on screen (root coordinates), so Kana can fly there (ui/LoraFlight). */
     val bounds: MutableMap<String, androidx.compose.ui.geometry.Rect> = java.util.concurrent.ConcurrentHashMap()
 }
 
-/** Wraps an option that Lora can highlight ([id] as in data/AppMap). */
+/** Wraps an option that Kana can highlight ([id] as in data/AppMap). */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Spot(id: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {

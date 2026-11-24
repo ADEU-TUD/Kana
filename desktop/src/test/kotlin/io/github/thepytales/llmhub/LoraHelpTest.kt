@@ -21,7 +21,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Lora as the helper at the core of the app (AP-33–AP-36): what she notices on the device (deadlines, tables,
+ * Kana as the helper at the core of the app (AP-33–AP-36): what she notices on the device (deadlines, tables,
  * literature, the place a typed text means, the step of the agent), her suggestions per area, her chat search, the
  * calendar entries and her reactions.
  */
@@ -140,7 +140,7 @@ class LoraHelpTest {
         assertTrue("DeepSeek" in io.github.thepytales.llmhub.data.ModelCatalog.info(std).displayName)
         // The funding question of the screenshots (with „Förderprogramm“) stays with DeepSeek.
         assertEquals(std to "Standard für Übergaben", LoraAgent.handoffModel(std, "Suche im Web nach Förderprogrammen für Forschung und Lehre, Frist in 4 Wochen", null))
-        // Special cases: Lora's own choice with her reason, or a question that clearly needs another model.
+        // Special cases: Kana's own choice with her reason, or a question that clearly needs another model.
         assertEquals("zai-org/GLM-5.3" to "sehr schwierige Analyse", LoraAgent.handoffModel(std, "Vergleiche drei Theorien", "zai-org/GLM-5.3", "sehr schwierige Analyse"))
         assertEquals(io.github.thepytales.llmhub.data.ModelCatalog.CODE_CHAT, LoraAgent.handoffModel(std, "Warum wirft mein Python-Skript eine Exception?", null).first)
         // An own standard counts.
@@ -158,7 +158,7 @@ class LoraHelpTest {
 
     @Test
     fun brandIsLora() {
-        assertEquals("Lora", Brand.NAME)
+        assertEquals("Kana", Brand.NAME)
         assertTrue(Brand.SLOGAN.startsWith("Der freundliche Helfer"))
     }
 }

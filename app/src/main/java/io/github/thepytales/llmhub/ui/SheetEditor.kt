@@ -213,7 +213,7 @@ fun SheetBody(
         onMarkdown(SheetMeta.compose(next, nextMeta))
     }
 
-    // Lora in der Tabelle (AP-38 Stufe c): her actions read and replace the rows and formats of this tab.
+    // Kana in der Tabelle (AP-38 Stufe c): her actions read and replace the rows and formats of this tab.
     val latestMarkdown = androidx.compose.runtime.rememberUpdatedState(onMarkdown)
     androidx.compose.runtime.DisposableEffect(doc.id, tabId) {
         val host = object : io.github.thepytales.llmhub.agent.EditorDocHost {

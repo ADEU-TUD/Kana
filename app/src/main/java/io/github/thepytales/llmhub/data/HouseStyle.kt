@@ -43,6 +43,6 @@ object HouseStyle {
         _version.value++
     }
 
-    /** The own rules and those of imported Lora-Pakete (AP-83). */
+    /** The own rules and those of imported Kana-Pakete (AP-83). */
     fun all(c: AppContainer): List<HouseRule> = (rules(c) + KnowledgePacks.installed(c).flatMap { it.houseRules }).distinctBy { it.avoid.lowercase() }
 }

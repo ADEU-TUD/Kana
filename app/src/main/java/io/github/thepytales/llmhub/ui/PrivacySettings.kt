@@ -48,7 +48,7 @@ import io.github.thepytales.llmhub.data.PiiFeature
 /**
  * Einstellungen › Datenschutz (AP-103): one calm page. On top the status card (protection on/off, what is active, the
  * fixed rules), then *Erkennung*, *Meine Listen* and *Ausprobieren*, the single switches under *Feineinstellungen*,
- * the hints before sending and *So schützt Lora deine Daten*. Everything but the status card and *Erkennung* is
+ * the hints before sending and *So schützt Kana deine Daten*. Everything but the status card and *Erkennung* is
  * folded; which part is open is kept in [AppSettings.privacyOpen]. With the protection off the parts are greyed out.
  */
 @Composable
@@ -220,8 +220,8 @@ fun PrivacySection(c: AppContainer) {
         PrivacyGroup(c, PrivacyPage.SENDING_GROUP, PrivacyPage.HINTS, off) { f, v -> setFeature(f, v) }
     }
 
-    // ── So schützt Lora deine Daten ──
-    PrivacyFold(c, PrivacyPage.ABOUT, tr("So schützt Lora deine Daten"), tr("Postfach, Bilder, lokale Modelle und das Agent-Protokoll in Kürze.")) {
+    // ── So schützt Kana deine Daten ──
+    PrivacyFold(c, PrivacyPage.ABOUT, tr("So schützt Kana deine Daten"), tr("Postfach, Bilder, lokale Modelle und das Agent-Protokoll in Kürze.")) {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             SettingsHint(tr("• Postfach: Mails, Termine und Aufgaben liest nur ein Modell auf diesem Gerät – Uni-Server und externe Anbieter sind dort fest gesperrt. Weiter geht nur, was du mit „An Chat übergeben“ prüfst, pseudonymisiert und ohne Mails und Anhänge."))
             SettingsHint(tr("• Bilder, Scans und Spracheingaben lassen sich nicht pseudonymisieren – mit „Warnung bei Bildern“ fragt die App vor dem Senden nach. Vorlesen mit der KI-Stimme schickt den Antworttext an den Uni-Server."))
@@ -262,7 +262,7 @@ internal object PrivacyPage {
     /** Names of the groups of [PiiFeature] (they are shown with tr). */
     val GROUPS = listOf(trLater("Kontaktdaten"), trLater("Nummern und Daten"), trLater("Namen"), trLater("Platzhalter"), trLater("Hinweise"))
 
-    /** Spots inside a folded part: Lora's frame (AP-41) opens the part first. */
+    /** Spots inside a folded part: Kana's frame (AP-41) opens the part first. */
     val SPOT_FOLDS = mapOf("privacy.never" to LISTS)
 
     fun open(s: AppSettings): Set<String> = s.privacyOpen.split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
@@ -275,7 +275,7 @@ internal object PrivacyPage {
     /** Lines of a list that are not empty. */
     fun count(list: String) = list.lines().count { it.isNotBlank() && !it.trimStart().startsWith("#") }
 
-    /** One line under the main switch: what is active right now („Regeln · Lora Namensschutz · Gründlich aus“). */
+    /** One line under the main switch: what is active right now („Regeln · Kana Namensschutz · Gründlich aus“). */
     fun status(s: AppSettings, modelInstalled: Boolean): String {
         if (!s.pseudonymize) return tr("Schutz aus – nichts wird ersetzt.")
         val parts = buildList {
@@ -289,7 +289,7 @@ internal object PrivacyPage {
     }
 }
 
-/** A part of the privacy page that opens on a click; Lora's frame on a spot inside opens it too. */
+/** A part of the privacy page that opens on a click; Kana's frame on a spot inside opens it too. */
 @Composable
 private fun PrivacyFold(c: AppContainer, key: String, title: String, summary: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val s by c.settings.settings.collectAsStateWithLifecycle()

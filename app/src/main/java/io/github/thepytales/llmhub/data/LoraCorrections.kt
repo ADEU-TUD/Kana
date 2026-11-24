@@ -9,14 +9,14 @@ import kotlinx.serialization.json.put
 import java.io.File
 
 /**
- * Lora lernt aus Korrekturen (AP-72): when Lora got a wish wrong and the user corrected her – a button under „Meinst du …
+ * Kana lernt aus Korrekturen (AP-72): when Kana got a wish wrong and the user corrected her – a button under „Meinst du …
  * oder …?“ (AP-73), „nein, ich meinte …“, a tap on the right card, „Rückgängig“ right after an action –, the pair
  * *wish → meant action* is kept **on this device** and wins over the command model the next time. A small list like the
- * own list of the pseudonymization: visible and deletable under Einstellungen › Lora, exportable as a file (reviewed by
+ * own list of the pseudonymization: visible and deletable under Einstellungen › Kana, exportable as a file (reviewed by
  * the user) for the next training of the command model (tools/befehle). Nothing is kept in the Tresor, nothing leaves the
  * device by itself.
  *
- * A pair with [Entry.wrong] says the opposite: this action was undone right after Lora carried it out for this wish – next
+ * A pair with [Entry.wrong] says the opposite: this action was undone right after Kana carried it out for this wish – next
  * time she does not carry it out without asking.
  */
 object LoraCorrections {
@@ -31,7 +31,7 @@ object LoraCorrections {
         val at: Long = System.currentTimeMillis(),
         /** How often the pair has been used since. */
         val used: Int = 0,
-        /** The action was undone right after Lora carried it out: not this one without asking. */
+        /** The action was undone right after Kana carried it out: not this one without asking. */
         val wrong: Boolean = false,
     )
 
@@ -83,7 +83,7 @@ object LoraCorrections {
         return true
     }
 
-    /** „Rückgängig“ right after Lora carried out [label] for [wish]: next time not without asking. */
+    /** „Rückgängig“ right after Kana carried out [label] for [wish]: next time not without asking. */
     @Synchronized
     fun undone(c: AppContainer, wish: String, area: String, label: String, vault: Boolean = false): Boolean {
         if (vault || !c.settings.current.loraLearn || !learnable(wish, label)) return false
@@ -95,7 +95,7 @@ object LoraCorrections {
 
     /**
      * The action [wish] meant the last time it was corrected, or null. The same wish in the same area first; a place,
-     * setting or Lora's own action also counts from another area (an action of a tool only where that tool is open).
+     * setting or Kana's own action also counts from another area (an action of a tool only where that tool is open).
      */
     @Synchronized
     fun meant(c: AppContainer, wish: String, area: String): String? {
@@ -110,7 +110,7 @@ object LoraCorrections {
         return hit.label
     }
 
-    /** Whether [label] was undone right after Lora carried it out for [wish] (then she asks instead). */
+    /** Whether [label] was undone right after Kana carried it out for [wish] (then she asks instead). */
     @Synchronized
     fun refused(c: AppContainer, wish: String, area: String, label: String): Boolean {
         if (!c.settings.current.loraLearn) return false

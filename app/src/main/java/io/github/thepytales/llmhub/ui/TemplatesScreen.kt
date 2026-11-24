@@ -85,7 +85,7 @@ fun TemplatesScreen(c: AppContainer, onBack: () -> Unit, onUse: (Template) -> Un
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = pad.calculateTopPadding(), bottom = pad.calculateBottomPadding() + 88.dp),
             header = {
-                // „Erstellen“ (AP-24): one wish for Lora, then the designs (Windows), then the TU Vorlagen.
+                // „Erstellen“ (AP-24): one wish for Kana, then the designs (Windows), then the TU Vorlagen.
                 item(key = "lora") { Spot("create.lora") { CreateWithLora(c, Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) } }
                 designSection(c)
                 item(key = "intro") {

@@ -5,7 +5,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 /**
- * The inside of the Lora-Ordner (AP-16): the app's data in the hidden „.lora“, everything else is the user's. Moves the
+ * The inside of the Kana-Ordner (AP-16): the app's data in the hidden „.lora“, everything else is the user's. Moves the
  * data of earlier versions in once – from %APPDATA%\ADEU LLM or from a data folder chosen before (where the data lay
  * directly in the folder).
  */
@@ -20,7 +20,7 @@ object LoraLayout {
     private val DATA_EXT = setOf("json", "dat", "bin", "pending", "pid")
     private val DATA_FILES = setOf("selftest.txt", "work_files.txt", "crash.txt", "absturz.txt")
 
-    /** Whether [dir] holds Lora's data. */
+    /** Whether [dir] holds Kana's data. */
     fun isData(dir: File): Boolean =
         listOf("einstellungen.json", "adeu-settings.json", "secure_settings.dat").any { File(dir, it).isFile } ||
             listOf("conversations", "documents", "livedocs").any { File(dir, it).isDirectory }

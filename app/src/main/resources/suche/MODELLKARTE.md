@@ -1,8 +1,8 @@
-multilingual-e5-small – Lora Edition
+multilingual-e5-small – Kana Edition
 
 Wofür: Suche nach Bedeutung in der Wissenssammlung auf diesem Gerät (AP-107). Das Modell macht aus jedem Abschnitt und jeder Frage einen Vektor; ähnliche Bedeutung gibt ähnliche Vektoren. Nichts verlässt dabei das Gerät.
 
-Was „Lora Edition“ heißt: von uns ausgewählt, gemessen und für Lora eingestellt (Abschnitte wie die Wissenssammlung, Mischung mit der Wortsuche). Die Gewichte sind unverändert, die Datei ist die des Originals. Keine Billigung durch die Urheber.
+Was „Kana Edition“ heißt: von uns ausgewählt, gemessen und für Kana eingestellt (Abschnitte wie die Wissenssammlung, Mischung mit der Wortsuche). Die Gewichte sind unverändert, die Datei ist die des Originals. Keine Billigung durch die Urheber.
 
 Basismodell: intfloat/multilingual-e5-small (Liang Wang u. a., Microsoft), Lizenz MIT. Datei: onnx/model_qint8_avx512_vnni.onnx (int8, 118 MB) und sentencepiece.bpe.model (5 MB) aus dem Original-Repository auf Hugging Face, fester Commit 614241f622f53c4eeff9890bdc4f31cfecc418b3, geprüft mit SHA-256.
 

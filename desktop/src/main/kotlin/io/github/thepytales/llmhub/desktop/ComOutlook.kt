@@ -84,7 +84,7 @@ object ComOutlook : OutlookBridge {
 
     private fun startProblem(e: COMException): String = when (hresult(e)) {
         in NOT_INSTALLED -> tr("Das klassische Outlook ist auf diesem PC nicht installiert. Das neue Outlook (und Outlook im Browser) bieten keine Schnittstelle für Programme – dafür kommt später der Weg über den Mailserver.")
-        0x80080005.toInt() -> tr("Outlook ließ sich nicht ansprechen. Läuft Outlook mit anderen Rechten als Lora (z. B. „Als Administrator ausführen“)? Dann beide normal starten.")
+        0x80080005.toInt() -> tr("Outlook ließ sich nicht ansprechen. Läuft Outlook mit anderen Rechten als Kana (z. B. „Als Administrator ausführen“)? Dann beide normal starten.")
         else -> tr("Outlook ließ sich nicht starten: {0}", e.message ?: tr("unbekannter Fehler"))
     }
 
@@ -480,7 +480,7 @@ object ComOutlook : OutlookBridge {
         file
     }
 
-    // ── AP-69 b/c: Lora sortiert selbst ──
+    // ── AP-69 b/c: Kana sortiert selbst ──
 
     /** Restricts the folder to the time (Outlook's filter in the short date format of Windows), newest first. */
     override fun mailsInRange(folderId: String?, from: Long, until: Long?, limit: Int): List<MailHeader> = session { _, ns ->

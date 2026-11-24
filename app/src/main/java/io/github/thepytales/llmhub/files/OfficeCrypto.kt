@@ -158,7 +158,7 @@ object OfficeCrypto {
         return when {
             major == 4 && minor == 4 -> agile(info, pkg, password)
             minor == 2 && major in 2..4 -> standard(info, pkg, password)
-            else -> error(tr("Diese Verschlüsselung (Version {0}.{1}) kennt Lora nicht.", major, minor))
+            else -> error(tr("Diese Verschlüsselung (Version {0}.{1}) kennt Kana nicht.", major, minor))
         }
     }
 

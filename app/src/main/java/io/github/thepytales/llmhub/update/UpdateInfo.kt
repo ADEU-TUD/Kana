@@ -24,7 +24,7 @@ data class ExtensionFile(val id: String, val name: String, val version: String, 
  *  "android": {"file": "ADEU-LLM-1.0.37.apk", "url": "https://…", "sha256": "…", "size": 123},
  *  "macos": {"file": "ADEU-LLM-1.0.37-macOS.tar.gz", …}, "linux": {"file": "ADEU-LLM-1.0.37-Linux.tar.gz", …},
  *  "extensions": [{"id": "videoeditor", "name": "Videoeditor-Paket", "version": "1", "description": "…",
- *                  "file": "Lora-Videoeditor-1.zip", "url": "https://…", "sha256": "…", "size": 123}]}
+ *                  "file": "Kana-Videoeditor-1.zip", "url": "https://…", "sha256": "…", "size": 123}]}
  * ```
  */
 data class UpdateInfo(

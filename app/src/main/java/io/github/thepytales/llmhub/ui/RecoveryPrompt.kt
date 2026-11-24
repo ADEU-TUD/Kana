@@ -53,7 +53,7 @@ fun RecoveryPrompt(c: AppContainer, onOpen: (String) -> Unit) {
         title = { Text(tr("Ungespeicherte Arbeit wiederherstellen?")) },
         text = {
             Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(tr("Beim letzten Mal blieb etwas ungespeichert – etwa weil Lora abgestürzt ist oder geschlossen wurde."))
+                Text(tr("Beim letzten Mal blieb etwas ungespeichert – etwa weil Kana abgestürzt ist oder geschlossen wurde."))
                 list.forEach { e ->
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         val preview by produceState<ImageBitmap?>(null, e.file) {

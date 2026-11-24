@@ -25,7 +25,7 @@ import java.nio.ByteOrder
 import kotlin.test.Test
 
 /**
- * Films of Lora to look at before a release (no check): every action as a loop, the start page and the work as the app
+ * Films of Kana to look at before a release (no check): every action as a loop, the start page and the work as the app
  * plays them (with the moves from one action into the next), the close-up and the small size of the chat. It only runs
  * when LORA_PREVIEW_DIR names a folder and needs ffmpeg on the PATH:
  *
@@ -82,7 +82,7 @@ class LoraPreviewTest {
             film(File(out, "reel-home.mkv"), 560, 392, fps, 60_000, look.page) { t -> drawLora(home.frame(t), t, look.colors) }
             val work = LoraDirector(WORKING_SEQUENCE, LoraAction.WALK, 1500)
             film(File(out, "reel-work.mkv"), 560, 392, fps, 75_000, look.card) { t -> drawLora(work.frame(t), t, look.colors) }
-            // The close-up of small places (the button in the top bar, the sleeping Lora in a corner).
+            // The close-up of small places (the button in the top bar, the sleeping Kana in a corner).
             val face = LoraDirector(listOf(LoraAction.IDLE, LoraAction.WAVE, LoraAction.LOOK, LoraAction.NOD, LoraAction.SLEEP), LoraAction.IDLE, 1500)
             film(File(out, "face.mkv"), 320, 320, fps, 22_400, look.card) { t -> drawLoraFace(face.frame(t), t, look.colors) }
             // The whole figure as small as under an answer of the chat (30 × 21 dp, here at four times the pixels).

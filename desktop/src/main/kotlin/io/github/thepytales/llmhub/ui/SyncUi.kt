@@ -74,7 +74,7 @@ fun runSyncGate(): Boolean {
                 }
             }
         }
-        Window(onCloseRequest = ::exitApplication, state = state, title = "Lora", icon = androidx.compose.ui.res.painterResource("icon.png")) {
+        Window(onCloseRequest = ::exitApplication, state = state, title = "Kana", icon = androidx.compose.ui.res.painterResource("icon.png")) {
             LlmHubTheme(AppSettings()) {
                 finding?.let { f ->
                     SyncGateContent(
@@ -116,11 +116,11 @@ private fun SyncGateContent(f: SyncGuard.Finding, onOpen: () -> Unit, onQuit: ()
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            LoraFace(Modifier.size(56.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.THINK, LoraAction.LOOK), LoraAction.THINK))
+            LoraFace(Modifier.size(56.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.THINK, LoraAction.LOOK), LoraAction.THINK))
             Spacer(Modifier.size(12.dp))
             Text(
                 when (f) {
-                    is SyncGuard.Finding.OpenElsewhere -> tr("Lora ist auf „{0}“ geöffnet", s.pc)
+                    is SyncGuard.Finding.OpenElsewhere -> tr("Kana ist auf „{0}“ geöffnet", s.pc)
                     is SyncGuard.Finding.StillSyncing -> tr("Die Änderungen von „{0}“ sind noch unterwegs", s.pc)
                 },
                 style = MaterialTheme.typography.titleLarge,
@@ -129,8 +129,8 @@ private fun SyncGateContent(f: SyncGuard.Finding, onOpen: () -> Unit, onQuit: ()
         when (f) {
             is SyncGuard.Finding.OpenElsewhere -> {
                 Text(
-                    if (s.background) tr("Dort läuft Lora nur im Hintergrund (Infobereich) und hat nichts zu tun. Sie beendet sich von selbst, sobald du hier öffnest.")
-                    else tr("Seit {0}, zuletzt aktiv {1}. Damit keine Änderungen verloren gehen, sollte Lora nur auf ", TIME.format(Date(s.openedAt)), ago(s.aliveAt)) +
+                    if (s.background) tr("Dort läuft Kana nur im Hintergrund (Infobereich) und hat nichts zu tun. Sie beendet sich von selbst, sobald du hier öffnest.")
+                    else tr("Seit {0}, zuletzt aktiv {1}. Damit keine Änderungen verloren gehen, sollte Kana nur auf ", TIME.format(Date(s.openedAt)), ago(s.aliveAt)) +
                         tr("einem PC offen sein. Schließe sie dort (Symbol im Infobereich › Beenden) – dann geht es hier von selbst weiter."),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -145,7 +145,7 @@ private fun SyncGateContent(f: SyncGuard.Finding, onOpen: () -> Unit, onQuit: ()
             }
         }
         LinearProgressIndicator(Modifier.fillMaxWidth())
-        HintText(tr("Lora prüft alle paar Sekunden neu. „Trotzdem öffnen“ kann Änderungen des anderen PCs überschreiben."))
+        HintText(tr("Kana prüft alle paar Sekunden neu. „Trotzdem öffnen“ kann Änderungen des anderen PCs überschreiben."))
         Spacer(Modifier.weight(1f))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, androidx.compose.ui.Alignment.End)) {
             TextButton(onClick = onQuit) { Text(tr("Beenden")) }
@@ -156,7 +156,7 @@ private fun SyncGateContent(f: SyncGuard.Finding, onOpen: () -> Unit, onQuit: ()
 }
 
 /**
- * While the app runs, another PC opened the same folder: in the background (window closed, nothing running) Lora
+ * While the app runs, another PC opened the same folder: in the background (window closed, nothing running) Kana
  * ends here by herself ([onQuit] with a note); with the window open she asks.
  */
 @Composable
@@ -166,17 +166,17 @@ fun SyncNewcomerDialog(visible: Boolean, idle: Boolean, onQuit: (String?) -> Uni
     val o = other ?: return
     if (dismissed == o.id + o.openedAt) return
     if (!visible && idle) {
-        LaunchedEffect(o.id, o.openedAt) { onQuit(tr("Lora wurde auf „{0}“ geöffnet – hier beendet, damit nichts überschrieben wird.", o.pc)) }
+        LaunchedEffect(o.id, o.openedAt) { onQuit(tr("Kana wurde auf „{0}“ geöffnet – hier beendet, damit nichts überschrieben wird.", o.pc)) }
         return
     }
     if (!visible) return
     AlertDialog(
         onDismissRequest = {},
         icon = { Icon(Icons.Outlined.CloudSync, contentDescription = null) },
-        title = { Text(tr("Lora ist jetzt auch auf „{0}“ geöffnet", o.pc)) },
+        title = { Text(tr("Kana ist jetzt auch auf „{0}“ geöffnet", o.pc)) },
         text = {
             Text(
-                tr("Beide PCs nutzen denselben Datenordner. Damit keiner die Änderungen des anderen überschreibt, sollte Lora nur auf einem " +
+                tr("Beide PCs nutzen denselben Datenordner. Damit keiner die Änderungen des anderen überschreibt, sollte Kana nur auf einem " +
                     "PC offen sein. Am besten hier beenden, wenn du dort weiterarbeitest."),
             )
         },
@@ -188,7 +188,7 @@ fun SyncNewcomerDialog(visible: Boolean, idle: Boolean, onQuit: (String?) -> Uni
 /** Entry of Einstellungen › Synchronisation in the overview. */
 fun syncSettingsItemDesktop(): SettingsItem = SettingsItem(
     "settings/sync", Icons.Outlined.CloudSync, tr("Synchronisation"),
-    if (SyncSession.active) tr("An · {0}", CloudFolders.serviceOf(Paths.root) ?: Paths.root.name) else tr("Lora-Ordner in OneDrive, Google Drive oder Nextcloud legen"),
+    if (SyncSession.active) tr("An · {0}", CloudFolders.serviceOf(Paths.root) ?: Paths.root.name) else tr("Kana-Ordner in OneDrive, Google Drive oder Nextcloud legen"),
 )
 
 /**
@@ -205,7 +205,7 @@ fun SyncSettings(c: AppContainer) {
     val kept by SyncSession.kept.collectAsState()
     Section(tr("So funktioniert es")) {
         Text(
-            tr("Wie bei Obsidian: Der Lora-Ordner (Dateien, Chats und Einstellungen) liegt in einem Cloud-Ordner (Nextcloud, Google Drive für Desktop oder OneDrive), der auf " +
+            tr("Wie bei Obsidian: Der Kana-Ordner (Dateien, Chats und Einstellungen) liegt in einem Cloud-Ordner (Nextcloud, Google Drive für Desktop oder OneDrive), der auf " +
                 "deinen PCs eingerichtet ist. Deren Programm hält ihn überall gleich – am Büro-PC beginnen, am Laptop weiterarbeiten, ohne Umzug."),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -215,8 +215,8 @@ fun SyncSettings(c: AppContainer) {
                 "(Sprachmodelle, lokale Modelle, Aufnahmen) bleiben ebenfalls auf dem PC."),
         )
         HintText(
-            tr("Lora ist immer nur auf einem PC offen: Beim Start prüft sie, ob sie anderswo läuft oder dessen Änderungen noch unterwegs sind, und " +
-                "wartet dann kurz. Legt der Cloud-Dienst trotzdem Konfliktkopien an, behält Lora beide Fassungen."),
+            tr("Kana ist immer nur auf einem PC offen: Beim Start prüft sie, ob sie anderswo läuft oder dessen Änderungen noch unterwegs sind, und " +
+                "wartet dann kurz. Legt der Cloud-Dienst trotzdem Konfliktkopien an, behält Kana beide Fassungen."),
         )
     }
     if (active) {
@@ -238,7 +238,7 @@ fun SyncSettings(c: AppContainer) {
                 OutlinedButton(onClick = { DesktopActions.open(Paths.root) }) {
                     Icon(Icons.Outlined.FolderOpen, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.size(6.dp))
-                    Text(tr("Lora-Ordner öffnen"))
+                    Text(tr("Kana-Ordner öffnen"))
                 }
                 val conflictDir = File(File(Paths.data, SyncGuard.FOLDER), SyncGuard.CONFLICTS)
                 if (conflictDir.isDirectory) OutlinedButton(onClick = { DesktopActions.open(conflictDir) }) { Text(tr("Beiseitegelegte Konfliktkopien")) }
@@ -254,8 +254,8 @@ fun SyncSettings(c: AppContainer) {
             }
         }
     } else {
-        Section(tr("Lora-Ordner in einen Cloud-Ordner legen")) {
-            Text(tr("Erster PC: Dein Lora-Ordner wird in den Cloud-Ordner kopiert, danach startet Lora neu und arbeitet dort."), style = MaterialTheme.typography.bodySmall)
+        Section(tr("Kana-Ordner in einen Cloud-Ordner legen")) {
+            Text(tr("Erster PC: Dein Kana-Ordner wird in den Cloud-Ordner kopiert, danach startet Kana neu und arbeitet dort."), style = MaterialTheme.typography.bodySmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 places.forEach { p -> Button(onClick = { target = p.target }) { Text(tr("In {0} legen", p.name)) } }
                 OutlinedButton(onClick = { scope.launch { FolderAccess.pick(tr("Ordner in deinem Cloud-Ordner wählen"))?.let { target = File(it) } } }) {
@@ -266,10 +266,10 @@ fun SyncSettings(c: AppContainer) {
         }
         Section(tr("Zweiter PC: vorhandenen Ordner öffnen")) {
             Text(
-                tr("Auf dem zweiten PC wählst du denselben Ordner (z. B. „Lora“ in deinem Cloud-Ordner). Lora nutzt die Daten dort – alles ist da."),
+                tr("Auf dem zweiten PC wählst du denselben Ordner (z. B. „Kana“ in deinem Cloud-Ordner). Kana nutzt die Daten dort – alles ist da."),
                 style = MaterialTheme.typography.bodySmall,
             )
-            OutlinedButton(onClick = { scope.launch { FolderAccess.pick(tr("Vorhandenen Lora-Ordner wählen"))?.let { target = File(it) } } }) {
+            OutlinedButton(onClick = { scope.launch { FolderAccess.pick(tr("Vorhandenen Kana-Ordner wählen"))?.let { target = File(it) } } }) {
                 Text(tr("Vorhandenen Ordner öffnen …"))
             }
         }
@@ -288,15 +288,15 @@ private fun SyncSwitchDialog(dir: File, ending: Boolean, onDismiss: () -> Unit) 
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (ending) tr("Synchronisation beenden") else if (hasData) tr("Vorhandenen Ordner nutzen") else tr("Lora-Ordner verlegen")) },
+        title = { Text(if (ending) tr("Synchronisation beenden") else if (hasData) tr("Vorhandenen Ordner nutzen") else tr("Kana-Ordner verlegen")) },
         text = {
             Text(
                 when {
-                    ending -> tr("Dein Lora-Ordner wird zurück nach „{0}“ kopiert (neuere Dateien ersetzen ältere), dann ", Paths.defaultRoot.absolutePath) +
-                        tr("startet Lora neu. Der Cloud-Ordner bleibt unverändert – auf anderen PCs geht die Synchronisation weiter.")
-                    hasData -> tr("In „{0}“ liegen schon Lora-Daten (z. B. vom anderen PC). Lora startet neu und nutzt sie. ", dir.absolutePath) +
+                    ending -> tr("Dein Kana-Ordner wird zurück nach „{0}“ kopiert (neuere Dateien ersetzen ältere), dann ", Paths.defaultRoot.absolutePath) +
+                        tr("startet Kana neu. Der Cloud-Ordner bleibt unverändert – auf anderen PCs geht die Synchronisation weiter.")
+                    hasData -> tr("In „{0}“ liegen schon Kana-Daten (z. B. vom anderen PC). Kana startet neu und nutzt sie. ", dir.absolutePath) +
                         tr("„Meine Daten dazukopieren“ ergänzt nur Dateien, die dort noch fehlen.")
-                    else -> tr("Dein Lora-Ordner wird nach „{0}“ kopiert, danach startet Lora neu und arbeitet dort weiter. ", dir.absolutePath) +
+                    else -> tr("Dein Kana-Ordner wird nach „{0}“ kopiert, danach startet Kana neu und arbeitet dort weiter. ", dir.absolutePath) +
                         tr("Der bisherige Ordner bleibt als Sicherung erhalten.")
                 },
             )

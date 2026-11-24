@@ -10,13 +10,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Files Lora opens in its own editors (the rest goes to a chat). */
+/** Files Kana opens in its own editors (the rest goes to a chat). */
 private val EDITABLE = setOf("docx", "pptx", "xlsx", "xlsm", "md", "markdown", "odt", "ods", "odp", "txt", "csv")
 
 /**
- * „Mit Lora öffnen“ / „Lora fragen“ / „Frag diesen Ordner“ from the Explorer (AP-59): a PDF opens in the
- * PDF-Werkzeugkasten, Office files and Markdown in the editor (a file in the Lora-Ordner as itself, others as a linked
- * copy), videos as a project in the video editor; everything else – and „Lora fragen“ – becomes a new chat with the file
+ * „Mit Kana öffnen“ / „Kana fragen“ / „Frag diesen Ordner“ from the Explorer (AP-59): a PDF opens in the
+ * PDF-Werkzeugkasten, Office files and Markdown in the editor (a file in the Kana-Ordner as itself, others as a linked
+ * copy), videos as a project in the video editor; everything else – and „Kana fragen“ – becomes a new chat with the file
  * attached. A folder becomes a chat in the Quellenmodus over its files (AP-58).
  */
 suspend fun handleShellRequest(c: AppContainer, r: ShellArgs.Request) {
@@ -29,7 +29,7 @@ suspend fun handleShellRequest(c: AppContainer, r: ShellArgs.Request) {
     }
 }
 
-/** Where a file goes for „Mit Lora öffnen“: "pdf", "doc", "video" or "chat". */
+/** Where a file goes for „Mit Kana öffnen“: "pdf", "doc", "video" or "chat". */
 internal fun shellTarget(f: File): String {
     val ext = f.extension.lowercase()
     return when {
@@ -75,7 +75,7 @@ private suspend fun askFile(c: AppContainer, f: File) {
 }
 
 private suspend fun askFolder(c: AppContainer, dir: File) {
-    Notices.info(tr("Lora liest den Ordner „{0}“ …", dir.name))
+    Notices.info(tr("Kana liest den Ordner „{0}“ …", dir.name))
     val files = withContext(Dispatchers.IO) { runCatching { io.github.thepytales.llmhub.agent.FolderAsk.prepare(c, dir) { _, _ -> } }.getOrDefault(emptyList()) }
     if (files.isEmpty()) { Notices.info(tr("Im Ordner „{0}“ gibt es keine lesbaren Dateien.", dir.name)); return }
     ChatHandoff.pending.value = ChatHandoff.Content(

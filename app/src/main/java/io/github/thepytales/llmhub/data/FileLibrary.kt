@@ -284,8 +284,8 @@ class FileLibrary(private val c: AppContainer, context: Context) {
     companion object {
         /** The place of the editor's documents in the folder tree. */
         const val DOCUMENTS = "Dokumente"
-        /** The Lora-Ordner in the folder tree (AP-16). */
-        const val LORA = "Lora-Ordner"
+        /** The Kana-Ordner in the folder tree (AP-16). */
+        const val LORA = "Kana-Ordner"
         const val MAX_FILES = 5000
         private const val MEMORY_CHARS = 25_000_000L
         private const val MAX_BYTES = 40L * 1024 * 1024

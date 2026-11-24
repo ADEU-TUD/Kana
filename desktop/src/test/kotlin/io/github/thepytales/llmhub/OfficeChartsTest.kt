@@ -106,7 +106,7 @@ class OfficeChartsTest {
         assertTrue("<c:lineChart>" in parts["xl/charts/chart3.xml"]!! && "\$C\$2:\$C\$5" in parts["xl/charts/chart3.xml"]!!)
         assertTrue("<c:numLit>" in parts["xl/charts/chart4.xml"]!!, "a histogram's classes are values")
         assertTrue("<drawing r:id=\"rIdDr\"/>" in parts["xl/worksheets/sheet1.xml"]!!)
-        assertTrue("Lora-Diagramm vert1" in parts["xl/drawings/drawing1.xml"]!!)
+        assertTrue("Kana-Diagramm vert1" in parts["xl/drawings/drawing1.xml"]!!)
         assertTrue("Histogramm von A1:A13" in parts["xl/drawings/drawing2.xml"]!!)
         assertTrue("drawingml.chart+xml" in parts["[Content_Types].xml"]!!)
 
@@ -125,7 +125,7 @@ class OfficeChartsTest {
 
     @Test
     fun foreignExcelChartBecomesAnEditorChart() {
-        // As Excel writes it: the chart on the sheet, its data on another one, no Lora names.
+        // As Excel writes it: the chart on the sheet, its data on another one, no Kana names.
         val xml = OfficeCharts.xml(
             ChartSpec(ChartSpec.Type.HBAR, "Umsatz", labels = listOf("A", "B"), series = listOf(ChartSpec.Series("2026", listOf(3.0, 4.0)))),
             listOf(OfficeCharts.Refs("Daten!\$C\$1", "Daten!\$A\$2:\$A\$3", "Daten!\$C\$2:\$C\$3")),

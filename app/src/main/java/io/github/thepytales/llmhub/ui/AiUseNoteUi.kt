@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * KI-Nutzungsnachweis (AP-19) in the chat: once a chat is about a work and the AI wrote for it, a small pop-up above the
- * input offers the declaration (once per chat; „Nicht mehr vorschlagen“ switches it off under Einstellungen › Lora).
+ * input offers the declaration (once per chat; „Nicht mehr vorschlagen“ switches it off under Einstellungen › Kana).
  * Always reachable in the chat menu.
  */
 object AiUseNoteOffers {
@@ -86,7 +86,7 @@ fun AiUseNoteSuggestion(c: AppContainer, conv: Conversation, running: Boolean, o
                             style = MaterialTheme.typography.labelLarge,
                         )
                         Text(
-                            tr("Lora erstellt aus diesem Chat einen KI-Nutzungsnachweis – Modelle, Zweck, Zeitraum – für die Prüfungsordnung, einen Verlag oder als Fußnote."),
+                            tr("Kana erstellt aus diesem Chat einen KI-Nutzungsnachweis – Modelle, Zweck, Zeitraum – für die Prüfungsordnung, einen Verlag oder als Fußnote."),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

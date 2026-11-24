@@ -186,7 +186,7 @@ fun VideoScreen(c: AppContainer, onBack: () -> Unit) {
     val prefs = remember { c.appContext.getSharedPreferences("ui_state", 0) }
     var setupSeen by remember { mutableStateOf(prefs.getBoolean("videoSetupSeen", false) || Extensions.installed(Extensions.VIDEO.id)) }
     var open by rememberSaveable { mutableStateOf<String?>(null) }
-    // Lora made a project (AP-38): it opens here.
+    // Kana made a project (AP-38): it opens here.
     val loraOpen by io.github.thepytales.llmhub.video.VideoLora.openRequest.collectAsStateWithLifecycle()
     LaunchedEffect(loraOpen) { loraOpen?.let { open = it; io.github.thepytales.llmhub.video.VideoLora.openRequest.value = null } }
     open?.let { id ->
@@ -194,7 +194,7 @@ fun VideoScreen(c: AppContainer, onBack: () -> Unit) {
         return
     }
     val projects by VideoHub.store.items.collectAsStateWithLifecycle()
-    // Lora leads to a place of the editor (a tour step, „Wo setze ich Untertitel?“): the latest project opens (AP-70).
+    // Kana leads to a place of the editor (a tour step, „Wo setze ich Untertitel?“): the latest project opens (AP-70).
     val spot by Spotlight.target.collectAsStateWithLifecycle()
     LaunchedEffect(spot, projects.isEmpty()) {
         if (spot in EDITOR_SPOTS && open == null) projects.maxByOrNull { it.updatedAt }?.let { open = it.id }
@@ -250,7 +250,7 @@ fun VideoScreen(c: AppContainer, onBack: () -> Unit) {
                 item { StepsLine(Modifier.padding(horizontal = 4.dp, vertical = 2.dp)) }
                 if (projects.isEmpty()) item {
                     Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        LoraFigure(Modifier.size(width = 120.dp, height = 84.dp), label = "Lora", director = rememberLoraDirector(listOf(LoraAction.SCISSORS, LoraAction.HEADPHONES, LoraAction.LOOK), LoraAction.SCISSORS))
+                        LoraFigure(Modifier.size(width = 120.dp, height = 84.dp), label = "Kana", director = rememberLoraDirector(listOf(LoraAction.SCISSORS, LoraAction.HEADPHONES, LoraAction.LOOK), LoraAction.SCISSORS))
                         Text(tr("Noch keine Videoprojekte"), style = MaterialTheme.typography.titleMedium)
                         HintText(tr("Lehrvideos schneiden, Titel und Bauchbinden im TUD-Design einblenden, Untertitel aus der Transkription, Pausen und Füllwörter automatisch herausschneiden – und als MP4 für OPAL oder YouTube speichern. Die Videos bleiben, wo sie sind."))
                     }
@@ -477,7 +477,7 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
     val srcPlaying by source.playing.collectAsStateWithLifecycle()
     LaunchedEffect(sourceProject) { sourceProject?.let { source.seek(it, sourceItem?.inSec ?: 0.0) } }
     LaunchedEffect(id) { player.seek(p, 0.0) }
-    // Lora's actions (AP-38 Stufe d) change this project through its history, so Strg+Z takes them back as well.
+    // Kana's actions (AP-38 Stufe d) change this project through its history, so Strg+Z takes them back as well.
     DisposableEffect(id) {
         val host = io.github.thepytales.llmhub.video.VideoLora.Host(id, { h.project }, { f -> h.edit(record = true, f = f) }, { player.position.value })
         io.github.thepytales.llmhub.video.VideoLora.host = host
@@ -605,7 +605,7 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
     }
     val menuShown by Navigation.wideMenu.collectAsStateWithLifecycle()
     LaunchedEffect(menuShown) { layout.menu = menuShown }
-    // Lora leads to a place behind the full-screen preview or in a folded panel: it comes back first.
+    // Kana leads to a place behind the full-screen preview or in a folded panel: it comes back first.
     val spot by Spotlight.target.collectAsStateWithLifecycle()
     LaunchedEffect(spot) {
         if (spot?.startsWith("video.") == true) layout.full = false
@@ -884,7 +884,7 @@ private fun EditorHeader(
             }
         }
         BarGap()
-        // Help (AP-121): the step card, the tour, the keys and Lora in one place.
+        // Help (AP-121): the step card, the tour, the keys and Kana in one place.
         Spot("video.help") { HelpButton(layout.guide, onGuide = onGuide, onKeys = onKeys, onDismiss = onFocus) }
         ToolGroup {
             TipIconButton(Icons.AutoMirrored.Outlined.Undo, tr("Rückgängig") + " (Strg+Z)", h::undo, enabled = h.canUndo)
@@ -1150,10 +1150,10 @@ private fun TimelineBar(
                 }
             }
             Box {
-                Spot("video.roughcut") { BarButton(Icons.Outlined.AutoAwesome, tr("Rohschnitt"), tr("Rohschnitt: Pausen und Füllwörter, mit Lora kürzen"), { cut = true }, words) }
+                Spot("video.roughcut") { BarButton(Icons.Outlined.AutoAwesome, tr("Rohschnitt"), tr("Rohschnitt: Pausen und Füllwörter, mit Kana kürzen"), { cut = true }, words) }
                 DropdownMenu(expanded = cut, onDismissRequest = { cut = false; onFocus() }) {
                     DropdownMenuItem(text = { Text(tr("Pausen und Füllwörter herausschneiden …")) }, onClick = { cut = false; a.pickTranscript = "cut" })
-                    DropdownMenuItem(text = { Text(tr("Mit Lora kürzen …")) }, onClick = { cut = false; a.loraCut = true })
+                    DropdownMenuItem(text = { Text(tr("Mit Kana kürzen …")) }, onClick = { cut = false; a.loraCut = true })
                 }
             }
         }
@@ -1241,7 +1241,7 @@ internal fun TranscriptPicker(c: AppContainer, p: VideoProject, onDismiss: () ->
     )
 }
 
-/** „Mit Lora kürzen“: a wish for the selected or the first clip with a transcript; Lora picks the passages. */
+/** „Mit Kana kürzen“: a wish for the selected or the first clip with a transcript; Kana picks the passages. */
 @Composable
 internal fun LoraCutDialog(c: AppContainer, h: History, onDismiss: () -> Unit) {
     var wish by remember { mutableStateOf("") }
@@ -1251,12 +1251,12 @@ internal fun LoraCutDialog(c: AppContainer, h: History, onDismiss: () -> Unit) {
     val withTranscript = h.project.clips.indexOfFirst { it.path in h.project.transcripts }
     AlertDialog(
         onDismissRequest = { if (!running) onDismiss() },
-        title = { Text(tr("Mit Lora kürzen")) },
+        title = { Text(tr("Mit Kana kürzen")) },
         text = {
             Column(Modifier.width(520.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (withTranscript < 0) HintText(tr("Dafür braucht ein Clip ein Transkript: unter Rohschnitt › Pausen und Füllwörter oder Untertitel › Aus der Transkription eines zuordnen."))
                 else {
-                    HintText(tr("Lora liest das Transkript des Clips „{0}“ und wählt die Abschnitte, die bleiben. Der Text geht an das Standardmodell, Namen pseudonymisiert.", File(h.project.clips[withTranscript].path).name))
+                    HintText(tr("Kana liest das Transkript des Clips „{0}“ und wählt die Abschnitte, die bleiben. Der Text geht an das Standardmodell, Namen pseudonymisiert.", File(h.project.clips[withTranscript].path).name))
                     OutlinedTextField(wish, { wish = it }, minLines = 2, modifier = Modifier.fillMaxWidth().typing(), placeholder = { Text(tr("z. B. „Nur die Erklärung des Versuchsaufbaus, höchstens 5 Minuten“")) })
                 }
                 error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }

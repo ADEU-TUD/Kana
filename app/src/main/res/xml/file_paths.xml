@@ -4,7 +4,7 @@
     exported). A file outside of them is copied to the cache first (DocumentActions.shareableUri), so nothing crashes.
 -->
 <paths>
-    <!-- The Lora-Ordner (AP-16): created documents (Erstellt/), uploads (Hochgeladen/) and the user's own folders -->
+    <!-- The Kana-Ordner (AP-16): created documents (Erstellt/), uploads (Hochgeladen/) and the user's own folders -->
     <files-path name="lora" path="Lora/" />
     <!-- Documents created before AP-16 (create_document) -->
     <files-path name="documents" path="documents/" />

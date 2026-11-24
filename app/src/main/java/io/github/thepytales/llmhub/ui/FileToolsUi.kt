@@ -62,9 +62,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * The file tools of round 3 in *Dateien* and in the Lora-Ordner: CSV-Lotse (AP-93), Fotos aufbereiten (AP-100),
+ * The file tools of round 3 in *Dateien* and in the Kana-Ordner: CSV-Lotse (AP-93), Fotos aufbereiten (AP-100),
  * Archiv-Werkzeug (AP-99), Passwortschutz (AP-98), Schriften-Notfall (AP-91) and Druck-Lotse (AP-97, PC). A menu line
- * or Lora asks for a tool through [FileTools.request]; [FileToolDialogs] (once per screen) shows it. Originals always
+ * or Kana asks for a tool through [FileTools.request]; [FileToolDialogs] (once per screen) shows it. Originals always
  * stay; results go next to them with their own name.
  */
 object FileTools {
@@ -402,7 +402,7 @@ private fun PackDialog(files: List<File>, onDismiss: () -> Unit, onDone: () -> U
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     listOf<Pair<Int?, String>>(null to tr("Nicht teilen"), 10 to "10 MB", 20 to "20 MB", 50 to "50 MB").forEach { (m, l) -> FilterChip(selected = part == m, onClick = { part = m }, label = { Text(l) }) }
                 }
-                if (part != null) HintText(tr("Es entstehen „.zip“, „.z01“, „.z02“ … – alle Teile zusammen verschicken. Öffnen mit 7-Zip, WinRAR oder Lora; der Windows-Explorer kann geteilte ZIPs nicht öffnen."))
+                if (part != null) HintText(tr("Es entstehen „.zip“, „.z01“, „.z02“ … – alle Teile zusammen verschicken. Öffnen mit 7-Zip, WinRAR oder Kana; der Windows-Explorer kann geteilte ZIPs nicht öffnen."))
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { withPassword = !withPassword }) {
                     Checkbox(withPassword, { withPassword = it })
                     Text(tr("Mit Passwort (AES-256)"))
@@ -411,7 +411,7 @@ private fun PackDialog(files: List<File>, onDismiss: () -> Unit, onDone: () -> U
                     PasswordField(tr("Passwort"), password) { password = it }
                     PasswordField(tr("Passwort wiederholen"), repeat) { repeat = it }
                     if (mismatch) Text(tr("Die Passwörter stimmen nicht überein."), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                    HintText(tr("Das Passwort auf anderem Weg weitergeben (Telefon, Messenger) – nicht in derselben Mail. Der Explorer von Windows öffnet AES-ZIPs nicht, 7-Zip und Lora schon."))
+                    HintText(tr("Das Passwort auf anderem Weg weitergeben (Telefon, Messenger) – nicht in derselben Mail. Der Explorer von Windows öffnet AES-ZIPs nicht, 7-Zip und Kana schon."))
                 }
                 if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             }
@@ -510,7 +510,7 @@ private fun OpenProtectedDialog(c: AppContainer, file: File, onDismiss: () -> Un
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 PasswordField(tr("Passwort"), password) { password = it }
-                HintText(tr("Die Datei öffnet sich als Kopie in Lora; das Original bleibt verschlüsselt. Zum Speichern mit Passwort „Exportieren“ und danach „Passwort …“ wählen."))
+                HintText(tr("Die Datei öffnet sich als Kopie in Kana; das Original bleibt verschlüsselt. Zum Speichern mit Passwort „Exportieren“ und danach „Passwort …“ wählen."))
             }
         },
         confirmButton = {

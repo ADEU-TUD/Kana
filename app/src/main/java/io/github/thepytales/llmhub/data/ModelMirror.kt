@@ -1,7 +1,7 @@
 package io.github.thepytales.llmhub.data
 
 /**
- * Our own mirror on Hugging Face (AP-106, decision of 10.11.2026): the curated models of the Lora Edition lie there
+ * Our own mirror on Hugging Face (AP-106, decision of 10.11.2026): the curated models of the Kana Edition lie there
  * byte for byte with licence and model card under huggingface.co/[ORG], each at a fixed commit. [sources] gives the
  * mirror first and the original as a fallback – path, size and SHA-256 are the same, so a download that stopped can go
  * on from the other source. A new model of the catalog is mirrored first (tools/huggingface) and entered here.

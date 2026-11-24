@@ -252,7 +252,7 @@ class ControlsBehaviourTest {
     }
 
     /**
-     * A new screen density (window on another monitor, other scaling, Lora 1.0.75) must not end the app: Compose cast the
+     * A new screen density (window on another monitor, other scaling, Kana 1.0.75) must not end the app: Compose cast the
      * scrollbar to PointerInputModifierNode and failed with a ClassCastException. The bar still drags afterwards.
      */
     @Test

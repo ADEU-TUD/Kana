@@ -29,7 +29,7 @@ fun ToolsSection(c: AppContainer) {
     val s by c.settings.settings.collectAsStateWithLifecycle()
     Section(tr("Große Werkzeuge")) {
         HintText(
-            tr("Große Werkzeuge sind anfangs aus, damit die App übersichtlich bleibt. Eingeschaltete stehen in der Seitenleiste unter „Mehr“ und auf der Startseite; Lora schlägt passende Werkzeuge vor."),
+            tr("Große Werkzeuge sind anfangs aus, damit die App übersichtlich bleibt. Eingeschaltete stehen in der Seitenleiste unter „Mehr“ und auf der Startseite; Kana schlägt passende Werkzeuge vor."),
         )
         val available = AppTool.available(IS_ANDROID)
         if (available.isEmpty()) HintText(tr("Im Moment gibt es noch kein einschaltbares Werkzeug – die ersten folgen mit den nächsten Updates."))
@@ -63,7 +63,7 @@ fun ToolsSection(c: AppContainer) {
             )
             // Bereiche ausblenden, damit die Liste kurz bleibt (Werkzeuge oben ausschalten); „Erstellen“ und „Dateien“ bleiben.
             DrawerArea.entries.filter { it.tool == null && it !in DrawerArea.ALWAYS }.forEach { area ->
-                SwitchRow(tr(area.label), tr("In der Seitenleiste zeigen – sonst über Strg+K und Lora erreichbar."), area.id !in s.drawerHiddenIds) { on ->
+                SwitchRow(tr(area.label), tr("In der Seitenleiste zeigen – sonst über Strg+K und Kana erreichbar."), area.id !in s.drawerHiddenIds) { on ->
                     c.settings.update { it.copy(drawerHidden = hideDrawerArea(it.drawerHidden, area, !on)) }
                 }
             }
@@ -79,8 +79,8 @@ fun ToolsSection(c: AppContainer) {
 private val dismissedTools = androidx.compose.runtime.mutableStateListOf<String>()
 
 /**
- * Lora's hint above the input when the request (or an attached file) fits a tool that is switched off: „Für PDFs gibt
- * es den PDF-Werkzeugkasten – einschalten?“ (AP-02). Only with Einstellungen › Lora › Hinweise and Lora not off.
+ * Kana's hint above the input when the request (or an attached file) fits a tool that is switched off: „Für PDFs gibt
+ * es den PDF-Werkzeugkasten – einschalten?“ (AP-02). Only with Einstellungen › Kana › Hinweise and Kana not off.
  */
 @Composable
 fun ToolSuggestion(c: AppContainer, input: String, fileNames: List<String>) {

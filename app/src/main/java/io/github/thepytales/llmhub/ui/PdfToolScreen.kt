@@ -141,7 +141,7 @@ object PdfWork {
     var selected by mutableStateOf(0)
 
     init {
-        // Lora handelt im Werkzeugkasten (AP-38): she sees the open PDFs and changes the active one like a tool of the
+        // Kana handelt im Werkzeugkasten (AP-38): she sees the open PDFs and changes the active one like a tool of the
         // screen does – with the same Rückgängig.
         io.github.thepytales.llmhub.agent.LoraFocus.pdfSource = {
             val list = tabs.toList()
@@ -429,7 +429,7 @@ fun PdfToolScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit = 
 private fun PdfEmpty(onOpen: () -> Unit) {
     Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         val director = rememberLoraDirector(sequence = PDF_LORA, start = PDF_LORA.first())
-        LoraFigure(Modifier.size(150.dp, 150.dp / LORA_ASPECT), label = tr("Lora mit Schere, Hefter und Stempel"), director = director)
+        LoraFigure(Modifier.size(150.dp, 150.dp / LORA_ASPECT), label = tr("Kana mit Schere, Hefter und Stempel"), director = director)
         Spacer(Modifier.size(12.dp))
         Text(tr("PDF-Werkzeugkasten"), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.size(6.dp))
@@ -452,7 +452,7 @@ private fun PdfEmpty(onOpen: () -> Unit) {
     }
 }
 
-/** Lora's moves for the PDF tools: cutting, stapling, stamping. */
+/** Kana's moves for the PDF tools: cutting, stapling, stamping. */
 internal val PDF_LORA = listOf(LoraAction.SCISSORS, LoraAction.STAPLER, LoraAction.STAMP, LoraAction.READ)
 
 private val NIGHT = ColorFilter.colorMatrix(

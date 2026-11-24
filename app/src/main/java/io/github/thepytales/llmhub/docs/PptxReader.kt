@@ -1,5 +1,6 @@
 package io.github.thepytales.llmhub.docs
 
+import io.github.thepytales.llmhub.Brand
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import java.io.ByteArrayInputStream
@@ -12,7 +13,7 @@ import kotlin.math.roundToInt
 /**
  * PowerPoint-Treue (AP-51): reads a .pptx as slides of the editor.
  *
- * Lora's own decks ([PptxWriter]) come back as they were written: the layout from the TUD shapes, the freely placed
+ * Kana's own decks ([PptxWriter]) come back as they were written: the layout from the TUD shapes, the freely placed
  * elements of [SlideExtras] (shape ids from 1000) as elements again, charts from their chart part.
  *
  * Foreign decks – also the TUD-Präsentationsvorlage – are read the way PowerPoint shows them: a placeholder inherits
@@ -41,10 +42,10 @@ object PptxReader {
             .ifEmpty { listOf(SlideDeck.Slide("Titel", layout = SlideDeck.Layout.TITLE)) }
     }
 
-    /** Whether the deck was written by Lora (then the TUD shapes of [PptxWriter] are read back as layouts). */
+    /** Whether the deck was written by Kana (then the TUD shapes of [PptxWriter] are read back as layouts). */
     internal fun isOwn(files: Map<String, ByteArray>): Boolean =
-        files["docProps/core.xml"]?.toString(Charsets.UTF_8)?.contains("<dc:creator>Lora</dc:creator>") == true ||
-            files["docProps/app.xml"]?.toString(Charsets.UTF_8)?.contains("<Application>Lora</Application>") == true
+        files["docProps/core.xml"]?.toString(Charsets.UTF_8)?.let { x -> Brand.NAMES.any { "<dc:creator>$it</dc:creator>" in x } } == true ||
+            files["docProps/app.xml"]?.toString(Charsets.UTF_8)?.let { x -> Brand.NAMES.any { "<Application>$it</Application>" in x } } == true
 
     /** Übergang of a slide (AP-51): push-like ones as „Schieben“, every other one as „Überblenden“. */
     private fun transition(root: Element?): String {
@@ -114,19 +115,19 @@ object PptxReader {
         }
     }
 
-    // ── Lora's own decks ─────────────────────────────────────────────────────────────────────────────────
+    // ── Kana's own decks ─────────────────────────────────────────────────────────────────────────────────
 
     /** Shapes of [SlideExtras] (freely placed elements) have ids from 1000 on. */
     private fun Element.isExtra(): Boolean = (cNvPr()?.attr("id")?.toIntOrNull() ?: 0) >= 1000
 
     /**
-     * Lora's own export: titles, bullet points, tables, pictures and notes; the TUD shapes decide the slide type
+     * Kana's own export: titles, bullet points, tables, pictures and notes; the TUD shapes decide the slide type
      * (title, section, two columns, comparison, picture), [SlideExtras] shapes become elements again.
      */
     private fun own(pkg: Pkg, slideNames: List<String>, media: MutableMap<String, ByteArray>): List<SlideDeck.Slide> =
         slideNames.mapIndexed { index, key -> ownSlide(pkg, key, index, media) }
 
-    /** One slide of Lora's export (also a slide [PptxMerge] added to a foreign deck: its cSld is named „Lora“). */
+    /** One slide of Kana's export (also a slide [PptxMerge] added to a foreign deck: its cSld is named „Kana“). */
     private fun ownSlide(pkg: Pkg, key: String, index: Int, media: MutableMap<String, ByteArray>): SlideDeck.Slide {
         val files = pkg.files
         val slideHeight = pkg.xml("ppt/presentation.xml")?.all("sldSz")?.firstOrNull()?.attr("cy")?.toLongOrNull() ?: 6858000L

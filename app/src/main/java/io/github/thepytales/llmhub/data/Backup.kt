@@ -191,7 +191,7 @@ object Backup {
                 }
             }
         }
-        val m = manifest ?: throw IllegalArgumentException(tr("Das ist keine Sicherung von Lora (backup.json fehlt)."))
+        val m = manifest ?: throw IllegalArgumentException(tr("Das ist keine Sicherung von Kana (backup.json fehlt)."))
         // Documents, logos and attachment copies are referenced with absolute paths of the old device.
         texts.forEach { f -> runCatching { f.writeText(movePaths(f.readText(), m.root, root.absolutePath)) }.logFailure("Pfade nach Umzug anpassen") }
         c.settings.update { s -> apply(s, m.settings) }

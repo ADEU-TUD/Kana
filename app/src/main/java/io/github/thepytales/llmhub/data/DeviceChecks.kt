@@ -217,7 +217,7 @@ class DeviceCheckStore(dir: File, private val catalog: () -> DeviceChecks.Catalo
         val open = mine.filter { state(it, list) == State.OPEN }
         fun pkgTitle(id: String) = cat.packages.firstOrNull { it.id == id }?.let { "${it.id} ${it.title}" } ?: id
         return buildString {
-            append("Prüfung am Gerät · Lora $version · ${DeviceChecks.DEVICES[device] ?: device} · $system\n")
+            append("Prüfung am Gerät · Kana $version · ${DeviceChecks.DEVICES[device] ?: device} · $system\n")
             append("${passed.size} passt · ${failed.size} passt nicht · ${open.size} offen\n")
             fun section(title: String, steps: List<DeviceChecks.Step>, withNote: Boolean) {
                 if (steps.isEmpty()) return

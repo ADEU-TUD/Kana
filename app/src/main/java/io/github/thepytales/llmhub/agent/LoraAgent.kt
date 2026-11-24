@@ -21,7 +21,7 @@ import kotlinx.serialization.json.JsonObject
 import io.github.thepytales.llmhub.ui.trLater
 import io.github.thepytales.llmhub.ui.tr
 
-/** One thing Lora does or offers after a wish (AP-07); the screen carries it out. */
+/** One thing Kana does or offers after a wish (AP-07); the screen carries it out. */
 sealed interface LoraStep {
     /** Opens [target] and highlights its option. */
     data class Navigate(val target: AppTarget) : LoraStep
@@ -38,7 +38,7 @@ sealed interface LoraStep {
     /** Hands the wish to a chat model; [reason] says why this model (shown on the card in the chat). */
     data class Handoff(val model: String, val request: String, val summary: String = "", val reason: String = "") : LoraStep
 
-    /** Opens an earlier chat (found by Lora's chat search, AP-35). */
+    /** Opens an earlier chat (found by Kana's chat search, AP-35). */
     data class OpenChat(val id: String, val title: String, val updatedAt: Long) : LoraStep
 
     /** Puts a deadline or reminder into the calendar (.ics with a reminder) – after the user confirms (AP-35). */
@@ -48,7 +48,7 @@ sealed interface LoraStep {
     data class Ask(val questions: List<UserQuestion>) : LoraStep
 
     /**
-     * Lora handelt im Werkzeug (AP-38): a planned action. Safe ones run at once (step line, then the result with
+     * Kana handelt im Werkzeug (AP-38): a planned action. Safe ones run at once (step line, then the result with
      * Rückgängig); risky ones show their preview and wait for „Ausführen“.
      */
     data class Action(val plan: ActionPlan, val dry: Boolean = false) : LoraStep
@@ -68,7 +68,7 @@ sealed interface LoraStep {
     /** A tour through a tool (AP-41). */
     data class Tour(val tourId: String) : LoraStep
 
-    /** Lora sortiert Mails (AP-69): a run on the model of this device; its card shows progress, preview and Rückgängig. */
+    /** Kana sortiert Mails (AP-69): a run on the model of this device; its card shows progress, preview and Rückgängig. */
     data class MailSort(val runId: String) : LoraStep
 
     /**
@@ -81,8 +81,8 @@ sealed interface LoraStep {
 }
 
 /**
- * Lora's answer: a short [text] and what to do; [local] = found on the device without a request. [understood]: the
- * command Lora carried out on the device for this wish (AP-71/72) – „Rückgängig“ right after it counts as a correction.
+ * Kana's answer: a short [text] and what to do; [local] = found on the device without a request. [understood]: the
+ * command Kana carried out on the device for this wish (AP-71/72) – „Rückgängig“ right after it counts as a correction.
  */
 data class LoraReply(
     val text: String, val steps: List<LoraStep> = emptyList(), val local: Boolean = true, val hits: List<AppTarget> = emptyList(),
@@ -91,10 +91,10 @@ data class LoraReply(
     val fix: io.github.thepytales.llmhub.ui.ErrorHelp.Fix? = null,
 )
 
-/** The command [label] Lora took [wish] for while [area] was open (AP-72). */
+/** The command [label] Kana took [wish] for while [area] was open (AP-72). */
 data class Understood(val wish: String, val area: String, val label: String)
 
-/** A setting Lora may change (after asking): id, name, the allowed values with labels, how to read and set it. */
+/** A setting Kana may change (after asking): id, name, the allowed values with labels, how to read and set it. */
 class LoraSetting(
     val id: String,
     val label: String,
@@ -119,15 +119,15 @@ class LoraSetting(
 }
 
 /**
- * Lora als Navigator (AP-07): a slim agent loop with GLM-5.3 Flash (thinking off, short prompt) that finds settings,
+ * Kana als Navigator (AP-07): a slim agent loop with GLM-5.3 Flash (thinking off, short prompt) that finds settings,
  * opens modes and templates, suggests tools and hands real questions to a chat model. Simple wishes are answered on the
- * device first ([local]) without any request. Lora only runs when asked and never reads along in the background.
+ * device first ([local]) without any request. Kana only runs when asked and never reads along in the background.
  */
 class LoraAgent(private val c: AppContainer) {
 
     /**
-     * Answers [wish]. [history] are the earlier turns of this conversation with Lora (wish, answer); [folderId] the
-     * project of the chat Lora was called from (its privacy level decides whether a model may be asked).
+     * Answers [wish]. [history] are the earlier turns of this conversation with Kana (wish, answer); [folderId] the
+     * project of the chat Kana was called from (its privacy level decides whether a model may be asked).
      */
     suspend fun ask(
         wish: String, history: List<Pair<String, String>> = emptyList(), folderId: String? = null, android: Boolean = false,
@@ -156,8 +156,8 @@ class LoraAgent(private val c: AppContainer) {
     }
 
     /**
-     * Wo Lora arbeitet (AP-112): where the chat works on this device, a question Lora hands over goes to the model here
-     * (not to DeepSeek on the server); without one Lora says what is missing instead of handing over.
+     * Wo Kana arbeitet (AP-112): where the chat works on this device, a question Kana hands over goes to the model here
+     * (not to DeepSeek on the server); without one Kana says what is missing instead of handing over.
      */
     private fun onDevice(reply: LoraReply): LoraReply {
         val handoffs = reply.steps.filterIsInstance<LoraStep.Handoff>().filter { !Privacy.isLocal(it.model) }
@@ -171,7 +171,7 @@ class LoraAgent(private val c: AppContainer) {
         return reply.copy(steps = reply.steps.map { if (it is LoraStep.Handoff && it in handoffs) it.copy(model = here) else it })
     }
 
-    /** The last wish Lora answered and what was open then – what „nein, ich meinte …“ corrects (AP-72). */
+    /** The last wish Kana answered and what was open then – what „nein, ich meinte …“ corrects (AP-72). */
     @Volatile
     private var lastWish: Pair<String, String>? = null
 
@@ -180,7 +180,7 @@ class LoraAgent(private val c: AppContainer) {
     private fun vault(): Boolean = c.drive.isVaultChat(io.github.thepytales.llmhub.ui.LoraHelper.chatId)
 
     /**
-     * „Nein, ich meinte …“ (AP-72): the rest is answered as a wish of its own; if that is a command, Lora remembers it for
+     * „Nein, ich meinte …“ (AP-72): the rest is answered as a wish of its own; if that is a command, Kana remembers it for
      * the wish before. Null for every other wish.
      */
     private suspend fun corrected(
@@ -197,7 +197,7 @@ class LoraAgent(private val c: AppContainer) {
     }
 
     /**
-     * The user tapped [label] under „Meinst du … oder …?“ (AP-73): Lora carries it out on the device like a command the
+     * The user tapped [label] under „Meinst du … oder …?“ (AP-73): Kana carries it out on the device like a command the
      * model was sure of. If that needs more than the wish gives (a value is missing), the wish goes on as before.
      */
     suspend fun chosen(
@@ -242,7 +242,7 @@ class LoraAgent(private val c: AppContainer) {
         return LoraReply(tr("Meinst du „{0}“ oder „{1}“?", options[0].title, options[1].title), listOf(LoraStep.Choose(wish, options, area, correcting)))
     }
 
-    /** The model handed-over questions go to while Lora works „Nur lokal“ (AP-71); null otherwise. */
+    /** The model handed-over questions go to while Kana works „Nur lokal“ (AP-71); null otherwise. */
     @Volatile
     private var localOnly: String? = null
 
@@ -263,29 +263,29 @@ class LoraAgent(private val c: AppContainer) {
         LoraCorrections.meant(c, wish, areaKey)?.let { label ->
             LoraCommands.reply(c, this, wish, label, targets, area, android)?.let { return it.copy(understood = Understood(wish, areaKey, label)) to device }
         }
-        // AP-39: „Merk dir, dass …“ – Lora asks before she remembers.
+        // AP-39: „Merk dir, dass …“ – Kana asks before she remembers.
         LoraPrefs.fromWish(c, wish)?.let { return it to device }
         // AP-41: „Zeig mir, wie das geht“ starts the tour of the open tool.
         localTour(wish, android)?.let { return it to device }
         // AP-69: „Ordne die Mails der letzten Woche in Lehre, Forschung und Verwaltung ein“ – the order is read here, the
         // mails only by the model on this device.
         MailSorter.fromWish(c, wish)?.let { return it to device }
-        // AP-68: mail tasks go to the model on this device, the handoff from a Postfach chat to the card – Lora reads no mails.
+        // AP-68: mail tasks go to the model on this device, the handoff from a Postfach chat to the card – Kana reads no mails.
         LoraMail.fromWish(c, wish, io.github.thepytales.llmhub.ui.LoraHelper.chatId)?.let { return it to device }
         // AP-71: the command model on this device – a clear command is carried out at once, without a language model.
         // Unsure, it changes nothing: the rules and the language model decide as before.
         c.commandModel.offerIfNeeded()
         val multi = LoraFlows.looksMultiStep(wish)
         val seen = if (multi) null else c.commandModel.recognize(wish, areaKey)
-        // AP-72: an action undone right after Lora carried it out for this very wish is not carried out again unasked.
+        // AP-72: an action undone right after Kana carried it out for this very wish is not carried out again unasked.
         val refused = seen != null && seen.sure && !seen.free && LoraCorrections.refused(c, wish, areaKey, seen.label)
         if (seen != null && seen.sure && !seen.free && !refused) LoraCommands.reply(c, this, wish, seen.label, targets, area, android)?.let {
             return it.copy(understood = Understood(wish, areaKey, seen.label)) to device
         }
-        // AP-73: not sure, but one of two commands – Lora asks with two buttons instead of guessing or asking a model.
+        // AP-73: not sure, but one of two commands – Kana asks with two buttons instead of guessing or asking a model.
         // Before the word rules on purpose: a question costs a tap, a wrongly carried out action costs more.
         if (seen != null && !noChoice && seen.choices.size == 2) choose(wish, seen.choices, areaKey, targets, android, correcting)?.let { return it to device }
-        // Lora handelt (AP-38): clear wishes for the open tool are carried out on the device, without a model.
+        // Kana handelt (AP-38): clear wishes for the open tool are carried out on the device, without a model.
         if (!multi) localAction(wish, area, android)?.let { return it to device }
         // The rules that guess a place from single words stay out when the model is sure that this is a free request.
         val free = seen != null && seen.sure && seen.free
@@ -306,16 +306,16 @@ class LoraAgent(private val c: AppContainer) {
                 wish, targets,
                 when {
                     !settings.hasAnyApiKey && level != PrivacyLevel.LOCAL ->
-                        tr("Ohne API-Schlüssel arbeite ich auf diesem Gerät – dafür fehlt noch ein Sprachmodell (Einstellungen › Wo Lora arbeitet › Einrichtung). Befehle verstehe ich trotzdem.")
+                        tr("Ohne API-Schlüssel arbeite ich auf diesem Gerät – dafür fehlt noch ein Sprachmodell (Einstellungen › Wo Kana arbeitet › Einrichtung). Befehle verstehe ich trotzdem.")
                     io.github.thepytales.llmhub.data.Places.loraMode(c) == ModelRouter.Mode.LOCAL && level != PrivacyLevel.LOCAL ->
-                        tr("Lora arbeitet „Nur lokal“, aber auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Befehle verstehe ich trotzdem.")
+                        tr("Kana arbeitet „Nur lokal“, aber auf diesem Gerät ist noch kein Sprachmodell installiert (Einstellungen › Modelle auf diesem Gerät). Befehle verstehe ich trotzdem.")
                     !settings.hasAnyApiKey -> tr("Ohne API-Schlüssel suche ich nur in der App.")
                     else -> tr("In diesem Projekt bleibt alles auf dem Gerät – ich suche nur in der App.")
                 },
             ) to device
             ModelRouter.Place.LOCAL -> {
                 val model = route.model!!
-                // A short task in the mixed mode needs no detour over Lora's own model: it goes straight to a chat on this device.
+                // A short task in the mixed mode needs no detour over Kana's own model: it goes straight to a chat on this device.
                 if (ModelRouter.Mode.of(settings.loraPlace) == ModelRouter.Mode.MIXED && level != PrivacyLevel.LOCAL && server != null) {
                     LoraReply(tr("Das beantwortet das Modell auf diesem Gerät – ich gebe es weiter."), listOf(LoraStep.Handoff(model, wish.trim(), reason = tr(route.reason)))) to LoraWays.Way.LOCAL
                 } else {
@@ -365,11 +365,11 @@ class LoraAgent(private val c: AppContainer) {
     }
 
     /**
-     * The model a handed-over question goes to (AP-33): the one set under Einstellungen › Lora (DeepSeek by default);
-     * with „Automatisch“ Lora's own choice or the automatic one for the question.
+     * The model a handed-over question goes to (AP-33): the one set under Einstellungen › Kana (DeepSeek by default);
+     * with „Automatisch“ Kana's own choice or the automatic one for the question.
      */
     internal fun handoffModel(request: String, chosen: String? = null, why: String? = null): Pair<String, String> =
-        localOnly?.let { it to tr("Lora arbeitet nur lokal") } ?: handoffModel(c.settings.current.loraHandoffModel, request, chosen, why)
+        localOnly?.let { it to tr("Kana arbeitet nur lokal") } ?: handoffModel(c.settings.current.loraHandoffModel, request, chosen, why)
 
     /**
      * „Was ist das ZLSB?“, „Was heißt MHB?“, „Wofür steht LaSuB?“ (AP-78): the explanation of an own word or a pack entry,
@@ -449,7 +449,7 @@ class LoraAgent(private val c: AppContainer) {
             area == ActionArea.SHEET && Regex("^(sortier\\w*|ordne)\\s+(nach|die tabelle nach)\\s+").containsMatchIn(n) ->
                 "sheet.sort" to mapOf("spalte" to wish.trim().replace(Regex("^(?i)(sortier\\w*|ordne)\\s+(die tabelle\\s+)?nach\\s+"), "").replace(Regex("(?i)\\s+(absteigend|aufsteigend)$"), "").trim(), "absteigend" to if ("absteigend" in n) "ja" else "")
             area == ActionArea.SHEET && Regex("(bereinig|aufraum|dubletten|doppelte zeilen)").containsMatchIn(n) -> "sheet.clean" to emptyMap()
-            // Lora rechnet (AP-49): „Berechne die Notenverteilung“, „Mittelwert je Gruppe“, „Erkläre die Formel in D2“.
+            // Kana rechnet (AP-49): „Berechne die Notenverteilung“, „Mittelwert je Gruppe“, „Erkläre die Formel in D2“.
             area == ActionArea.SHEET && Regex("(verteilung|haufigkeit|wie oft)").containsMatchIn(n) ->
                 "sheet.distribution" to listOfNotNull(Regex("(?i)(?:verteilung|häufigkeit|haeufigkeit)\\s+(?:der|von|in)\\s+(?:spalte\\s+)?[„\"]?([\\p{L}\\d .-]+?)[“\"]?\\s*$").find(wish.trim())?.groupValues?.get(1)?.let { "spalte" to it }).toMap()
             area == ActionArea.SHEET && Regex("(mittelwert|durchschnitt|schnitt|anzahl)\\b.*\\b(je|pro|nach)\\s+").containsMatchIn(n) -> {
@@ -510,7 +510,7 @@ class LoraAgent(private val c: AppContainer) {
         val offers = mutableListOf<LoraStep>()
         var text = ""
         repeat(MAX_ROUNDS) { round ->
-            // Wo Lora arbeitet (AP-112): Lora's own place, not the one of the chat.
+            // Wo Kana arbeitet (AP-112): Kana's own place, not the one of the chat.
             val result = kotlinx.coroutines.withContext(io.github.thepytales.llmhub.data.PlaceScope(io.github.thepytales.llmhub.data.Area.LORA)) {
                 c.llm.streamChat(model, messages, tools.toSchema(), thinking = ThinkingLevel.OFF) { upd ->
                     splitThinking(upd.content).second.trim().takeIf { it.isNotEmpty() }?.let(onText)
@@ -530,7 +530,7 @@ class LoraAgent(private val c: AppContainer) {
                         val plan = action.plan(c, LoraPrefs.withDefaults(c, action, args).first)
                         ToolActions.log("${action.id} geplant: ${plan.title}")
                         LoraPrefs.offerFor(c, action, args)?.let { offers += it }
-                        // Mail actions (AP-68) run on this device: Lora's model hears nothing of the mailbox.
+                        // Mail actions (AP-68) run on this device: Kana's model hears nothing of the mailbox.
                         if (MailAccess.isMailAction(action.id)) LoraMail.TOOL_OUTPUT to LoraStep.Action(plan)
                         else (if (plan.risky) "Vorschau wird gezeigt, der Nutzer bestätigt: ${plan.title}" else "Wird ausgeführt: ${plan.title}") to LoraStep.Action(plan)
                     } catch (e: ActionFailed) {
@@ -554,7 +554,7 @@ class LoraAgent(private val c: AppContainer) {
         return LoraReply(text.ifBlank { defaultText(steps) }, steps + offers, local = false)
     }
 
-    /** Runs one of Lora's tools: the text for the model and the step for the screen. */
+    /** Runs one of Kana's tools: the text for the model and the step for the screen. */
     internal fun runTool(name: String, args: JsonObject, targets: List<AppTarget>, wish: String = "", android: Boolean = false): Pair<String, LoraStep?> = when (name) {
         "navigate" -> {
             val t = args.s("ziel")?.let { AppMap.byId(it, targets) ?: AppMap.clearHit(it, targets) }
@@ -585,7 +585,7 @@ class LoraAgent(private val c: AppContainer) {
             if (tool == null || tool.planned) "FEHLER: Dieses Werkzeug gibt es (noch) nicht." to null
             else "Der Nutzer wird gefragt, ob „${tool.label}“ eingeschaltet werden soll." to LoraStep.EnableTool(tool)
         }
-        // AP-68: a mail task goes to the model on this device; Lora's model gets no mail content back.
+        // AP-68: a mail task goes to the model on this device; Kana's model gets no mail content back.
         "postfach_auftrag" -> LoraMail.TOOL_OUTPUT to LoraMail.task(c, args.s("auftrag").orEmpty().ifBlank { wish })
         "handoff_chat" -> {
             val request = args.s("anfrage").orEmpty().ifBlank { args.s("zusammenfassung").orEmpty() }
@@ -616,7 +616,7 @@ class LoraAgent(private val c: AppContainer) {
             val text = args.s("text")?.trim().orEmpty()
             when {
                 text.length < 4 -> "FEHLER: Was soll ich mir merken?" to null
-                c.drive.isVaultChat(io.github.thepytales.llmhub.ui.LoraHelper.chatId) -> "FEHLER: Im Tresor merkt sich Lora nichts. Sag das dem Nutzer." to null
+                c.drive.isVaultChat(io.github.thepytales.llmhub.ui.LoraHelper.chatId) -> "FEHLER: Im Tresor merkt sich Kana nichts. Sag das dem Nutzer." to null
                 Memory.known(c, text) -> "Steht schon im Gedächtnis." to null
                 else -> "Der Nutzer wird gefragt, ob du dir „$text“ merken sollst." to LoraStep.Remember(text, args.s("werkzeug")?.lowercase()?.takeIf { w -> LoraPrefs.TOOLS.any { it.first == w } } ?: LoraPrefs.guessTool(text))
             }
@@ -651,20 +651,20 @@ class LoraAgent(private val c: AppContainer) {
             "bekommst du nicht – Mails liest nur ein Modell auf diesem Gerät.\n"
     }
 
-    /** What Lora can do in the open tool (AP-38) and what the user has in front of them. */
+    /** What Kana can do in the open tool (AP-38) and what the user has in front of them. */
     private fun actionPrompt(area: ActionArea?, actions: List<ToolAction>): String = if (area == null || actions.isEmpty()) "" else buildString {
         append("\nOffen ist: ").append(area.label).append(". Du kannst hier selbst handeln: ")
         append(actions.joinToString { it.toolName })
         append(". Handle, wenn der Wunsch klar ist; Riskantes (verschieben, löschen, überschreiben) zeigt der App vorher eine Vorschau. ")
         append("Erfinde keine Dateinamen – nimm die Auswahl, wenn nichts genannt ist.\n")
         if (LoraFocus.files.isNotEmpty()) append("Ausgewählt: ").append(LoraFocus.files.take(12).joinToString { it.name }).append('\n')
-        LoraFocus.folder?.let { append("Offener Ordner: ").append(c.drive.rel(it)?.ifEmpty { "Lora-Ordner" } ?: it.name).append(" (").append(it.listFiles()?.count { f -> f.isFile } ?: 0).append(" Dateien)\n") }
+        LoraFocus.folder?.let { append("Offener Ordner: ").append(c.drive.rel(it)?.ifEmpty { "Kana-Ordner" } ?: it.name).append(" (").append(it.listFiles()?.count { f -> f.isFile } ?: 0).append(" Dateien)\n") }
         if (LoraFocus.pdfTabs.isNotEmpty()) append("Offene PDFs: ").append(LoraFocus.pdfTabs.joinToString { it.first }).append(" (das erste ist das aktive)\n")
     }
 
     private fun systemPrompt(wish: String, targets: List<AppTarget>, android: Boolean): String = buildString {
-        append("Du bist Lora, die freundliche Helferin und Navigatorin der App Lora (").append(if (android) "Android" else "Windows").append(") ")
-        append("für Forschung, Lehre und Verwaltung an der TU Dresden. ")
+        append("Du bist Kana, die freundliche Helferin und Navigatorin der App Kana (").append(if (android) "Android" else "Windows").append(") ")
+        append("für Forschung, Lehre und Verwaltung an der TU Dresden (früher hießt du Lora; wer dich so nennt, meint dich). ")
         append("Du hilfst, Bereiche, Einstellungen, Modi, TU Vorlagen und Werkzeuge zu finden, und führst dorthin. ")
         append("Antworte auf Deutsch, freundlich und sehr kurz (1–2 Sätze). Erfinde keine Funktionen.\n")
         append("Werkzeuge: navigate(ziel) öffnet einen Ort und hebt die Option hervor; open_mode(modus, text) startet einen Modus oder ")
@@ -690,7 +690,7 @@ class LoraAgent(private val c: AppContainer) {
     companion object {
         private const val MAX_ROUNDS = 3
 
-        /** Settings Lora may change (always after asking). */
+        /** Settings Kana may change (always after asking). */
         val SETTINGS = listOf(
             LoraSetting(
                 "theme", trLater("Helligkeit"),
@@ -704,12 +704,12 @@ class LoraAgent(private val c: AppContainer) {
             ),
             LoraSetting("language", trLater("Sprache der Oberfläche"), listOf("de" to "Deutsch", "en" to "Englisch"), { it.uiLanguage }, { s, v -> s.copy(uiLanguage = v) }),
             LoraSetting(
-                "lora", "Lora",
+                "lora", "Kana",
                 listOf("EVERYWHERE" to "Überall", "CHAT" to "Nur im Chat", "OFF" to "Aus"),
                 { it.loraMode }, { s, v -> s.copy(loraMode = v, hideLora = v == "OFF") },
             ),
             LoraSetting(
-                "lora_place", trLater("Wo Lora arbeitet"),
+                "lora_place", trLater("Wo Kana arbeitet"),
                 listOf("MIXED" to "Gemischt", "LOCAL" to "Nur lokal", "SERVER" to "Nur Server"),
                 { it.loraPlace }, { s, v -> s.copy(loraPlace = v) },
             ),
@@ -719,7 +719,7 @@ class LoraAgent(private val c: AppContainer) {
             onOff("auto_model", "Modell automatisch wählen", { it.autoModel }) { s, v -> s.copy(autoModel = v) },
             onOff("collapse_steps", "Arbeitsschritte einklappen", { it.collapseSteps }) { s, v -> s.copy(collapseSteps = v) },
             onOff("start_animation", "Startanimation", { it.startAnimation }) { s, v -> s.copy(startAnimation = v) },
-            onOff("lora_calm", "Ruhigere Bewegungen für Lora", { it.loraCalm }) { s, v -> s.copy(loraCalm = v) },
+            onOff("lora_calm", "Ruhigere Bewegungen für Kana", { it.loraCalm }) { s, v -> s.copy(loraCalm = v) },
         )
 
         private fun onOff(id: String, label: String, get: (AppSettings) -> Boolean, set: (AppSettings, Boolean) -> AppSettings) =
@@ -732,7 +732,7 @@ class LoraAgent(private val c: AppContainer) {
             "start_animation" to "appearance.startAnimation", "lora_calm" to "lora.calm",
         )
 
-        /** Lora's tools in the function-calling format. */
+        /** Kana's tools in the function-calling format. */
         val TOOLS: List<ToolDef> = listOf(
             ToolDef("navigate", "Öffnet einen Ort der App (Bereich, Einstellungsseite, Option) und hebt die Option mit einem Leuchtrahmen hervor.",
                 listOf(Param("ziel", "id aus der Liste der Orte, z. B. option.appearance.theme"))),
@@ -745,7 +745,7 @@ class LoraAgent(private val c: AppContainer) {
             ToolDef("handoff_chat", "Gibt eine Fach- oder Inhaltsfrage an einen neuen Chat weiter (Erklärungen, Texte, Recherche).",
                 listOf(
                     Param("anfrage", "Die Anfrage für den Chat, ausformuliert"),
-                    Param("zusammenfassung", "Was im Gespräch mit Lora schon klar wurde", required = false),
+                    Param("zusammenfassung", "Was im Gespräch mit Kana schon klar wurde", required = false),
                     Param("modell", "Nur in Sonderfällen setzen, sonst leer lassen (dann gilt der Standard, DeepSeek)", required = false),
                     Param("grund", "Warum ein anderes Modell, kurz (nur mit modell)", required = false),
                 )),
@@ -754,7 +754,7 @@ class LoraAgent(private val c: AppContainer) {
                 listOf(Param("suche", "Stichworte, leer für die letzten Chats"))),
             ToolDef("add_reminder", "Legt eine Frist oder Erinnerung als ganztägigen Kalendereintrag mit Erinnerung an (öffnet in Outlook bzw. dem Kalender); der Nutzer bestätigt.",
                 listOf(Param("titel", "Wofür, z. B. Skizzenfrist BMFTR"), Param("datum", "Tag, z. B. 2026-11-30"), Param("tage_vorher", "Erinnerung so viele Tage vorher (Standard 3)", required = false))),
-            ToolDef("remember_preference", "Fragt den Nutzer, ob Lora sich eine dauerhafte Vorliebe merken soll (z. B. „Handouts zweispaltig“); gespeichert wird erst nach seinem Ja.",
+            ToolDef("remember_preference", "Fragt den Nutzer, ob Kana sich eine dauerhafte Vorliebe merken soll (z. B. „Handouts zweispaltig“); gespeichert wird erst nach seinem Ja.",
                 listOf(Param("text", "Die Vorliebe als kurzer Satz"), Param("werkzeug", "files, pdf, doc, sheet, slides, video, literature oder chat", required = false))),
             ToolDef("start_tour", "Startet eine kurze Tour mit Leuchtrahmen durch ein Werkzeug (pdf, files, templates, video).",
                 listOf(Param("werkzeug", "id der Tour, leer: das offene Werkzeug", required = false))),
@@ -764,7 +764,7 @@ class LoraAgent(private val c: AppContainer) {
         val HELP: List<Pair<String, String>> = listOf(
             trLater("Chat und Modelle") to trLater("Neuer Chat oben in der Seitenleiste. Das Modell wechselst du über den Namen über dem Eingabefeld; „Automatisch“ schlägt je Anfrage das passende vor. Dateien und Bilder hängst du mit + an oder ziehst sie hinein."),
             trLater("Modi") to trLater("Modi (Literatursuche, Planungsmodus, Quellenmodus, Exzerpt, Sprachmodus) startest du mit „/“ im Eingabefeld, über Strg+K oder die Startseite. Der Chip über dem Eingabefeld zeigt den Modus, ✕ verlässt ihn."),
-            trLater("TU Vorlagen") to trLater("Unter „Erstellen“ in der Seitenleiste: TU Vorlagen (Briefe, Mails, Lehre, Forschung) und unter Windows Gestalten (Poster, Flyer, Social Media) mit Meine Designs. Vorlagen mit vielen Feldern lassen sich auch Schritt für Schritt mit Lora ausfüllen. Mit dem Stern landen sie unter Favoriten auf der Startseite."),
+            trLater("TU Vorlagen") to trLater("Unter „Erstellen“ in der Seitenleiste: TU Vorlagen (Briefe, Mails, Lehre, Forschung) und unter Windows Gestalten (Poster, Flyer, Social Media) mit Meine Designs. Vorlagen mit vielen Feldern lassen sich auch Schritt für Schritt mit Kana ausfüllen. Mit dem Stern landen sie unter Favoriten auf der Startseite."),
             trLater("Literatur") to trLater("Literatur in der Seitenleiste: Einträge per DOI, ISBN, BibTeX/RIS oder Zotero, Zitierstil unter Einstellungen › Literatur & Zotero. Zu einem Eintrag lässt sich ein Exzerpt erstellen."),
             trLater("Exzerpt") to trLater("Exzerpt-Modus (/Exzerpt) oder Literatur › Eintrag › Exzerpt: PDF anhängen, der Agent füllt Bibliografie, Fragestellung, Theorie, Methode, Befunde und Zitate mit Seitenangaben aus, prüft die Zitate gegen das PDF und hängt das Exzerpt an den Literatureintrag."),
             trLater("Quellenmodus") to trLater("Quellenmodus (/Quellen): Jede Aussage bekommt einen Beleg (Datei und Seite, DOI, URL). Danach prüft die App die Zitate gegen die Quellen und zeigt ein Belegprotokoll, das sich exportieren lässt."),
@@ -776,11 +776,11 @@ class LoraAgent(private val c: AppContainer) {
             trLater("Transkription") to trLater("Transkription in der Seitenleiste: Audio wählen, auf dem Uni-Server oder dem Gerät verschriften, Sprecher benennen, codieren und exportieren."),
             trLater("Dokumente") to trLater("Der Agent erstellt PDF, Word, PowerPoint und mehr. Unter Dokumente bearbeitest du Entwürfe mit Versionen und Kommentaren."),
             trLater("Darstellung") to trLater("Einstellungen › Darstellung: Stil, Helligkeit (hell/dunkel), Farbton, Schriftgröße und Zoom."),
-            trLater("Lora") to trLater("Lora hilft beim Finden: In den Einstellungen unten rechts antippen, auf der Startseite „Lora fragen“ oder Strg+K › Lora fragen. Einstellungen › Lora legt fest, wo sie erscheint."),
+            trLater("Kana") to trLater("Kana hilft beim Finden: In den Einstellungen unten rechts antippen, auf der Startseite „Kana fragen“ oder Strg+K › Kana fragen. Einstellungen › Kana legt fest, wo sie erscheint."),
             trLater("Updates") to trLater("Neue Versionen meldet die App beim Start. Einstellungen › Updates sucht auf Knopfdruck."),
         )
 
-        /** The help sections that fit [topic]; [shown] in the language of the interface (Lora's own answer), else German for the model. */
+        /** The help sections that fit [topic]; [shown] in the language of the interface (Kana's own answer), else German for the model. */
         fun explain(topic: String, shown: Boolean = false): String {
             val words = AppMap.words(topic)
             val hits = HELP.map { (title, text) ->
@@ -826,20 +826,20 @@ class LoraAgent(private val c: AppContainer) {
         private val RECENT = Regex("(letzte[nrm]? chats?|zuletzt|mein(en)? letzte[nrm]? (chat|gesprach)|letzte gesprach)")
         private val FIND_CHAT = Regex("^(wo hatte ich|wo war (das|der chat)|finde? (den |meinen )?chat|such(e)? (den |meinen )?chat|welcher chat)( (das|den|die|der|uber|mit|zu|zum|zur))*")
         private val HOWTO = Regex("^(wie (geht|funktioniert|nutze|benutze|verwende|mache|kann ich|lege|richte))")
-        private val APP_WORDS = Regex("(app|einstellung|lora|seitenleiste|modus|vorlage|tresor|werkzeug|pdf werkzeug|knopf|menu|menue)")
+        private val APP_WORDS = Regex("(app|einstellung|kana|lora|seitenleiste|modus|vorlage|tresor|werkzeug|pdf werkzeug|knopf|menu|menue)")
 
         /**
          * Lokal zuerst: answers the wish on the device when it is clear – a tool that is switched off, a mode, one clear
          * place, an explanation for a chat or „Wie geht …?“ from the help. Null when the model should help.
          */
         /**
-         * The model for a handed-over question: the standard of Einstellungen › Lora (DeepSeek by default). Only in
-         * special cases another one – when Lora chose one herself ([chosen], with her [why]), or when the question
+         * The model for a handed-over question: the standard of Einstellungen › Kana (DeepSeek by default). Only in
+         * special cases another one – when Kana chose one herself ([chosen], with her [why]), or when the question
          * clearly needs it (programming, a very demanding analysis; see ModelRouter).
          */
         fun handoffModel(setting: String, request: String, chosen: String?, why: String? = null): Pair<String, String> {
             val standard = setting.ifBlank { ModelCatalog.DEFAULT_CHAT }
-            if (chosen != null && chosen != standard) return chosen to (why?.takeIf { it.isNotBlank() } ?: tr("von Lora gewählt"))
+            if (chosen != null && chosen != standard) return chosen to (why?.takeIf { it.isNotBlank() } ?: tr("von Kana gewählt"))
             val route = ModelRouter.suggest(request, 0, emptyList(), false, standard)
             return if (route.model != standard) route.model to route.reason else standard to tr("Standard für Übergaben")
         }
@@ -898,7 +898,7 @@ fun AppContainer.loraCalendar(deadlines: List<Pair<String, java.time.LocalDate>>
         io.github.thepytales.llmhub.docs.CalendarEvent(
             title = if (title.startsWith("Frist", ignoreCase = true)) title else "Frist: $title",
             start = day.atStartOfDay(), end = day.atStartOfDay(), allDay = true,
-            description = note.ifBlank { "Von Lora eingetragen." },
+            description = note.ifBlank { "Von Kana eingetragen." },
             reminderMinutes = daysBefore.coerceAtLeast(0) * 24 * 60,
         )
     }

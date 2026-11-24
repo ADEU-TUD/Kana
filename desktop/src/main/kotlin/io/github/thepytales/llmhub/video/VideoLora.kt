@@ -24,11 +24,11 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * Lora im Videoeditor (AP-38 Stufe d): her actions work on the project model of today – cut, titles and lower thirds,
- * subtitles from the transcription, rough cut, shorten with Lora, export. With the editor open they go through its
+ * Kana im Videoeditor (AP-38 Stufe d): her actions work on the project model of today – cut, titles and lower thirds,
+ * subtitles from the transcription, rough cut, shorten with Kana, export. With the editor open they go through its
  * history (Strg+Z works as well); in an Ablauf (AP-40) without the editor, on the stored project. Since AP-52/53
  * also picture-in-picture and markers; since AP-54 speed, freeze, zoom, pixelated faces and a changed voice (the last two
- * are anonymisation and go into the Protokoll der Lora-Aktionen with what was done).
+ * are anonymisation and go into the Protokoll der Kana-Aktionen with what was done).
  */
 object VideoLora {
     /** The editor of the open project: its id, the project as it is now, and a change through its history. */
@@ -37,7 +37,7 @@ object VideoLora {
     @Volatile
     var host: Host? = null
 
-    /** The project Lora made or worked on last (for the next step of an Ablauf). */
+    /** The project Kana made or worked on last (for the next step of an Ablauf). */
     @Volatile
     var lastId: String? = null
 
@@ -95,7 +95,7 @@ object VideoLora {
     }
 
     private suspend fun transcripts(c: AppContainer, p: VideoProject): Map<String, Transcript> = withContext(Dispatchers.IO) {
-        // Linked ones, else the transcript titled like the source file (as Lora's transcription names it).
+        // Linked ones, else the transcript titled like the source file (as Kana's transcription names it).
         val list = c.transcription.transcripts.value
         p.clips.map { it.path }.distinct().mapNotNull { path ->
             val id = p.transcripts[path] ?: list.firstOrNull { it.title.equals(File(path).nameWithoutExtension, true) }?.id ?: return@mapNotNull null
@@ -230,7 +230,7 @@ object VideoLora {
                 "video.protect_names", tr("Schützt {0} Stelle(n) mit Namen im Ton …", result.size), true,
                 result.take(8).map { b -> b.name to (NameGuard.timelineAt(p, b)?.let { clock(it) } ?: "") + " · " + label },
             ) {
-                io.github.thepytales.llmhub.agent.ToolActions.log(tr("Namen im Ton im Video „{0}“: {1} Stelle(n) {2} (Lora).", p.title, result.size, label))
+                io.github.thepytales.llmhub.agent.ToolActions.log(tr("Namen im Ton im Video „{0}“: {1} Stelle(n) {2} (Kana).", p.title, result.size, label))
                 change(p, tr("{0} Stelle(n) mit Namen im Ton {1} – Liste unter Transkript › Namen im Ton.", result.size, label)) { pp -> pp.copy(bleeps = result, nameList = ownText) }
             }
         },
@@ -375,7 +375,7 @@ object VideoLora {
             }
         },
         ToolAction(
-            "video.shorten", ActionArea.VIDEO, trLater("Mit Lora kürzen"), "Kürzt das Video nach einem Wunsch (z. B. auf 10 Minuten, Beispiele behalten); vorher Vorschau.",
+            "video.shorten", ActionArea.VIDEO, trLater("Mit Kana kürzen"), "Kürzt das Video nach einem Wunsch (z. B. auf 10 Minuten, Beispiele behalten); vorher Vorschau.",
             listOf(ActionParam("wunsch", "Wie kürzen, z. B. auf 10 Minuten, Beispiele behalten")), risky = true, android = false, usesModel = true,
         ) { c, a ->
             val p = need()
@@ -390,7 +390,7 @@ object VideoLora {
                 val parts = runCatching { RoughCut.withLora(c, t, clip.inSec, clip.outSec, wish) }.getOrNull() ?: continue
                 next = RoughCut.apply(next, i, parts)
             }
-            if (next == p) throw ActionFailed(tr("Lora hat nichts zum Kürzen gefunden."))
+            if (next == p) throw ActionFailed(tr("Kana hat nichts zum Kürzen gefunden."))
             val result = next
             ActionPlan("video.shorten", tr("Kürzt das Video: {0} …", wish.take(50)), true, listOf(clock(p.duration) to clock(result.duration))) {
                 change(p, tr("Gekürzt auf {0}.", clock(result.duration))) { _ -> result }
@@ -408,7 +408,7 @@ object VideoLora {
             if (all.isEmpty()) throw ActionFailed(tr("Dafür braucht es ein Transkript – zuerst „Untertitel erzeugen“ oder transkribieren."))
             val doc = TextCut.build(p, all)
             val props = runCatching { TextCut.propose(c, doc, p.duration, wish) }.getOrElse { throw ActionFailed(it.message ?: it.javaClass.simpleName) }
-            if (props.isEmpty()) throw ActionFailed(tr("Lora hat nichts zum Herausschneiden gefunden."))
+            if (props.isEmpty()) throw ActionFailed(tr("Kana hat nichts zum Herausschneiden gefunden."))
             val result = TextCut.accept(p, doc, props)
             val preview = props.map { pr -> (clock(doc.tokens[pr.from].start) + " „" + doc.text(pr.from, pr.to).take(60) + "…“") to pr.reason.ifBlank { tr("herausschneiden") } } +
                 (clock(p.duration) to clock(result.duration))

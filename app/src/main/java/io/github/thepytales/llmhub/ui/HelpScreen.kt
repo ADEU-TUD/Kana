@@ -54,7 +54,7 @@ fun HelpSection() {
             else tr("Mitgeschickt werden nur Version, System, Angaben zu Maus und Trackpad und die letzten Fehlermeldungen – ohne Chat-Inhalte, Schlüssel, Namen, Pfade und Adressen.")
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { shareText(context, report(), tr("Problem mit Lora {0}", BuildConfig.VERSION_NAME)) }) { Text(tr("Per E-Mail senden …")) }
+            Button(onClick = { shareText(context, report(), tr("Problem mit Kana {0}", BuildConfig.VERSION_NAME)) }) { Text(tr("Per E-Mail senden …")) }
             OutlinedButton(onClick = {
                 val title = text.trim().lineSequence().firstOrNull().orEmpty().take(80).ifBlank { tr("Problem melden") }
                 fun enc(s: String) = URLEncoder.encode(s, "UTF-8")

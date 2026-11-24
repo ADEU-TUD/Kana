@@ -59,7 +59,7 @@ enum class DocKind(val label: String, val newTitle: String, val ext: String) {
     MARKDOWN(trLater("Markdown-Datei"), "Unbenannte Markdown-Datei", "md"),
     ;
 
-    /** Format of its real file in the Lora-Ordner (AP-16). */
+    /** Format of its real file in the Kana-Ordner (AP-16). */
     val fileExt: String get() = when (this) { DOC -> "docx"; SLIDES -> "pptx"; SHEET -> "xlsx"; MARKDOWN -> "md" }
 
     companion object {
@@ -107,7 +107,7 @@ data class LiveDoc(
     val starred: Boolean = false,
     /** File name of the Markdown copy in the vault. */
     val mirror: String? = null,
-    /** Lora-Ordner (AP-16): path of the real file (.docx, .pptx, .xlsx, .md) inside it, with „/“. */
+    /** Kana-Ordner (AP-16): path of the real file (.docx, .pptx, .xlsx, .md) inside it, with „/“. */
     val path: String? = null,
     /**
      * Änderungen nachverfolgen (AP-16): the text of each tab (by id) when tracking began or a change was last accepted –
@@ -245,9 +245,9 @@ class DocsStore(dir: File) {
 
     private fun mirror(v: DocVault, d: LiveDoc): File? = d.mirror?.let { File(v.path, it) }
 
-    // ── Lora-Ordner (AP-16): documents without a storage location are real files there ──
+    // ── Kana-Ordner (AP-16): documents without a storage location are real files there ──
 
-    /** The visible Lora-Ordner; null: documents stay inside the app (tests, before the container set it). */
+    /** The visible Kana-Ordner; null: documents stay inside the app (tests, before the container set it). */
     @Volatile
     var root: File? = null
 
@@ -255,7 +255,7 @@ class DocsStore(dir: File) {
     @Volatile
     var files: DocFiles? = null
 
-    /** Moves a real file into the Papierkorb of the Lora-Ordner (set by the container). */
+    /** Moves a real file into the Papierkorb of the Kana-Ordner (set by the container). */
     @Volatile
     var trashFile: ((File) -> Unit)? = null
 
@@ -266,7 +266,7 @@ class DocsStore(dir: File) {
     /** Folder for documents made in a chat („Erstellt“). */
     var createdFolder = "Erstellt"
 
-    /** The real file of [doc] in the Lora-Ordner, if it has one. */
+    /** The real file of [doc] in the Kana-Ordner, if it has one. */
     fun realFile(doc: LiveDoc): File? = doc.path?.let { p -> root?.let { File(it, p) } }
 
     /** The document whose real file is [f]. */
@@ -326,10 +326,10 @@ class DocsStore(dir: File) {
         return doc.copy(path = next)
     }
 
-    /** Saves a new document into [folder] of the Lora-Ordner (the Dateien tab's „+“ in an open folder). */
+    /** Saves a new document into [folder] of the Kana-Ordner (the Dateien tab's „+“ in an open folder). */
     fun saveIn(doc: LiveDoc, folder: String) = save(withPath(doc.copy(path = null, vault = null), folder))
 
-    /** A file or folder of the Lora-Ordner moved from [oldAbs] to [newAbs] (Dateien tab): the documents follow. */
+    /** A file or folder of the Kana-Ordner moved from [oldAbs] to [newAbs] (Dateien tab): the documents follow. */
     @Synchronized
     fun relocated(oldAbs: String, newAbs: String) {
         val old = File(oldAbs).absoluteFile.normalize().path
@@ -378,7 +378,7 @@ class DocsStore(dir: File) {
         runCatching { AtomicFiles.write(File(folder, "${d.id}.json"), json.encodeToString(LiveDoc.serializer(), d)) }.logFailure("Dokument speichern")
     }
 
-    /** Documents of before AP-16 (inside the app) become files in the Lora-Ordner: AP-18 folders become real folders. */
+    /** Documents of before AP-16 (inside the app) become files in the Kana-Ordner: AP-18 folders become real folders. */
     fun migrateToFiles(folderOf: (LiveDoc) -> String) {
         val r = root ?: return
         _items.value.filter { it.vault == null && it.path == null && !keepInApp(it) }.forEach { d ->
@@ -391,7 +391,7 @@ class DocsStore(dir: File) {
         }
     }
 
-    /** Opens [f] of the Lora-Ordner in the editor: the document it already is, or a new one that writes into it. */
+    /** Opens [f] of the Kana-Ordner in the editor: the document it already is, or a new one that writes into it. */
     fun openReal(f: File, imported: OfficeImport.Imported): LiveDoc {
         forRealFile(f)?.let { return it }
         val bytes = f.readBytes()
@@ -472,7 +472,7 @@ class DocsStore(dir: File) {
     @Synchronized
     fun delete(id: String) {
         val doc = get(id)
-        // A real file of the Lora-Ordner goes into its Papierkorb (with the document, restorable there).
+        // A real file of the Kana-Ordner goes into its Papierkorb (with the document, restorable there).
         doc?.let { realFile(it) }?.takeIf { it.isFile && trashFile != null }?.let { f ->
             trashFile?.invoke(f)
             _items.update { list -> list.filterNot { it.id == id } }

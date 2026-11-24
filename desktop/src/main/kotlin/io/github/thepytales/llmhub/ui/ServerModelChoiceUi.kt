@@ -33,8 +33,8 @@ import io.github.thepytales.llmhub.data.DataPlace
 import io.github.thepytales.llmhub.ssh.ServerModelChoice
 
 /**
- * „Wo soll Lora im Server-Terminal denken?“ (AP-131 e): asked once on the first use of the terminal (and on request from
- * Einstellungen › Lora): the model on this PC or the Uni-Server, with the recommendation for this PC, what speaks for
+ * „Wo soll Kana im Server-Terminal denken?“ (AP-131 e): asked once on the first use of the terminal (and on request from
+ * Einstellungen › Kana): the model on this PC or the Uni-Server, with the recommendation for this PC, what speaks for
  * each way and what to keep in mind. [onCancel] null: the question must be answered (first use).
  */
 @Composable
@@ -43,10 +43,10 @@ internal fun ServerModelDialog(advice: ServerModelChoice.Advice, current: Server
     AlertDialog(
         onDismissRequest = { onCancel?.invoke() },
         icon = { Icon(Icons.Outlined.Lightbulb, null) },
-        title = { Text(tr("Wo soll Lora im Server-Terminal denken?")) },
+        title = { Text(tr("Wo soll Kana im Server-Terminal denken?")) },
         text = {
             Column(Modifier.widthIn(min = 520.dp, max = 680.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(tr("Lora schlägt im Terminal Befehle vor und liest dafür, was das Terminal zeigt. Das kann auf diesem PC passieren oder auf dem Uni-Server der TU Dresden."), style = MaterialTheme.typography.bodyMedium)
+                Text(tr("Kana schlägt im Terminal Befehle vor und liest dafür, was das Terminal zeigt. Das kann auf diesem PC passieren oder auf dem Uni-Server der TU Dresden."), style = MaterialTheme.typography.bodyMedium)
                 advice.recommended?.let { r ->
                     Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.medium) {
                         Column(Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -64,7 +64,7 @@ internal fun ServerModelDialog(advice: ServerModelChoice.Advice, current: Server
                 Row(verticalAlignment = Alignment.Top) {
                     Icon(Icons.Outlined.Info, null, Modifier.size(16.dp).padding(top = 2.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.width(6.dp))
-                    Text(advice.both + " " + tr("Ändern lässt es sich jederzeit unter Einstellungen › Lora › Server-Terminal."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(advice.both + " " + tr("Ändern lässt es sich jederzeit unter Einstellungen › Kana › Server-Terminal."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         },
@@ -114,7 +114,7 @@ private fun Line(text: String, good: Boolean) {
     }
 }
 
-/** Einstellungen › Lora › Server-Terminal (AP-131 e): the same choice, shown when the tool is switched on. */
+/** Einstellungen › Kana › Server-Terminal (AP-131 e): the same choice, shown when the tool is switched on. */
 @Composable
 internal fun ServerTerminalLoraSettings(c: AppContainer) {
     val s by c.settings.settings.collectAsStateWithLifecycle()
@@ -123,7 +123,7 @@ internal fun ServerTerminalLoraSettings(c: AppContainer) {
     val advice = remember(s.serverTerminalModel, s.apiKey, s.loraModel) { ServerModelChoice.advise(c) }
     val current = ServerModelChoice.of(s.serverTerminalModel)
     Section(tr("Server-Terminal")) {
-        HintText(tr("Wo Lora denkt, wenn sie im Server-Terminal Befehle vorschlägt. Externe Cloud-Anbieter sind dort gesperrt."))
+        HintText(tr("Wo Kana denkt, wenn sie im Server-Terminal Befehle vorschlägt. Externe Cloud-Anbieter sind dort gesperrt."))
         listOf(advice.local, advice.tu).forEach { o ->
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 RadioButton(selected = current == o.choice, enabled = o.possible, onClick = { c.settings.update { it.copy(serverTerminalModel = o.choice.key) } })

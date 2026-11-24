@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** Lora handelt in Werkzeugen (AP-38). */
+/** Kana handelt in Werkzeugen (AP-38). */
 class LoraActionsTest {
     @Test
     fun areasAndTheirActions() {

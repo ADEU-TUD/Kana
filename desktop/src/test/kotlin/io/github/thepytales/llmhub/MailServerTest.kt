@@ -182,7 +182,7 @@ class MailServerTest {
     @Test
     fun draftsAreMime() {
         val m = String(ImapBridge.mime("anna@tu-dresden.de", "weber@tu-dresden.de", "", "Prüfung", "Grüße\nAnna"))
-        assertTrue("Subject: =?UTF-8?B?" in m && "Content-Transfer-Encoding: base64" in m && "X-Mailer: Lora (Entwurf, nicht gesendet)" in m)
+        assertTrue("Subject: =?UTF-8?B?" in m && "Content-Transfer-Encoding: base64" in m && "X-Mailer: Kana (Entwurf, nicht gesendet)" in m)
         val body = m.substringAfter("\r\n\r\n").replace("\r\n", "")
         assertEquals("Grüße\r\nAnna", String(java.util.Base64.getDecoder().decode(body)))
         assertEquals("Bitte bis Freitag.", ImapBridge.preview("text/plain; charset=UTF-8", "Bitte  bis\r\nFreitag."))

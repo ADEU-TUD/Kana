@@ -12,8 +12,8 @@ import kotlinx.serialization.json.put
 import java.io.File
 
 /**
- * Wie oft und wie schnell Lora wo geantwortet hat (AP-71): a small counter on this device – nothing but numbers, no
- * wishes. Shown under Einstellungen › Lora, so one can see what the mixed mode does.
+ * Wie oft und wie schnell Kana wo geantwortet hat (AP-71): a small counter on this device – nothing but numbers, no
+ * wishes. Shown under Einstellungen › Kana, so one can see what the mixed mode does.
  */
 object LoraWays {
     /** [DEVICE]: answered by rules or the command model without any language model; [LOCAL]: a language model on this device; [SERVER]: a server model. */
@@ -34,7 +34,7 @@ object LoraWays {
         }.toMap()
     }
 
-    /** Counts one answer of Lora that took [millis] until she replied. */
+    /** Counts one answer of Kana that took [millis] until she replied. */
     @Synchronized
     fun record(c: AppContainer, way: Way, millis: Long) {
         val all = read(c).toMutableMap()

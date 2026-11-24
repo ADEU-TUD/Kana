@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
- * Android (AP-16): the Lora-Ordner lives inside the app; a folder chosen in the system dialog (e.g. Dokumente/Lora, also
+ * Android (AP-16): the Kana-Ordner lives inside the app; a folder chosen in the system dialog (e.g. Dokumente/Lora, also
  * one of Nextcloud or Google Drive) gets a copy of everything in it and gives back what was changed there – so the files
  * are easy to find on the phone. Two-way by modification time; what was deleted on one side since the last time goes on
  * the other side too. Windows has no such copy (its version of this file is empty).

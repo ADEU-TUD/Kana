@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 /**
- * „Lora Namensschutz“, the recognition model of the pseudonymization (AP-67; up to 1.0.65 „Erkennungsmodell“): a German
+ * „Kana Namensschutz“, the recognition model of the pseudonymization (AP-67; up to 1.0.65 „Erkennungsmodell“): a German
  * BERT (gbert-base by deepset, MIT licence), fine-tuned and changed by us on invented texts, labels private persons,
  * institutions (schools, day-care centres, practices …) and places with a personal reference in milliseconds on the
  * device. Built with tools/pii (model card: tools/pii/modell/MODELLKARTE.md).
@@ -34,7 +34,7 @@ import java.io.File
  */
 object PiiModelInfo {
     /** The name shown in the app. */
-    const val NAME = "Lora Namensschutz"
+    const val NAME = "Kana Namensschutz"
     const val COMMIT = "43ad93492aaa3e89742bccd6994d04eef9b89bb4"
     const val URL = "https://raw.githubusercontent.com/ADEU-TUD/Lora/$COMMIT/lora-namensschutz-pytales.int8.onnx.gz"
     const val GZ_SIZE = 92_816_043L
@@ -439,7 +439,7 @@ class PiiModel(private val c: AppContainer, versions: List<ModelVersion> = PiiMo
     }
 
     private fun refresh() {
-        found = runCatching { files.detect() }.logFailure("Lora Namensschutz erkennen").getOrNull()
+        found = runCatching { files.detect() }.logFailure("Kana Namensschutz erkennen").getOrNull()
         detected = true
         _state.value = _state.value.copy(installed = installed(), old = hasOld(), version = found?.version)
         if (offerWanted) { offerWanted = false; offerIfNeeded() }
@@ -512,7 +512,7 @@ class PiiModel(private val c: AppContainer, versions: List<ModelVersion> = PiiMo
                 _state.value = _state.value.copy(message = tr("Für {0} fehlt die ONNX Runtime der App (Spracherkennung) – die Regeln arbeiten allein.", PiiModelInfo.NAME))
                 return@launch
             }
-            runCatching { OrtClassifier(lib, f.file) }.logFailure("Lora Namensschutz laden").getOrNull()?.let { cl ->
+            runCatching { OrtClassifier(lib, f.file) }.logFailure("Kana Namensschutz laden").getOrNull()?.let { cl ->
                 classifier = cl
                 val v = f.version
                 recognizer = PiiRecognizer(cl, WordPiece(OwnModels.vocab(v.vocab)), threshold = v.threshold, labelNames = OwnModels.labels(v.labels))
@@ -533,7 +533,7 @@ class PiiModel(private val c: AppContainer, versions: List<ModelVersion> = PiiMo
         val r = recognizer ?: return null
         if (!c.settings.current.pseudonymModel) return null
         synchronized(cache) { cache[text] }?.let { return it }
-        val hits = runCatching { r.hits(text) }.logFailure("Lora Namensschutz").getOrNull() ?: return null
+        val hits = runCatching { r.hits(text) }.logFailure("Kana Namensschutz").getOrNull() ?: return null
         synchronized(cache) { cache[text] = hits }
         return hits
     }

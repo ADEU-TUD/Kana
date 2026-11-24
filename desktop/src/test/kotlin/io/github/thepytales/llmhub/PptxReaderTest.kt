@@ -278,7 +278,7 @@ class PptxReaderTest {
         val base = OfficeImport.pptx(original)
         val slides = SlideDeck.parse(base)
         // Slide 4 gets a point more (new structure), slide 5 goes, a new slide comes at the end, slide 2 moves behind 3.
-        val now = listOf(slides[0], slides[2], slides[1], slides[3].copy(body = slides[3].body + "\n- Links B"), SlideDeck.Slide("Neue Folie", "- Von Lora", notes = "Neu dazu"))
+        val now = listOf(slides[0], slides[2], slides[1], slides[3].copy(body = slides[3].body + "\n- Links B"), SlideDeck.Slide("Neue Folie", "- Von Kana", notes = "Neu dazu"))
         val nowMd = SlideDeck.markdown(now)
         val generated = Files.createTempFile("gen", ".pptx").toFile()
         PptxWriter.write(generated, "Vortrag", nowMd, "Professur")
@@ -315,7 +315,7 @@ class PptxReaderTest {
         val back = SlideDeck.parse(PptxReader.read(merged))
         assertEquals(listOf("Forschungstag 2026", "Zahlen", "Ergebnisse", "Vorher und nachher", "Neue Folie"), back.map { it.title })
         assertTrue("Links B" in back[3].body, back[3].body)
-        assertEquals("- Von Lora", back[4].body)
+        assertEquals("- Von Kana", back[4].body)
         assertEquals("Neu dazu", back[4].notes)
         assertEquals(back[2].elements, slides[1].elements)
     }

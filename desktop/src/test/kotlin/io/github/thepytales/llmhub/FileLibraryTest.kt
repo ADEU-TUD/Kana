@@ -59,7 +59,7 @@ class FileLibraryTest {
         assertEquals("Vertraege", contract.folder)
         assertEquals(FileKind.WORD, contract.kind)
         val seminar = items.first { it.docId == doc.id }
-        // AP-16: documents are files in the Lora-Ordner, their folder is the real one.
+        // AP-16: documents are files in the Kana-Ordner, their folder is the real one.
         assertEquals(FileLibrary.LORA, seminar.place)
         assertEquals("", seminar.folder)
         assertEquals(FileKind.KNOWLEDGE, items.first { it.name == "Modulhandbuch" }.kind)

@@ -11,9 +11,9 @@ import kotlin.math.abs
 /**
  * Textbasierter Schnitt (AP-55): the transcript of the clips on V1 as text beside the timeline – every word knows where
  * it is on the timeline (a click jumps there), deleting words cuts them out of the video, moving a paragraph moves its
- * clip, filler words and long pauses are marked for removal, and Lora proposes passages to cut for a wish („Kürze auf
+ * clip, filler words and long pauses are marked for removal, and Kana proposes passages to cut for a wish („Kürze auf
  * 10 Minuten, behalte die Beispiele“) which are accepted or rejected one by one. Pure functions on [VideoProject]: the
- * editor (through its history, so Strg+Z works), Lora and the tests use the same ones.
+ * editor (through its history, so Strg+Z works), Kana and the tests use the same ones.
  */
 object TextCut {
     /** Room kept around the speech next to a cut (seconds of the source), as in the rough cut. */
@@ -306,13 +306,13 @@ object TextCut {
         return moveClip(r, id, if (from < to) to - 1 else to)
     }
 
-    // ── Lora as editing assistant ──
+    // ── Kana as editing assistant ──
 
-    /** A passage Lora proposes to cut: tokens [from]..[to] with a short reason. */
+    /** A passage Kana proposes to cut: tokens [from]..[to] with a short reason. */
     data class Proposal(val id: String = newVideoId(), val from: Int, val to: Int, val reason: String = "")
 
     /**
-     * Lora reads the paragraphs (numbered, with times and the length of the video) and answers with the numbers of
+     * Kana reads the paragraphs (numbered, with times and the length of the video) and answers with the numbers of
      * those to cut for [wish]; each run of numbers becomes a [Proposal]. Nothing is cut yet.
      */
     suspend fun propose(c: AppContainer, doc: Doc, duration: Double, wish: String): List<Proposal> {

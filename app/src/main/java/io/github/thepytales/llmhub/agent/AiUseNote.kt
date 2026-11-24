@@ -119,7 +119,7 @@ object AiUseNote {
                 append("**Erklärung zur Nutzung von KI-Werkzeugen**\n\n")
                 append("Bei der Erstellung der vorliegenden Arbeit${u.work?.let { " ($it)" }.orEmpty()} habe ich KI-gestützte Werkzeuge wie folgt genutzt:\n\n")
                 append("| Werkzeug / Modell | Zweck | Zeitraum | Betroffene Teile |\n|---|---|---|---|\n")
-                append("| Lora (KI-Assistenz-App) mit $models | ${u.purposes.joinToString("; ")} | ${period(u)} | $parts |\n\n")
+                append("| Kana (KI-Assistenz-App) mit $models | ${u.purposes.joinToString("; ")} | ${period(u)} | $parts |\n\n")
                 if (u.tools.isNotEmpty()) append("Genutzte Funktionen: ${u.tools.joinToString(", ")}.\n\n")
                 append("Alle Ausgaben der KI habe ich geprüft, überarbeitet und, wo nötig, mit Quellen belegt. Die Arbeit ist in ihrer gedanklichen ")
                 append("Leistung meine eigene; für den gesamten Inhalt trage ich die Verantwortung.")
@@ -127,14 +127,14 @@ object AiUseNote {
             Format.PUBLISHER -> buildString {
                 val en = u.purposes.map { PURPOSE_EN[it] ?: it }.joinToString(", ")
                 append("**Declaration of generative AI and AI-assisted technologies in the writing process**\n\n")
-                append("During the preparation of this work the author(s) used Lora with $models (${MONTH_EN.format(Date(u.to))}) in order to $en. ")
+                append("During the preparation of this work the author(s) used Kana with $models (${MONTH_EN.format(Date(u.to))}) in order to $en. ")
                 append("After using this tool, the author(s) reviewed and edited the content as needed and take(s) full responsibility for the content of the publication.\n\n")
-                append("*Deutsch:* Bei der Vorbereitung dieser Arbeit wurde Lora mit $models (${MONTH.format(Date(u.to))}) genutzt für: ")
+                append("*Deutsch:* Bei der Vorbereitung dieser Arbeit wurde Kana mit $models (${MONTH.format(Date(u.to))}) genutzt für: ")
                 append(u.purposes.joinToString(", ") { it.replaceFirstChar(Char::lowercase) })
                 append(". Die Inhalte wurden danach geprüft und überarbeitet; die Verantwortung für den Inhalt liegt bei den Autor:innen.")
             }
             Format.FOOTNOTE ->
-                "Bei der Erstellung wurden KI-Werkzeuge genutzt (Lora mit $models, ${MONTH.format(Date(u.to))}) für: " +
+                "Bei der Erstellung wurden KI-Werkzeuge genutzt (Kana mit $models, ${MONTH.format(Date(u.to))}) für: " +
                     u.purposes.joinToString(", ") { it.replaceFirstChar(Char::lowercase) } + ". Die Ergebnisse wurden geprüft und überarbeitet."
         }
     }

@@ -18,10 +18,10 @@ import kotlin.test.assertTrue
 class WordKeysTest {
     @Test
     fun wordStepsLikeWordOnWindows() {
-        val t = "Das ist, sagt’s Lora, gut.\nZweiter Absatz"
+        val t = "Das ist, sagt’s Kana, gut.\nZweiter Absatz"
         // Strg+→: to the start of the next word; punctuation is a word of its own; the apostrophe stays in the word.
         val stops = generateSequence(0) { i -> WordKeys.nextWord(t, i).takeIf { it != i } }.toList()
-        assertEquals(listOf("Das ", "ist", ", ", "sagt’s ", "Lora", ", ", "gut", ".", "\n", "Zweiter ", "Absatz"), stops.zipWithNext { a, b -> t.substring(a, b) })
+        assertEquals(listOf("Das ", "ist", ", ", "sagt’s ", "Kana", ", ", "gut", ".", "\n", "Zweiter ", "Absatz"), stops.zipWithNext { a, b -> t.substring(a, b) })
         // Strg+←: the same stops backwards.
         val back = generateSequence(t.length) { i -> WordKeys.prevWord(t, i).takeIf { it != i } }.toList()
         assertEquals(stops.reversed(), back)

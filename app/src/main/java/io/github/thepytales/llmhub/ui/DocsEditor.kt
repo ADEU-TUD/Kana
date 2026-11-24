@@ -580,7 +580,7 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         val narrow = maxWidth < 600.dp
         val wide = maxWidth > 980.dp
-        // Lora sits beside the document on wide screens from the start (AP-16, like Google Docs); closable.
+        // Kana sits beside the document on wide screens from the start (AP-16, like Google Docs); closable.
         LaunchedEffect(doc?.id, wide) { if (wide && doc != null && !loraShown && panel == DocPanel.NONE && (kind == DocKind.DOC || kind == DocKind.MARKDOWN || kind == DocKind.SLIDES)) { panel = DocPanel.AI; loraShown = true } }
         val undoRedo: @Composable () -> Unit = {
             if (doc != null && narrow) {
@@ -1104,7 +1104,7 @@ internal val DOWNLOAD_FORMATS = listOf(DocFormat.DOCX, DocFormat.PDF, DocFormat.
 
 /**
  * Header of a text document in the Fließtext-Editor (APD-15, like Google Docs): back, the document symbol, the title
- * (click: rename) with its status, the menus right under the title; at the right Kommentare, Lora and *Exportieren*.
+ * (click: rename) with its status, the menus right under the title; at the right Kommentare, Kana and *Exportieren*.
  */
 @Composable
 private fun FlowDocHeader(
@@ -1538,7 +1538,7 @@ private fun VersionHistory(c: AppContainer, doc: LiveDoc, tabId: String?, onDism
                                 val base = c.docs.baseDir(doc)
                                 MarkdownDocx.writeTracked(
                                     f, doc.title, DocMarkup.resolveImages(DocumentWriter.withTitle(sel.title, sel.tabs.joinToString("\n\n") { it.markdown }), base),
-                                    DocMarkup.resolveImages(DocumentWriter.withTitle(doc.title, doc.markdown()), base), c.documentTools.settingsTheme(DocStyle.parse(doc.style)), author = "Lora",
+                                    DocMarkup.resolveImages(DocumentWriter.withTitle(doc.title, doc.markdown()), base), c.documentTools.settingsTheme(DocStyle.parse(doc.style)), author = "Kana",
                                 )
                                 f
                             }

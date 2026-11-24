@@ -159,7 +159,7 @@ class DeviceChecksTest {
         assertEquals(DeviceCheckStore.State.FAILED, store.state(three))
 
         val report = store.report("windows", "1.0.76", "Windows 11")
-        assertTrue(report.startsWith("Prüfung am Gerät · Lora 1.0.76 · Windows · Windows 11"), report)
+        assertTrue(report.startsWith("Prüfung am Gerät · Kana 1.0.76 · Windows · Windows 11"), report)
         assertTrue("1 passt · 1 passt nicht · 0 offen" in report, report)
         assertTrue(report.indexOf("PASST NICHT") < report.indexOf("\nPASST\n"), report)
         assertTrue("Notiz: Knopf fehlt" in report && "Bild: AP-902_nur-ein-schritt.png" in report, report)

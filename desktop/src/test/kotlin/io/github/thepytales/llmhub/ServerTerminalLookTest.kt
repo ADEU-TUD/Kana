@@ -49,7 +49,7 @@ import kotlin.test.assertTrue
 
 /**
  * Server-Terminal (AP-118, AP-131) as pictures (build/screenshots/server-*.png): the saved sessions with the tabs; the
- * flow „Symfony aktualisieren“ with two steps done; Lora asking to run a command after a wish; Lora's answer after the
+ * flow „Symfony aktualisieren“ with two steps done; Kana asking to run a command after a wish; Kana's answer after the
  * command ran; the files of the server beside the terminal with two sessions in tabs. The terminal itself is a Swing
  * component (JediTerm) and cannot be drawn without a window – here a stand-in shows where it sits.
  */
@@ -94,9 +94,9 @@ class ServerTerminalLookTest {
         start()
     }
 
-    /** Lora as a stand-in with fixed answers – the pictures show the screen, not a model. */
+    /** Kana as a stand-in with fixed answers – the pictures show the screen, not a model. */
     private class FakeLora : ServerHelper {
-        override fun where() = ServerAssistant.Where("test", true, "Lora schlägt mit dem Sprachmodell auf diesem Gerät vor – nichts verlässt den PC.")
+        override fun where() = ServerAssistant.Where("test", true, "Kana schlägt mit dem Sprachmodell auf diesem Gerät vor – nichts verlässt den PC.")
         override suspend fun propose(wish: String, profile: SshProfile, recent: String, done: List<ServerStep>, secrets: Collection<String>, screen: String, followUp: Boolean) =
             if (!followUp) ServerAssistant.Proposal(
                 ServerAssistant.parse("""{"steps":[{"command":"df -h /","what":"Zeigt, wie voll die Festplatte des Servers ist.","safety":"Liest nur, ändert nichts.","risk":"read"}],"note":"Ich sehe nach, wie viel Platz auf dem Server noch frei ist."}""").first,
@@ -184,7 +184,7 @@ class ServerTerminalLookTest {
             assertTrue(has("Was soll im Terminal passieren?") && has("Wie viel Speicherplatz ist noch frei?") && has("Feste Abläufe"))
             runBlocking { term.propose("Wie viel Speicherplatz ist noch frei?") }
             shot("server-lora-frage-windows.png")
-            assertTrue(has("Lora möchte:") && has("df -h /") && has("Ausführen") && has("Ich sehe nach"))
+            assertTrue(has("Kana möchte:") && has("df -h /") && has("Ausführen") && has("Ich sehe nach"))
             runBlocking { term.run(0); term.awaitLora() }
             shot("server-lora-ergebnis-windows.png")
             assertTrue(has("12 GB von 50 GB frei") && has("Fertig"))
@@ -243,13 +243,13 @@ class ServerTerminalLookTest {
                 val img = onAllNodes(isRoot())[0].captureToImage().toAwtImage()
                 File("build/screenshots").mkdirs()
                 ImageIO.write(img, "png", File("build/screenshots/server-modell-frage-windows.png"))
-                assertTrue(has("Wo soll Lora im Server-Terminal denken?") && has("Empfehlung für diesen PC: TU-Server"))
+                assertTrue(has("Wo soll Kana im Server-Terminal denken?") && has("Empfehlung für diesen PC: TU-Server"))
                 assertTrue(has("Namen von Personen in Logs") && has("keins installiert") && has("Cloud-Anbieter"))
                 onNodeWithText("Übernehmen").performClick()
                 repeat(3) { Thread.sleep(100); mainClock.advanceTimeBy(300) }
                 waitForIdle()
                 assertEquals("TU_SERVER", c.settings.current.serverTerminalModel, "die Wahl ist gespeichert – das Pop-up kommt nicht wieder")
-                assertFalse(has("Wo soll Lora im Server-Terminal denken?"))
+                assertFalse(has("Wo soll Kana im Server-Terminal denken?"))
             }
             val w = io.github.thepytales.llmhub.ssh.ServerAssistant(c).where()
             assertTrue(!w.onDevice && "TU-Server" in w.note, w.note)

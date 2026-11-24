@@ -101,7 +101,7 @@ internal fun tabColor(p: SshProfile?): Color = TAB_COLORS[(p?.color ?: 0).mod(TA
 
 /**
  * Server-Terminal (AP-118, AP-131): sessions in tabs like in a browser; per tab the saved sessions (not connected) or
- * the terminal (JediTerm), the files of the server (SFTP, on request) and Lora's column, where every command waits
+ * the terminal (JediTerm), the files of the server (SFTP, on request) and Kana's column, where every command waits
  * for a click and then runs in the terminal. [terminalView] draws the terminal (tests replace it with a stand-in).
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,7 +115,7 @@ fun ServerTerminalScreen(
     filesAtStart: Boolean = false,
 ) {
     val settings by c.settings.settings.collectAsStateWithLifecycle()
-    // Where Lora thinks (AP-131 e): asked once; afterwards Einstellungen › Lora or „Ändern“ in Lora's column.
+    // Where Kana thinks (AP-131 e): asked once; afterwards Einstellungen › Kana or „Ändern“ in Kana's column.
     val advice = remember(settings.serverTerminalModel, settings.apiKey, settings.loraModel) { ServerModelChoice.advise(c) }
     val place = where ?: remember(settings.serverTerminalModel, settings.apiKey, settings.loraModel) { ServerAssistant(c).where() }
     var changePlace by remember { mutableStateOf(false) }
@@ -329,7 +329,7 @@ private val SERVER_WISHES = listOf(
 )
 
 /**
- * Lora's column (AP-118, AP-131 d): say what should happen in the terminal; Lora says in a sentence what she wants to
+ * Kana's column (AP-118, AP-131 d): say what should happen in the terminal; Kana says in a sentence what she wants to
  * do and shows the next command with its risk. Only after *Ausführen* she types it into the terminal and presses Enter,
  * then looks at the result: she says what came out or proposes the next command – again with a click.
  */
@@ -350,7 +350,7 @@ internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Mod
     Surface(modifier, color = MaterialTheme.colorScheme.surfaceContainerLow) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(tr("Lora"), style = MaterialTheme.typography.titleSmall)
+                Text(tr("Kana"), style = MaterialTheme.typography.titleSmall)
                 state.profile?.let { p ->
                     Spacer(Modifier.width(8.dp))
                     Box(Modifier.size(8.dp).background(tabColor(p), CircleShape))
@@ -371,13 +371,13 @@ internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Mod
                 wish, { wish = it }, label = { Text(tr("Was soll im Terminal passieren?")) },
                 placeholder = { Text(tr("z. B. Wie viel Speicher ist frei? · Deploy wie immer")) },
                 modifier = Modifier.fillMaxWidth().onPreviewKeyEvent { e ->
-                    // Enter asks Lora, Umschalt+Enter makes a new line.
+                    // Enter asks Kana, Umschalt+Enter makes a new line.
                     if (e.type == KeyEventType.KeyDown && (e.key == Key.Enter || e.key == Key.NumPadEnter) && !e.isShiftPressed) { ask(wish); true } else false
                 },
                 minLines = 2,
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Button(enabled = wish.isNotBlank() && canAsk, onClick = { ask(wish) }) { Text(tr("Lora fragen")) }
+                Button(enabled = wish.isNotBlank() && canAsk, onClick = { ask(wish) }) { Text(tr("Kana fragen")) }
             }
             if (state.steps.isEmpty()) {
                 if (where.model != null) {
@@ -418,7 +418,7 @@ internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Mod
                     StepCard(i, s, isNext = i == next && running < 0, term, state.waitsForInput && i == running)
                     if (s.state == StepState.FAILED && where.model != null && state.goal == null) TextButton(enabled = state.busy == null, onClick = {
                         scope.launch { term.propose(tr("Der Schritt „{0}“ ist fehlgeschlagen (Exit {1}). Was ist die Ursache, und was ist der nächste Schritt?", s.command, s.exitCode ?: "?"), s.output) }
-                    }) { Text(tr("Lora fragen")) }
+                    }) { Text(tr("Kana fragen")) }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = { term.cancel() }) { Text(if (state.steps.any { it.state == StepState.OPEN }) tr("Abbrechen") else tr("Fertig")) }
@@ -441,12 +441,12 @@ internal fun LoraServerPane(c: AppContainer, term: ServerTerminal, modifier: Mod
     }
 }
 
-/** What Lora says: her plan before the steps, or the result after them. */
+/** What Kana says: her plan before the steps, or the result after them. */
 @Composable
 private fun LoraSays(text: String) {
     Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(10.dp)) {
-            Text(tr("Lora:"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(tr("Kana:"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
             Spacer(Modifier.width(6.dp))
             SelectionContainer { Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer) }
         }
@@ -454,7 +454,7 @@ private fun LoraSays(text: String) {
 }
 
 /**
- * One step. The next open one is the question „Lora möchte …“ with *Ausführen* (typed into the terminal with Enter),
+ * One step. The next open one is the question „Kana möchte …“ with *Ausführen* (typed into the terminal with Enter),
  * *Bearbeiten*, *Überspringen*; a running one shows that it runs, whether it waits for input, *Strg+C* and *Ist fertig*.
  */
 @OptIn(ExperimentalLayoutApi::class)
@@ -478,7 +478,7 @@ private fun StepCard(index: Int, s: ServerStep, isNext: Boolean, term: ServerTer
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("${index + 1}.", style = MaterialTheme.typography.labelLarge)
                 Spacer(Modifier.width(6.dp))
-                if (asking) Text(tr("Lora möchte:") + " ", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                if (asking) Text(tr("Kana möchte:") + " ", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                 if (s.risk == Risk.RISKY) Icon(Icons.Outlined.Warning, null, Modifier.size(16.dp), tint = riskColor)
                 Text(tr(s.risk.label), color = riskColor, style = MaterialTheme.typography.labelMedium)
                 Spacer(Modifier.weight(1f))
@@ -504,7 +504,7 @@ private fun StepCard(index: Int, s: ServerStep, isNext: Boolean, term: ServerTer
                 if (waitsForInput) Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.Keyboard, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
                     Spacer(Modifier.width(6.dp))
-                    Text(tr("Das Terminal wartet auf deine Eingabe (z. B. Passwort oder Ja/Nein) – tippe sie dort ein. Lora sieht sie nicht."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                    Text(tr("Das Terminal wartet auf deine Eingabe (z. B. Passwort oder Ja/Nein) – tippe sie dort ein. Kana sieht sie nicht."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                 }
                 if (term.tty != null) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     OutlinedButton(onClick = { term.interrupt(index) }) { Text(tr("Abbrechen (Strg+C)")) }
@@ -568,7 +568,7 @@ internal object TerminalWidgets {
         term.detach()
     }
 
-    /** Puts the keyboard into the terminal (after Lora typed a command – a password prompt can be answered at once). */
+    /** Puts the keyboard into the terminal (after Kana typed a command – a password prompt can be answered at once). */
     fun focus(term: ServerTerminal) {
         val w = synchronized(this) { open[term]?.widget } ?: return
         javax.swing.SwingUtilities.invokeLater { runCatching { w.terminalPanel.requestFocusInWindow() } }
@@ -603,7 +603,7 @@ private fun HostKeyDialog(result: KnownHosts.Result, host: String, port: Int, on
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(if (port == 22) host else "$host:$port", style = MaterialTheme.typography.titleSmall)
                 if (changed != null) {
-                    Text(tr("Lora kennt für diesen Server einen anderen Schlüssel. Das passiert nach einer Neuinstallation – oder wenn jemand die Verbindung abfängt. Verbinde dich nur, wenn die Administration den neuen Schlüssel bestätigt hat."), color = MaterialTheme.colorScheme.error)
+                    Text(tr("Kana kennt für diesen Server einen anderen Schlüssel. Das passiert nach einer Neuinstallation – oder wenn jemand die Verbindung abfängt. Verbinde dich nur, wenn die Administration den neuen Schlüssel bestätigt hat."), color = MaterialTheme.colorScheme.error)
                     Text(tr("Bisher: {0}", changed.previous.joinToString(", ")), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
                     Text(tr("Jetzt: {0}", result.fingerprint), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
                     Row(verticalAlignment = Alignment.CenterVertically) {

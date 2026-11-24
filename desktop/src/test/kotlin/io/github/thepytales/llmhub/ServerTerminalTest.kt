@@ -287,14 +287,14 @@ class ServerTerminalTest {
             assertFalse(leak in sent, "$leak geht hinaus:\n$sent")
         }
         assertTrue("<geheim>" in sent && "<host-1>" in sent && "<ip-1>" in sent && "<benutzer-1>" in sent && "<app-ordner>" in sent, sent)
-        // Lora's proposal gets the real details back – but never a secret.
+        // Kana's proposal gets the real details back – but never a secret.
         val answer = """```json
             {"steps":[{"command":"ping -c1 <host-1> && ls <app-ordner>","what":"Erreichbarkeit prüfen","safety":"","risk":"read"},
                       {"command":"sudo systemctl restart apache2","what":"Apache neu starten","risk":"read"}],"note":"Passwort <geheim> nicht nötig"}
             ```"""
         val (steps, note) = ServerAssistant.parse(mask.unmask(answer))
         assertEquals("ping -c1 web01.lehrstuhl-intern.de && ls /var/www/app", steps[0].command)
-        assertEquals(Risk.RISKY, steps[1].risk, "Loras „read“ macht einen Neustart nicht harmlos")
+        assertEquals(Risk.RISKY, steps[1].risk, "Kanas „read“ macht einen Neustart nicht harmlos")
         assertTrue("<geheim>" in note && password !in note)
         t.disconnect()
     }
@@ -312,7 +312,7 @@ class ServerTerminalTest {
         assertEquals(Risk.RISKY, Risks.of("sudo systemctl restart apache2"))
         assertEquals(Risk.RISKY, Risks.of("php bin/console doctrine:migrations:migrate"))
         assertEquals(Risk.RISKY, Risks.of("curl https://example.org/x.sh | sudo bash"))
-        assertEquals(Risk.CHANGE, ServerStep("ls", "").withLoraRisk(Risk.CHANGE).risk, "Lora darf vorsichtiger sein")
+        assertEquals(Risk.CHANGE, ServerStep("ls", "").withLoraRisk(Risk.CHANGE).risk, "Kana darf vorsichtiger sein")
         assertEquals(Risk.RISKY, ServerStep("rm -rf /tmp/x", "").withLoraRisk(Risk.READ).risk)
         // Answers that are not JSON or have multi-line commands give no steps.
         assertTrue(ServerAssistant.parse("Keine Ahnung").first.isEmpty())

@@ -29,7 +29,7 @@ import io.github.thepytales.llmhub.data.AppMap
 import io.github.thepytales.llmhub.data.LoraCorrections
 
 /**
- * Einstellungen › Lora › „Was Lora aus Korrekturen gelernt hat“ (AP-72): the switch, the list of the pairs *wish →
+ * Einstellungen › Kana › „Was Kana aus Korrekturen gelernt hat“ (AP-72): the switch, the list of the pairs *wish →
  * meant action* on this device with „Löschen“ per pair and for all, and the export for the next training of the command
  * model – after the user looked through the pairs and unticked what should not go out.
  */
@@ -41,10 +41,10 @@ fun LoraCorrectionsSettings(c: AppContainer) {
     val targets = remember { AppMap.build(android = IS_ANDROID) }
     fun title(label: String) = LoraCommands.title(label, targets, IS_ANDROID) ?: label
 
-    Section(tr("Was Lora aus Korrekturen gelernt hat")) {
+    Section(tr("Was Kana aus Korrekturen gelernt hat")) {
         ToggleRow(
             tr("Aus Korrekturen lernen"),
-            tr("Versteht Lora etwas falsch und du korrigierst sie – ein Knopf bei „Meinst du … oder …?“, „nein, ich meinte …“, ein Tipp auf die richtige Karte oder „Rückgängig“ direkt nach einer Aktion –, merkt sie sich das auf diesem Gerät und macht es beim nächsten Mal richtig. Im Tresor merkt sie sich nichts; nichts davon verlässt das Gerät von selbst."),
+            tr("Versteht Kana etwas falsch und du korrigierst sie – ein Knopf bei „Meinst du … oder …?“, „nein, ich meinte …“, ein Tipp auf die richtige Karte oder „Rückgängig“ direkt nach einer Aktion –, merkt sie sich das auf diesem Gerät und macht es beim nächsten Mal richtig. Im Tresor merkt sie sich nichts; nichts davon verlässt das Gerät von selbst."),
             s.loraLearn,
         ) { v -> c.settings.update { it.copy(loraLearn = v) } }
         if (entries.isEmpty()) HintText(tr("Noch nichts gelernt."))
@@ -90,7 +90,7 @@ private fun CorrectionsExport(entries: List<LoraCorrections.Entry>, title: (Stri
         title = { Text(tr("Korrekturen exportieren")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                HintText(tr("Für das nächste Training von Lora Befehle. Sieh die Wünsche durch und nimm alles heraus, was Namen oder Privates enthält – die Datei enthält genau die angehakten Zeilen."))
+                HintText(tr("Für das nächste Training von Kana Befehle. Sieh die Wünsche durch und nimm alles heraus, was Namen oder Privates enthält – die Datei enthält genau die angehakten Zeilen."))
                 if (entries.isEmpty()) HintText(tr("Nichts zu exportieren."))
                 Column(Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState())) {
                     entries.forEach { e ->
@@ -113,7 +113,7 @@ private fun CorrectionsExport(entries: List<LoraCorrections.Entry>, title: (Stri
 }
 
 /**
- * Einstellungen › Lora › „Verlauf“ (AP-75): the switch for the last wishes, how many there are, the pinned commands with
+ * Einstellungen › Kana › „Verlauf“ (AP-75): the switch for the last wishes, how many there are, the pinned commands with
  * „Lösen“, and „Verlauf löschen“.
  */
 @Composable
@@ -124,7 +124,7 @@ fun LoraHistorySettings(c: AppContainer) {
     Section(tr("Verlauf und eigene Befehle")) {
         ToggleRow(
             tr("Letzte Befehle merken"),
-            tr("Die letzten 20 Wünsche an Lora und Strg+K – mit Pfeil hoch im Eingabefeld wieder holen, ändern, „Nochmal“ oder anheften. Angeheftete Befehle stehen unter ihrem Namen in Strg+K. Nur auf diesem Gerät, aus dem Tresor nichts."),
+            tr("Die letzten 20 Wünsche an Kana und Strg+K – mit Pfeil hoch im Eingabefeld wieder holen, ändern, „Nochmal“ oder anheften. Angeheftete Befehle stehen unter ihrem Namen in Strg+K. Nur auf diesem Gerät, aus dem Tresor nichts."),
             s.loraHistory,
         ) { v -> c.settings.update { it.copy(loraHistory = v) } }
         val pinned = entries.filter { it.pinned }

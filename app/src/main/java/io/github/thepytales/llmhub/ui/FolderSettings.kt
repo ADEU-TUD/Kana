@@ -162,7 +162,7 @@ internal fun chatFolderName(existing: List<LocalFolder>, path: String): String {
 }
 
 /**
- * Attach a folder to the chat or change its right: Lora may only read there, or also write (create, change, move;
+ * Attach a folder to the chat or change its right: Kana may only read there, or also write (create, change, move;
  * deleted files go to „.adeu-papierkorb“). The right can be changed at any time during the chat.
  */
 @Composable
@@ -175,9 +175,9 @@ internal fun ChatFolderDialog(folder: LocalFolder, isNew: Boolean, onDismiss: ()
         text = {
             Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp)) {
                 Text(folder.path, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(tr("Was darf Lora in diesem Ordner?"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 6.dp))
+                Text(tr("Was darf Kana in diesem Ordner?"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 6.dp))
                 listOf(false to (tr("Nur lesen") to tr("Dateien auflisten, lesen und durchsuchen – nichts wird verändert.")),
-                    true to (tr("Lesen und schreiben") to tr("Auch Dateien anlegen, ändern und verschieben; Gelöschtes landet in „.adeu-papierkorb“. Vor Änderungen fragt Lora je nach Freigaben nach.")))
+                    true to (tr("Lesen und schreiben") to tr("Auch Dateien anlegen, ändern und verschieben; Gelöschtes landet in „.adeu-papierkorb“. Vor Änderungen fragt Kana je nach Freigaben nach.")))
                     .forEach { (value, texts) ->
                         Row(
                             Modifier.fillMaxWidth().selectable(selected = write == value, role = Role.RadioButton) { write = value }.padding(vertical = 4.dp),

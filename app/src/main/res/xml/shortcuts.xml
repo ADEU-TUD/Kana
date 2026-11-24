@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Long press on the app icon (AP-34): ask Lora right away, or start a new chat. -->
+<!-- Long press on the app icon (AP-34): ask Kana right away, or start a new chat. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
