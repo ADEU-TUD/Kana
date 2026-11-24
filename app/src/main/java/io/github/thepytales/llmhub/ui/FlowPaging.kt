@@ -368,7 +368,8 @@ internal fun applyPlan(plan: PageLayout.Plan, owners: List<Pair<FlowSeg, Int>>, 
             }
         }
     }
-    for (seg in state.segs) {
+    // A copy: the editor may change the list while the plan is applied (ConcurrentModificationException in the PR check).
+    for (seg in state.segs.toList()) {
         val top = tops[seg.id] ?: 0f
         when (seg) {
             // Room that differs by a pixel or two stays as it is (see ROOM_SLACK): the plan must come to rest.
@@ -409,7 +410,7 @@ internal fun sameBreaks(a: List<PageBreakAt>, b: List<PageBreakAt>): Boolean =
 
 /** No pages (Ohne Seiten, narrow window): all room goes. */
 internal fun clearPlan(state: FlowState) {
-    for (seg in state.segs) when (seg) {
+    for (seg in state.segs.toList()) when (seg) {
         is FlowSeg.Text -> { if (seg.breaks.isNotEmpty()) seg.breaks = emptyList(); if (seg.push != 0f) seg.push = 0f }
         is FlowSeg.Raw -> {
             if (seg.push != 0f) seg.push = 0f
