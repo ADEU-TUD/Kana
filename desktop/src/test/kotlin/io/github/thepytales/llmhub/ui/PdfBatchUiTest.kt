@@ -177,8 +177,8 @@ class PdfBatchUiTest {
         // (b) Wasserzeichen „Vertraulich“ and „Seite x von y“ below.
         onNodeWithText("Wasserzeichen & Kopfzeile").performClick()
         settle(3)
-        onNodeWithText("Vertraulich").performClick()
-        onNodeWithText("Seite x von y unten").performClick()
+        onNodeWithText("Vertraulich").performScrollTo().performClick()
+        onNodeWithText("Seite x von y unten").performScrollTo().performClick()
         settle(3)
         shot("wasserzeichen")
         onNodeWithText("Auf die Seiten setzen").performClick()
@@ -186,7 +186,7 @@ class PdfBatchUiTest {
         while (PdfWork.tabs[0].history.isEmpty() && n++ < 100) settle(1)
         settle(4)
         val stamped = text(PdfWork.tabs[0].file)
-        assertTrue("VERTRAULICH" in stamped && "Seite 2 von 2" in stamped, stamped)
+        assertTrue("VERTRAULICH" in stamped.filterNot { it.isWhitespace() } && "Seite 2 von 2" in stamped, stamped)
         // (d) Lesezeichen from the headings.
         onNodeWithText("Lesezeichen").performClick()
         settle(3)

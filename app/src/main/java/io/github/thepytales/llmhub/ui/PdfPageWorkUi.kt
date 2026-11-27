@@ -123,7 +123,7 @@ internal fun PdfStampDialog(initial: List<PdfStamp>, confirm: String, onDismiss:
         title = { Text(tr("Wasserzeichen und Kopfzeile")) },
         text = {
             Column(Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                StampPreview(d, Modifier.fillMaxWidth().padding(horizontal = 60.dp))
+                StampPreview(d, Modifier.align(Alignment.CenterHorizontally).width(150.dp))
                 Text(tr("Wasserzeichen"), style = MaterialTheme.typography.titleSmall)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     FilterChip(selected = d.mark.isBlank() && d.imagePath == null && !custom, onClick = { custom = false; d = d.copy(mark = "", imagePath = null) }, label = { Text(tr("Keins")) })

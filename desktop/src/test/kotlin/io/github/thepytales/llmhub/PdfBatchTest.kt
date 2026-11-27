@@ -263,7 +263,8 @@ class PdfBatchTest {
             out, name = "Bericht", date = "27.11.2026",
         )
         val p1 = text(out, 1)
-        assertTrue("ENTWURF" in p1 && "Bericht · 27.11.2026" in p1 && "Vertraulich – Größe ß" in p1, p1)
+        // The diagonal letters come out of the text in pieces („EN TW URF“); together they are the word.
+        assertTrue("ENTWURF" in p1.filterNot { it.isWhitespace() } && "Bericht · 27.11.2026" in p1 && "Vertraulich – Größe ß" in p1, p1)
         assertFalse("Seite 1 von 3" in p1, "nur ab Seite 2")
         assertTrue("Seite 2 von 3" in text(out, 2))
         // The turned page gets it as well, readable in its direction.
