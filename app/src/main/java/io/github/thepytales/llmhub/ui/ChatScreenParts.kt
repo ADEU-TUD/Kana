@@ -47,7 +47,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -199,8 +199,8 @@ internal fun EmptyChat(
                     else StartExamples(open, onClose = { opened = null }) { e -> opened = null; e.run() }
                 }
                 // Weiterarbeiten (AP-135 b) beside „Zuletzt“ and „Favoriten“.
-                val workVersion by io.github.thepytales.llmhub.data.RecentWork.version.collectAsStateWithLifecycle()
-                val hasWork = remember(workVersion) { existingWork(io.github.thepytales.llmhub.App.container, 1).isNotEmpty() }
+                val workVersion by io.github.thepytales.llmhub.data.RecentWork.version.collectAsState()
+                val hasWork = remember(workVersion) { appContainer()?.let { existingWork(it, 1).isNotEmpty() } == true }
                 if (roomForLists && (recent.isNotEmpty() || favorites.isNotEmpty() || hasWork)) {
                     Spacer(Modifier.size(14.dp))
                     RecentAndFavorites(recent, favorites, onOpenChat, onTemplate)
@@ -289,7 +289,7 @@ private fun RecentAndFavorites(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         // Weiterarbeiten (AP-135 b): the files of all editors, opened where one stopped.
-        ContinueWorkList(io.github.thepytales.llmhub.App.container, max = 4)
+        appContainer()?.let { ContinueWorkList(it, max = 4) }
         if (recent.isNotEmpty()) {
             Column(Modifier.widthIn(min = 220.dp, max = 360.dp)) {
                 GroupLabel(tr("Zuletzt"))

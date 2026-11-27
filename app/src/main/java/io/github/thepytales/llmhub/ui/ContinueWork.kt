@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.collectAsState
 import io.github.thepytales.llmhub.AppContainer
 import io.github.thepytales.llmhub.data.RecentWork
 import java.io.File
@@ -59,6 +59,9 @@ private fun workIcon(kind: String): ImageVector = when (kind) {
     else -> Icons.Outlined.Description
 }
 
+/** The app's container where the screen has none of its own (the start page); null before the app has started (tests). */
+internal fun appContainer(): AppContainer? = runCatching { io.github.thepytales.llmhub.App.container }.getOrNull()
+
 /** The entries that still exist (a deleted document drops out of the list). */
 internal fun existingWork(c: AppContainer, max: Int): List<RecentWork.Entry> = RecentWork.recent(c).filter { e -> exists(c, e) }.take(max)
 
@@ -76,7 +79,7 @@ private fun exists(c: AppContainer, e: RecentWork.Entry): Boolean = when (e.kind
  */
 @Composable
 fun ContinueWorkList(c: AppContainer, max: Int = 5, title: Boolean = true, modifier: Modifier = Modifier) {
-    val version by RecentWork.version.collectAsStateWithLifecycle()
+    val version by RecentWork.version.collectAsState()
     val entries = remember(version) { existingWork(c, max) }
     if (entries.isEmpty()) return
     Column(modifier.widthIn(min = 220.dp, max = 360.dp).testTag("weiterarbeiten")) {

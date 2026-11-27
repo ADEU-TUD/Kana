@@ -289,7 +289,8 @@ private fun PaletteRow(title: String, hint: String?, chat: Boolean = false, enab
 @Composable
 fun ShortcutsDialog(onDismiss: () -> Unit, tool: ToolCommands? = EditorCommands.current) {
     val shortcuts = listOf(
-        tr("Strg+K") to tr("Befehlspalette: Bereiche, Einstellungen, Chats"),
+        tr("Strg+K") to tr("Befehlspalette: Befehle des Werkzeugs, Bereiche, Einstellungen, Chats"),
+        tr("Strg+P") to tr("Drucken mit Vorschau (Dokument, Tabelle, Folien, Gestalten, PDF, Transkript)"),
         tr("Strg+N") to tr("Neuer Chat"),
         tr("Strg+B") to tr("Seitenleiste ein/aus (im Text: fett)"),
         tr("Strg+L") to tr("Kana öffnen und schließen"),
