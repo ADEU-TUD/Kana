@@ -259,7 +259,7 @@ internal fun PdfBookmarksDialog(file: File, pages: Int, currentPage: Int, onDism
                 }
                 if (loaded && list.isEmpty()) HintText(tr("Noch keine Lesezeichen. Sie erscheinen in jedem PDF-Programm als Inhaltsverzeichnis an der Seite."))
                 LazyColumn(state = state, modifier = Modifier.heightIn(max = 380.dp).fillMaxWidth()) {
-                    itemsIndexed(list, key = { i, e -> "$i-${e.title}-${e.level}" }) { i, e ->
+                    itemsIndexed(list) { i, e ->
                         val sel = selected == i
                         Row(
                             Modifier.fillMaxWidth()
