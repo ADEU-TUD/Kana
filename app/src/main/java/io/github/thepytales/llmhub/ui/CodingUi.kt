@@ -103,8 +103,10 @@ fun CodePickerDialog(
 ) {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     var field by remember(segment.start) { mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(segment.text)) }
-    val sel = field.selection
-    val part = !sel.collapsed
+    // The marked words stay marked when the focus leaves the text (a click on a code); „Ganzer Abschnitt“ lifts them.
+    var marked by remember(segment.start) { mutableStateOf<androidx.compose.ui.text.TextRange?>(null) }
+    val sel = marked ?: androidx.compose.ui.text.TextRange(0)
+    val part = marked != null
     val mine = coding.at(segment, coder)
     var newCode by remember { mutableStateOf("") }
     var suggestions by remember(segment.start) { mutableStateOf<List<Code>?>(null) }
@@ -120,15 +122,15 @@ fun CodePickerDialog(
                 // The passage: words can be marked to code only them.
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()) {
                     androidx.compose.foundation.text.BasicTextField(
-                        value = field, onValueChange = { field = it.copy(text = segment.text) }, readOnly = true,
+                        value = field, onValueChange = { v -> field = v.copy(text = segment.text); if (!v.selection.collapsed) marked = v.selection }, readOnly = true,
                         textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                         modifier = Modifier.fillMaxWidth().padding(10.dp).testTag("code.passage"),
                     )
                 }
-                HintText(
-                    if (part) tr("Markiert: „{0}“ – die Codes gelten nur für diese Wörter.", segment.text.substring(sel.min, sel.max).trim().take(80))
-                    else tr("Codierer:in: {0}. Wörter markieren, um nur sie zu codieren – sonst gilt der Code für den ganzen Abschnitt.", coder),
-                )
+                if (part) Row(verticalAlignment = Alignment.CenterVertically) {
+                    HintText(tr("Markiert: „{0}“ – die Codes gelten nur für diese Wörter.", segment.text.substring(sel.min, sel.max).trim().take(80)), Modifier.weight(1f))
+                    TextButton(onClick = { marked = null; field = field.copy(selection = androidx.compose.ui.text.TextRange(0)) }) { Text(tr("Ganzer Abschnitt")) }
+                } else HintText(tr("Codierer:in: {0}. Wörter markieren, um nur sie zu codieren – sonst gilt der Code für den ganzen Abschnitt.", coder))
                 codebook.codes.forEach { code ->
                     val checked = if (part) mine.any { it.codeId == code.id && it.from == sel.min && it.to == sel.max } else mine.any { it.codeId == code.id && it.whole }
                     Row(

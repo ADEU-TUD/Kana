@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CircularProgressIndicator
@@ -120,7 +121,8 @@ fun ViewSheet(c: AppContainer, onDismiss: () -> Unit) {
     }
 }
 
-/** ⋮ › Sprecher: rename, merge, add by hand, remove. */
+/** ⋮ › Sprecher: rename, merge, add by hand, remove; voice profiles (remember, recognise, delete). */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SpeakersSheet(t: Transcript, onEdit: (Int) -> Unit, onSave: (Transcript) -> Unit, onDismiss: () -> Unit, c: AppContainer? = null, hasAudio: Boolean = false) {
     var add by remember { mutableStateOf(false) }
@@ -159,8 +161,30 @@ fun SpeakersSheet(t: Transcript, onEdit: (Int) -> Unit, onSave: (Transcript) -> 
             Text(tr("Stimmprofile"), style = MaterialTheme.typography.titleSmall)
             HintText(
                 tr("Benannte Sprecher lassen sich als Stimmprofil merken und in weiteren Aufnahmen (z.B. einer Interviewreihe) an der Stimme " +
-                    "wiedererkennen. Die Stimmabdrücke entstehen und bleiben nur auf diesem Gerät.") + if (profiles.isNotEmpty()) tr(" Gespeichert: ") + profiles.joinToString { it.name } + "." else ""
+                    "wiedererkennen. Die Stimmabdrücke entstehen und bleiben nur auf diesem Gerät.")
             )
+            // Profile löschbar (AP-136 c): each one, or all at once.
+            if (profiles.isNotEmpty()) {
+                androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    profiles.forEach { p ->
+                        androidx.compose.material3.InputChip(
+                            selected = false, onClick = {},
+                            label = { Text(tr("{0} ({1} Aufnahmen)", p.name, p.recordings)) },
+                            trailingIcon = {
+                                Icon(Icons.Outlined.Close, contentDescription = tr("Stimmprofil „{0}“ löschen", p.name), modifier = Modifier.size(16.dp).clickable {
+                                    c.voices.delete(p.id)
+                                    Notices.undo(tr("Stimmprofil „{0}“ gelöscht", p.name), restore = { c.voices.upsert(p) })
+                                })
+                            },
+                        )
+                    }
+                }
+                TextButton(onClick = {
+                    val all = profiles
+                    all.forEach { c.voices.delete(it.id) }
+                    Notices.undo(tr("Alle Stimmprofile gelöscht"), restore = { all.forEach { c.voices.upsert(it) } })
+                }) { Text(tr("Alle Stimmprofile löschen")) }
+            }
             if (!hasAudio) HintText(tr("Dafür braucht es die gespeicherte Aufnahme."))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(enabled = hasAudio && !voiceBusy && profiles.isNotEmpty(), onClick = {

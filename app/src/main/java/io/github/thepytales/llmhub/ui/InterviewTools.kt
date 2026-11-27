@@ -184,7 +184,8 @@ fun InterviewAnalysisSheet(c: AppContainer, folder: String?, onOpen: (String) ->
     val loaded by produceState<List<Transcript>?>(null, scopeIds, reload) {
         value = scopeIds.mapNotNull { id -> runCatching { c.transcription.load(id) }.getOrNull() }
     }
-    val items = remember(loaded) { loaded.orEmpty().map { it to TranscriptCoding.of(it) } }
+    // In the order they were recorded (Interview 1, 2, 3 …).
+    val items = remember(loaded) { loaded.orEmpty().sortedWith(compareBy({ it.created }, { it.title.lowercase() })).map { it to TranscriptCoding.of(it) } }
     val usedBooks = remember(items, books) {
         items.mapNotNull { it.second.codebookId }.groupingBy { it }.eachCount().entries.sortedByDescending { it.value }.mapNotNull { e -> books.firstOrNull { it.id == e.key } }
     }
