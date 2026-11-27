@@ -489,19 +489,23 @@ fun ExportSheet(c: AppContainer, t: Transcript, onDismiss: () -> Unit) {
     var busy by remember { mutableStateOf<TranscriptFormat?>(null) }
     var stamps by remember { mutableStateOf(TranscriptEdit.Stamps.of(vs.stamps)) }
     var anonymous by remember { mutableStateOf(false) }
-    var mappingFile by remember { mutableStateOf<File?>(null) }
-    val anon = remember(t, anonymous) {
-        if (!anonymous) null else io.github.thepytales.llmhub.transcribe.TranscriptAnon.anonymize(
-            t, c.settings.current.pseudonymTerms.lines().map { it.trim() }.filter { it.length >= 2 },
-        )
+    // Pseudonymisiert exportieren (AP-136 a): with Kana Namensschutz where it is there; the key list only into the Tresor.
+    // Found off the main thread (the recognition model takes a moment for a long interview).
+    val anon by androidx.compose.runtime.produceState<io.github.thepytales.llmhub.transcribe.TranscriptAnon.Result?>(null, t, anonymous) {
+        value = null
+        if (anonymous) value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+            io.github.thepytales.llmhub.transcribe.TranscriptAnon.findings(
+                t, c.settings.current.pseudonymTerms.lines().map { it.trim() }.filter { it.length >= 2 }, detect = { text -> c.privacy.detect(text) },
+            ).let { f -> io.github.thepytales.llmhub.transcribe.TranscriptAnon.apply(t, f.map { it.value to it.pseudonym }) }
+        }
     }
     PanelSheet(tr("Exportieren"), onDismiss) {
         made?.let { f -> DocumentCard(f.absolutePath) }
-        mappingFile?.let { f -> DocumentCard(f.absolutePath) }
         ToggleRow(
-            tr("Anonymisiert exportieren"),
-            tr("Namen, Kontaktdaten, Anschriften und die eigene Liste (Einstellungen › Datenschutz) werden durchgehend ersetzt, Sprecher mit " +
-                "echtem Namen heißen „Person A“ … Das Transkript selbst bleibt unverändert.") +
+            tr("Pseudonymisiert exportieren"),
+            tr("Namen, Orte, Einrichtungen, Kontaktdaten und die eigene Liste (Einstellungen › Datenschutz) werden durchgehend ersetzt, " +
+                "Sprecher mit echtem Namen heißen „Person A“ … Das Transkript selbst bleibt unverändert; die Schlüsselliste kommt in den Tresor. " +
+                "Zum Prüfen jeder Fundstelle: *Mehr › Pseudonymisieren …*") +
                 (anon?.let { a -> tr(" – {0} Ersetzungen.", a.mapping.size) } ?: ""),
             anonymous,
         ) { anonymous = it }
@@ -512,19 +516,19 @@ fun ExportSheet(c: AppContainer, t: Transcript, onDismiss: () -> Unit) {
         val opts = ExportOptions(stamps, vs.exportComments)
         TranscriptFormat.entries.forEach { f ->
             AppCard(onClick = {
+                // Never the real names while the pseudonyms are still being found.
+                if (anonymous && anon == null) { Notices.info(tr("Die Namen werden noch gesucht – gleich noch einmal.")); return@AppCard }
                 busy = f
+                val pseudo = anon
                 scope.launch {
-                    val source = anon?.transcript ?: t
+                    val source = pseudo?.transcript ?: t
                     made = runCatching { exportFile(context, source, f, opts) }
                         .onFailure { Notices.error(tr("Export fehlgeschlagen: {0}", it.message)) }.getOrNull()
-                    // The mapping goes into a separate file (to be kept apart from the anonymized transcript).
-                    if (anon != null && anon.mapping.isNotEmpty()) mappingFile = runCatching {
-                        DocumentWriter.create(
-                            context, File(io.github.thepytales.llmhub.data.LoraRoot.dir(context), "Erstellt/Transkripte"), "Zuordnungsliste – ${t.title}",
-                            io.github.thepytales.llmhub.transcribe.TranscriptAnon.mappingTable(t.title, anon.mapping), DocFormat.PDF,
-                            fileName = DocumentWriter.safeName(t.title) + " (Zuordnungsliste)", overwrite = true,
-                        ).file
-                    }.getOrNull()
+                    // The key list only into the Tresor (AP-136 a), never as a file beside the pseudonymized transcript.
+                    if (pseudo != null && pseudo.mapping.isNotEmpty()) {
+                        if (KeyList.save(c, t.title, pseudo.mapping)) Notices.info(tr("Schlüsselliste im Tresor gespeichert."))
+                        else Notices.info(tr("Ohne Schlüsselliste exportiert – der Tresor ist nicht offen."))
+                    }
                     busy = null
                 }
             }) {

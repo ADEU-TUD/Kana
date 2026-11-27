@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Insights
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Timer
@@ -117,6 +118,8 @@ fun TranscriptsScreen(c: AppContainer, onBack: () -> Unit, onOpen: (String) -> U
     val folders by c.folders.items.collectAsStateWithLifecycle()
     val settings by t.settings.collectAsStateWithLifecycle()
     var folder by rememberSaveable { mutableStateOf<String?>(null) }
+    // Interviews auswerten (AP-136 b): codes across the interviews of the chosen project.
+    var analysis by rememberSaveable { mutableStateOf(false) }
     var searching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     var showRecording by remember { mutableStateOf(true) }
@@ -191,6 +194,7 @@ fun TranscriptsScreen(c: AppContainer, onBack: () -> Unit, onOpen: (String) -> U
                     IconButton(onClick = { searching = !searching; if (!searching) query = "" }) {
                         Icon(if (searching) Icons.Outlined.Close else Icons.Outlined.Search, contentDescription = if (searching) tr("Suche schließen") else tr("Suchen"))
                     }
+                    if (!searching) IconButton(onClick = { analysis = true }) { Icon(Icons.Outlined.Insights, contentDescription = tr("Interviews auswerten")) }
                     if (!searching) IconButton(onClick = { onNavigate("settings/transcription") }) { Icon(Icons.Outlined.Settings, contentDescription = tr("Einstellungen der Transkription")) }
                 },
             )
@@ -281,6 +285,7 @@ fun TranscriptsScreen(c: AppContainer, onBack: () -> Unit, onOpen: (String) -> U
     }
 
     incoming.firstOrNull { it.token !in postponed }?.let { f -> StartSheet(c, f, folder, onDone = { postponed = postponed + f.token }) }
+    if (analysis) InterviewAnalysisSheet(c, folder, onOpen = onOpen, onDismiss = { analysis = false })
 }
 
 @Composable

@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,9 @@ fun SegmentCodes(coding: TranscriptCoding, codebook: Codebook?, segment: Segment
                 Row(Modifier.padding(horizontal = 8.dp, vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(7.dp).clip(CircleShape).background(color))
                     Spacer(Modifier.width(5.dp))
-                    Text(code.name + if (several && c.coder.isNotBlank()) " · ${initials(c.coder)}" else "", style = MaterialTheme.typography.labelSmall)
+                    // A marked part shows its first words, a memo its mark (AP-136 b).
+                    val quote = if (c.whole) "" else " · „" + c.quote(segment).let { q -> if (q.length > 24) q.take(24).trimEnd() + "…" else q } + "“"
+                    Text(code.name + quote + (if (several && c.coder.isNotBlank()) " · ${initials(c.coder)}" else "") + (if (!c.memo.isNullOrBlank()) " ✎" else ""), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -80,28 +83,114 @@ fun SegmentCodes(coding: TranscriptCoding, codebook: Codebook?, segment: Segment
 
 private fun initials(name: String) = name.split(Regex("\\s+")).filter { it.isNotEmpty() }.joinToString("") { it.take(1).uppercase() }.ifEmpty { name.take(2) }
 
-/** Codes of the scheme as checkboxes for one passage (the current coder's codings). */
+/**
+ * Codieren of one passage (AP-136 b): the codes of the scheme for the whole passage or – after marking words in its
+ * text – only for them; a new code is made right here; the current coder's codings of the passage with their memos;
+ * Kana's suggestions (only suggestions – a person decides).
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CodePickerDialog(segment: Segment, coding: TranscriptCoding, codebook: Codebook, coder: String, onToggle: (String) -> Unit, onDismiss: () -> Unit) {
-    val mine = coding.at(segment, coder).map { it.codeId }.toSet()
+fun CodePickerDialog(
+    segment: Segment,
+    coding: TranscriptCoding,
+    codebook: Codebook,
+    coder: String,
+    onCoding: (TranscriptCoding) -> Unit,
+    onCodebook: (Codebook) -> Unit,
+    onDismiss: () -> Unit,
+    /** Kana's suggestions for this passage (null: not offered, e.g. no model allowed in this project). */
+    suggest: (suspend () -> List<Code>)? = null,
+) {
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var field by remember(segment.start) { mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(segment.text)) }
+    val sel = field.selection
+    val part = !sel.collapsed
+    val mine = coding.at(segment, coder)
+    var newCode by remember { mutableStateOf("") }
+    var suggestions by remember(segment.start) { mutableStateOf<List<Code>?>(null) }
+    var asking by remember { mutableStateOf(false) }
+    fun apply(codeId: String) {
+        onCoding(if (part) coding.mark(segment, codeId, coder, sel.min, sel.max) else coding.toggle(segment, codeId, coder))
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(tr("Codieren")) },
         text = {
-            Column(Modifier.heightIn(max = 460.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("„${segment.text.trim().take(220)}“", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                HintText(tr("Codierer:in: {0}", coder))
+            Column(Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                // The passage: words can be marked to code only them.
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth()) {
+                    androidx.compose.foundation.text.BasicTextField(
+                        value = field, onValueChange = { field = it.copy(text = segment.text) }, readOnly = true,
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                        modifier = Modifier.fillMaxWidth().padding(10.dp).testTag("code.passage"),
+                    )
+                }
+                HintText(
+                    if (part) tr("Markiert: „{0}“ – die Codes gelten nur für diese Wörter.", segment.text.substring(sel.min, sel.max).trim().take(80))
+                    else tr("Codierer:in: {0}. Wörter markieren, um nur sie zu codieren – sonst gilt der Code für den ganzen Abschnitt.", coder),
+                )
                 codebook.codes.forEach { code ->
+                    val checked = if (part) mine.any { it.codeId == code.id && it.from == sel.min && it.to == sel.max } else mine.any { it.codeId == code.id && it.whole }
                     Row(
-                        Modifier.fillMaxWidth().clickable { onToggle(code.id) }.padding(start = if (code.parentId != null) 20.dp else 0.dp),
+                        Modifier.fillMaxWidth().clickable { apply(code.id) }.padding(start = if (code.parentId != null) 20.dp else 0.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Checkbox(code.id in mine, { onToggle(code.id) })
+                        Checkbox(checked, { apply(code.id) })
                         Box(Modifier.size(10.dp).clip(CircleShape).background(codeColor(code.color)))
                         Spacer(Modifier.width(8.dp))
                         Column(Modifier.weight(1f)) {
                             Text(code.name, style = MaterialTheme.typography.bodyMedium)
                             if (code.description.isNotBlank()) Text(code.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        }
+                    }
+                }
+                // A new code right here (added to the scheme and used at once).
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(newCode, { newCode = it }, singleLine = true, label = { Text(tr("Neuer Code")) }, modifier = Modifier.weight(1f))
+                    TextButton(enabled = newCode.isNotBlank() && codebook.codes.none { it.name.equals(newCode.trim(), true) }, onClick = {
+                        val code = Code(name = newCode.trim(), color = Codebook.COLORS[codebook.codes.size % Codebook.COLORS.size])
+                        onCodebook(codebook.copy(codes = codebook.codes + code))
+                        newCode = ""
+                        apply(code.id)
+                    }) { Text(tr("Anlegen")) }
+                }
+                // Kana's suggestions: shown, taken over only by a click.
+                if (suggest != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        TextButton(enabled = !asking, onClick = {
+                            asking = true
+                            scope.launch {
+                                suggestions = runCatching { suggest() }.onFailure { Notices.error(tr("Kein Vorschlag: {0}", it.message ?: "")) }.getOrNull()
+                                asking = false
+                            }
+                        }) { Text(tr(if (asking) "Kana liest …" else "Kana schlägt vor")) }
+                        suggestions?.let { list -> if (list.isEmpty()) HintText(tr("Kein Code passt.")) }
+                    }
+                    suggestions?.takeIf { it.isNotEmpty() }?.let { list ->
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            list.forEach { code -> FilterChip(false, { apply(code.id); suggestions = list - code }, label = { Text(tr("Übernehmen: {0}", code.name)) }) }
+                        }
+                        HintText(tr("Nur Vorschläge – du entscheidest."))
+                    }
+                }
+                // The coder's codings of this passage, with memo and remove.
+                if (mine.isNotEmpty()) {
+                    HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                    Text(tr("Deine Codierungen hier"), style = MaterialTheme.typography.titleSmall)
+                    mine.forEach { cd ->
+                        val code = codebook.code(cd.codeId) ?: return@forEach
+                        var memo by remember(cd.codeId, cd.from, cd.to) { mutableStateOf(cd.memo.orEmpty()) }
+                        Column(Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(Modifier.size(10.dp).clip(CircleShape).background(codeColor(code.color)))
+                                Spacer(Modifier.width(8.dp))
+                                Text(code.name + if (cd.whole) "" else " · „" + cd.quote(segment).take(50) + "“", style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                                IconButton(onClick = { onCoding(coding.remove(cd)) }) { Icon(Icons.Outlined.Delete, contentDescription = tr("Codierung entfernen")) }
+                            }
+                            OutlinedTextField(
+                                memo, { memo = it; onCoding(coding.withMemo(cd, it)) }, label = { Text(tr("Memo")) }, singleLine = false, maxLines = 3,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
                         }
                     }
                 }

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ContentCut
@@ -252,6 +253,8 @@ private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit
     var wordsDialog by rememberSaveable(id) { mutableStateOf(false) }
     var codingSheet by rememberSaveable(id) { mutableStateOf(false) }
     var translateDialog by rememberSaveable(id) { mutableStateOf(false) }
+    // Interviews pseudonymisieren (AP-136 a).
+    var pseudoDialog by rememberSaveable(id) { mutableStateOf(false) }
     var codingMode by rememberSaveable(id) { mutableStateOf(false) }
     var codeSegment by rememberSaveable(id) { mutableStateOf<Int?>(null) }
     val codebooks by c.codebooks.items.collectAsStateWithLifecycle()
@@ -373,6 +376,7 @@ private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit
                                     onOpenChat()
                                 })
                                 DropdownMenuItem(text = { Text(tr("Übersetzen …")) }, leadingIcon = { Icon(Icons.Outlined.Translate, null) }, onClick = { menu = false; translateDialog = true })
+                                DropdownMenuItem(text = { Text(tr("Pseudonymisieren …")) }, leadingIcon = { Icon(Icons.Outlined.Shield, null) }, onClick = { menu = false; pseudoDialog = true })
                                 DropdownMenuItem(text = { Text(tr("Status: {0} …", current.status.label)) }, leadingIcon = { Icon(Icons.Outlined.FactCheck, null) }, onClick = { menu = false; statusDialog = true })
                                 HorizontalDivider()
                                 DropdownMenuItem(text = { Text(tr("Exportieren …")) }, leadingIcon = { Icon(Icons.Outlined.FileDownload, null) }, onClick = { menu = false; export = true })
@@ -601,6 +605,7 @@ private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit
     if (chaptersSheet) ChaptersSheet(c, current, control, onSave = { update(it) }, onDismiss = { chaptersSheet = false })
     if (statusDialog) StatusDialog(current.status, onPick = { update(current.copy(status = it)) }, onDismiss = { statusDialog = false })
     if (translateDialog) TranslateDialog(c, current, onDismiss = { translateDialog = false })
+    if (pseudoDialog) PseudonymizeDialog(c, current, onDone = { pseudoDialog = false }, onDismiss = { pseudoDialog = false })
     if (codingSheet) CodingSheet(
         c, current, codingMode, onCodingMode = { codingMode = it }, onUpdate = { update(it, undoable = false) },
         onJump = { s -> scope.launch { listState.animateScrollToItem(segs.indexOf(s).coerceAtLeast(0) + 1) } },
@@ -608,9 +613,20 @@ private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit
     )
     codeSegment?.let { i ->
         val seg = segs.getOrNull(i)
-        if (seg != null && codebook != null) CodePickerDialog(seg, coding, codebook, coderName.coderName.ifBlank { tr("Codierer:in") },
-            onToggle = { codeId -> update(current.withCoding(coding.toggle(seg, codeId, coderName.coderName.ifBlank { tr("Codierer:in") })), undoable = false) },
-            onDismiss = { codeSegment = null })
+        if (seg != null && codebook != null) {
+            // Kana's suggestions only with a model the project allows (AP-136 b).
+            val model = io.github.thepytales.llmhub.data.Privacy.suitableModel(c, current.folder, c.settings.current.defaultModel)
+            val allowed = io.github.thepytales.llmhub.data.Privacy.blockReason(c, current.folder, model) == null && (c.settings.current.hasApiKey || io.github.thepytales.llmhub.data.Privacy.isLocal(model))
+            CodePickerDialog(seg, coding, codebook, coderName.coderName.ifBlank { tr("Codierer:in") },
+                onCoding = { next -> update(current.withCoding(next), undoable = false) },
+                onCodebook = { book -> c.codebooks.upsert(book) },
+                onDismiss = { codeSegment = null },
+                suggest = if (!allowed) null else suspend {
+                    val answer = c.llm.streamChat(model = model, messages = io.github.thepytales.llmhub.transcribe.CodeSuggest.prompt(codebook, seg.text), tools = null, thinking = io.github.thepytales.llmhub.net.ThinkingLevel.OFF) { }
+                    io.github.thepytales.llmhub.transcribe.CodeSuggest.parse(splitThinking(answer.content).second, codebook)
+                },
+            )
+        }
         else codeSegment = null
     }
     if (wordsDialog) WordTimesDialog(c, current, audio != null, onDismiss = { wordsDialog = false })

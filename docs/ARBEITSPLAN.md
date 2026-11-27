@@ -1044,7 +1044,7 @@ offen (Prüfliste `pruefungen.txt`, Paket AP-135).
 - **Offen**: Android nicht gebaut (kein SDK in der Cloud-Sitzung; der PR-Check baut es); Whiteboard und Mail melden
   noch keine Befehle für Strg+K und nichts zum Drucken.
 
-### AP-136 ☐ Interviews auswerten: Codieren und Pseudonymisieren · L (Analyse TR-01, TR-03, TR-02)
+### AP-136 ◐ Interviews auswerten: Codieren und Pseudonymisieren · L (Analyse TR-01, TR-03, TR-02)
 - **(a) Interviews pseudonymisieren** (TR-03): Namen, Orte und Einrichtungen im Transkript durchgängig durch Pseudonyme
   ersetzen (Kana Namensschutz plus eigene Liste), Fundstellen zum Prüfen, Schlüsselliste nur im Tresor; Export mit
   Pseudonymen (Word, REFI-QDA, Untertitel).
