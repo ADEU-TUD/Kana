@@ -94,6 +94,10 @@ data class Reference(
     val citations: Int? = null,
     /** Freely readable full text, if known. */
     val openAccessUrl: String = "",
+    /** The full text stored in the Kana-Ordner (path relative to it, AP-138 c), e.g. "Literatur/Volltexte/Helmke 2009.pdf". */
+    val fullTextPath: String = "",
+    /** Keywords (e.g. from Citavi or Zotero, AP-138 d). */
+    val keywords: List<String> = emptyList(),
     /** Where the details come from (OpenAlex, Crossref, ERIC, DNB, BibTeX …). */
     val source: String = "",
     /** Own note, e.g. why the work is relevant. */
@@ -278,6 +282,7 @@ object BibTeX {
             language = f("language", "langid"),
             source = "BibTeX",
             note = f("note", "annote"),
+            keywords = f("keywords").split(',', ';').map { it.trim() }.filter { it.isNotEmpty() },
         )
     }
 
@@ -460,6 +465,7 @@ object Ris {
             language = one("LA"),
             source = "RIS",
             note = one("N1"),
+            keywords = all("KW").flatMap { it.split(';') }.map { it.trim() }.filter { it.isNotEmpty() },
         )
     }
 
@@ -501,6 +507,7 @@ object Ris {
             t("LA", r.language)
             t("AB", r.abstract)
             t("N1", r.note)
+            r.keywords.forEach { t("KW", it) }
             append("ER  - \r\n")
         }
     }

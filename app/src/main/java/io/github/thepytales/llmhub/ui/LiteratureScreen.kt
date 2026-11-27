@@ -267,7 +267,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
     val lists = remember(all) { c.literature.lists() }
     val shown = remember(all, list, query) {
         all.filter { r -> list == null || r.lists.any { it.equals(list, true) } }
-            .filter { r -> query.isBlank() || listOf(r.title, r.container, r.year, r.authors.joinToString { it.family }, r.note).any { it.contains(query, true) } }
+            .filter { r -> query.isBlank() || (listOf(r.title, r.container, r.year, r.authors.joinToString { it.family }, r.note) + r.keywords).any { it.contains(query, true) } }
             .sortedBy { Bibliography.sortKey(it).lowercase() }
     }
     val chosen = shown.filter { it.id in selected }.ifEmpty { shown }
@@ -285,11 +285,22 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
         )
     }
     val importFile = rememberFileImport(arrayOf("*/*")) { input ->
-        val text = input.readBytes().toString(Charsets.UTF_8)
+        val bytes = input.readBytes()
+        // Citavi-Projekt (AP-138 d): an SQLite database with notes, keywords and categories.
+        if (io.github.thepytales.llmhub.research.Citavi.isProject(bytes)) {
+            runCatching { io.github.thepytales.llmhub.research.Citavi.read(bytes) }.onSuccess { res ->
+                c.literature.addAll(res.refs, list)
+                Notices.info(tr("Citavi: {0} Titel übernommen, {1} Kategorien als Listen, {2} Schlagwörter, {3} Wissenselemente in den Notizen.", res.refs.size, res.categories, res.keywords, res.knowledge))
+            }.onFailure { Notices.error(it.message ?: tr("Das Citavi-Projekt ließ sich nicht lesen.")) }
+            return@rememberFileImport
+        }
+        val text = bytes.toString(Charsets.UTF_8)
         val refs = ReferenceImport.read(text)
         c.literature.addAll(refs, list)
         Notices.info(tr("{0} Einträge übernommen", refs.size))
     }
+    var fetching by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var watching by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -297,6 +308,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                 query, { query = it }, leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                 placeholder = { Text(tr("In der Sammlung suchen")) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
+            fetching?.let { (done, total) -> HintText(tr("Suche Volltexte: {0} von {1} …", done + 1, total)) }
             Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FlowRow(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     FilterChip(list == null, { list = null; selected.clear() }, label = { Text(tr("Alle ({0})", all.size)) })
@@ -335,6 +347,17 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                                 }
                             })
                         }
+                        DropdownMenuItem(text = { Text(tr("Volltexte suchen (Open Access)")) }, leadingIcon = { Icon(Icons.Outlined.Download, null) }, enabled = fetching == null, onClick = {
+                            more = false
+                            val todo = chosen.filter { it.fullTextPath.isBlank() }
+                            if (todo.isEmpty()) Notices.info(tr("Alle gewählten Werke haben schon einen Volltext."))
+                            else scope.launch {
+                                fetching = 0 to todo.size
+                                runCatching { fetchFullTexts(c, todo) { i -> fetching = i to todo.size } }
+                                fetching = null
+                            }
+                        })
+                        DropdownMenuItem(text = { Text(tr("Literatur-Wächter einrichten …")) }, leadingIcon = { Icon(Icons.Outlined.Search, null) }, onClick = { more = false; watching = true })
                         DropdownMenuItem(text = { Text(tr("Zitate kopieren (APA-Kurzform)")) }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = {
                             more = false
                             clipboard.setText(AnnotatedString(chosen.joinToString("\n") { it.short() }))
@@ -380,9 +403,11 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                                 r.citations?.let { StatusPill(tr("{0} Zitationen", it), PillTone.NEUTRAL) }
                                 if (r.openAccessUrl.isNotBlank()) StatusPill(tr("Open Access"), PillTone.SUCCESS)
                                 r.lists.take(2).forEach { StatusPill(it, PillTone.ACCENT) }
+                                r.keywords.take(3).forEach { StatusPill("#$it", PillTone.NEUTRAL) }
                             }
                             if (r.note.isNotBlank()) Text(r.note, style = MaterialTheme.typography.bodySmall)
                             ReferenceLinks(r)
+                            FullTextRow(c, r)
                             ExcerptRow(c, r, onOpenChat)
                         }
                     }
@@ -391,6 +416,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
         }
     }
 
+    if (watching) LiteratureWatchDialog(c, list, onDismiss = { watching = false })
     if (importing) ImportDialog(onDismiss = { importing = false }, onFile = { importing = false; importFile() }) { text ->
         val refs = ReferenceImport.read(text)
         c.literature.addAll(refs, list)
@@ -459,7 +485,7 @@ private fun ImportDialog(onDismiss: () -> Unit, onFile: () -> Unit, onText: (Str
         title = { Text(tr("Literatur importieren")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                HintText(tr("BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) oder Literaturangaben als Text einfügen – oder eine Datei wählen."))
+                HintText(tr("BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) oder Literaturangaben als Text einfügen – oder eine Datei wählen, auch ein Citavi-Projekt (.ctv6) mit Notizen, Schlagwörtern und Kategorien."))
                 OutlinedTextField(text, { text = it }, minLines = 6, maxLines = 12, modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp))
             }
         },

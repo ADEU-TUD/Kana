@@ -259,6 +259,8 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
     var stopTracking by remember { mutableStateOf(false) }
     var spellLocal by remember { mutableStateOf(false) }
     var citing by remember { mutableStateOf(false) }
+    /** Zitate prüfen (AP-138 b). */
+    var checkingCitations by remember { mutableStateOf(false) }
     var spellFor by remember { mutableStateOf<String?>(null) }
     var deckFromDoc by remember { mutableStateOf(false) }
     /** Datei › Details und Sprache (AP-126 b). */
@@ -566,6 +568,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
             onSource = { mode = TextMode.SOURCE },
             onRead = { mode = TextMode.READ },
             onSpell = { spellLocal = true },
+            onCheckCitations = { checkingCitations = true },
             onTrack = { if (liveDoc?.trackBase == null) save(note = tr("Änderungen nachverfolgen an")) { d -> d.copy(trackBase = d.tabs.associate { it.id to it.markdown }) } else stopTracking = true },
             onAskAi = { panel = DocPanel.AI },
             onShowComments = { panel = DocPanel.COMMENTS },
@@ -713,6 +716,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
                             if (kind == DocKind.DOC) {
                                 DropdownMenuItem(text = { Text(tr("Seite einrichten …")) }, onClick = { more = false; pageSetup = true })
                                 DropdownMenuItem(text = { Text(tr("Literatur einfügen …")) }, onClick = { more = false; citing = true })
+                                DropdownMenuItem(text = { Text(tr("Zitate prüfen")) }, onClick = { more = false; editing.index = null; checkingCitations = true })
                                 DropdownMenuItem(text = { Text(tr("Rechtschreibung prüfen")) }, onClick = { more = false; editing.index = null; spellLocal = true })
                                 DropdownMenuItem(text = { Text(tr("Rechtschreibung prüfen (KI)")) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null) }, onClick = {
                                     more = false
@@ -1017,6 +1021,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
         editing.index = null
         setMarkdown(DocMarkup.withPageSetup(tab.markdown, setup))
     }
+    if (checkingCitations && doc != null) CitationCheckDialog(c, flowHost.markdown?.invoke() ?: markdown, onDismiss = { checkingCitations = false })
     if (citing && doc != null) {
         val style = DocCitations.cited(markdown).choice ?: io.github.thepytales.llmhub.research.CitationStyles.resolve(c.settings.current.citationStyle)
         CitationDialog(c, style, onDismiss = { citing = false }) { ref, st ->
