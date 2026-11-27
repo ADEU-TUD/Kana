@@ -209,9 +209,9 @@ class DeviceChecksTest {
         override val lifecycle: androidx.lifecycle.Lifecycle get() = registry
     }
 
-    /** Tall enough for the whole list (it grows with every package's steps – AP-129 added eight). */
+    /** Tall enough for the whole list (it grows with every package's steps – AP-129 added eight, AP-137 nine). */
     private fun ui(width: Dp, block: SkikoComposeUiTest.() -> Unit) =
-        runSkikoComposeUiTest(Size(width.value * 2f + 80, 5200 * 2f), Density(2f)) {
+        runSkikoComposeUiTest(Size(width.value * 2f + 80, 6600 * 2f), Density(2f)) {
             mainClock.autoAdvance = false
             block()
         }
