@@ -122,30 +122,35 @@ internal fun PdfStampDialog(initial: List<PdfStamp>, confirm: String, onDismiss:
         onDismissRequest = onDismiss,
         title = { Text(tr("Wasserzeichen und Kopfzeile")) },
         text = {
-            Column(Modifier.heightIn(max = 560.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                StampPreview(d, Modifier.align(Alignment.CenterHorizontally).width(150.dp))
-                Text(tr("Wasserzeichen"), style = MaterialTheme.typography.titleSmall)
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    FilterChip(selected = d.mark.isBlank() && d.imagePath == null && !custom, onClick = { custom = false; d = d.copy(mark = "", imagePath = null) }, label = { Text(tr("Keins")) })
-                    presets.forEachIndexed { k, (value, label) ->
-                        FilterChip(selected = !custom && d.imagePath == null && d.mark == value, onClick = {
-                            custom = false
-                            d = d.copy(mark = value, imagePath = null, markColor = if (k == 1) 0xC62828 else d.markColor.takeIf { it != 0xC62828 } ?: 0x9E9E9E)
-                        }, label = { Text(label) })
+            Column(Modifier.heightIn(max = 600.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // The page with everything on it stays in view beside the watermark choices.
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(tr("Wasserzeichen"), style = MaterialTheme.typography.titleSmall)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            FilterChip(selected = d.mark.isBlank() && d.imagePath == null && !custom, onClick = { custom = false; d = d.copy(mark = "", imagePath = null) }, label = { Text(tr("Keins")) })
+                            presets.forEachIndexed { k, (value, label) ->
+                                FilterChip(selected = !custom && d.imagePath == null && d.mark == value, onClick = {
+                                    custom = false
+                                    d = d.copy(mark = value, imagePath = null, markColor = if (k == 1) 0xC62828 else d.markColor.takeIf { it != 0xC62828 } ?: 0x9E9E9E)
+                                }, label = { Text(label) })
+                            }
+                            FilterChip(selected = custom && d.imagePath == null, onClick = { custom = true; d = d.copy(imagePath = null) }, label = { Text(tr("Eigener Text")) })
+                            FilterChip(selected = d.imagePath != null, onClick = pickImage, label = { Text(tr("Bild …")) })
+                        }
+                        if (custom && d.imagePath == null) OutlinedTextField(d.mark, { d = d.copy(mark = it) }, label = { Text(tr("Text des Wasserzeichens")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                        if (d.mark.isNotBlank() || d.imagePath != null) {
+                            if (d.imagePath == null) FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(tr("Farbe"), style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.CenterVertically))
+                                MARK_COLORS.forEach { (rgb, label) -> FilterChip(selected = d.markColor == rgb, onClick = { d = d.copy(markColor = rgb) }, label = { Text(tr(label)) }) }
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(tr("Deckkraft") + " ${(d.opacity * 100).toInt()} %", style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(110.dp))
+                                Slider(d.opacity, { d = d.copy(opacity = it) }, valueRange = 0.08f..0.8f, modifier = Modifier.weight(1f))
+                            }
+                        }
                     }
-                    FilterChip(selected = custom && d.imagePath == null, onClick = { custom = true; d = d.copy(imagePath = null) }, label = { Text(tr("Eigener Text")) })
-                    FilterChip(selected = d.imagePath != null, onClick = pickImage, label = { Text(tr("Bild …")) })
-                }
-                if (custom && d.imagePath == null) OutlinedTextField(d.mark, { d = d.copy(mark = it) }, label = { Text(tr("Text des Wasserzeichens")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
-                if (d.mark.isNotBlank() || d.imagePath != null) {
-                    if (d.imagePath == null) Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text(tr("Farbe"), style = MaterialTheme.typography.bodySmall)
-                        MARK_COLORS.forEach { (rgb, label) -> FilterChip(selected = d.markColor == rgb, onClick = { d = d.copy(markColor = rgb) }, label = { Text(tr(label)) }) }
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(tr("Deckkraft") + " ${(d.opacity * 100).toInt()} %", style = MaterialTheme.typography.bodySmall, modifier = Modifier.width(120.dp))
-                        Slider(d.opacity, { d = d.copy(opacity = it) }, valueRange = 0.08f..0.8f, modifier = Modifier.weight(1f))
-                    }
+                    StampPreview(d, Modifier.width(130.dp))
                 }
                 Text(tr("Kopf- und Fußzeile"), style = MaterialTheme.typography.titleSmall)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {

@@ -236,13 +236,14 @@ private fun BatchSetup(c: AppContainer, openTabs: List<Pair<File, String>>) {
                 else -> tr("Hier gibt es keine Texterkennung (kein Bildmodell erlaubt).")
             },
             steps.ocr && (local || model != null),
+            spot = "pdf.stapel.ocr",
         ) { on -> PdfBatchRun.steps = steps.copy(ocr = on, ocrModel = if (local) null else model) }
         if (steps.ocr && !local && model != null) Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(PdfBatchRun.modelAgreed, { PdfBatchRun.modelAgreed = it })
             Text(tr("Ja, die Seitenbilder der Scans dürfen an {0} gehen.", ModelCatalog.info(model).displayName), style = MaterialTheme.typography.bodySmall)
         }
         if (PdfStage3.SUPPORTED) {
-            SwitchRow(tr("Schwärzen nach Liste"), tr("Jeder Begriff wird überall geschwärzt, der Text darunter entfernt; die übrigen Wörter bleiben durchsuchbar."), steps.redact || steps.redactTerms.isNotEmpty()) { on ->
+            SwitchRow(tr("Schwärzen nach Liste"), tr("Jeder Begriff wird überall geschwärzt, der Text darunter entfernt; die übrigen Wörter bleiben durchsuchbar."), steps.redact || steps.redactTerms.isNotEmpty(), spot = "pdf.stapel.schwaerzen") { on ->
                 PdfBatchRun.steps = steps.copy(redactTerms = if (on) steps.redactTerms.ifEmpty { listOf("") } else emptyList())
             }
             if (steps.redactTerms.isNotEmpty()) {
@@ -253,13 +254,13 @@ private fun BatchSetup(c: AppContainer, openTabs: List<Pair<File, String>>) {
                 TextButton(onClick = importTerms) { Text(tr("Liste aus Datei laden (.txt, .csv) …")) }
             }
         }
-        SwitchRow(tr("Wasserzeichen und Kopfzeile"), steps.stamps.takeIf { it.isNotEmpty() }?.joinToString(" · ") { s -> (s.text.ifBlank { tr("Bild") }) + " (" + tr(s.place.label) + ")" } ?: tr("„Entwurf“, „Vertraulich“, Datum, „Seite x von y“ …"), steps.stamps.isNotEmpty()) { on ->
+        SwitchRow(tr("Wasserzeichen und Kopfzeile"), steps.stamps.takeIf { it.isNotEmpty() }?.joinToString(" · ") { s -> (s.text.ifBlank { tr("Bild") }) + " (" + tr(s.place.label) + ")" } ?: tr("„Entwurf“, „Vertraulich“, Datum, „Seite x von y“ …"), steps.stamps.isNotEmpty(), spot = "pdf.stapel.wasserzeichen") { on ->
             if (on) stampsOpen = true else PdfBatchRun.steps = steps.copy(stamps = emptyList())
         }
         if (steps.stamps.isNotEmpty()) TextButton(onClick = { stampsOpen = true }) { Text(tr("Ändern …")) }
-        if (PdfStage3.SHRINK) SwitchRow(tr("Verkleinern"), tr("Große Bilder kleiner rechnen – nur behalten, wenn die Datei kleiner wird."), steps.shrink) { PdfBatchRun.steps = steps.copy(shrink = it) }
-        if (PdfStage3.SUPPORTED) SwitchRow(tr("Als PDF/A speichern"), tr("PDF/A-2b für die Langzeitarchivierung, als letzter Schritt."), steps.pdfA) { PdfBatchRun.steps = steps.copy(pdfA = it) }
-        SwitchRow(tr("Zusammenführen je Ordner"), tr("Die Ergebnisse jedes Unterordners werden ein PDF mit dem Namen des Ordners."), steps.mergePerFolder) { PdfBatchRun.steps = steps.copy(mergePerFolder = it) }
+        if (PdfStage3.SHRINK) SwitchRow(tr("Verkleinern"), tr("Große Bilder kleiner rechnen – nur behalten, wenn die Datei kleiner wird."), steps.shrink, spot = "pdf.stapel.verkleinern") { PdfBatchRun.steps = steps.copy(shrink = it) }
+        if (PdfStage3.SUPPORTED) SwitchRow(tr("Als PDF/A speichern"), tr("PDF/A-2b für die Langzeitarchivierung, als letzter Schritt."), steps.pdfA, spot = "pdf.stapel.pdfa") { PdfBatchRun.steps = steps.copy(pdfA = it) }
+        SwitchRow(tr("Zusammenführen je Ordner"), tr("Die Ergebnisse jedes Unterordners werden ein PDF mit dem Namen des Ordners."), steps.mergePerFolder, spot = "pdf.stapel.zusammenfuehren") { PdfBatchRun.steps = steps.copy(mergePerFolder = it) }
     }
 
     // 3. Ziel
