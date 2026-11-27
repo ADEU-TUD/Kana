@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -196,10 +197,12 @@ private fun StampPreview(d: StampDraft, modifier: Modifier = Modifier) {
                 s.imagePath != null -> Box(Modifier.align(Alignment.Center).fillMaxWidth(0.45f).aspectRatio(1.6f).alpha(s.opacity).background(Color(0xFF90A4AE), RoundedCornerShape(4.dp)), contentAlignment = Alignment.Center) {
                     Text(tr("Bild"), color = Color.White, fontSize = 10.sp)
                 }
+                // Measured without the width of the page (it runs along the diagonal, which is longer), then turned.
                 !s.place.edge -> Text(
-                    text, color = color, fontWeight = FontWeight.Bold, maxLines = 1,
-                    fontSize = (maxWidth.value * 0.72f * 1.414f / (text.length * 0.68f).coerceAtLeast(1f)).coerceIn(8f, maxWidth.value * 0.2f).sp,
-                    modifier = Modifier.align(Alignment.Center).rotate(if (s.place == PdfStamp.Place.DIAGONAL) -Math.toDegrees(atan2(h, w).toDouble()).toFloat() else 0f),
+                    text, color = color, fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false,
+                    fontSize = (maxWidth.value * 0.66f * 1.414f / (text.length * 0.68f).coerceAtLeast(1f)).coerceIn(8f, maxWidth.value * 0.2f).sp,
+                    modifier = Modifier.align(Alignment.Center).wrapContentSize(unbounded = true)
+                        .rotate(if (s.place == PdfStamp.Place.DIAGONAL) -Math.toDegrees(atan2(h, w).toDouble()).toFloat() else 0f),
                 )
                 else -> {
                     val align = when (s.place) {
