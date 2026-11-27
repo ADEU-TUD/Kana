@@ -44,6 +44,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CheckBox
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.DynamicFeed
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.IosShare
@@ -78,8 +79,14 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.isMetaPressed
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -142,6 +149,12 @@ class PdfTab(val id: String, val name: String, val original: File?, file: File) 
 object PdfWork {
     val tabs = mutableStateListOf<PdfTab>()
     var selected by mutableStateOf(0)
+    /** Where the tabs stand in the window (AP-137 c): pages dragged onto one go into that PDF. */
+    internal val tabBounds = HashMap<String, androidx.compose.ui.geometry.Rect>()
+    /** The tab under pages being dragged (drawn highlighted). */
+    var dropTarget by mutableStateOf<String?>(null)
+    /** The area *Stapel* is shown instead of the tabs (AP-137 a); stays while the screen is left. */
+    var batchShown by mutableStateOf(false)
 
     init {
         // Kana handelt im Werkzeugkasten (AP-38): she sees the open PDFs and changes the active one like a tool of the
@@ -264,7 +277,7 @@ object PdfWork {
 /** The modes of the werkzeugkasten; [words] are what each one contains, for Strg+K (AP-135 a). */
 private enum class PdfMode(val label: String, val words: String) {
     VIEW(trLater("Ansehen"), "lesen suchen im pdf suchen gliederung nachtmodus zoom kommentare kommentarliste view read search"),
-    PAGES(trLater("Seiten"), "seiten drehen löschen verschieben sortieren zusammenfügen zusammenführen teilen aufteilen extrahieren seitenzahlen einfügen pages rotate merge split extract"),
+    PAGES(trLater("Seiten"), "seiten drehen löschen verschieben sortieren zusammenfügen zusammenführen teilen aufteilen extrahieren seitenzahlen einfügen wasserzeichen entwurf vertraulich kopfzeile fußzeile datum lesezeichen inhaltsverzeichnis in anderes pdf kopieren pages rotate merge split extract watermark header footer bookmarks"),
     MARK(trLater("Markieren"), "hervorheben unterstreichen durchstreichen notiz stempel freihand zeichnen kommentar highlight annotate"),
     SIGN(trLater("Unterschreiben"), "unterschrift signatur signieren zertifikat sign signature"),
     FORM(trLater("Formular"), "formular ausfüllbar felder erkennen form fields"),
@@ -272,6 +285,29 @@ private enum class PdfMode(val label: String, val words: String) {
     AI("KI", "ki kana zusammenfassen fragen übersetzen ai summary"),
     // AP-26: Schwärzen, ändern, verkleinern, PDF/A, Passwort, Metadaten, PDF/UA, vergleichen.
     EDIT(trLater("Schwärzen & mehr"), "schwärzen text ändern verkleinern komprimieren pdf a archiv passwort verschlüsseln metadaten barrierefrei pdf ua vergleichen redact compress password"),
+}
+
+/**
+ * Seiten zwischen Tabs (AP-137 c): [pages] (0-based) of [from] go into [to] before page [at] (null: at the end) – copied,
+ * or with [move] taken out of [from]. Each tab gets its own new version (Rückgängig in each).
+ */
+internal suspend fun transferPages(context: android.content.Context, from: PdfTab, pages: List<Int>, to: PdfTab, at: Int?, move: Boolean): Boolean {
+    val total = from.info?.pages ?: withContext(Dispatchers.IO) { runCatching { PdfTools.info(context, from.file).pages }.getOrDefault(0) }
+    val chosen = pages.distinct().filter { it in 0 until total }.sorted()
+    if (chosen.isEmpty() || from === to) return false
+    if (move && chosen.size >= total) {
+        Notices.error(tr("Mindestens eine Seite muss bleiben – zum Kopieren Strg gedrückt halten."))
+        return false
+    }
+    val source = from.file
+    if (!to.change(context) { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.insertPages(context, src, source, chosen, at, out) }) return false
+    if (move) from.change(context) { src, out -> PdfTools.rearrange(context, src, (0 until total).filter { it !in chosen }, emptyMap(), out) }
+    val n = chosen.size
+    Notices.info(
+        if (move) tr(if (n == 1) "{0} Seite nach „{1}“ verschoben" else "{0} Seiten nach „{1}“ verschoben", n, to.name)
+        else tr(if (n == 1) "{0} Seite nach „{1}“ kopiert" else "{0} Seiten nach „{1}“ kopiert", n, to.name),
+    )
+    return true
 }
 
 /** Runs a change of the PDF: the result becomes a new version, the old one stays for „Rückgängig“. */
@@ -360,8 +396,15 @@ private fun PdfToolScreenBody(c: AppContainer, onBack: () -> Unit, onOpenChat: (
                 navigationIcon = { BackButton(onBack) },
                 title = { Text(tr("PDF-Werkzeugkasten")) },
                 actions = {
+                    // Stapel (AP-137 a): many PDFs or a folder at once; lit while one runs.
+                    val batchRun by PdfBatchRun.state.collectAsStateWithLifecycle()
+                    val batchRunning = batchRun?.let { it.report == null } == true
+                    ToolCommand(tr("Stapel: viele PDFs auf einmal"), tr("PDF-Werkzeugkasten"), { PdfWork.batchShown = true }, keywords = "stapel viele pdfs ordner unterordner auf einmal texterkennung durchsuchbar verkleinern pdf a archiv wasserzeichen schwärzen nach liste zusammenführen batch folder")
+                    IconButton(onClick = { PdfWork.batchShown = !PdfWork.batchShown }) {
+                        Icon(Icons.Outlined.DynamicFeed, contentDescription = tr("Stapel: viele PDFs auf einmal"), tint = if (batchRunning || PdfWork.batchShown) MaterialTheme.colorScheme.primary else androidx.compose.material3.LocalContentColor.current)
+                    }
                     Spot("pdf.open") { IconButton(onClick = pick) { Icon(Icons.Outlined.FolderOpen, contentDescription = tr("PDF öffnen")) } }
-                    if (tab != null) {
+                    if (tab != null && !PdfWork.batchShown) {
                         IconButton(onClick = { tab.undo(context, scope) }, enabled = tab.history.isNotEmpty()) {
                             Icon(Icons.AutoMirrored.Outlined.Undo, contentDescription = tr("Rückgängig"))
                         }
@@ -388,13 +431,29 @@ private fun PdfToolScreenBody(c: AppContainer, onBack: () -> Unit, onOpenChat: (
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
+            if (PdfWork.batchShown) {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(tr("Stapel: viele PDFs auf einmal"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                    TextButton(onClick = { PdfWork.batchShown = false }) { Text(tr(if (PdfWork.tabs.isEmpty()) "Schließen" else "Zurück zu den offenen PDFs")) }
+                }
+                PdfBatchArea(c, PdfWork.tabs.map { t -> t.file to t.name.let { n -> if (n.endsWith(".pdf", true)) n else "$n.pdf" } }) { files ->
+                    scope.launch {
+                        files.forEach { f -> PdfWork.open(context, f, f.name) }
+                        PdfWork.batchShown = false
+                    }
+                }
+                return@Column
+            }
             if (PdfWork.tabs.isEmpty()) {
-                PdfEmpty(onOpen = pick)
+                PdfEmpty(onOpen = pick, onBatch = { PdfWork.batchShown = true })
                 return@Column
             }
             ScrollableTabRow(selectedTabIndex = PdfWork.selected.coerceIn(0, PdfWork.tabs.lastIndex), edgePadding = 8.dp) {
                 PdfWork.tabs.forEachIndexed { i, t ->
-                    Tab(selected = i == PdfWork.selected, onClick = { PdfWork.selected = i }, text = {
+                    val drop = PdfWork.dropTarget == t.id
+                    Tab(selected = i == PdfWork.selected, onClick = { PdfWork.selected = i }, modifier = Modifier
+                        .onGloballyPositioned { PdfWork.tabBounds[t.id] = it.boundsInWindow() }
+                        .background(if (drop) MaterialTheme.colorScheme.primary.copy(alpha = 0.18f) else Color.Transparent, RoundedCornerShape(8.dp)), text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(t.name, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.widthIn(max = 180.dp))
                             Spacer(Modifier.size(4.dp))
@@ -432,7 +491,7 @@ private fun PdfToolScreenBody(c: AppContainer, onBack: () -> Unit, onOpenChat: (
                 }
             }
             when (mode) {
-                PdfMode.VIEW -> PdfViewer(c, current)
+                PdfMode.VIEW -> PdfViewer(c, current, onRun = ::run)
                 PdfMode.PAGES -> PdfPages(current, onRun = ::run, onBusy = { busy = it })
                 PdfMode.MARK -> PdfMarker(current, onRun = ::run)
                 PdfMode.FORM -> PdfFormEditor(current, onRun = ::run, onOpenChat = onOpenChat)
@@ -446,7 +505,7 @@ private fun PdfToolScreenBody(c: AppContainer, onBack: () -> Unit, onOpenChat: (
 }
 
 @Composable
-private fun PdfEmpty(onOpen: () -> Unit) {
+private fun PdfEmpty(onOpen: () -> Unit, onBatch: () -> Unit) {
     Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         val director = rememberLoraDirector(sequence = PDF_LORA, start = PDF_LORA.first())
         LoraFigure(Modifier.size(150.dp, 150.dp / LORA_ASPECT), label = tr("Kana mit Schere, Hefter und Stempel"), director = director)
@@ -468,6 +527,12 @@ private fun PdfEmpty(onOpen: () -> Unit) {
                 Spacer(Modifier.size(8.dp))
                 Text(tr("PDF öffnen"))
             }
+        }
+        Spacer(Modifier.size(8.dp))
+        OutlinedButton(onClick = onBatch) {
+            Icon(Icons.Outlined.DynamicFeed, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.size(8.dp))
+            Text(tr("Viele PDFs auf einmal (Stapel)"))
         }
     }
 }
@@ -495,7 +560,7 @@ private fun PdfInfo.aspect(i: Int) = sizes.getOrNull(i)?.let { (w, h) -> (w / h)
 
 /** Viewer: thumbnails or outline or search hits beside the pages; zoom and night mode. */
 @Composable
-private fun PdfViewer(c: AppContainer, tab: PdfTab) {
+private fun PdfViewer(c: AppContainer, tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit) {
     val context = LocalContext.current
     val info = tab.info ?: return
     var zoom by remember { mutableStateOf(1f) }
@@ -504,6 +569,7 @@ private fun PdfViewer(c: AppContainer, tab: PdfTab) {
     var query by remember { mutableStateOf("") }
     var hits by remember(tab.file) { mutableStateOf<List<PdfSearchHit>>(emptyList()) }
     val outline by produceState<List<PdfOutlineEntry>>(emptyList(), tab.file) { value = withContext(Dispatchers.IO) { runCatching { PdfTools.outline(context, tab.file) }.getOrDefault(emptyList()) } }
+    var bookmarksOpen by remember { mutableStateOf(false) }
     val list = rememberLazyListState()
     LaunchedEffect(tab.goTo) { tab.goTo?.let { list.scrollToItem(it.coerceIn(0, info.pages - 1)); tab.goTo = null } }
     // Weiterarbeiten (AP-135 b): the page in view is noted – for PDFs from a file (an imported copy has no file to go
@@ -527,7 +593,7 @@ private fun PdfViewer(c: AppContainer, tab: PdfTab) {
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
             modifier = Modifier.weight(1f),
         )
-        IconButton(onClick = { side = if (side == "outline") "thumbs" else "outline" }, enabled = outline.isNotEmpty()) { Icon(Icons.Outlined.Toc, contentDescription = tr("Gliederung")) }
+        IconButton(onClick = { if (outline.isEmpty()) bookmarksOpen = true else side = if (side == "outline") "thumbs" else "outline" }) { Icon(Icons.Outlined.Toc, contentDescription = tr(if (outline.isEmpty()) "Lesezeichen anlegen" else "Gliederung")) }
         IconButton(onClick = { night = !night }) { Icon(Icons.Outlined.DarkMode, contentDescription = tr("Nachtmodus")) }
         IconButton(onClick = { zoom = (zoom - 0.25f).coerceAtLeast(0.5f) }) { Icon(Icons.Outlined.ZoomOut, contentDescription = tr("Verkleinern")) }
         IconButton(onClick = { zoom = (zoom + 0.25f).coerceAtMost(3f) }) { Icon(Icons.Outlined.ZoomIn, contentDescription = tr("Vergrößern")) }
@@ -539,6 +605,12 @@ private fun PdfViewer(c: AppContainer, tab: PdfTab) {
                 Column(Modifier.width(170.dp).fillMaxHeight().padding(8.dp)) {
                     when (side) {
                         "outline" -> LazyColumn {
+                            item {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(tr("Lesezeichen"), style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+                                    TextButton(onClick = { bookmarksOpen = true }) { Text(tr("Bearbeiten")) }
+                                }
+                            }
                             itemsIndexed(outline) { _, e ->
                                 Text(
                                     e.title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodySmall,
@@ -577,6 +649,16 @@ private fun PdfViewer(c: AppContainer, tab: PdfTab) {
             }
         }
     }
+    if (bookmarksOpen) ViewerBookmarks(tab, list.firstVisibleItemIndex, onDismiss = { bookmarksOpen = false }, onRun = onRun)
+}
+
+@Composable
+private fun ViewerBookmarks(tab: PdfTab, page: Int, onDismiss: () -> Unit, onRun: ((File, File) -> Unit) -> Unit) {
+    val context = LocalContext.current
+    PdfBookmarksDialog(tab.file, tab.info?.pages ?: 1, page, onDismiss) { entries ->
+        onDismiss()
+        onRun { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.setOutline(context, src, entries, out) }
+    }
 }
 
 /** Pages: select, rotate, delete, extract, sort by dragging, merge, split, number. */
@@ -590,7 +672,11 @@ private fun PdfPages(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit, onBusy:
     var splitOpen by remember { mutableStateOf(false) }
     var numbersOpen by remember { mutableStateOf(false) }
     var mergeOpen by remember { mutableStateOf(false) }
+    var stampOpen by remember { mutableStateOf(false) }
+    var bookmarksOpen by remember { mutableStateOf(false) }
+    var transferOpen by remember { mutableStateOf(false) }
     val chosen = selected.sorted()
+    val others = PdfWork.tabs.filter { it !== tab }
     FlowRow(Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         OutlinedButton(enabled = chosen.isNotEmpty(), onClick = { onRun { src, out -> PdfTools.rearrange(context, src, (0 until info.pages).toList(), chosen.associateWith { 90 }, out) } }) {
             Icon(Icons.Outlined.RotateRight, contentDescription = null, modifier = Modifier.size(16.dp)); Spacer(Modifier.size(4.dp)); Text(tr("Drehen"))
@@ -611,16 +697,28 @@ private fun PdfPages(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit, onBusy:
         Spot("pdf.merge") { OutlinedButton(onClick = { mergeOpen = true }) { Text(tr("Zusammenfügen")) } }
         OutlinedButton(onClick = { splitOpen = true }) { Text(tr("Teilen")) }
         OutlinedButton(onClick = { numbersOpen = true }) { Text(tr("Seitenzahlen")) }
+        // AP-137: Wasserzeichen und Kopfzeile (b), Seiten in ein anderes PDF (c), Lesezeichen (d).
+        OutlinedButton(onClick = { stampOpen = true }) { Text(tr("Wasserzeichen & Kopfzeile")) }
+        OutlinedButton(onClick = { bookmarksOpen = true }) { Text(tr("Lesezeichen")) }
+        OutlinedButton(enabled = chosen.isNotEmpty() && others.isNotEmpty(), onClick = { transferOpen = true }) { Text(tr("In anderes PDF …")) }
         TextButton(onClick = { if (selected.size == info.pages) selected.clear() else { selected.clear(); selected.addAll(0 until info.pages) } }) {
             Text(tr(if (selected.size == info.pages) "Keine auswählen" else "Alle auswählen"))
         }
     }
-    HintText(tr("Antippen wählt Seiten aus; lange drücken und ziehen sortiert sie um."), Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+    HintText(
+        tr("Antippen wählt Seiten aus; lange drücken und ziehen sortiert sie um.") +
+            if (others.isNotEmpty()) " " + tr(if (IS_ANDROID) "Auf einen anderen Tab gezogen, wandern sie in dieses PDF." else "Auf einen anderen Tab gezogen, wandern sie in dieses PDF – mit Strg werden sie kopiert.") else "",
+        Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+    )
     // Sorting by dragging a thumbnail onto another place.
     val grid = rememberLazyGridState()
     var dragging by remember { mutableStateOf<Int?>(null) }
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
     var target by remember { mutableStateOf<Int?>(null) }
+    // AP-137 c: where the thumbnails stand in the window, whether Strg is held, the pointer while dragging.
+    val itemOrigins = remember(tab.file) { HashMap<Int, Offset>() }
+    var ctrlHeld by remember { mutableStateOf(false) }
+    var dragStartWindow by remember { mutableStateOf(Offset.Zero) }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(130.dp),
         state = grid,
@@ -634,15 +732,28 @@ private fun PdfPages(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit, onBusy:
             val shift = if (dragging == i) IntOffset(dragOffset.x.roundToInt(), dragOffset.y.roundToInt()) else IntOffset.Zero
             Column(
                 Modifier
+                    .onGloballyPositioned { itemOrigins[i] = it.positionInWindow() }
                     .offset { shift }
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                val e = awaitPointerEvent(androidx.compose.ui.input.pointer.PointerEventPass.Initial)
+                                ctrlHeld = e.keyboardModifiers.isCtrlPressed || e.keyboardModifiers.isMetaPressed
+                            }
+                        }
+                    }
                     .border(if (target == i && dragging != i) 3.dp else if (isSel) 2.dp else 0.dp, if (target == i && dragging != i || isSel) MaterialTheme.colorScheme.primary else Color.Transparent, RoundedCornerShape(6.dp))
                     .padding(4.dp)
                     .pointerInput(tab.file, i) {
                         detectDragGesturesAfterLongPress(
-                            onDragStart = { dragging = i; dragOffset = Offset.Zero },
+                            onDragStart = { at -> dragging = i; dragOffset = Offset.Zero; dragStartWindow = (itemOrigins[i] ?: Offset.Zero) + at },
                             onDrag = { change, amount ->
                                 change.consume()
                                 dragOffset += amount
+                                // Over another tab: the pages go into that PDF (AP-137 c).
+                                val pointer = dragStartWindow + dragOffset
+                                PdfWork.dropTarget = PdfWork.tabs.firstOrNull { t -> t !== tab && PdfWork.tabBounds[t.id]?.contains(pointer) == true }?.id
+                                if (PdfWork.dropTarget != null) { target = null; return@detectDragGesturesAfterLongPress }
                                 val me = grid.layoutInfo.visibleItemsInfo.firstOrNull { it.index == i } ?: return@detectDragGesturesAfterLongPress
                                 val center = Offset(me.offset.x + me.size.width / 2f + dragOffset.x, me.offset.y + me.size.height / 2f + dragOffset.y)
                                 target = grid.layoutInfo.visibleItemsInfo.firstOrNull { item ->
@@ -652,14 +763,24 @@ private fun PdfPages(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit, onBusy:
                             onDragEnd = {
                                 val from = dragging
                                 val to = target
-                                dragging = null; target = null; dragOffset = Offset.Zero
-                                if (from != null && to != null && from != to) {
+                                val other = PdfWork.dropTarget?.let { id -> PdfWork.tabs.firstOrNull { it.id == id } }
+                                dragging = null; target = null; dragOffset = Offset.Zero; PdfWork.dropTarget = null
+                                if (from != null && other != null) {
+                                    // The dragged page, or all selected ones when it is one of them.
+                                    val pagesToGo = if (from in selected) selected.sorted() else listOf(from)
+                                    val copy = ctrlHeld
+                                    scope.launch {
+                                        onBusy(true)
+                                        if (transferPages(context, tab, pagesToGo, other, null, move = !copy)) selected.clear()
+                                        onBusy(false)
+                                    }
+                                } else if (from != null && to != null && from != to) {
                                     val order = (0 until info.pages).toMutableList().apply { remove(from); add(to, from) }
                                     onRun { src, out -> PdfTools.rearrange(context, src, order, emptyMap(), out) }
                                     selected.clear()
                                 }
                             },
-                            onDragCancel = { dragging = null; target = null; dragOffset = Offset.Zero },
+                            onDragCancel = { dragging = null; target = null; dragOffset = Offset.Zero; PdfWork.dropTarget = null },
                         )
                     }
                     .clickable { if (isSel) selected.remove(i) else selected.add(i) },
@@ -692,6 +813,65 @@ private fun PdfPages(tab: PdfTab, onRun: ((File, File) -> Unit) -> Unit, onBusy:
         numbersOpen = false
         onRun { src, out -> PdfTools.addPageNumbers(context, src, numbering, out) }
     }
+    if (stampOpen) PdfStampDialog(listOf(io.github.thepytales.llmhub.docs.PdfStamp.ENTWURF), tr("Auf die Seiten setzen"), onDismiss = { stampOpen = false }) { stamps ->
+        stampOpen = false
+        onRun { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.stamp(context, src, stamps, out, name = tab.name.substringBeforeLast('.')) }
+    }
+    if (bookmarksOpen) PdfBookmarksDialog(tab.file, info.pages, chosen.firstOrNull() ?: 0, onDismiss = { bookmarksOpen = false }) { entries ->
+        bookmarksOpen = false
+        onRun { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.setOutline(context, src, entries, out) }
+    }
+    if (transferOpen) TransferDialog(tab, chosen, others, onDismiss = { transferOpen = false }) { to, at, move ->
+        transferOpen = false
+        scope.launch {
+            onBusy(true)
+            if (transferPages(context, tab, chosen, to, at, move)) selected.clear()
+            onBusy(false)
+        }
+    }
+}
+
+/** Seiten in ein anderes offenes PDF (AP-137 c): which one, where in it, copy or move. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TransferDialog(tab: PdfTab, pages: List<Int>, others: List<PdfTab>, onDismiss: () -> Unit, onGo: (PdfTab, Int?, Boolean) -> Unit) {
+    var to by remember { mutableStateOf(others.first()) }
+    var where by remember { mutableStateOf("end") }
+    var before by remember { mutableStateOf("1") }
+    var move by remember { mutableStateOf(false) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(tr("In anderes PDF")) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(tr(if (pages.size == 1) "{0} Seite aus „{1}“" else "{0} Seiten aus „{1}“", pages.size, tab.name) + " (" + pages.joinToString(", ") { "${it + 1}" }.take(60) + ")")
+                Text(tr("Ziel"), style = MaterialTheme.typography.labelLarge)
+                others.forEach { t ->
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().clickable { to = t }) {
+                        androidx.compose.material3.RadioButton(selected = to === t, onClick = { to = t })
+                        Text(t.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                }
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FilterChip(selected = where == "end", onClick = { where = "end" }, label = { Text(tr("Am Ende")) })
+                    FilterChip(selected = where == "start", onClick = { where = "start" }, label = { Text(tr("Am Anfang")) })
+                    FilterChip(selected = where == "before", onClick = { where = "before" }, label = { Text(tr("Vor Seite …")) })
+                }
+                if (where == "before") OutlinedTextField(before, { before = it.filter(Char::isDigit).take(5) }, label = { Text(tr("Vor Seite")) }, singleLine = true)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FilterChip(selected = !move, onClick = { move = false }, label = { Text(tr("Kopieren")) })
+                    FilterChip(selected = move, onClick = { move = true }, label = { Text(tr("Verschieben")) })
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                val at = when (where) { "start" -> 0; "before" -> (before.toIntOrNull() ?: 1) - 1; else -> null }
+                onGo(to, at, move)
+            }, modifier = Modifier.testTag("pdf.transfer.go")) { Text(tr(if (move) "Verschieben" else "Kopieren")) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
+    )
 }
 
 @Composable

@@ -2,7 +2,10 @@ package io.github.thepytales.llmhub.docs
 
 import io.github.thepytales.llmhub.ui.tr
 import org.apache.pdfbox.Loader
+import org.apache.pdfbox.contentstream.operator.Operator
 import org.apache.pdfbox.cos.COSName
+import org.apache.pdfbox.cos.COSNumber
+import org.apache.pdfbox.pdfparser.PDFStreamParser
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.apache.pdfbox.pdmodel.PDPage
@@ -320,13 +323,47 @@ object PdfStage3 {
             val fonts = mutableSetOf<String>()
             doc.pages.forEach { page ->
                 val res = page.resources ?: return@forEach
-                res.fontNames.forEach { n -> runCatching { res.getFont(n) }.getOrNull()?.let { f -> if (!f.isEmbedded) fonts += f.name.orEmpty() } }
+                // Fonts used only for invisible text – the text layer of the Texterkennung – need not be embedded
+                // (ISO 19005-2, 6.2.11.4.1); AP-137: a scan made searchable can become PDF/A as it is.
+                val visible = visibleFonts(page)
+                res.fontNames.forEach { n ->
+                    if (visible != null && n !in visible) return@forEach
+                    runCatching { res.getFont(n) }.getOrNull()?.let { f -> if (!f.isEmbedded) fonts += f.name.orEmpty() }
+                }
             }
             if (fonts.isNotEmpty()) problems += "Nicht eingebettete Schriften: ${fonts.filter { it.isNotBlank() }.joinToString(", ")} – die Datei aus dem Ursprungsprogramm mit eingebetteten Schriften neu erzeugen (Word: „Als PDF speichern“ › Optionen › „ISO 19005-1-kompatibel (PDF/A)“)."
             doc.save(out)
         }
         return problems
     }
+
+    /**
+     * Names of the fonts of [page] that draw visible text (text rendering mode other than 3 „unsichtbar“ and 7 „nur
+     * Clipping“); null when the content cannot be read (then every font counts).
+     */
+    internal fun visibleFonts(page: PDPage): Set<COSName>? = runCatching {
+        val parser = PDFStreamParser(page)
+        val visible = HashSet<COSName>()
+        val operands = ArrayList<Any>()
+        var font: COSName? = null
+        var mode = 0
+        val stack = ArrayDeque<Pair<COSName?, Int>>()
+        var token = parser.parseNextToken()
+        while (token != null) {
+            if (token is Operator) {
+                when (token.name) {
+                    "q" -> stack.addLast(font to mode)
+                    "Q" -> stack.removeLastOrNull()?.let { (f, m) -> font = f; mode = m }
+                    "Tf" -> (operands.firstOrNull() as? COSName)?.let { font = it }
+                    "Tr" -> (operands.firstOrNull() as? COSNumber)?.let { mode = it.intValue() }
+                    "Tj", "TJ", "'", "\"" -> if (mode != 3 && mode != 7) font?.let { visible += it }
+                }
+                operands.clear()
+            } else operands += token
+            token = parser.parseNextToken()
+        }
+        visible as Set<COSName>
+    }.getOrNull()
 
     private fun xmp(title: String, author: String, created: Calendar, modified: Calendar): ByteArray {
         val f = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ROOT).apply { timeZone = TimeZone.getDefault() }

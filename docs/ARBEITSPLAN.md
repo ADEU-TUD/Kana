@@ -1082,7 +1082,7 @@ Stellen je Transkript, Intercoder-Übereinstimmung, REFI-QDA für **ein** Transk
 - **Offen**: am Gerät mit echtem MAXQDA prüfen; markierte Wörter werden im Transkript noch nicht farbig hinterlegt (die
   Code-Chips unter dem Abschnitt nennen sie); Kana-Aktionen für Codieren und Pseudonymisieren.
 
-### AP-137 ☐ PDF im Stapel und Seitenarbeit · M (Analyse P-03, P-04, P-05, P-06, D)
+### AP-137 ◐ PDF im Stapel und Seitenarbeit · M (Analyse P-03, P-04, P-05, P-06, D)
 - **(a) Stapelverarbeitung** (P-03): eigener Bereich im Werkzeugkasten – viele PDFs oder ein Ordner auf einmal:
   Texterkennung, verkleinern, PDF/A, Wasserzeichen, Schwärzen nach Liste, zusammenführen je Unterordner; Fortschritt,
   Abbrechen, Bericht (was geändert, was übersprungen); dieselben Schritte wie Kana-Abläufe.

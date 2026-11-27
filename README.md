@@ -92,8 +92,9 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   - **Dateien**: aufräumen (Unterordner nach Dateiart, Semester „WiSe 2026-27“ oder Monat), nach Inhalt umbenennen,
     umbenennen, verschieben, Schlagwörter vergeben, Duplikate finden und in den Papierkorb legen.
   - **PDF-Werkzeugkasten**: öffnen, zusammenfügen, teilen, Seiten löschen/drehen/sortieren, Texterkennung, verkleinern,
-    schwärzen (immer mit Vorschau) und umwandeln (Word, Markdown, Text) – Änderungen am offenen PDF mit dessen eigenem
-    *Rückgängig*.
+    schwärzen (immer mit Vorschau) und umwandeln (Word, Markdown, Text), Wasserzeichen und Kopfzeile, Lesezeichen aus
+    Überschriften und ein ganzer **PDF-Stapel** (Ordner mit Unterordnern; AP-137) – Änderungen am offenen PDF mit dessen
+    eigenem *Rückgängig*.
   - **Dokument**: schreiben an der Cursorstelle, Abschnitte als Vorschläge überarbeiten, Tabelle einfügen, Absatz als
     Überschrift (siehe AP-47).
   - **Tabelle**: Zellen füllen (Werte und Formeln), Spalte mit Formel für jede Zeile (`=B{r}*0,5+C{r}*0,5`), nach einer
@@ -1316,6 +1317,38 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Zertifikat vertraut (Bouncy Castle). **Tags erzeugen** für PDF/UA: Überschriften nach Schriftgröße, Absätze, Listen,
   Abbildungen mit eingegebenem Alternativtext, Linien und Seitenzahlen als Dekoration – danach meldet die PDF/UA-Prüfung
   „Mit Struktur (Tags)“. Tabellen werden noch nicht erkannt. Test `PdfRestTest`.
+  **PDF im Stapel und Seitenarbeit** (AP-137):
+  - **Stapel** (Symbol oben im Werkzeugkasten, auch auf der leeren Startseite und über Strg+K „Stapel“): einen **Ordner**
+    (mit allen Unterordnern), einzelne PDFs oder die offenen Tabs auf einmal bearbeiten – **Texterkennung** (nur Seiten
+    ohne Text; am PC mit der Texterkennung von Windows, sonst nach ausdrücklicher Zustimmung mit einem Bildmodell),
+    **Schwärzen nach Liste** (Begriffe eintippen oder aus einer .txt/.csv laden; die übrigen Wörter der geschwärzten Seiten
+    bleiben durchsuchbar), **Wasserzeichen und Kopfzeile**, **Verkleinern** (nur behalten, wenn die Datei kleiner wird),
+    **PDF/A** (als letzter Schritt) und **Zusammenführen je Unterordner** (ein PDF mit dem Namen des Ordners). Die
+    Originale bleiben unberührt: Die Ergebnisse kommen in einen neuen Ordner „… (bearbeitet)“ neben dem gewählten (auf
+    Android in Kanas Ordner *Erstellt*) mit denselben Unterordnern und einer **Bericht.txt** – was geändert wurde (z. B.
+    „Text auf 1 Seite erkannt · 2,1 MB → 0,4 MB · PDF/A-2b“), was übersprungen wurde und warum (hat schon Text, mit
+    Passwort geschützt, kein PDF, lässt sich nicht lesen, Begriffe nicht gefunden). Fortschritt „12 von 50 PDFs“ mit
+    Datei und Schritt; der Stapel läuft im Hintergrund weiter, auch in einem anderen Werkzeug; *Abbrechen* hält nach dem
+    laufenden Schritt an (fertige Dateien bleiben, der Rest steht als „nicht bearbeitet“ im Bericht). Danach *Ordner
+    öffnen*, *Im Werkzeugkasten öffnen*, *Bericht kopieren*. Dieselben Schritte kann **Kana** (`pdf.batch`, auch als
+    Schritt eines Kana-Ablaufs): „Mach alle Scans im Ordner Protokolle durchsuchbar, klein und als PDF/A“. Die
+    Texterkennung legt ihren Text in einer nicht eingebetteten Schrift ab, die PDF/A für unsichtbaren Text erlaubt – die
+    PDF/A-Prüfung meldet sie seither nicht mehr als Problem.
+  - **Wasserzeichen & Kopfzeile** (*Seiten*): *Entwurf*, *Vertraulich*, *Kopie*, eigener Text oder ein **Bild** quer über
+    bzw. mitten auf der Seite, Farbe und Deckkraft; Text in den sechs Stellen von **Kopf- und Fußzeile** mit Platzhaltern
+    `{n}` (Seite), `{N}` (Seitenzahl), `{datum}`, `{datei}` und Knöpfen wie *Seite x von y unten*; nur auf bestimmten
+    Seiten („2-“). Die Vorschau zeigt eine Seite damit. Am PC in eingebettetem Noto Sans (jeder Buchstabe, PDF/A bleibt
+    möglich), als *Artefakt* markiert (Screenreader überspringen es), auch auf gedrehten Seiten richtig herum. Kana:
+    `pdf.watermark`.
+  - **Seiten zwischen Tabs**: Miniaturen im Modus *Seiten* auf einen anderen Tab ziehen – **verschiebt** sie in jenes PDF,
+    mit **Strg** gedrückt werden sie **kopiert** (sind Seiten ausgewählt und eine davon wird gezogen, gehen alle
+    ausgewählten mit). Oder *In anderes PDF …*: Ziel, *Am Ende*, *Am Anfang* oder *Vor Seite …*, kopieren oder
+    verschieben. Beide Tabs haben danach ihr eigenes *Rückgängig*.
+  - **Lesezeichen bearbeiten** (*Seiten › Lesezeichen* oder *Ansehen › Gliederung › Bearbeiten*): anlegen auf der
+    aktuellen Seite, umbenennen, Seite ändern, einrücken/ausrücken (verschachteln), mit den Unterpunkten verschieben,
+    löschen, **aus Überschriften erzeugen** (Schriftgröße und Nummerierung wie „2.1“; Kopfzeilen und Wasserzeichen, die
+    auf den meisten Seiten stehen, zählen nicht). Das PDF öffnet danach mit der Lesezeichenleiste. Kana:
+    `pdf.bookmarks`. Tests `PdfBatchTest`, `PdfBatchUiTest`.
 - **Mail & Kalender** (AP-13, AP-27, Werkzeug *Mail & Kalender*, anfangs aus): Kana arbeitet unter Windows mit dem
   **klassischen Outlook** dieses PCs – lokal über COM (JNA, ohne PowerShell, ohne Admin-Rechte, ohne Freigabe der IT;
   Outlook startet bei Bedarf im Hintergrund). Für das neue Outlook, andere Mailprogramme und **das Handy** gibt es den
@@ -2482,6 +2515,7 @@ Chats und Einstellungen erhalten bleiben).
 | `research/Excerpts.kt`, `agent/ExcerptTools.kt` | Exzerpt-Agent: Schemata, Seitenprüfung, `save_excerpt` |
 | `data/Vault.kt`, `data/DeviceKey.kt`, `ui/VaultScreen.kt` | Tresor: PIN, Wiederherstellungsschlüssel, Verschlüsselung (Keystore bzw. DPAPI) |
 | `docs/PdfTools.kt`, `docs/PdfToolModel.kt`, `ui/PdfRender.kt`, `ui/PdfToolScreen.kt` | PDF-Werkzeugkasten: Seiten, Anmerkungen, Formularfelder (erkennen und setzen), Darstellung je Plattform |
+| `docs/PdfBatch.kt`, `docs/PdfPageWork.kt`, `docs/PdfPageTools.kt`, `ui/PdfBatchUi.kt`, `ui/PdfBatchPlatform.kt`, `ui/PdfPageWorkUi.kt` | PDF im Stapel und Seitenarbeit (AP-137): Stapel mit Bericht und Abbrechen, Wasserzeichen und Kopf-/Fußzeile, Seiten aus einem anderen PDF, Lesezeichen (je Plattform: `PdfPageTools`, `PdfBatchPlatform`) |
 | `data/Batches.kt`, `agent/BatchRunner.kt`, `agent/BatchTools.kt`, `ui/BatchScreen.kt` | Stapel & Massenkontrolle (AP-20): Aufträge und Raster, Warteschlange im Hintergrund mit Pause/Fortsetzen, Kalibrierung, Belegprüfung, Ausreißer, Entscheidungen mit Protokoll, Exporte |
 | `data/Proposals.kt`, `agent/ProposalTools.kt`, `ui/ProposalScreen.kt` | Antrags-Werkstatt (AP-21): Förderer-Vorlagen, Checkliste, Fristen (Kalender), Gliederung mit Zeichen-/Seitenwächter, Gantt, Budget, Abgabe-Check, Probelauf |
 | `net/WebDav.kt`, `data/Nextcloud.kt`, `agent/NextcloudTools.kt`, `ui/NextcloudUi.kt`, `files/FileText.kt` (beide) | Nextcloud (AP-22): WebDAV, Login Flow v2, Datei-Browser, Anhängen/Holen/Speichern, Agent-Werkzeuge |

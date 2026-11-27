@@ -281,7 +281,7 @@ object ToolActions {
     /** Files of the Tresor never reach Kana's actions. */
     internal fun allowed(c: AppContainer, f: File): Boolean = !f.absolutePath.replace('\\', '/').contains("/tresor-dateien/")
 
-    private val PDF_IN_FILES = setOf("pdf.open", "pdf.merge", "pdf.compress", "pdf.convert", "pdf.split", "pdf.redact", "slides.from_paper")
+    private val PDF_IN_FILES = setOf("pdf.open", "pdf.merge", "pdf.compress", "pdf.convert", "pdf.split", "pdf.redact", "pdf.batch", "pdf.watermark", "slides.from_paper")
 
     // ── Finding the files an action is about ─────────────────────────────────────────────────────────────
 
@@ -787,6 +787,110 @@ object ToolActions {
                 val made = PdfConvert.fromPdf(c.appContext, f, displayName(f).removeSuffix(".pdf"), format, dir)
                 c.drive.changed()
                 ActionResult(tr("„{0}“ erstellt.", made.name), listOf(made), undo = { removeMade(c, listOf(made)) })
+            }
+        },
+        // AP-137: PDF im Stapel – dieselben Schritte wie der Bereich „Stapel“ im Werkzeugkasten, auch als Schritt eines
+        // Kana-Ablaufs; Wasserzeichen und Lesezeichen für das offene PDF.
+        ToolAction(
+            "pdf.batch", ActionArea.PDF, trLater("PDF-Stapel"),
+            "Bearbeitet viele PDFs oder einen ganzen Ordner (mit Unterordnern) in einem Lauf, dieselben Schritte wie der Bereich „Stapel“ im PDF-Werkzeugkasten: Texterkennung (ocr), verkleinern, pdfa, wasserzeichen, schwaerzen (nach einer Liste von Begriffen), zusammenfuehren (je Unterordner ein PDF). Die Originale bleiben; die Ergebnisse kommen in einen neuen Ordner mit Bericht.",
+            listOf(
+                ActionParam("ordner", "Ordner mit den PDFs (leer: die ausgewählten PDFs bzw. der offene Ordner)", required = false),
+                ActionParam("dateien", "Stattdessen einzelne PDFs, kommagetrennt", required = false),
+                ActionParam("schritte", "Kommagetrennt: ocr, verkleinern, pdfa, wasserzeichen, schwaerzen, zusammenfuehren"),
+                ActionParam("wasserzeichen", "Für den Schritt wasserzeichen: Entwurf, Vertraulich, Kopie, „Seite x von y“ oder eigener Text", required = false),
+                ActionParam("begriffe", "Für den Schritt schwaerzen: Begriffe, kommagetrennt", required = false),
+            ),
+            risky = false, usesModel = true,
+        ) { c, a ->
+            val named = a.s("ordner")?.takeIf { it.isNotBlank() }?.let { folder(c, it, create = false) ?: throw ActionFailed(tr("Den Ordner „{0}“ finde ich nicht.", it)) }
+            val roots = if (named != null) listOf(named) else files(c, a.s("dateien"), "pdf").ifEmpty { listOfNotNull(LoraFocus.folder) }
+            val inputs = io.github.thepytales.llmhub.docs.PdfBatch.collect(roots).filter { allowed(c, it.first) }
+            if (inputs.isEmpty()) throw ActionFailed(tr("Keine PDFs gefunden – bitte einen Ordner oder PDFs nennen."))
+            val wanted = a.s("schritte").orEmpty().lowercase()
+            fun has(vararg w: String) = w.any { wanted.contains(it) }
+            val ocrOn = has("ocr", "texterkennung", "durchsuchbar", "text erkennen")
+            val model = if (!ocrOn || io.github.thepytales.llmhub.docs.PdfPlatform.localOcr != null) null
+            else if (privacy(c) == io.github.thepytales.llmhub.data.PrivacyLevel.LOCAL) throw ActionFailed(tr("Hier bleibt alles auf dem Gerät – die Texterkennung bräuchte ein Bildmodell auf dem Server."))
+            else io.github.thepytales.llmhub.docs.PdfOcr.visionModel(c) ?: throw ActionFailed(tr("Für die Texterkennung gibt es hier kein Bildmodell."))
+            val terms = a.s("begriffe").orEmpty().split(',', ';', '\n').map { it.trim() }.filter { it.length >= 2 }
+            val redact = has("schwärz", "schwaerz", "redact")
+            if (redact && terms.isEmpty()) throw ActionFailed(tr("Was soll geschwärzt werden? Bitte die Begriffe nennen."))
+            val steps = io.github.thepytales.llmhub.docs.PdfBatchSteps(
+                ocr = ocrOn, ocrModel = model, redactTerms = if (redact) terms else emptyList(),
+                stamps = if (has("wasserzeichen", "kopfzeile", "fußzeile", "fusszeile", "stempel", "watermark")) listOf(io.github.thepytales.llmhub.docs.PdfStamp.fromWish(a.s("wasserzeichen")?.takeIf { it.isNotBlank() } ?: "Entwurf")) else emptyList(),
+                shrink = has("verklein", "kompr", "shrink", "compress"),
+                pdfA = has("pdfa", "pdf/a", "pdf-a", "archiv"),
+                mergePerFolder = has("zusammen", "merge"),
+            )
+            if (!steps.any) throw ActionFailed(tr("Welche Schritte? Texterkennung, verkleinern, PDF/A, Wasserzeichen, schwärzen oder zusammenführen."))
+            val outDir = io.github.thepytales.llmhub.ui.PdfBatchRun.defaultOut(c, roots)
+            val preview = listOf(tr("Schritte") to steps.labels().joinToString(" → "), tr("Ergebnisse in") to outDir.absolutePath) +
+                (if (model != null) listOf(tr("Datenschutz") to tr("Die Seitenbilder der Scans gehen an {0}.", io.github.thepytales.llmhub.data.ModelCatalog.info(model).displayName)) else emptyList())
+            ActionPlan("pdf.batch", tr("Bearbeitet {0} PDFs: {1} …", inputs.size, steps.labels().joinToString(", ")), false, preview) {
+                val report = io.github.thepytales.llmhub.docs.PdfBatch.run(c.appContext, inputs, steps, outDir, io.github.thepytales.llmhub.ui.PdfBatchRun.ocrFor(c, steps))
+                c.drive.changed()
+                val made = (report.merged + report.items).mapNotNull { it.out?.let(::File) }.filter { it.isFile }
+                ActionResult(
+                    tr("PDF-Stapel: {0}. Die Ergebnisse liegen in „{1}“, der Bericht daneben.", report.summary(), outDir.name),
+                    made,
+                    undo = {
+                        withContext(Dispatchers.IO) { made.forEach { it.delete() }; File(outDir, tr("Bericht") + ".txt").delete(); outDir.walkBottomUp().filter { it.isDirectory && it.listFiles().isNullOrEmpty() }.forEach { it.delete() } }
+                        c.drive.changed()
+                        tr("Die Ergebnisse des Stapels sind wieder entfernt.")
+                    },
+                )
+            }
+        },
+        ToolAction(
+            "pdf.watermark", ActionArea.PDF, trLater("Wasserzeichen und Kopfzeile"),
+            "Setzt ein Wasserzeichen (Entwurf, Vertraulich, Kopie oder eigener Text, quer über die Seite) oder eine Kopf-/Fußzeile (z. B. „Seite {n} von {N}“, „{datum}“) auf die Seiten eines PDFs.",
+            listOf(
+                ActionParam("text", "Entwurf, Vertraulich, Kopie, „Seite x von y“, Datum oder eigener Text (Platzhalter {n}, {N}, {datum}, {datei})"),
+                ActionParam("ort", "quer (Standard), kopfzeile oder fusszeile", required = false),
+                ActionParam("seiten", "Seiten, z. B. 2- (leer: alle)", required = false),
+                ActionParam("datei", "PDF (leer: das offene)", required = false),
+            ),
+            risky = false,
+        ) { c, a ->
+            val f = openOrNamedPdf(c, a.s("datei"))
+            val wish = a.s("text")?.takeIf { it.isNotBlank() } ?: throw ActionFailed(tr("Welcher Text? Zum Beispiel „Entwurf“ oder „Seite x von y“."))
+            val ort = a.s("ort").orEmpty().lowercase()
+            val base = io.github.thepytales.llmhub.docs.PdfStamp.fromWish(wish)
+            val place = when {
+                ort.startsWith("kopf") || ort.startsWith("oben") || ort.startsWith("header") -> io.github.thepytales.llmhub.docs.PdfStamp.Place.HEADER_CENTER
+                ort.startsWith("fu") || ort.startsWith("unten") || ort.startsWith("footer") -> io.github.thepytales.llmhub.docs.PdfStamp.Place.FOOTER_CENTER
+                else -> base.place
+            }
+            val stamp = (if (place.edge && !base.place.edge) base.copy(opacity = 1f, color = 0x404040, bold = false, text = wish.trim()) else base).copy(place = place, pages = a.s("seiten").orEmpty())
+            ActionPlan("pdf.watermark", tr("Setzt „{0}“ auf die Seiten von „{1}“ …", stamp.text, displayName(f)), false) {
+                val ctx = c.appContext
+                val change = ActionHosts.changeOpenPdf
+                val isOpen = LoraFocus.pdfTabs.firstOrNull()?.second == f
+                if (change != null && isOpen) {
+                    if (!change(tr("Wasserzeichen")) { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.stamp(ctx, src, listOf(stamp), out, name = displayName(f).substringBeforeLast('.')) }) throw ActionFailed(tr("Das hat nicht geklappt"))
+                    ActionResult(tr("„{0}“ steht auf den Seiten – erst „Speichern“ im Werkzeugkasten ändert das Original.", stamp.text), undo = { ActionHosts.undoOpenPdf?.invoke(); tr("Wasserzeichen zurückgenommen.") })
+                } else {
+                    val out = beside(c, f, f.nameWithoutExtension + " " + tr("(mit Wasserzeichen)") + ".pdf")
+                    withContext(Dispatchers.IO) { io.github.thepytales.llmhub.docs.PdfPageTools.stamp(ctx, f, listOf(stamp), out, name = f.nameWithoutExtension) }
+                    c.drive.changed()
+                    ActionResult(tr("„{0}“ erstellt, das Original bleibt.", out.name), listOf(out), undo = { removeMade(c, listOf(out)) }, open = out)
+                }
+            }
+        },
+        ToolAction(
+            "pdf.bookmarks", ActionArea.PDF, trLater("Lesezeichen aus Überschriften"),
+            "Legt im offenen PDF Lesezeichen (das Inhaltsverzeichnis an der Seite jedes PDF-Programms) aus den Überschriften an; vorhandene werden ersetzt.",
+            emptyList(), risky = false,
+        ) { c, _ ->
+            val f = openOrNamedPdf(c, null)
+            val ctx = c.appContext
+            val found = withContext(Dispatchers.IO) { PdfTools.textRuns(ctx, f).let { (runs, sizes) -> io.github.thepytales.llmhub.docs.PdfBookmarks.fromHeadings(runs, sizes) } }
+            if (found.isEmpty()) throw ActionFailed(tr("Keine Überschriften gefunden – bei Scans zuerst die Texterkennung nutzen."))
+            ActionPlan("pdf.bookmarks", tr("Legt {0} Lesezeichen in „{1}“ an …", found.size, displayName(f)), false, found.take(8).map { ("  ".repeat(it.level) + it.title) to tr("Seite {0}", it.page) }) {
+                val change = ActionHosts.changeOpenPdf ?: throw ActionFailed(tr("Bitte das PDF im PDF-Werkzeugkasten öffnen."))
+                if (!change(tr("Lesezeichen")) { src, out -> io.github.thepytales.llmhub.docs.PdfPageTools.setOutline(ctx, src, found, out) }) throw ActionFailed(tr("Bitte das PDF im PDF-Werkzeugkasten öffnen."))
+                ActionResult(tr("{0} Lesezeichen angelegt.", found.size), undo = { ActionHosts.undoOpenPdf?.invoke(); tr("Lesezeichen zurückgenommen.") })
             }
         },
         // Stufe c – Dokument (über den Editor, AP-47)

@@ -8054,3 +8054,157 @@ Namen, Orte, Einrichtungen, Kontaktdaten und die eigene Liste (Einstellungen ›
 Die Namen werden noch gesucht – gleich noch einmal.	The names are still being searched – try again in a moment.
 Schlüsselliste im Tresor gespeichert.	Key list saved in the vault.
 Ohne Schlüsselliste exportiert – der Tresor ist nicht offen.	Exported without key list – the vault is not open.
+# PDF im Stapel und Seitenarbeit (AP-137)
+PDF-Stapel	PDF batch
+Den Ordner „{0}“ finde ich nicht.	I can’t find the folder “{0}”.
+Keine PDFs gefunden – bitte einen Ordner oder PDFs nennen.	No PDFs found – please name a folder or PDFs.
+Für die Texterkennung gibt es hier kein Bildmodell.	There is no image model here for text recognition.
+Was soll geschwärzt werden? Bitte die Begriffe nennen.	What should be redacted? Please name the terms.
+Welche Schritte? Texterkennung, verkleinern, PDF/A, Wasserzeichen, schwärzen oder zusammenführen.	Which steps? Text recognition, compress, PDF/A, watermark, redact or merge.
+Ergebnisse in	Results in
+Die Seitenbilder der Scans gehen an {0}.	The page images of the scans go to {0}.
+Bearbeitet {0} PDFs: {1} …	Processing {0} PDFs: {1} …
+PDF-Stapel: {0}. Die Ergebnisse liegen in „{1}“, der Bericht daneben.	PDF batch: {0}. The results are in “{1}”, the report beside them.
+Die Ergebnisse des Stapels sind wieder entfernt.	The results of the batch have been removed.
+Wasserzeichen und Kopfzeile	Watermark and header
+Welcher Text? Zum Beispiel „Entwurf“ oder „Seite x von y“.	Which text? For example “Draft” or “Page x of y”.
+Setzt „{0}“ auf die Seiten von „{1}“ …	Putting “{0}” on the pages of “{1}” …
+„{0}“ steht auf den Seiten – erst „Speichern“ im Werkzeugkasten ändert das Original.	“{0}” is on the pages – only “Save” in the toolbox changes the original.
+Wasserzeichen zurückgenommen.	Watermark taken back.
+(mit Wasserzeichen)	(with watermark)
+Lesezeichen aus Überschriften	Bookmarks from headings
+Keine Überschriften gefunden – bei Scans zuerst die Texterkennung nutzen.	No headings found – for scans, run text recognition first.
+Legt {0} Lesezeichen in „{1}“ an …	Adding {0} bookmarks to “{1}” …
+{0} Lesezeichen angelegt.	{0} bookmarks added.
+Lesezeichen zurückgenommen.	Bookmarks taken back.
+Mindestens eine Seite muss bleiben – zum Kopieren Strg gedrückt halten.	At least one page must stay – hold Ctrl to copy.
+Stapel: viele PDFs auf einmal	Batch: many PDFs at once
+Viele PDFs auf einmal (Stapel)	Many PDFs at once (batch)
+Wasserzeichen & Kopfzeile	Watermark & header
+In anderes PDF …	Into another PDF …
+Auf die Seiten setzen	Put on the pages
+In anderes PDF	Into another PDF
+Am Ende	At the end
+Am Anfang	At the beginning
+Vor Seite …	Before page …
+Vor Seite	Before page
+{0} Seite nach „{1}“ verschoben	{0} page moved to “{1}”
+{0} Seiten nach „{1}“ verschoben	{0} pages moved to “{1}”
+{0} Seite nach „{1}“ kopiert	{0} page copied to “{1}”
+{0} Seiten nach „{1}“ kopiert	{0} pages copied to “{1}”
+Auf einen anderen Tab gezogen, wandern sie in dieses PDF.	Dragged onto another tab, they go into that PDF.
+Auf einen anderen Tab gezogen, wandern sie in dieses PDF – mit Strg werden sie kopiert.	Dragged onto another tab, they go into that PDF – with Ctrl they are copied.
+{0} Seite aus „{1}“	{0} page from “{1}”
+{0} Seiten aus „{1}“	{0} pages from “{1}”
+Schwärzen nach Liste ({0} Begriffe)	Redact by list ({0} terms)
+Zusammenführen je Ordner	Merge per folder
+{0} unverändert	{0} unchanged
+{0} übersprungen	{0} skipped
+{0} mit Fehler	{0} with errors
+{0} nicht bearbeitet (abgebrochen)	{0} not processed (cancelled)
+{0} zusammengeführt	{0} merged
+PDF-Stapel vom {0}	PDF batch of {0}
+PDFs	PDFs
+Dauer	Duration
+Zusammengeführt	Merged
+Unverändert	Unchanged
+Übersprungen	Skipped
+Nicht bearbeitet (abgebrochen)	Not processed (cancelled)
+(bearbeitet)	(processed)
+bearbeitet	processed
+Datei nicht gefunden	file not found
+kein PDF	not a PDF
+das Ergebnis würde das Original überschreiben – einen anderen Zielordner wählen	the result would overwrite the original – choose another target folder
+liegt im Zielordner	is in the target folder
+mit Passwort geschützt – erst im Werkzeugkasten entsperren	protected by a password – unlock it in the toolbox first
+lässt sich nicht lesen	cannot be read
+hat keine Seiten	has no pages
+hat schon Text	already has text
+Texterkennung nicht möglich: auf diesem Gerät gibt es keine	text recognition not possible: this device has none
+kein Text erkannt	no text recognised
+Text auf 1 Seite erkannt	text recognised on 1 page
+nicht erkannt: Seite {0}	not recognised: page {0}
+Schwärzen gibt es nur am PC	redaction is only available on the PC
+Begriffe nicht gefunden	terms not found
+{0} Stellen geschwärzt (Seite {1})	{0} places redacted (page {1})
+Verkleinern gibt es hier nicht	compressing is not available here
+war schon klein	was already small
+PDF/A gibt es nur am PC	PDF/A is only available on the PC
+ist schon PDF/A	is already PDF/A
+Zusammenführen	Merging
+zusammengeführt	merged
+{0} PDFs zusammengeführt	{0} PDFs merged
+Kein Text und kein Bild für das Wasserzeichen.	No text and no picture for the watermark.
+Quer über die Seite	Across the page
+Kopfzeile links	Header left
+Kopfzeile Mitte	Header centre
+Kopfzeile rechts	Header right
+Fußzeile links	Footer left
+Fußzeile Mitte	Footer centre
+Fußzeile rechts	Footer right
+PDF-Stapel fertig	PDF batch finished
+In „{0}“ liegen keine PDFs.	There are no PDFs in “{0}”.
+{0} Begriffe geladen.	{0} terms loaded.
+PDFs für den Stapel	PDFs for the batch
+Ordner mit PDFs wählen	Choose a folder with PDFs
+PDFs wählen …	Choose PDFs …
+Offene PDFs ({0})	Open PDFs ({0})
+Liste leeren	Clear list
+Einen Ordner wählen (mit allen Unterordnern) oder einzelne PDFs. Die Originale bleiben, wie sie sind.	Choose a folder (with all its subfolders) or single PDFs. The originals stay as they are.
+{0} PDFs	{0} PDFs
+Aus dem Stapel nehmen	Remove from the batch
+Was mit jedem PDF geschieht	What happens to every PDF
+Nur Seiten ohne Text (Scans): danach durchsuchbar und kopierbar. Auf diesem PC, nichts verlässt ihn.	Only pages without text (scans): searchable and copyable afterwards. On this PC, nothing leaves it.
+Nur Seiten ohne Text. Hier mit {0}: die Seitenbilder gehen an den Server.	Only pages without text. Here with {0}: the page images go to the server.
+Hier gibt es keine Texterkennung (kein Bildmodell erlaubt).	There is no text recognition here (no image model allowed).
+Ja, die Seitenbilder der Scans dürfen an {0} gehen.	Yes, the page images of the scans may go to {0}.
+Schwärzen nach Liste	Redact by list
+Jeder Begriff wird überall geschwärzt, der Text darunter entfernt; die übrigen Wörter bleiben durchsuchbar.	Every term is redacted everywhere and the text below removed; the other words stay searchable.
+Begriffe, einer pro Zeile (Namen, Matrikelnummern …)	Terms, one per line (names, student IDs …)
+Liste aus Datei laden (.txt, .csv) …	Load list from a file (.txt, .csv) …
+„Entwurf“, „Vertraulich“, Datum, „Seite x von y“ …	“Draft”, “Confidential”, date, “Page x of y” …
+Ändern …	Change …
+Große Bilder kleiner rechnen – nur behalten, wenn die Datei kleiner wird.	Scale large pictures down – only kept when the file gets smaller.
+Als PDF/A speichern	Save as PDF/A
+PDF/A-2b für die Langzeitarchivierung, als letzter Schritt.	PDF/A-2b for long-term archiving, as the last step.
+Die Ergebnisse jedes Unterordners werden ein PDF mit dem Namen des Ordners.	The results of every subfolder become one PDF named after the folder.
+Ein neuer Ordner mit denselben Unterordnern und einem Bericht; die Originale werden nicht verändert.	A new folder with the same subfolders and a report; the originals are not changed.
+Ordner für die Ergebnisse wählen	Choose a folder for the results
+Ein Stapel läuft schon.	A batch is already running.
+Stapel starten ({0} PDFs)	Start batch ({0} PDFs)
+Mindestens einen Schritt einschalten.	Switch on at least one step.
+Stapel läuft	Batch running
+{0} von {1} PDFs	{0} of {1} PDFs
+Läuft im Hintergrund weiter, auch wenn du ein anderes Werkzeug öffnest.	Keeps running in the background, also when you open another tool.
+Wird nach diesem Schritt angehalten …	Stopping after this step …
+Die ersten 10 öffnen	Open the first 10
+Im Werkzeugkasten öffnen	Open in the toolbox
+… und {0} weitere – alle stehen im Bericht.	… and {0} more – all are in the report.
+Stapel abgebrochen	Batch cancelled
+Stapel fertig	Batch finished
+Bericht kopiert	Report copied
+Bericht kopieren	Copy report
+Das Bild ist nicht lesbar.	The picture cannot be read.
+Keins	None
+Vertraulich	Confidential
+Kopie	Copy
+KOPIE	COPY
+Text des Wasserzeichens	Text of the watermark
+Kopf- und Fußzeile	Header and footer
+Seite x von y unten	Page x of y at the bottom
+Datum oben rechts	Date top right
+Dateiname oben links	File name top left
+„Vertraulich“ oben	“Confidential” at the top
+Platzhalter: {n} Seite, {N} Seitenzahl, {datum} heute, {datei} Dateiname.	Placeholders: {n} page, {N} number of pages, {datum} today, {datei} file name.
+Nur auf Seiten (leer: alle), z. B. 2-	Only on pages (empty: all), e.g. 2-
+Neues Lesezeichen	New bookmark
+Neu auf Seite {0}	New on page {0}
+{0} Überschriften gefunden – prüfen und übernehmen.	{0} headings found – check and apply.
+Aus Überschriften erzeugen	Create from headings
+Noch keine Lesezeichen. Sie erscheinen in jedem PDF-Programm als Inhaltsverzeichnis an der Seite.	No bookmarks yet. Every PDF program shows them as a table of contents at the side.
+Ausrücken	Outdent
+Einrücken (Unterpunkt)	Indent (sub-item)
+Klick auf ein Lesezeichen zeigt Einrücken, Verschieben und Löschen.	Clicking a bookmark shows indent, move and delete.
+PDFs für den Stapel wählen	Choose PDFs for the batch
+Lesezeichen anlegen	Add bookmarks
+Zurück zu den offenen PDFs	Back to the open PDFs

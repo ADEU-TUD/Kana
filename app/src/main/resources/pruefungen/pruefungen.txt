@@ -287,6 +287,69 @@ vorher: Ein Dokument, eine Tabelle, eine Präsentation mit mindestens fünf Foli
     Android.
   ort: area.chat
 
+== AP-137 PDF im Stapel und Seitenarbeit
+geräte: windows, macos, linux, android
+vorher: Ein Ordner mit etwa 50 eingescannten PDFs in zwei Unterordnern (am PC); ein PDF mit Überschriften; zwei
+  weitere PDFs zum Ziehen.
+- Ordner mit 50 Scans
+  tun: Im PDF-Werkzeugkasten das Symbol *Stapel* oben, *Ordner wählen …*, *Texterkennung*, *Verkleinern* und *Als PDF/A
+    speichern* einschalten, *Stapel starten*; während er läuft kurz ein anderes Werkzeug öffnen und zurückkommen.
+  erwartet: Fortschritt „x von 50 PDFs“ mit Datei und Schritt, läuft im anderen Werkzeug weiter. Am Ende liegt neben dem
+    Ordner „… (bearbeitet)“ mit denselben Unterordnern und Bericht.txt; die PDFs sind durchsuchbar (Strg+F im
+    PDF-Programm), deutlich kleiner und PDF/A (z. B. Adobe Reader zeigt „PDF/A-Modus“); die Originale sind unverändert.
+  ort: tool.pdf
+  geräte: windows, macos, linux
+- Abbrechen und Bericht
+  tun: Denselben Stapel noch einmal starten und nach ein paar Dateien *Abbrechen*.
+  erwartet: Er hält nach dem laufenden Schritt an; der Bericht nennt die fertigen Dateien und den Rest als „nicht
+    bearbeitet (abgebrochen)“; keine halben Dateien im Zielordner.
+  ort: tool.pdf
+  geräte: windows, macos, linux
+- Schwärzen nach Liste
+  tun: Im Stapel *Schwärzen nach Liste* mit zwei Namen (oder *Liste aus Datei laden …* mit einer .txt) über ein paar
+    Gutachten laufen lassen.
+  erwartet: Die Namen sind schwarz und auch per Suche nicht mehr zu finden; die übrigen Wörter der Seite findet die Suche
+    noch; der Bericht nennt je Datei die Zahl der Stellen bzw. „Begriffe nicht gefunden“.
+  ort: tool.pdf
+  geräte: windows, macos, linux
+- Stapel auf dem Handy
+  tun: Auf Android *Stapel* › *PDFs wählen …* drei PDFs, *Verkleinern* und ein Wasserzeichen „Entwurf“, starten.
+  erwartet: Die Ergebnisse liegen in Kanas Ordner *Erstellt* unter „PDF-Stapel …“ mit Bericht; *Im Werkzeugkasten öffnen*
+    zeigt sie.
+  ort: tool.pdf
+  geräte: android
+- Wasserzeichen und Kopfzeile
+  tun: Ein PDF öffnen, *Seiten › Wasserzeichen & Kopfzeile*, *Vertraulich*, *Seite x von y unten*, *Datum oben rechts*,
+    *Auf die Seiten setzen*; danach in einem anderen PDF-Programm ansehen und drucken.
+  erwartet: „VERTRAULICH“ schräg und blass über jeder Seite, unten „Seite 1 von n“, oben rechts das Datum – auch auf
+    quer liegenden Seiten richtig herum; Text der Seite bleibt lesbar und markierbar.
+  ort: tool.pdf
+- Seiten in einen anderen Tab ziehen
+  tun: Zwei PDFs öffnen; im Modus *Seiten* eine Miniatur lange drücken und auf den anderen Tab ziehen; dann mit gedrückter
+    Strg-Taste noch eine; dann *Rückgängig* in beiden Tabs.
+  erwartet: Der Tab leuchtet beim Darüberziehen; ohne Strg wandert die Seite, mit Strg wird sie kopiert; Rückgängig nimmt
+    es je Tab zurück.
+  ort: tool.pdf
+  geräte: windows, macos, linux
+- In anderes PDF auf dem Handy
+  tun: Auf Android zwei PDFs öffnen, im Modus *Seiten* zwei Seiten antippen, *In anderes PDF …*, *Am Anfang*, *Kopieren*.
+  erwartet: Die beiden Seiten stehen vorn im anderen PDF; im ersten sind sie noch da.
+  ort: tool.pdf
+  geräte: android
+- Lesezeichen aus Überschriften
+  tun: Ein PDF einer Abschlussarbeit öffnen, *Seiten › Lesezeichen › Aus Überschriften erzeugen*, ein Lesezeichen
+    umbenennen, eines einrücken, *Übernehmen*, speichern und im Adobe Reader öffnen.
+  erwartet: Die Kapitel stehen in der richtigen Ebene (2.1 unter 2); der Reader öffnet mit der Lesezeichenleiste, ein
+    Klick springt zur Seite.
+  ort: tool.pdf
+- Kana macht den Stapel
+  tun: In einem Chat „Mach alle PDFs im Ordner Protokolle durchsuchbar und klein“ schreiben und den Plan mit *Los*
+    starten.
+  erwartet: Die Karte zeigt die Schritte und den Zielordner; danach meldet Kana „PDF-Stapel: … geändert“ und wo die
+    Ergebnisse liegen.
+  ort: area.chat
+  geräte: windows, macos, linux
+
 == AP-136 Interviews auswerten: Codieren und Pseudonymisieren
 geräte: windows, macos, linux
 vorher: Drei transkribierte Interviews in einem Projekt (mit Sprechern), ein Kategoriensystem; der Tresor eingerichtet;
