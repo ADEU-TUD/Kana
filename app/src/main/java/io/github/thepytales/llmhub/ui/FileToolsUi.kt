@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.TableChart
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -604,7 +603,7 @@ private fun FontsDialog(file: File, onDismiss: () -> Unit, onDone: () -> Unit) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PrintDialog(file: File, onDismiss: () -> Unit, onDone: () -> Unit) {
+internal fun PrintDialog(file: File, onDismiss: () -> Unit, onDone: () -> Unit) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     // Word and slides become a PDF first (with Microsoft Office or the app's reader).

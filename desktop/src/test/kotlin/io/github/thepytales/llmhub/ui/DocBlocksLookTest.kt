@@ -220,7 +220,7 @@ class DocBlocksLookTest {
     fun shortcutsOverview() = runSkikoComposeUiTest(Size(1920f, 1080f), Density(1.25f)) {
         setContent {
             LlmHubTheme(AppSettings()) {
-                androidx.compose.material3.Surface(androidx.compose.ui.Modifier.fillMaxSize()) { ShortcutsDialog(onDismiss = {}) }
+                androidx.compose.material3.Surface(androidx.compose.ui.Modifier.fillMaxSize()) { ShortcutsDialog(onDismiss = {}, tool = ToolCommands("Dokument", ToolKeys.DOCUMENT)) }
             }
         }
         waitForIdle()

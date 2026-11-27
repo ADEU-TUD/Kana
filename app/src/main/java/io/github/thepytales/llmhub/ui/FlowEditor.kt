@@ -68,7 +68,6 @@ import androidx.compose.material.icons.outlined.FormatUnderlined
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -124,6 +123,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.ui.platform.LocalDensity
@@ -732,6 +732,42 @@ class FlowState(markdown: String) {
         lineTop(t, r.first)?.let { scrollTo?.invoke(it) }
     }
 
+    /** Weiterarbeiten (AP-135 b): where the cursor is – „text:<k>:<offset>“ in the k-th text part –, or null. */
+    fun cursorAt(): String? {
+        val t = active ?: return null
+        val k = segs.filterIsInstance<FlowSeg.Text>().indexOf(t).takeIf { it >= 0 } ?: return null
+        return "text:$k:${t.selection.start}"
+    }
+
+    /** The place of the cursor for people: the heading above it („bei „Methoden““), else the page. */
+    fun cursorPlace(): String {
+        val t = active
+        var heading: String? = null
+        for (s in segs.filterIsInstance<FlowSeg.Text>()) {
+            for (i in s.rich.paras.indices) {
+                if (s === t && s.rich.starts[i] > t.selection.start) break
+                if (s.rich.paras[i].kind.heading) heading = s.rich.text.substring(s.rich.starts[i], (s.rich.starts.getOrNull(i + 1) ?: s.rich.text.length)).trim().take(40)
+            }
+            if (s === t) break
+        }
+        return when {
+            pageCount > 1 -> tr("Seite {0}", pageNow) + (heading?.takeIf { it.isNotBlank() }?.let { " · „$it“" } ?: "")
+            !heading.isNullOrBlank() -> tr("bei „{0}“", heading)
+            else -> ""
+        }
+    }
+
+    /** Puts the cursor back at [at] (from [cursorAt]) and scrolls there; false while the page is not laid out yet. */
+    fun restoreCursor(at: String): Boolean {
+        val p = at.split(':')
+        if (p.size < 3 || p[0] != "text") return true
+        val t = segs.filterIsInstance<FlowSeg.Text>().getOrNull(p[1].toIntOrNull() ?: return true) ?: return true
+        if (segTop[t.id] == null || scrollTo == null) return false
+        val o = (p[2].toIntOrNull() ?: 0).coerceIn(0, t.rich.text.length)
+        show(t, o until o)
+        return true
+    }
+
     /** Jumps to heading number [k] of the document (Gliederung). */
     fun jumpToHeading(k: Int) {
         var n = 0
@@ -1150,6 +1186,20 @@ fun FlowEditor(
 ) {
     val state = remember(doc.id, tabId) { FlowState(markdown).also { FlowState.shown = java.lang.ref.WeakReference(it); it.spellLive = c.settings.current.docSpellLive } }
     val scope = rememberCoroutineScope()
+    // Weiterarbeiten (AP-135 b): back at the cursor where one stopped (from the start page), and the place is noted
+    // while one writes (without recomposing: read in a snapshotFlow).
+    val docForWork by androidx.compose.runtime.rememberUpdatedState(doc)
+    LaunchedEffect(state) {
+        val at = io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.DOC, doc.id) ?: return@LaunchedEffect
+        repeat(40) { if (state.restoreCursor(at)) return@LaunchedEffect; delay(100) }
+    }
+    LaunchedEffect(state) {
+        snapshotFlow { state.cursorAt()?.let { it to state.pageNow } }.filterNotNull().distinctUntilChanged().collectLatest {
+            delay(900)
+            val d = docForWork
+            io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(io.github.thepytales.llmhub.data.RecentWork.DOC, d.id, d.title, it.first, state.cursorPlace()))
+        }
+    }
     var view by remember { mutableStateOf(FlowView.PAGES) }
     var zoom by remember { mutableStateOf(1f) }
     // Gliederung on the left (AP-46) and the Lineal (AP-44), like in Docs: on on wide screens.
@@ -1673,7 +1723,7 @@ private fun FlowMenus(
             } else {
                 TextButton(onClick = { open = name }, contentPadding = PaddingValues(horizontal = 8.dp)) { Text(tr(name), style = MaterialTheme.typography.bodyMedium) }
             }
-            DropdownMenu(open == name, { open = null }) { items { open = null } }
+            DropdownMenu(open == name, { open = null }, commands = tr(name)) { items { open = null } }
         }
     }
     @Composable
@@ -2869,6 +2919,8 @@ internal val MENU_ROW: Modifier = if (DESKTOP) Modifier.height(36.dp) else Modif
  */
 @Composable
 internal fun MenuRow(label: String, keys: String, enabled: Boolean, onClick: () -> Unit) {
+    // Strg+K (AP-135 a): inside a recorded menu the row is reported as a command, not drawn.
+    if (LocalMenuRecording.current != null && recordEntry(label, keys, enabled, onClick)) return
     val color = MaterialTheme.colorScheme.onSurface.let { if (enabled) it else it.copy(alpha = 0.38f) }
     Row(
         Modifier.fillMaxWidth().widthIn(min = 180.dp).heightIn(min = if (DESKTOP) 36.dp else 48.dp)

@@ -42,10 +42,14 @@ fun Text(
     minLines: Int = 1,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
-) = androidx.compose.material3.Text(
-    tr(text), modifier, color, fontSize, fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign,
-    lineHeight, overflow, softWrap, maxLines, minLines, onTextLayout, style,
-)
+) {
+    // Strg+K reads the names of menu entries (AP-135 a): then the text is only noted, not drawn.
+    LocalTextCapture.current?.let { it.append(' ').append(tr(text)); return }
+    androidx.compose.material3.Text(
+        tr(text), modifier, color, fontSize, fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign,
+        lineHeight, overflow, softWrap, maxLines, minLines, onTextLayout, style,
+    )
+}
 
 @Composable
 fun Text(
@@ -67,7 +71,10 @@ fun Text(
     inlineContent: Map<String, InlineTextContent> = mapOf(),
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
-) = androidx.compose.material3.Text(
-    text, modifier, color, fontSize, fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign,
-    lineHeight, overflow, softWrap, maxLines, minLines, inlineContent, onTextLayout, style,
-)
+) {
+    LocalTextCapture.current?.let { it.append(' ').append(text.text); return }
+    androidx.compose.material3.Text(
+        text, modifier, color, fontSize, fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign,
+        lineHeight, overflow, softWrap, maxLines, minLines, inlineContent, onTextLayout, style,
+    )
+}

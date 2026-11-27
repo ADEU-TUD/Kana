@@ -124,12 +124,16 @@ class DocEditorBasicsTest {
         onAllNodesWithText("Übernehmen").onFirst().performClick()
         settle(8)
         assertEquals("en-GB", DocMarkup.language(md(id)), md(id))
-        // Strg+P: the document goes to the print dialog as PDF pages.
+        // Strg+P: the document goes to the print dialog as PDF pages – since AP-135 (d) after the preview with its
+        // pages (Strg+P in the window is the app's key, here the document's own one on a keyboard without the window).
         var pages = -1
         DocPrint.dialog = { _, p -> pages = p.numberOfPages; false }
         val field = onAllNodesWithContentDescription("Dokumenttext").onFirst()
         field.performClick()
         field.performKeyInput { withKeyDown(Key.CtrlLeft) { pressKey(Key.P) } }
+        repeat(160) { if (onAllNodesWithText("1 Seite").fetchSemanticsNodes().isEmpty()) { Thread.sleep(100); mainClock.advanceTimeBy(200) } }
+        settle(2)
+        onAllNodesWithText("Drucken …").onFirst().performClick()
         repeat(60) { if (pages < 0) { Thread.sleep(250); mainClock.advanceTimeBy(200) } }
         settle(4)
         assertEquals(1, pages, "eine Seite an den Drucker")

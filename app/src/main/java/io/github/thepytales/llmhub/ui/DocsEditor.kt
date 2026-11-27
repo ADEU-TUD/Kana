@@ -62,7 +62,6 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -108,6 +107,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.data.FileAttachment
 import io.github.thepytales.llmhub.docs.AiReview
 import io.github.thepytales.llmhub.docs.DocBlocks
@@ -217,7 +217,13 @@ private enum class DocPanel { NONE, AI, COMMENTS, OUTLINE }
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((String) -> Unit)? = null, inSidePanel: Boolean = false) {
+fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((String) -> Unit)? = null, inSidePanel: Boolean = false) =
+    // Strg+K finds the entries of its menus (AP-135 a); the name follows the kind (Dokument, Tabelle, Präsentation).
+    ToolCommandsArea(tr("Dokument"), ToolKeys.DOCUMENT) { DocPaneBody(c, id, onClose, onOpenChat, inSidePanel) }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((String) -> Unit)?, inSidePanel: Boolean) {
     val docs by c.docs.items.collectAsState()
     val drafts by DocsLive.drafts.collectAsState()
     val runs by c.runs.runs.collectAsState()
@@ -229,7 +235,10 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var tabId by rememberSaveable(doc?.id) { mutableStateOf(doc?.tabs?.firstOrNull()?.id) }
+    // Weiterarbeiten (AP-135 b): a table opens on the sheet where one stopped.
+    var tabId by rememberSaveable(doc?.id) {
+        mutableStateOf(RecentWork.peek(RecentWork.SHEET, doc?.id)?.split(':')?.getOrNull(3)?.takeIf { t -> doc?.tabs?.any { it.id == t } == true } ?: doc?.tabs?.firstOrNull()?.id)
+    }
     var mode by rememberSaveable(doc?.id) { mutableStateOf(TextMode.EDIT) }
     var panel by rememberSaveable { mutableStateOf(DocPanel.NONE) }
     var loraShown by rememberSaveable { mutableStateOf(false) }
@@ -237,6 +246,7 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     var commentOn by remember { mutableStateOf<String?>(null) }
     var renaming by remember { mutableStateOf(false) }
     var findOpen by remember { mutableStateOf(false) }
+    var printAsk by remember { mutableStateOf(false) }
     var find by remember { mutableStateOf("") }
     var replace by remember { mutableStateOf("") }
     var export by remember { mutableStateOf<Pair<String, String>?>(null) }
@@ -292,6 +302,20 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
     }
 
     val kind = doc?.docKind ?: DocKind.DOC
+    // Weiterarbeiten (AP-135 b): every document is noted when opened; its editor adds the place.
+    LaunchedEffect(doc?.id, doc?.title) {
+        val d = doc ?: return@LaunchedEffect
+        val k = when (kind) { DocKind.SHEET -> RecentWork.SHEET; DocKind.SLIDES -> RecentWork.SLIDES; else -> RecentWork.DOC }
+        RecentWork.touch(c, RecentWork.Entry(k, d.id, d.title))
+    }
+    androidx.compose.runtime.DisposableEffect(doc?.id) { onDispose { RecentWork.flush(c) } }
+    val commandsHere = LocalToolCommands.current
+    val areaName = tr(kind.label)
+    androidx.compose.runtime.SideEffect {
+        commandsHere?.area = areaName
+        // Strg+/ shows the keys of the kind first (AP-135 c).
+        commandsHere?.keys = when (kind) { DocKind.SHEET -> ToolKeys.SHEET; DocKind.SLIDES -> ToolKeys.SLIDES; DocKind.DOC -> ToolKeys.DOCUMENT; else -> emptyList() }
+    }
     val tab = doc?.tab(tabId)
     val markdown = when {
         writing && (doc == null || draft?.docId == null && doc.versions.size <= 1 && chatId != null) -> draft!!.markdown
@@ -498,25 +522,8 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
                     DocsHandoff.show(fresh.id)
                 }
             },
-            print = {
-                liveDoc?.let { d ->
-                    if (preparing == null) {
-                        preparing = tr("Wird für den Druck vorbereitet …")
-                        scope.launch {
-                            val r = runCatching {
-                                val pdf = DocumentWriter.create(
-                                    context, java.io.File(context.cacheDir, "print"), d.title, DocMarkup.resolveImages(exportMarkdown(d, null), docBase),
-                                    DocFormat.PDF, theme = c.documentTools.settingsTheme(DocStyle.parse(d.style)), overwrite = true,
-                                ).file
-                                io.github.thepytales.llmhub.docs.DocPrint.print(context, pdf, d.title)
-                            }
-                            preparing = null
-                            r.onFailure { Notices.error(tr("Drucken nicht möglich: {0}", it.message ?: it.javaClass.simpleName)) }
-                                .onSuccess { if (!it) Notices.info(tr("Nicht gedruckt.")) }
-                        }
-                    }
-                }
-            },
+            // Drucken mit Vorschau (AP-135 d): the same as Strg+P.
+            print = { if (liveDoc != null) printAsk = true },
             download = { format ->
                 liveDoc?.let { d ->
                     if (preparing == null) {
@@ -576,6 +583,19 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
         )
     }
     if (flowHost !== hostNow) flowHost = hostNow
+
+    // Strg+P überall (AP-135 d): what is printed – the document, the table with computed values, one slide per page.
+    liveDoc?.let { d ->
+        PrintableHere(d.title) { ctx ->
+            val content = if (d.docKind == DocKind.SLIDES) io.github.thepytales.llmhub.docs.SlideHandout.html(d.tab(tabId).markdown, d.title, perPage = 1, notes = false, base = docBase)
+            else DocMarkup.resolveImages(exportMarkdown(d, null), docBase)
+            DocumentWriter.create(
+                ctx, java.io.File(ctx.cacheDir, "print"), d.title, content, DocFormat.PDF,
+                theme = c.documentTools.settingsTheme(DocStyle.parse(d.style)), overwrite = true,
+            ).file
+        }
+    }
+    if (printAsk) LocalToolCommands.current?.printable?.let { p -> PrintPreviewDialog(p, onDismiss = { printAsk = false }) }
 
     BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         val narrow = maxWidth < 600.dp
@@ -648,7 +668,7 @@ fun DocPane(c: AppContainer, id: String, onClose: () -> Unit, onOpenChat: ((Stri
                     var more by remember { mutableStateOf(false) }
                     Box {
                         IconButton(onClick = { more = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
-                        DropdownMenu(expanded = more, onDismissRequest = { more = false }) {
+                        DropdownMenu(expanded = more, onDismissRequest = { more = false }, commands = tr("Mehr")) {
                             DropdownMenuItem(text = { Text(tr("Verlauf der Schritte …")) }, leadingIcon = { Icon(Icons.Outlined.History, null) }, onClick = {
                                 more = false
                                 historyOpen = true

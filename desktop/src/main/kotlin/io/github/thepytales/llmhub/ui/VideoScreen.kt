@@ -79,7 +79,6 @@ import androidx.compose.material.icons.outlined.Subtitles
 import androidx.compose.material.icons.outlined.Title
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
@@ -184,7 +183,13 @@ internal fun clock(sec: Double, tenths: Boolean = false): String {
  */
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
-fun VideoScreen(c: AppContainer, onBack: () -> Unit) {
+fun VideoScreen(c: AppContainer, onBack: () -> Unit) =
+    // Strg+K finds the entries of its menus (AP-135 a).
+    ToolCommandsArea(tr("Video"), VIDEO_SHORTCUT_GROUPS) { VideoScreenBody(c, onBack) }
+
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
+@Composable
+private fun VideoScreenBody(c: AppContainer, onBack: () -> Unit) {
     val prefs = remember { c.appContext.getSharedPreferences("ui_state", 0) }
     var setupSeen by remember { mutableStateOf(prefs.getBoolean("videoSetupSeen", false) || Extensions.installed(Extensions.VIDEO.id)) }
     var open by rememberSaveable { mutableStateOf<String?>(null) }
@@ -478,7 +483,14 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
     val srcPos by source.position.collectAsStateWithLifecycle()
     val srcPlaying by source.playing.collectAsStateWithLifecycle()
     LaunchedEffect(sourceProject) { sourceProject?.let { source.seek(it, sourceItem?.inSec ?: 0.0) } }
-    LaunchedEffect(id) { player.seek(p, 0.0) }
+    // Weiterarbeiten (AP-135 b): back at the time where one stopped (from the start page); the playhead is noted.
+    LaunchedEffect(id) { player.seek(p, io.github.thepytales.llmhub.data.RecentWork.seconds(io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.VIDEO, id))?.coerceIn(0.0, p.duration.coerceAtLeast(0.0)) ?: 0.0) }
+    LaunchedEffect(id, (pos * 2).toInt(), h.project.title) {
+        delay(1500)
+        val t = player.position.value
+        io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(io.github.thepytales.llmhub.data.RecentWork.VIDEO, id, h.project.title, "time:" + String.format(Locale.ROOT, "%.1f", t), clock(t)))
+    }
+    DisposableEffect(id) { onDispose { io.github.thepytales.llmhub.data.RecentWork.flush(c) } }
     // Kana's actions (AP-38 Stufe d) change this project through its history, so Strg+Z takes them back as well.
     DisposableEffect(id) {
         val host = io.github.thepytales.llmhub.video.VideoLora.Host(id, { h.project }, { f -> h.edit(record = true, f = f) }, { player.position.value })
@@ -867,7 +879,7 @@ private fun EditorHeader(
             Spot("video.layout") {
                 Box {
                     TipIconButton(Icons.Outlined.SpaceDashboard, tr("Anordnung"), { menu = true })
-                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false; onFocus() }) {
+                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false; onFocus() }, commands = tr("Anordnung")) {
                         DropdownMenuItem(text = { Text(tr("Vorschau groß") + " (Alt+F)") }, leadingIcon = { Icon(Icons.Outlined.OpenInFull, null) }, onClick = { menu = false; layout.bigPreview = !layout.bigPreview; onFocus() }, trailingIcon = { if (layout.bigPreview) Icon(Icons.Outlined.Check, null) })
                         DropdownMenuItem(text = { Text(tr("Vollbild") + " (Strg+F)") }, leadingIcon = { Icon(Icons.Outlined.Fullscreen, null) }, onClick = { menu = false; layout.full = true; onFocus() })
                         DropdownMenuItem(text = { Text(tr("Spuren höher")) }, leadingIcon = { Icon(Icons.Outlined.UnfoldMore, null) }, enabled = layout.trackScale < VideoLayout.MAX_TRACKS, onClick = { layout.tracksTaller(true) })
@@ -1128,7 +1140,7 @@ private fun TimelineBar(
             Spot("video.pip") {
                 Box {
                     BarButton(Icons.Outlined.Add, tr("Hinzufügen"), tr("Hinzufügen: Clip, Bild-in-Bild, Musik, Hervorhebung, Spuren"), { add = true }, words)
-                    DropdownMenu(expanded = add, onDismissRequest = { add = false; onFocus() }) {
+                    DropdownMenu(expanded = add, onDismissRequest = { add = false; onFocus() }, commands = tr("Hinzufügen")) {
                         DropdownMenuItem(text = { Text(tr("Clip hinzufügen …")) }, leadingIcon = { Icon(Icons.Outlined.Movie, null) }, onClick = { add = false; a.addClips() })
                         DropdownMenuItem(text = { Text(tr("Bild-in-Bild …")) }, leadingIcon = { Icon(Icons.Outlined.PictureInPicture, null) }, onClick = { add = false; a.addPicture() })
                         DropdownMenuItem(text = { Text(tr("Musik / Ton …")) }, leadingIcon = { Icon(Icons.Outlined.MusicNote, null) }, onClick = { add = false; a.addAudio() })
@@ -1142,7 +1154,7 @@ private fun TimelineBar(
             }
             Box {
                 Spot("video.titles") { BarButton(Icons.Outlined.Title, tr("Titel"), tr("Titel & Bauchbinde"), { titles = true }, words) }
-                DropdownMenu(expanded = titles, onDismissRequest = { titles = false; onFocus() }) {
+                DropdownMenu(expanded = titles, onDismissRequest = { titles = false; onFocus() }, commands = tr("Titel")) {
                     TextOverlay.STYLES.forEach { (style, label) ->
                         DropdownMenuItem(text = { Text(tr(label)) }, onClick = { titles = false; a.addTitle(style) })
                     }
@@ -1150,7 +1162,7 @@ private fun TimelineBar(
             }
             Box {
                 Spot("video.subtitles") { BarButton(Icons.Outlined.Subtitles, tr("Untertitel"), tr("Untertitel"), { subs = true }, words) }
-                DropdownMenu(expanded = subs, onDismissRequest = { subs = false; onFocus() }) {
+                DropdownMenu(expanded = subs, onDismissRequest = { subs = false; onFocus() }, commands = tr("Untertitel")) {
                     DropdownMenuItem(text = { Text(tr("Aus der Transkription …")) }, onClick = { subs = false; a.pickTranscript = "subs" })
                     DropdownMenuItem(text = { Text(tr("SRT/VTT importieren …")) }, onClick = { subs = false; a.importSubs() })
                     if (p.subtitles.isNotEmpty()) DropdownMenuItem(text = { Text(tr("Alle Untertitel entfernen")) }, onClick = { subs = false; h.edit { it.copy(subtitles = emptyList()) } })
@@ -1158,7 +1170,7 @@ private fun TimelineBar(
             }
             Box {
                 Spot("video.roughcut") { BarButton(Icons.Outlined.AutoAwesome, tr("Rohschnitt"), tr("Rohschnitt: Pausen und Füllwörter, mit Kana kürzen, Kurzclip, Interview nach Sprecher"), { cut = true }, words) }
-                DropdownMenu(expanded = cut, onDismissRequest = { cut = false; onFocus() }) {
+                DropdownMenu(expanded = cut, onDismissRequest = { cut = false; onFocus() }, commands = tr("Rohschnitt")) {
                     DropdownMenuItem(text = { Text(tr("Pausen und Füllwörter herausschneiden …")) }, onClick = { cut = false; a.pickTranscript = "cut" })
                     DropdownMenuItem(text = { Text(tr("Mit Kana kürzen …")) }, onClick = { cut = false; a.loraCut = true })
                     DropdownMenuItem(text = { Text(tr("Kurzclip aus Höhepunkten …")) }, onClick = { cut = false; a.highlights = true })

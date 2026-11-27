@@ -59,7 +59,6 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -168,7 +167,13 @@ fun transcriptKey(e: KeyEvent, control: PlaybackControl, playing: () -> Boolean,
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TranscriptScreen(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat: () -> Unit) {
+fun TranscriptScreen(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat: () -> Unit) =
+    // Strg+K finds the entries of its menus (AP-135 a).
+    ToolCommandsArea(tr("Transkript"), ToolKeys.TRANSCRIPT) { TranscriptScreenBody(c, id, onBack, onOpenChat) }
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat: () -> Unit) {
     val t = c.transcription
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -177,6 +182,16 @@ fun TranscriptScreen(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat
     val vm: TranscriptViewModel = viewModel(key = "transcript-$id") { TranscriptViewModel(c, id) }
     val tr by vm.transcript.collectAsStateWithLifecycle()
     val loaded by vm.loaded.collectAsStateWithLifecycle()
+    // Strg+P überall (AP-135 d): the transcript as *Exportieren › PDF* makes it.
+    tr?.let { cur ->
+        PrintableHere(cur.title) { ctx ->
+            io.github.thepytales.llmhub.docs.DocumentWriter.create(
+                ctx, java.io.File(ctx.cacheDir, "print"), cur.title,
+                io.github.thepytales.llmhub.transcribe.TranscriptExport.content(cur, io.github.thepytales.llmhub.transcribe.TranscriptFormat.PDF, io.github.thepytales.llmhub.transcribe.ExportOptions()),
+                io.github.thepytales.llmhub.docs.DocFormat.PDF, overwrite = true,
+            ).file
+        }
+    }
     val undo by vm.undo.collectAsStateWithLifecycle()
 
     val current = tr
@@ -203,6 +218,22 @@ fun TranscriptScreen(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat
     val playerError by (player?.error ?: remember { MutableStateFlow<String?>(null) }).collectAsStateWithLifecycle()
     val control = remember(player) { PlaybackControl(player, { player?.position?.value ?: 0.0 }, { t.settings.value }) }
     LaunchedEffect(player, vs.speed) { player?.setSpeed(vs.speed) }
+    // Weiterarbeiten (AP-135 b): back at the time where one stopped listening (from the start page); the time is noted.
+    LaunchedEffect(player) {
+        val p = player ?: return@LaunchedEffect
+        io.github.thepytales.llmhub.data.RecentWork.seconds(io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.TRANSCRIPT, current.id))?.let { p.seek(it) }
+    }
+    LaunchedEffect(current.id, (position / 2).toInt(), current.title) {
+        kotlinx.coroutines.delay(1500)
+        val sec = player?.position?.value ?: 0.0
+        val m = (sec / 60).toInt()
+        io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(
+            io.github.thepytales.llmhub.data.RecentWork.TRANSCRIPT, current.id, current.title,
+            if (player != null) "time:" + String.format(java.util.Locale.ROOT, "%.1f", sec) else "",
+            if (player != null && sec > 0.5) String.format(java.util.Locale.ROOT, "%d:%02d", m, (sec - m * 60).toInt()) else "",
+        ))
+    }
+    DisposableEffect(current.id) { onDispose { io.github.thepytales.llmhub.data.RecentWork.flush(c) } }
 
     var menu by rememberSaveable(id) { mutableStateOf(false) }
     var rename by rememberSaveable(id) { mutableStateOf(false) }
@@ -324,7 +355,7 @@ fun TranscriptScreen(c: AppContainer, id: String, onBack: () -> Unit, onOpenChat
                         }) { Icon(Icons.AutoMirrored.Outlined.Chat, contentDescription = tr("Im Chat verwenden")) }
                         Box {
                             IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
-                            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, commands = tr("Mehr")) {
                                 DropdownMenuItem(text = { Text(tr("Ansicht & Zeitstempel …")) }, leadingIcon = { Icon(Icons.Outlined.Tune, null) }, onClick = { menu = false; viewSheet = true })
                                 DropdownMenuItem(text = { Text(tr("Sprecher …")) }, leadingIcon = { Icon(Icons.Outlined.People, null) }, onClick = { menu = false; speakersSheet = true })
                                 DropdownMenuItem(text = { Text(tr("Segmentierung …")) }, leadingIcon = { Icon(Icons.Outlined.ContentCut, null) }, onClick = { menu = false; segmentSheet = true })

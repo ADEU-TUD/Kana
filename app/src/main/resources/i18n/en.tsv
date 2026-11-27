@@ -7909,3 +7909,89 @@ z. B. „Hier klicken“	e.g. “Click here”
 {0} – Kurzclip	{0} – short clip
 „{0}“ hat keinen Ton – so lässt sich die Kamera nicht synchronisieren.	“{0}” has no sound – so the camera cannot be synchronised.
 „{0}“ passt nicht zur Hauptkamera – ist es dasselbe Gespräch?	“{0}” does not match the main camera – is it the same conversation?
+# Schneller finden und arbeiten (AP-135): Befehle in Strg+K, Weiterarbeiten, Tasten je Werkzeug, Strg+P überall
+Leiste	Toolbar
+Weiterarbeiten	Continue working
+„{0}“ gibt es nicht mehr.	“{0}” no longer exists.
+Videos gibt es nur am PC.	Videos are only available on the PC.
+bei „{0}“	at “{0}”
+Zelle {0}	Cell {0}
+Zeilen & Spalten	Rows & columns
+Strg+F · Strg+H	Ctrl+F · Ctrl+H
+Suchen · Suchen und ersetzen	Find · Find and replace
+Strg+B · Strg+I · Strg+U	Ctrl+B · Ctrl+I · Ctrl+U
+Fett · Kursiv · Unterstrichen	Bold · Italic · Underline
+Strg+Alt+1 … 3 · Strg+Alt+0	Ctrl+Alt+1 … 3 · Ctrl+Alt+0
+Überschrift 1 bis 3 · Standard	Heading 1 to 3 · Normal
+Zentriert, rechtsbündig, Blocksatz	Centred, right-aligned, justified
+Strg+\\	Ctrl+\\
+Strg+E	Ctrl+E
+Kana neben dem Dokument	Kana beside the document
+Strg+Umschalt+F	Ctrl+Shift+F
+Menüs ein- und ausblenden	Show and hide the menus
+Bausteine, Tabelle, Datum … einfügen	Insert building blocks, table, date …
+In der Tabelle (wie in Excel)	In the table (like in Excel)
+Enter · Umschalt+Enter	Enter · Shift+Enter
+Zelle darunter · darüber	Cell below · above
+Tab · Umschalt+Tab	Tab · Shift+Tab
+Zelle rechts · links	Cell to the right · left
+↑ ↓ (mit Umschalt: markieren)	↑ ↓ (with Shift: select)
+Zelle darüber, darunter	Cell above, below
+Umschalt+← / →	Shift+← / →
+Bereich nach links, rechts erweitern	Extend the range to the left, right
+Eingabe verwerfen	Discard the entry
+Strg+C · Strg+V	Ctrl+C · Ctrl+V
+Bereich kopieren und einfügen (auch aus Excel)	Copy and paste a range (also from Excel)
+Vorschlag für die Formel übernehmen	Accept the formula suggestion
+Formel beginnen, z. B. =SUMME(B2:B9)	Start a formula, e.g. =SUM(B2:B9)
+In der Präsentation (wie in PowerPoint)	In the presentation (like in PowerPoint)
+Präsentieren von vorn (Umschalt+F5: ab dieser Folie)	Present from the start (Shift+F5: from this slide)
+Neue Folie	New slide
+Folie bzw. Gewähltes duplizieren	Duplicate the slide or the selection
+Strg+Umschalt+↑ / ↓	Ctrl+Shift+↑ / ↓
+Folie nach vorn, nach hinten	Move the slide forward, back
+Strg+G · Strg+Umschalt+G	Ctrl+G · Ctrl+Shift+G
+Gruppieren · Gruppierung aufheben	Group · Ungroup
+Strg+C · Strg+X	Ctrl+C · Ctrl+X
+Kopieren · Ausschneiden	Copy · Cut
+Strg+Umschalt+C / V	Ctrl+Shift+C / V
+Format übertragen und einfügen	Copy and paste the formatting
+Pfeiltasten	Arrow keys
+Gewähltes verschieben	Move the selection
+Gewähltes löschen	Delete the selection
+Aufzählung einrücken, ausrücken	Indent, outdent a bullet
+Beim Präsentieren	While presenting
+→ · Leertaste · Bild ab	→ · Space · Page Down
+← · Bild auf · Rück	← · Page Up · Backspace
+Zahl + Enter	Number + Enter
+Zu dieser Folie	To this slide
+Erste · letzte Folie	First · last slide
+B · W	B · W
+Schwarzes · weißes Bild	Black · white screen
+D · E · L	D · E · L
+Stift · Tinte löschen · Laserpointer	Pen · erase ink · laser pointer
+Beim Gestalten (wie in Canva)	While designing (like in Canva)
+Strg+C · Strg+X · Strg+V	Ctrl+C · Ctrl+X · Ctrl+V
+Kopieren · Ausschneiden · Einfügen	Copy · Cut · Paste
+Im Transkript	In the transcript
+F4 · Strg+Leertaste	F4 · Ctrl+Space
+Abspielen / anhalten	Play / pause
+F3 · F5	F3 · F5
+Zurück · vor (Sekunden wie in den Einstellungen)	Back · forward (seconds as in the settings)
+Abschnitt in Schleife	Loop the section
+Strg+F	Ctrl+F
+Im PDF-Werkzeugkasten	In the PDF toolbox
+Drucken (mit Druck-Lotse)	Print (with the print guide)
+Werkzeug suchen: „drehen“, „schwärzen“, „zusammenfügen“ …	Find a tool: “rotate”, “redact”, “merge” …
+Hier gibt es nichts zu drucken.	There is nothing to print here.
+Strg+P druckt in Dokument, Tabelle, Folien, Gestalten, PDF und Transkript.	Ctrl+P prints in documents, tables, slides, designs, PDFs and transcripts.
+Drucken: „{0}“	Print: “{0}”
+1 Seite	1 page
+Broschüre, mehrere Seiten pro Blatt, Handzettel oder Druckerei: über den Druck-Lotsen. Er prüft auch vorher, ob Schriften fehlen oder Bilder zu grob sind.	Booklet, several pages per sheet, handout or print shop: through the print guide. It also checks beforehand whether fonts are missing or pictures are too coarse.
+„{0}“ geht gerade nicht – im Menü ist es ausgegraut.	“{0}” is not possible right now – it is greyed out in the menu.
+Befehl in {0}, Bereich, Einstellung – oder sag, was du tun willst …	Command in {0}, area, setting – or say what you want to do …
+Tastenkürzel: {0}	Keyboard shortcuts: {0}
+Überall in der App	Everywhere in the app
+In einem Werkzeug (Dokument, Tabelle, Folien, Gestalten, Video, PDF, Transkript) zeigt Strg+/ zuerst dessen Tasten.	In a tool (document, table, slides, design, video, PDF, transcript) Ctrl+/ shows its keys first.
+Befehlspalette: Befehle des Werkzeugs, Bereiche, Einstellungen, Chats	Command palette: commands of the tool, areas, settings, chats
+Drucken mit Vorschau (Dokument, Tabelle, Folien, Gestalten, PDF, Transkript)	Print with preview (document, table, slides, design, PDF, transcript)

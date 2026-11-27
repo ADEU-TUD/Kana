@@ -165,6 +165,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
 
     var palette by remember { mutableStateOf(false) }
     var shortcuts by remember { mutableStateOf(false) }
+    var printing by remember { mutableStateOf<Printable?>(null) }
     val route by openRoute.collectAsStateWithLifecycle()
     LaunchedEffect(route) {
         route?.let { r ->
@@ -173,6 +174,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
                 "palette" -> palette = true
                 "lora" -> LoraHelper.toggle()
                 "shortcuts" -> shortcuts = true
+                "print" -> printing = PrintRequest.printableOrHint()
                 "chat" -> nav.openChat(chatRoute())
                 // Escape: close the menu, otherwise go back.
                 "back" -> if (drawer.isOpen) closeDrawer() else nav.popBackStack()
@@ -194,6 +196,18 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         designRequest?.let { id ->
             if (nav.current.route != "design/$id") nav.navigate("design/$id")
             DesignHandoff.request.value = null
+        }
+    }
+
+    // Weiterarbeiten (AP-135 b): a file from the start page or Erstellen opens where one stopped.
+    val workRequest by io.github.thepytales.llmhub.data.RecentWork.openRequest.collectAsStateWithLifecycle()
+    LaunchedEffect(workRequest) {
+        workRequest?.let { e ->
+            io.github.thepytales.llmhub.data.RecentWork.openRequest.value = null
+            openWork(c, e, navigate = { r -> nav.navigate(r) }, openVideo = { id ->
+                io.github.thepytales.llmhub.video.VideoLora.openRequest.value = id
+                if (nav.current.base != "video") nav.navigate("video")
+            })
         }
     }
 
@@ -273,6 +287,7 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         )
     }
     if (shortcuts) ShortcutsDialog(onDismiss = { shortcuts = false })
+    printing?.let { p -> PrintPreviewDialog(p, onDismiss = { printing = null }) }
     // Kana (AP-07, AP-34): answers wishes, leads to places, and the two questions of the first start. She knows where
     // the user is, so her suggestions fit the screen.
     LoraHelperHost(c) { r -> if (r == "chat" || r.startsWith("chat?")) nav.openChat(r) else nav.navigate(r) }

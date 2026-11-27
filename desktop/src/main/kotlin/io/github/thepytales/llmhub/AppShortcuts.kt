@@ -18,7 +18,7 @@ import io.github.thepytales.llmhub.ui.isCmd
  * gewinnt der Text, everywhere else the app keeps its keys.
  */
 internal object AppShortcuts {
-    /** Before the focused element: Strg+N, Strg+, Strg+K, Strg+/, Strg+L, Strg+Umschalt+L, Strg+T. */
+    /** Before the focused element: Strg+N, Strg+, Strg+K, Strg+/, Strg+L, Strg+Umschalt+L, Strg+T, Strg+P. */
     fun early(e: KeyEvent): String? = if (e.type != KeyEventType.KeyDown || !e.isCmd) null else when (e.key) {
         Key.N -> "chat"
         // Strg+Umschalt+, is Schrift kleiner in the document (AP-125 c, like Google Docs).
@@ -27,6 +27,8 @@ internal object AppShortcuts {
         Key.Slash, Key.NumPadDivide -> "shortcuts"
         Key.L -> if (e.isShiftPressed) "literature" else "lora"
         Key.T -> "transcripts"
+        // Strg+P überall (AP-135 d): the open editor prints with a preview, the Druck-Lotse behind it.
+        Key.P -> if (e.isShiftPressed || e.isAltPressed) null else "print"
         else -> null
     }
 

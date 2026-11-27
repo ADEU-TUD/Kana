@@ -52,7 +52,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -100,6 +99,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.docs.CellCheck
 import io.github.thepytales.llmhub.docs.CellRich
 import io.github.thepytales.llmhub.docs.CellStyle
@@ -206,6 +206,18 @@ fun SheetBody(
     var condDialog by remember { mutableStateOf(false) }
     var shiftDown by remember { mutableStateOf(false) }
     val hScroll = rememberScrollState()
+    val gridList = androidx.compose.foundation.lazy.rememberLazyListState()
+    // Weiterarbeiten (AP-135 b): back at the cell where one stopped (from the start page), and the cell is noted.
+    LaunchedEffect(doc.id, tabId) {
+        RecentWork.cell(RecentWork.take(RecentWork.SHEET, doc.id))?.let { (r, col) ->
+            sel = r.coerceIn(0, rows.lastIndex) to col.coerceIn(0, cols - 1)
+            runCatching { gridList.scrollToItem((r - meta.topRows).coerceAtLeast(0)) }
+        }
+    }
+    LaunchedEffect(doc.id, tabId, sr, sc) {
+        kotlinx.coroutines.delay(700)
+        RecentWork.touch(c, RecentWork.Entry(RecentWork.SHEET, doc.id, doc.title, "cell:$sr:$sc:${tabId.orEmpty()}", tr("Zelle {0}", SheetEngine.ref(sr, sc))))
+    }
 
     fun write(next: List<List<String>>, nextMeta: SheetMeta = meta) {
         rows = next
@@ -420,7 +432,7 @@ fun SheetBody(
             var rowsMenu by remember { mutableStateOf(false) }
             Box {
                 ToolLabel(tr("Zeilen & Spalten ▾")) { rowsMenu = true }
-                DropdownMenu(expanded = rowsMenu, onDismissRequest = { rowsMenu = false }) {
+                DropdownMenu(expanded = rowsMenu, onDismissRequest = { rowsMenu = false }, commands = tr("Zeilen & Spalten")) {
                     fun insertRow(at: Int) {
                         rowsMenu = false
                         write(rows.toMutableList().apply { add(at, List(cols) { "" }) }, meta.remapRows((0 until at).toList() + listOf(null) + (at until rows.size)))
@@ -610,7 +622,7 @@ fun SheetBody(
             var nfMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.Numbers, tr("Zahlenformat"), active = style.nf != null) { nfMenu = true }
-                DropdownMenu(expanded = nfMenu, onDismissRequest = { nfMenu = false }) {
+                DropdownMenu(expanded = nfMenu, onDismissRequest = { nfMenu = false }, commands = tr("Zahlenformat")) {
                     SheetMeta.NUMBER_FORMATS.forEach { (nf, label) ->
                         DropdownMenuItem(text = { Text((if (style.nf == nf) "✓ " else "") + label) }, onClick = { nfMenu = false; restyle { it.copy(nf = nf) } })
                     }
@@ -622,7 +634,7 @@ fun SheetBody(
                     when (style.align) { "c" -> Icons.Outlined.FormatAlignCenter; "r" -> Icons.Outlined.FormatAlignRight; else -> Icons.Outlined.FormatAlignLeft },
                     tr("Ausrichtung"), active = style.align != null,
                 ) { alignMenu = true }
-                DropdownMenu(expanded = alignMenu, onDismissRequest = { alignMenu = false }) {
+                DropdownMenu(expanded = alignMenu, onDismissRequest = { alignMenu = false }, commands = tr("Ausrichtung")) {
                     listOf(null to tr("Standard"), "l" to tr("Links"), "c" to tr("Mitte"), "r" to tr("Rechts")).forEach { (a, label) ->
                         DropdownMenuItem(text = { Text((if (style.align == a) "✓ " else "") + label) }, onClick = { alignMenu = false; restyle { it.copy(align = a) } })
                     }
@@ -633,7 +645,7 @@ fun SheetBody(
             var sortMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.AutoMirrored.Outlined.Sort, tr("Sortieren")) { sortMenu = true }
-                DropdownMenu(expanded = sortMenu, onDismissRequest = { sortMenu = false }) {
+                DropdownMenu(expanded = sortMenu, onDismissRequest = { sortMenu = false }, commands = tr("Sortieren")) {
                     DropdownMenuItem(text = { Text(tr("Nach Spalte {0} aufsteigend", SheetEngine.colName(sc))) }, onClick = { sortMenu = false; sort(sc, false) })
                     DropdownMenuItem(text = { Text(tr("Nach Spalte {0} absteigend", SheetEngine.colName(sc))) }, onClick = { sortMenu = false; sort(sc, true) })
                 }
@@ -641,7 +653,7 @@ fun SheetBody(
             var filterMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.FilterList, tr("Filtern"), active = filterOpen || filter.isNotBlank() || colFilters.isNotEmpty()) { filterMenu = true }
-                DropdownMenu(expanded = filterMenu, onDismissRequest = { filterMenu = false }) {
+                DropdownMenu(expanded = filterMenu, onDismissRequest = { filterMenu = false }, commands = tr("Filtern")) {
                     DropdownMenuItem(text = { Text(tr("Spalte {0} filtern …", SheetEngine.colName(sc))) }, onClick = { filterMenu = false; filterDialog = sc })
                     DropdownMenuItem(text = { Text(if (filterOpen) tr("Suchfilter schließen") else tr("Zeilen nach Text durchsuchen …")) }, onClick = {
                         filterMenu = false
@@ -659,7 +671,7 @@ fun SheetBody(
             var fx by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.Functions, tr("Funktion einfügen")) { fx = true }
-                DropdownMenu(expanded = fx, onDismissRequest = { fx = false }) {
+                DropdownMenu(expanded = fx, onDismissRequest = { fx = false }, commands = tr("Funktion einfügen")) {
                     DropdownMenuItem(text = { Text(tr("Σ Summe der Spalte darunter einfügen")) }, onClick = {
                         fx = false
                         val last = rows.indexOfLast { r -> r.getOrNull(sc)?.isNotBlank() == true }.coerceAtLeast(1)
@@ -681,7 +693,7 @@ fun SheetBody(
             var chartMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.BarChart, tr("Diagramm aus Auswahl")) { chartMenu = true }
-                DropdownMenu(expanded = chartMenu, onDismissRequest = { chartMenu = false }) {
+                DropdownMenu(expanded = chartMenu, onDismissRequest = { chartMenu = false }, commands = tr("Diagramm aus Auswahl")) {
                     if (!isRange) Text(
                         tr("Zuerst einen Bereich markieren (lange tippen oder Umschalt + Klick), z. B. Namen und Werte."),
                         style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp).width(260.dp),
@@ -702,7 +714,7 @@ fun SheetBody(
             var ask by remember { mutableStateOf<SheetAi?>(null) }
             Box {
                 ToolIcon(Icons.Outlined.AutoAwesome, tr("KI")) { ai = true }
-                DropdownMenu(expanded = ai, onDismissRequest = { ai = false }) {
+                DropdownMenu(expanded = ai, onDismissRequest = { ai = false }, commands = tr("KI")) {
                     DropdownMenuItem(text = { Text(tr("Formel für {0} beschreiben …", SheetEngine.ref(sr, sc))) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(16.dp)) }, onClick = { ai = false; ask = SheetAi.FORMULA })
                     DropdownMenuItem(text = { Text(tr("Spalte {0} mit KI ausfüllen …", SheetEngine.colName(sc))) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(16.dp)) }, onClick = { ai = false; ask = SheetAi.FILL })
                     DropdownMenuItem(text = { Text(tr("Formel in {0} erklären", SheetEngine.ref(sr, sc))) }, enabled = bar.text.startsWith("="), onClick = {
@@ -1107,7 +1119,7 @@ fun SheetBody(
             },
         ) {
             val frozen = meta.topRows.coerceIn(0, rows.size)
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxSize(), state = gridList) {
                 // Column letters and the frozen rows stay at the top while scrolling (like „Fenster fixieren“ in Excel).
                 stickyHeader(key = "head") {
                     Column {

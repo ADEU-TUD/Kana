@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -116,6 +119,18 @@ fun filterCommands(commands: List<Command>, query: String): List<Command> {
 fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (String) -> Unit, onDismiss: () -> Unit) {
     var query by remember { mutableStateOf("") }
     val conversations by c.chats.conversations.collectAsStateWithLifecycle()
+    // Befehle des Werkzeugs (AP-135 a): while the palette is open, the menus of the open editor report their entries.
+    DisposableEffect(Unit) {
+        EditorCommands.recording = true
+        onDispose { EditorCommands.recording = false }
+    }
+    val tool = EditorCommands.current
+    val toolHits = if (tool == null || query.isBlank()) emptyList() else EditorCommands.search(tool, query)
+    fun runTool(cmd: MenuCommand) {
+        if (!cmd.enabled) { Notices.info(tr("„{0}“ geht gerade nicht – im Menü ist es ausgegraut.", cmd.title.removePrefix("✓ "))); return }
+        onDismiss()
+        cmd.run()
+    }
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { runCatching { focus.requestFocus() } }
     val commands = remember(query) { filterCommands(APP_COMMANDS, query).take(12) }
@@ -155,6 +170,8 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
         // A wish fetched with Pfeil hoch goes to Kana again („Nochmal“), a pinned command by its name too.
         if (historyAt >= 0) { LoraHelper.open(query.trim()); onDismiss(); return }
         pinned.firstOrNull()?.takeIf { query.isNotBlank() && commands.none { tr(it.title).equals(query.trim(), true) } }?.let { LoraHelper.open(it.text); onDismiss(); return }
+        // A menu entry of the open editor that fits comes first (the editor is what one works in).
+        toolHits.firstOrNull()?.takeIf { it.enabled && commands.none { c -> tr(c.title).equals(query.trim(), true) } }?.let { runTool(it); return }
         commands.firstOrNull()?.let { go(it.route); onDismiss() }
             ?: command?.let { LoraHelper.open(query.trim()); onDismiss() }
             ?: chats.firstOrNull()?.let { onOpenChat(it.id); onDismiss() }
@@ -166,11 +183,11 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                     value = query,
                     onValueChange = { query = it; historyAt = -1 },
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                    placeholder = { Text(tr("Bereich, Einstellung, Chat – oder sag, was du tun willst …")) },
+                    placeholder = { Text(if (tool != null) tr("Befehl in {0}, Bereich, Einstellung – oder sag, was du tun willst …", tool.area) else tr("Bereich, Einstellung, Chat – oder sag, was du tun willst …")) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
                     keyboardActions = KeyboardActions(onGo = { first() }),
-                    modifier = Modifier.fillMaxWidth().focusRequester(focus).onPreviewKeyEvent { e ->
+                    modifier = Modifier.fillMaxWidth().focusRequester(focus).testTag("palette.query").onPreviewKeyEvent { e ->
                         when {
                             e.type == KeyEventType.KeyDown && e.key == Key.DirectionUp -> browse(up = true)
                             e.type == KeyEventType.KeyDown && e.key == Key.DirectionDown -> browse(up = false)
@@ -186,6 +203,14 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                     )
                 }
                 LazyColumn(Modifier.heightIn(max = 420.dp).padding(top = 6.dp)) {
+                    if (toolHits.isNotEmpty()) {
+                        item(key = "g_tool") { PaletteHeading(tool!!.area) }
+                        toolHits.forEach { cmd ->
+                            item(key = "tool_" + cmd.path + "|" + cmd.title) {
+                                PaletteRow(cmd.title, listOf(cmd.path, cmd.keys).filter { it.isNotBlank() }.joinToString(" · "), enabled = cmd.enabled) { runTool(cmd) }
+                            }
+                        }
+                    }
                     command?.let { line ->
                         item(key = "command") { PaletteRow("⚡ $line", tr("Befehl")) { LoraHelper.open(query.trim()); onDismiss() } }
                     }
@@ -229,7 +254,7 @@ fun CommandPalette(c: AppContainer, onNavigate: (String) -> Unit, onOpenChat: (S
                             PaletteRow(conv.title, null, chat = true) { onOpenChat(conv.id); onDismiss() }
                         }
                     }
-                    if (commands.isEmpty() && chats.isEmpty()) item { Text(tr("Nichts gefunden."), Modifier.padding(12.dp), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    if (commands.isEmpty() && chats.isEmpty() && toolHits.isEmpty()) item { Text(tr("Nichts gefunden."), Modifier.padding(12.dp), color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 }
             }
         }
@@ -242,7 +267,8 @@ private fun PaletteHeading(text: String) {
 }
 
 @Composable
-private fun PaletteRow(title: String, hint: String?, chat: Boolean = false, onClick: () -> Unit) {
+private fun PaletteRow(title: String, hint: String?, chat: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
+    val alpha = if (enabled) 1f else 0.45f
     Row(
         Modifier.fillMaxWidth().heightIn(min = 44.dp).clickable(onClick = onClick).padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -251,16 +277,20 @@ private fun PaletteRow(title: String, hint: String?, chat: Boolean = false, onCl
             Icon(Icons.Outlined.ChatBubbleOutline, contentDescription = null, modifier = Modifier.size(16.dp))
             Spacer(Modifier.size(10.dp))
         }
-        Text(if (chat) title else tr(title), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        hint?.let { Text(tr(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        Text(if (chat) title else tr(title), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f).alpha(alpha))
+        hint?.let { Text(tr(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.alpha(alpha), maxLines = 1) }
     }
 }
 
-/** Strg+/: the keyboard shortcuts of the Windows version. */
+/**
+ * Strg+/: the keyboard shortcuts of the Windows version – those of the open editor first (AP-135 c: im Video die
+ * Video-Tasten, in Tabellen die Excel-Tasten …), the app's below.
+ */
 @Composable
-fun ShortcutsDialog(onDismiss: () -> Unit) {
+fun ShortcutsDialog(onDismiss: () -> Unit, tool: ToolCommands? = EditorCommands.current) {
     val shortcuts = listOf(
-        tr("Strg+K") to tr("Befehlspalette: Bereiche, Einstellungen, Chats"),
+        tr("Strg+K") to tr("Befehlspalette: Befehle des Werkzeugs, Bereiche, Einstellungen, Chats"),
+        tr("Strg+P") to tr("Drucken mit Vorschau (Dokument, Tabelle, Folien, Gestalten, PDF, Transkript)"),
         tr("Strg+N") to tr("Neuer Chat"),
         tr("Strg+B") to tr("Seitenleiste ein/aus (im Text: fett)"),
         tr("Strg+L") to tr("Kana öffnen und schließen"),
@@ -269,31 +299,18 @@ fun ShortcutsDialog(onDismiss: () -> Unit) {
         tr("Strg+T") to tr("Transkription"),
         tr("Strg+,") to tr("Einstellungen"),
         tr("Strg+/") to tr("Diese Übersicht"),
-        tr("Strg+Umschalt+E · Strg+R · Strg+Umschalt+J") to tr("Im Dokument: zentriert, rechtsbündig, Blocksatz"),
         tr("Strg++ / Strg+−") to tr("Zoom (Strg+0: 100 %, auch Strg+Mausrad)"),
         tr("Enter") to tr("Senden (Umschalt+Enter: neue Zeile)"),
         "/" to tr("Befehle im Eingabefeld"),
         "@" to tr("Dateien, Literatur und Dokumente erwähnen"),
         tr("Esc") to tr("Menü schließen bzw. zurück"),
     )
-    // Tasten im Dokument wie in Word (AP-125 c).
-    val document = listOf(
-        tr("Strg+P") to tr("Drucken"),
-        tr("Strg+← / →, Strg+↑ / ↓") to tr("Wort- bzw. absatzweise (mit Umschalt: markieren)"),
-        tr("Strg+Pos1 / Strg+Ende") to tr("Anfang bzw. Ende des Dokuments"),
-        tr("Strg+Rück / Strg+Entf") to tr("Wort löschen"),
-        tr("Alt+Umschalt+↑ / ↓") to tr("Absatz verschieben"),
-        tr("Umschalt+F3") to tr("Groß-/Kleinschreibung"),
-        tr("Strg+Umschalt+> / <") to tr("Schrift größer / kleiner"),
-        tr("Strg+Umschalt+C · Strg+Alt+V") to tr("Format kopieren und einfügen"),
-        tr("Strg+Enter") to tr("Seitenumbruch"),
-        "F7" to tr("Rechtschreibung prüfen"),
-        tr("Strg+Klick") to tr("Satz markieren bzw. Link öffnen"),
-    )
+    // Tasten des offenen Werkzeugs zuerst (AP-135 c).
+    val toolKeys = tool?.keys.orEmpty()
     Dialog(onDismissRequest = onDismiss) {
         Surface(shape = RoundedCornerShape(20.dp), tonalElevation = 6.dp, modifier = Modifier.widthIn(max = 620.dp)) {
             Column(Modifier.verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(tr("Tastenkürzel"), style = MaterialTheme.typography.titleLarge)
+                Text(if (toolKeys.isNotEmpty()) tr("Tastenkürzel: {0}", tool!!.area) else tr("Tastenkürzel"), style = MaterialTheme.typography.titleLarge)
                 HorizontalDivider(Modifier.padding(vertical = 6.dp))
                 @Composable
                 fun row(key: String, what: String) = Row(verticalAlignment = Alignment.CenterVertically) {
@@ -306,9 +323,16 @@ fun ShortcutsDialog(onDismiss: () -> Unit) {
                     Spacer(Modifier.size(12.dp))
                     Text(what, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                 }
+                toolKeys.forEachIndexed { i, (group, keys) ->
+                    Text(tr(group), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = if (i == 0) 0.dp else 10.dp))
+                    keys.forEach { (key, what) -> row(tr(key), tr(what)) }
+                }
+                if (toolKeys.isNotEmpty()) Text(tr("Überall in der App"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 10.dp))
                 shortcuts.forEach { (key, what) -> row(key, what) }
-                Text(tr("Im Dokument (wie in Word)"), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 10.dp))
-                document.forEach { (key, what) -> row(key, what) }
+                if (toolKeys.isEmpty()) Text(
+                    tr("In einem Werkzeug (Dokument, Tabelle, Folien, Gestalten, Video, PDF, Transkript) zeigt Strg+/ zuerst dessen Tasten."),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 10.dp),
+                )
                 TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(tr("Schließen")) }
             }
         }

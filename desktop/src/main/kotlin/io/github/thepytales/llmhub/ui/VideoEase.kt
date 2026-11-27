@@ -45,7 +45,6 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Subtitles
 import androidx.compose.material.icons.outlined.Title
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -253,6 +252,8 @@ private fun GuideButton(icon: ImageVector?, label: String, onClick: () -> Unit, 
  */
 @Composable
 internal fun BarButton(icon: ImageVector, label: String, tip: String, onClick: () -> Unit, labelled: Boolean, enabled: Boolean = true, selected: Boolean? = null) {
+    // Strg+K finds the buttons of the bars too (AP-135 a); the tooltip says more about them.
+    ToolCommand(label, tr("Leiste"), onClick, enabled, keywords = tip)
     if (!labelled) { TipIconButton(icon, tip, onClick, enabled = enabled, selected = selected, size = 34.dp); return }
     Tip(tip) {
         TextButton(

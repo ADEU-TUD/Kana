@@ -30,6 +30,10 @@ object PdfRender {
         return o
     }
 
+    /** How many pages [file] has; 0 if it cannot be read (the print preview, AP-135 d). */
+    @Synchronized
+    fun pages(file: File): Int = runCatching { open(file).doc.numberOfPages }.getOrDefault(0)
+
     /** Page [index] of [file] about [widthPx] pixels wide; null if it cannot be drawn. */
     @Synchronized
     fun page(file: File, index: Int, widthPx: Int): ImageBitmap? {

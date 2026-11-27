@@ -65,7 +65,6 @@ import androidx.compose.material.icons.outlined.SpeakerNotes
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.animation.togetherWith
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -109,6 +108,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.docs.DocBlocks
 import io.github.thepytales.llmhub.docs.DocMarkup
 import io.github.thepytales.llmhub.docs.LiveDoc
@@ -186,6 +186,12 @@ fun SlidesBody(
     )
     var selected by remember(doc.id) { mutableIntStateOf(0) }
     val sel = selected.coerceIn(0, slides.lastIndex)
+    // Weiterarbeiten (AP-135 b): back at the slide where one stopped (from the start page), and the slide is noted.
+    LaunchedEffect(doc.id) { RecentWork.number(RecentWork.take(RecentWork.SLIDES, doc.id), "slide")?.let { selected = it.coerceIn(0, slides.lastIndex) } }
+    LaunchedEffect(doc.id, sel) {
+        kotlinx.coroutines.delay(700)
+        RecentWork.touch(c, RecentWork.Entry(RecentWork.SLIDES, doc.id, doc.title, "slide:$sel", tr("Folie {0}", sel + 1)))
+    }
     var presenting by remember { mutableStateOf<Int?>(null) }
     var sorter by remember { mutableStateOf(false) }
     var handout by remember { mutableStateOf(false) }
@@ -290,7 +296,7 @@ fun SlidesBody(
             var aiMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.AutoAwesome, tr("KI für diese Folie")) { aiMenu = true }
-                DropdownMenu(expanded = aiMenu, onDismissRequest = { aiMenu = false }) {
+                DropdownMenu(expanded = aiMenu, onDismissRequest = { aiMenu = false }, commands = tr("KI für diese Folie")) {
                     SLIDE_AI.forEach { (label, instruction) ->
                         DropdownMenuItem(text = { Text(label) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(16.dp)) }, onClick = {
                             aiMenu = false
@@ -1242,7 +1248,7 @@ private fun FreeDesignBar(
             AssistChip(onClick = pickImage, label = { Text(tr("Bild …")) })
             Box {
                 AssistChip(onClick = { shapes = true }, label = { Text(tr("Form ▾")) })
-                DropdownMenu(shapes, { shapes = false }) {
+                DropdownMenu(shapes, { shapes = false }, commands = tr("Form")) {
                     listOf("rechteck" to tr("Rechteck"), "abgerundet" to tr("Abgerundetes Rechteck"), "ellipse" to tr("Ellipse"), "pfeil" to tr("Pfeil"), "linie" to tr("Linie")).forEach { (k, label) ->
                         DropdownMenuItem(text = { Text(label) }, onClick = {
                             shapes = false
@@ -1265,7 +1271,7 @@ private fun FreeDesignBar(
             var animMenu by remember { mutableStateOf(false) }
             Box {
                 AssistChip(onClick = { animMenu = true }, label = { Text(tr("Animation: {0}", listOfNotNull(when (s.transition) { "fade" -> tr("Überblenden"); "push" -> tr("Schieben"); else -> null }, if (s.build) tr("Punkte nacheinander") else null).joinToString(", ").ifBlank { tr("keine") })) })
-                DropdownMenu(expanded = animMenu, onDismissRequest = { animMenu = false }) {
+                DropdownMenu(expanded = animMenu, onDismissRequest = { animMenu = false }, commands = tr("Animation")) {
                     listOf("" to tr("Kein Übergang"), "fade" to tr("Überblenden"), "push" to tr("Schieben")).forEach { (k, label) ->
                         DropdownMenuItem(text = { Text((if (s.transition == k) "✓ " else "") + label) }, onClick = { animMenu = false; onChange(s.copy(transition = k)) })
                     }

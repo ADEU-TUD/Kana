@@ -87,6 +87,8 @@ fun TemplatesScreen(c: AppContainer, onBack: () -> Unit, onUse: (Template) -> Un
             header = {
                 // „Erstellen“ (AP-24): one wish for Kana, then the designs (Windows), then the TU Vorlagen.
                 item(key = "lora") { Spot("create.lora") { CreateWithLora(c, Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) } }
+                // Weiterarbeiten (AP-135 b): what was made last, opened where one stopped.
+                item(key = "weiterarbeiten") { ContinueWorkList(c, max = 6, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) }
                 designSection(c)
                 item(key = "intro") {
                     Spot("create.templates") { Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
