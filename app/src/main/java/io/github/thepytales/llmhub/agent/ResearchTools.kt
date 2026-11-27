@@ -8,7 +8,6 @@ import io.github.thepytales.llmhub.net.s
 import io.github.thepytales.llmhub.research.BibEntry
 import io.github.thepytales.llmhub.research.BibTeX
 import io.github.thepytales.llmhub.research.Bibliography
-import io.github.thepytales.llmhub.research.CitationStyle
 import io.github.thepytales.llmhub.research.CslJson
 import io.github.thepytales.llmhub.research.LitLinks
 import io.github.thepytales.llmhub.research.LitSource
@@ -106,7 +105,7 @@ class ResearchTools(private val c: AppContainer) : ToolProvider {
             listOf(
                 Param("references", "Literaturangaben als Text (je Angabe eine Zeile), BibTeX, RIS oder CSL-JSON", required = false),
                 Param("list", "Oder: Name einer Liste der Literatursammlung", required = false),
-                Param("style", "apa7_de (Standard aus den Einstellungen), apa7_en, zfpaed, din_iso_690, harvard, chicago, mla9, ieee", required = false),
+                Param("style", "apa7_de (Standard aus den Einstellungen), apa7_en, zfpaed, din_iso_690, harvard, chicago, mla9, ieee – oder Name eines geladenen CSL-Stils (Einstellungen › Literatur)", required = false),
                 Param("complete", "Fehlende Angaben online ergänzen (Standard true)", required = false, type = "boolean"),
                 Param("export", "Optional zusätzlich als Datei: bibtex, ris oder csl-json (für Zotero, Citavi, LaTeX)", required = false),
             ),
@@ -346,7 +345,7 @@ class ResearchTools(private val c: AppContainer) : ToolProvider {
     }
 
     private suspend fun bibliography(args: JsonObject, ctx: RepoContext, online: Boolean): ToolOutput {
-        val style = CitationStyle.parse(args.s("style")) ?: CitationStyle.parse(c.settings.current.citationStyle) ?: CitationStyle.APA7_DE
+        val style = io.github.thepytales.llmhub.research.CitationStyles.find(args.s("style")) ?: io.github.thepytales.llmhub.research.CitationStyles.resolve(c.settings.current.citationStyle)
         val refs = buildList {
             args.s("references")?.takeIf { it.isNotBlank() }?.let { addAll(ReferenceImport.read(it)) }
             args.s("list")?.takeIf { it.isNotBlank() }?.let { name ->

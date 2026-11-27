@@ -35,9 +35,12 @@ fun LiteratureSettings(c: AppContainer) {
     var status by remember { mutableStateOf<String?>(null) }
     var testing by remember { mutableStateOf(false) }
     Section(tr("Literaturverzeichnis")) {
-        ChoiceField(tr("Standard-Zitierstil"), CitationStyle.entries.map { it.name to it.label }, s.citationStyle, { v -> c.settings.update { it.copy(citationStyle = v) } })
-        HintText(CitationStyle.parse(s.citationStyle)?.description.orEmpty())
-        HintText(tr("Alle Stile sortieren alphabetisch nach Erstautor:in; gleiche Autor:innen und Jahr bekommen a/b. Fehlende Angaben ergänzt die App aus Crossref, der Deutschen Nationalbibliothek, Google Books und OpenAlex."))
+        CitationStyleField(c, tr("Standard-Zitierstil"), s.citationStyle, { v -> c.settings.update { it.copy(citationStyle = v) } })
+        HintText(CitationStyle.parse(s.citationStyle)?.description ?: tr("Geladener Zitierstil (CSL)"))
+        HintText(tr("Die eingebauten Stile sortieren alphabetisch nach Erstautor:in; gleiche Autor:innen und Jahr bekommen a/b. Geladene CSL-Stile sortieren so, wie der Stil es vorgibt. Fehlende Angaben ergänzt die App aus Crossref, der Deutschen Nationalbibliothek, Google Books und OpenAlex."))
+    }
+    Section(tr("Weitere Zitierstile (CSL)")) {
+        CslStylesSection(c, s.citationStyle) { v -> c.settings.update { it.copy(citationStyle = v) } }
     }
     Section(tr("Literatursuche")) {
         Text(tr("Durchsuchte Datenbanken"), style = MaterialTheme.typography.labelLarge)

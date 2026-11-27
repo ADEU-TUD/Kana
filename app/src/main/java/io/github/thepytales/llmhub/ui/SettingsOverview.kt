@@ -194,7 +194,7 @@ fun SettingsOverview(c: AppContainer, onNavigate: (String) -> Unit, deviceItem: 
             ),
             SettingsItem(
                 "settings/literature", Icons.Outlined.MenuBook, tr("Literatur & Zotero"),
-                (io.github.thepytales.llmhub.research.CitationStyle.parse(s.citationStyle)?.label ?: "APA 7") + if (s.zoteroKey.isNotBlank()) tr(" · Zotero verbunden") else "",
+                io.github.thepytales.llmhub.research.CitationStyles.resolve(s.citationStyle).label + if (s.zoteroKey.isNotBlank()) tr(" · Zotero verbunden") else "",
             ),
             SettingsItem(
                 "settings/folders", Icons.Outlined.Folder, tr("Lokale Ordner"),

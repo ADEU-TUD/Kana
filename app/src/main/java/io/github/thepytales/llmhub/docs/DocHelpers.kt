@@ -170,15 +170,33 @@ object Tracking {
  * (`<!-- literatur: APA7_DE; id1, id2 -->`), which the exports leave out.
  */
 object DocCitations {
-    private val MARKER = Regex("^\\s*<!--\\s*literatur:\\s*([A-Z0-9_]*)\\s*;?\\s*(.*?)\\s*-->\\s*$", RegexOption.MULTILINE)
+    private val MARKER = Regex("^\\s*<!--\\s*literatur:\\s*((?:csl:[a-z0-9-]+)|[A-Z0-9_]*)\\s*;?\\s*(.*?)\\s*-->\\s*$", RegexOption.MULTILINE)
     const val HEADING = "## Literatur"
 
-    data class Cited(val style: CitationStyle?, val ids: List<String>)
+    /** The cited works and the style of the list; [key] is the enum name or `csl:<id>` of a loaded CSL style. */
+    data class Cited(val style: CitationStyle?, val ids: List<String>, val key: String? = null) {
+        /** The style as chosen (a CSL style only while it is loaded), null if the document has no list yet. */
+        val choice: io.github.thepytales.llmhub.research.CitationStyles.Choice?
+            get() = key?.takeIf { it.isNotBlank() }?.let { io.github.thepytales.llmhub.research.CitationStyles.resolve(it, style ?: CitationStyle.APA7_DE) }
+    }
 
     fun cited(markdown: String): Cited {
         val m = MARKER.find(markdown) ?: return Cited(null, emptyList())
-        return Cited(CitationStyle.parse(m.groupValues[1]), m.groupValues[2].split(',').map { it.trim() }.filter { it.isNotEmpty() })
+        val key = m.groupValues[1]
+        return Cited(CitationStyle.parse(key), m.groupValues[2].split(',').map { it.trim() }.filter { it.isNotEmpty() }, key)
     }
+
+    /** The in-text citation in a built-in or CSL style; [refs] are all works of the list (for a/b and numbers). */
+    fun inText(r: Reference, choice: io.github.thepytales.llmhub.research.CitationStyles.Choice, number: Int = 1, refs: List<Reference> = listOf(r)): String {
+        val csl = choice.csl ?: return inText(r, choice.style, number)
+        return csl.cite(listOf(r to number), csl.yearSuffixes(refs))
+    }
+
+    fun withBibliography(markdown: String, refs: List<Reference>, choice: io.github.thepytales.llmhub.research.CitationStyles.Choice): String =
+        withBibliography(markdown, refs, choice.style, choice.csl)
+
+    fun number(refs: List<Reference>, ref: Reference, choice: io.github.thepytales.llmhub.research.CitationStyles.Choice): Int =
+        Bibliography.build(refs.map { BibEntry(it) }, choice).entries.indexOfFirst { it.ref.id == ref.id } + 1
 
     private fun names(r: Reference, style: CitationStyle): String {
         val fam = r.creators.map { it.family }
@@ -214,12 +232,12 @@ object DocCitations {
      * [markdown] with the reference list for [refs] (in [style], sorted as the style wants) at the end, replacing the
      * list made before.
      */
-    fun withBibliography(markdown: String, refs: List<Reference>, style: CitationStyle): String {
+    fun withBibliography(markdown: String, refs: List<Reference>, style: CitationStyle, csl: io.github.thepytales.llmhub.research.CslStyle? = null): String {
         val body = removeBibliography(markdown).trimEnd()
         if (refs.isEmpty()) return "$body\n"
-        val result = Bibliography.build(refs.map { BibEntry(it) }, style)
+        val result = Bibliography.build(refs.map { BibEntry(it) }, style, csl)
         val ids = result.entries.joinToString(", ") { it.ref.id }
-        return "$body\n\n$HEADING\n\n<!-- literatur: ${style.name}; $ids -->\n\n" + result.lines.joinToString("\n\n") + "\n"
+        return "$body\n\n$HEADING\n\n<!-- literatur: ${result.key}; $ids -->\n\n" + result.lines.joinToString("\n\n") + "\n"
     }
 
     /** Position of [ref] in the sorted list (for numbered styles). */

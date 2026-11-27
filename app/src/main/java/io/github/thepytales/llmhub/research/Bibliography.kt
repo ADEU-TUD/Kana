@@ -34,8 +34,14 @@ data class BibEntry(
 )
 
 /** A finished reference list: entries in order and the formatted lines. */
-data class BibResult(val style: CitationStyle, val entries: List<BibEntry>, val lines: List<String>) {
-    fun markdown(heading: String? = if (style.german) "Literaturverzeichnis" else "References"): String = buildString {
+data class BibResult(val style: CitationStyle, val entries: List<BibEntry>, val lines: List<String>, val csl: CslStyle? = null) {
+    /** Name of the style (built-in or loaded CSL style). */
+    val label: String get() = csl?.title ?: style.label
+    val german: Boolean get() = csl?.german ?: style.german
+    /** Key of the style (enum name or `csl:<id>`). */
+    val key: String get() = csl?.key ?: style.name
+
+    fun markdown(heading: String? = if (german) "Literaturverzeichnis" else "References"): String = buildString {
         if (heading != null) append("# ").append(heading).append("\n\n")
         lines.forEach { append(it).append("\n\n") }
     }.trimEnd() + "\n"
@@ -46,7 +52,7 @@ data class BibResult(val style: CitationStyle, val entries: List<BibEntry>, val 
     /** Check report for the model or the user. */
     fun report(): String = buildString {
         val counts = entries.groupingBy { it.status }.eachCount()
-        append("${entries.size} Einträge, ${style.label}, alphabetisch sortiert. ")
+        append("${entries.size} Einträge, $label, " + (if (csl == null) "alphabetisch sortiert. " else "sortiert wie der Stil. "))
         append(EntryStatus.entries.filter { (counts[it] ?: 0) > 0 }.joinToString(", ") { "${counts[it]} ${it.label}" })
         append(".")
         val details = entries.filter { it.added.isNotEmpty() || it.missing.isNotEmpty() || it.notes.isNotEmpty() || it.status == EntryStatus.NOT_FOUND }
@@ -125,9 +131,24 @@ object Bibliography {
         return out
     }
 
-    /** Sorts, removes duplicates, marks same author and year with a/b and formats. */
-    fun build(entries: List<BibEntry>, style: CitationStyle): BibResult {
+    /** [build] with the style of a [choice] (built-in or CSL). */
+    fun build(entries: List<BibEntry>, choice: CitationStyles.Choice): BibResult = build(entries, choice.style, choice.csl)
+
+    /**
+     * Sorts, removes duplicates, marks same author and year with a/b and formats. With a CSL style ([csl], AP-138 a)
+     * the style decides order and form; [style] then only says which fields are needed.
+     */
+    fun build(entries: List<BibEntry>, style: CitationStyle, csl: CslStyle? = null): BibResult {
         val unique = entries.distinctBy { if (it.ref.unparsed) "raw:" + it.ref.raw else it.ref.dedupeKey }
+        if (csl != null) {
+            val byId = unique.associateBy { it.ref.id }
+            val parsed = unique.filter { !it.ref.unparsed }
+            val rendered = csl.bibliography(parsed.map { it.ref })
+            val sortedEntries = rendered.map { (r, _) -> byId.getValue(r.id).let { it.copy(missing = missing(it.ref, style)) } } +
+                unique.filter { it.ref.unparsed }.map { it.copy(missing = missing(it.ref, style)) }
+            val lines = rendered.map { it.second } + unique.filter { it.ref.unparsed }.map { it.ref.raw.trim() }
+            return BibResult(style, sortedEntries, lines, csl)
+        }
         val sorted = unique.sortedWith { a, b -> collator.compare(sortKey(a.ref), sortKey(b.ref)) }
         val suffixes = mutableMapOf<String, String>()
         if (style.authorYear) {

@@ -48,7 +48,6 @@ import io.github.thepytales.llmhub.docs.HtmlPdf
 import io.github.thepytales.llmhub.docs.LiveDoc
 import io.github.thepytales.llmhub.docs.SlideHandout
 import io.github.thepytales.llmhub.docs.SpellCheck
-import io.github.thepytales.llmhub.research.CitationStyle
 import io.github.thepytales.llmhub.research.Reference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -162,7 +161,7 @@ fun PageSetupDialog(setup: DocMarkup.PageSetup, onDismiss: () -> Unit, onSave: (
 
 /** Picks a work from the literature collection and the citation style for "Literatur einfügen". */
 @Composable
-fun CitationDialog(c: AppContainer, initialStyle: CitationStyle, onDismiss: () -> Unit, onPick: (Reference, CitationStyle) -> Unit) {
+fun CitationDialog(c: AppContainer, initialStyle: io.github.thepytales.llmhub.research.CitationStyles.Choice, onDismiss: () -> Unit, onPick: (Reference, io.github.thepytales.llmhub.research.CitationStyles.Choice) -> Unit) {
     val all by c.literature.items.collectAsState()
     var query by remember { mutableStateOf("") }
     var style by remember { mutableStateOf(initialStyle) }
@@ -180,7 +179,7 @@ fun CitationDialog(c: AppContainer, initialStyle: CitationStyle, onDismiss: () -
                     Box {
                         TextButton(onClick = { styles = true }) { Text(style.label) }
                         DropdownMenu(expanded = styles, onDismissRequest = { styles = false }) {
-                            CitationStyle.entries.forEach { st ->
+                            io.github.thepytales.llmhub.research.CitationStyles.choices().forEach { st ->
                                 androidx.compose.material3.DropdownMenuItem(text = { Text(st.label) }, onClick = { style = st; styles = false })
                             }
                         }

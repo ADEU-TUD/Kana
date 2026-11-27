@@ -97,6 +97,9 @@ class AppContainer(context: Context) {
     val documentTools = DocumentTools(context.applicationContext, settings, logos, contacts, docs)
     /** Works the user or the literature search collected (see research/). */
     val literature = LiteratureStore(files)
+    /** Citation styles loaded as CSL files (AP-138 a); the built-in styles stay first. */
+    val cslStyles = io.github.thepytales.llmhub.research.CslLibrary(File(files, "csl")).also { io.github.thepytales.llmhub.research.CitationStyles.library = it }
+    val cslRepository by lazy { io.github.thepytales.llmhub.research.CslRepository(llm.http, File(files, "csl")) }
     val researchTools = ResearchTools(this)
     /** Lernspiele (AP-17): the collection and the agent's tools for it (offered while the tool is switched on). */
     val games = io.github.thepytales.llmhub.data.LearningGameStore(files)

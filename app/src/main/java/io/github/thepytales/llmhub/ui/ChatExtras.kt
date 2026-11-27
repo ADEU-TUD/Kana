@@ -61,7 +61,6 @@ import io.github.thepytales.llmhub.data.Template
 import io.github.thepytales.llmhub.data.TemplateLibrary
 import io.github.thepytales.llmhub.docs.DocBlocks
 import io.github.thepytales.llmhub.research.Bibliography
-import io.github.thepytales.llmhub.research.CitationStyle
 import io.github.thepytales.llmhub.transcribe.TranscriptExport
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -136,7 +135,7 @@ fun inputSuggestions(
         c.literature.lists().filter { matches(it) }.take(4).forEach { l ->
             out += InputSuggestion(Icons.Outlined.MenuBook, "@$l", tr("Literaturliste")) {
                 replace("$before@$l ")
-                val style = CitationStyle.parse(c.settings.current.citationStyle) ?: CitationStyle.APA7_DE
+                val style = io.github.thepytales.llmhub.research.CitationStyles.resolve(c.settings.current.citationStyle)
                 val result = Bibliography.build(c.literature.inList(l).map { io.github.thepytales.llmhub.research.BibEntry(it) }, style)
                 attach(FileAttachment("Literaturliste – $l.md", "text/markdown", result.markdown(l) + "\n\nAbstracts und Notizen:\n" +
                     c.literature.inList(l).joinToString("\n\n") { r -> "- ${r.short()}" + (if (r.note.isNotBlank()) "\n  Notiz: ${r.note}" else "") + (if (r.abstract.isNotBlank()) "\n  Abstract: ${r.abstract.take(800)}" else "") }))
@@ -316,7 +315,7 @@ fun FromAppSheet(c: AppContainer, onFile: (FileAttachment) -> Unit, onImage: (St
                 val works = literature.filter { r -> r.lists.any { it.equals(l, true) } }
                 Pick(Icons.Outlined.MenuBook, l, tr("{0} Werke", works.size)) {
                     done {
-                        val style = CitationStyle.parse(c.settings.current.citationStyle) ?: CitationStyle.APA7_DE
+                        val style = io.github.thepytales.llmhub.research.CitationStyles.resolve(c.settings.current.citationStyle)
                         onFile(FileAttachment("Literaturliste – $l.md", "text/markdown", Bibliography.build(works.map { io.github.thepytales.llmhub.research.BibEntry(it) }, style).markdown(l)))
                     }
                 }
