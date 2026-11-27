@@ -7,6 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.test.SkikoComposeUiTest
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
@@ -78,6 +81,12 @@ class ToolCommandsTest {
         return { palette = true }
     }
 
+    /** Pictures of the new parts for the README and the Vorher/Nachher-Seite: build/screenshots/ap135-*.png. */
+    private fun SkikoComposeUiTest.shot(name: String) {
+        val dir = File("build/screenshots").apply { mkdirs() }
+        runCatching { javax.imageio.ImageIO.write(onAllNodes(isRoot())[0].captureToImage().toAwtImage(), "png", File(dir, "ap135-$name.png")) }
+    }
+
     private fun SkikoComposeUiTest.ask(open: () -> Unit, words: String) {
         open()
         settle(4)
@@ -106,6 +115,7 @@ class ToolCommandsTest {
         assertTrue(tool.all.any { it.title == "Fett" && it.keys == "Strg+B" }, tool.all.joinToString())
         assertTrue(tool.all.size > 60, "${tool.all.size} Einträge")
         assertTrue(onAllNodesWithText("Seite einrichten …").fetchSemanticsNodes().isNotEmpty(), "Treffer in Strg+K")
+        shot("strgk-dokument")
         // Enter runs the best entry: the dialog *Seite einrichten* opens, Strg+K is closed.
         onNodeWithTag("palette.query").performKeyInput { pressKey(Key.Enter) }
         settle(6)
@@ -122,6 +132,7 @@ class ToolCommandsTest {
         ask(open, "Spalte einfügen")
         assertEquals("Tabelle", EditorCommands.current!!.area)
         assertTrue(onAllNodesWithText("Spalte links einfügen").fetchSemanticsNodes().isNotEmpty(), EditorCommands.current!!.all.joinToString())
+        shot("strgk-tabelle")
         onNodeWithText("Spalte links einfügen").performClick()
         settle(8)
         val head = c.docs.get(doc.id)!!.tabs.first().markdown.lines().first { it.startsWith("|") }
@@ -145,6 +156,7 @@ class ToolCommandsTest {
             ask(open, "Untertitel")
             assertEquals("Video", EditorCommands.current!!.area)
             assertTrue(onAllNodesWithText("Aus der Transkription …").fetchSemanticsNodes().isNotEmpty(), EditorCommands.current!!.all.joinToString())
+            shot("strgk-video")
             onNodeWithText("Aus der Transkription …").performClick()
             settle(6)
             assertTrue(onAllNodesWithText("Transkript wählen").fetchSemanticsNodes().isNotEmpty(), "Auswahl des Transkripts offen")

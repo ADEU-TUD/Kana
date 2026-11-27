@@ -246,6 +246,47 @@ vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten 
   erwartet: Bild und Ton laufen gleichmäßig, ohne Hänger.
   ort: tool.video
 
+== AP-135 Schneller finden und arbeiten
+geräte: alle
+vorher: Ein Dokument, eine Tabelle, eine Präsentation mit mindestens fünf Folien, ein Videoprojekt und ein PDF aus einer
+  Datei; für das Drucken ein Drucker (oder „Microsoft Print to PDF“).
+- Befehle des Werkzeugs in Strg+K
+  geräte: windows, macos, linux
+  tun: Im Dokument Strg+K drücken, „Seitenränder“ tippen, Enter. In der Tabelle Strg+K › „Spalte einfügen“, im Video
+    Strg+K › „Untertitel“, im PDF-Werkzeugkasten Strg+K › „drehen“.
+  erwartet: Oben in Strg+K steht der passende Eintrag mit seinem Menü (*Datei*, *Zeilen & Spalten*, *Untertitel* …);
+    Enter öffnet *Seite einrichten*, fügt die Spalte ein, öffnet die Auswahl des Transkripts bzw. den Modus *Seiten*.
+  ort: area.files
+- Tasten des Werkzeugs zuerst
+  geräte: windows, macos, linux
+  tun: Im Video, in der Tabelle und in der Präsentation jeweils Strg+/ drücken.
+  erwartet: Oben stehen die Tasten des Werkzeugs (Video-Tasten, „In der Tabelle (wie in Excel)“, „Beim Präsentieren“),
+    darunter „Überall in der App“.
+  ort: tool.video
+- Drucken mit Vorschau
+  geräte: windows, macos, linux
+  tun: In Dokument, Tabelle, Präsentation, Gestalten und im PDF jeweils Strg+P drücken; einmal *Drucken …* bis zum
+    Drucker, einmal *Druck-Lotse …* › Broschüre.
+  erwartet: Erst die Vorschau mit den Seiten (Präsentation: eine Folie je Seite), dann der Druckdialog von Windows mit
+    Drucker, Kopien und doppelseitig; der Druck sieht aus wie die Vorschau. Im Video sagt Strg+P, dass es nichts zu
+    drucken gibt.
+  ort: area.files
+- Weiterarbeiten an der Stelle
+  geräte: windows, macos, linux
+  tun: Die Präsentation auf Folie 5 schließen, in der Tabelle eine Zelle weit unten wählen, im Video an 1:00 gehen, im
+    PDF auf Seite 3 blättern. Die App beenden und neu starten, auf der Startseite unter *Weiterarbeiten* die vier
+    nacheinander öffnen; dasselbe einmal unter *Erstellen*.
+  erwartet: Jede Datei öffnet dort, wo du aufgehört hast (Folie 5, dieselbe Zelle und dasselbe Blatt, 1:00, Seite 3);
+    die Liste zeigt die Stelle unter dem Namen („Präsentation · Folie 5“). Eine gelöschte Datei steht nicht mehr darin.
+  ort: area.chat
+- Weiterarbeiten und Drucken am Handy
+  geräte: android
+  tun: Ein Dokument weiter unten bearbeiten, die App schließen und neu öffnen, auf der Startseite *Weiterarbeiten*
+    antippen; danach im Dokument *Datei › Drucken*.
+  erwartet: Das Dokument öffnet an der Stelle des Cursors; Drucken zeigt erst die Vorschau, dann den Druckdialog von
+    Android.
+  ort: area.chat
+
 == AP-131 Server-Terminal: Kana im Terminal, Dateien, Tabs
 geräte: windows, macos, linux
 vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.

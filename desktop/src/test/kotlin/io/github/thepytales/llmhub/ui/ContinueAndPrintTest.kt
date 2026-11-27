@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.test.SkikoComposeUiTest
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -56,6 +59,12 @@ class ContinueAndPrintTest {
     private fun SkikoComposeUiTest.settle(rounds: Int = 8) {
         repeat(rounds) { Thread.sleep(80); mainClock.advanceTimeBy(200) }
         waitForIdle()
+    }
+
+    /** Pictures of the new parts for the README and the Vorher/Nachher-Seite: build/screenshots/ap135-*.png. */
+    private fun SkikoComposeUiTest.shot(name: String) {
+        val dir = File("build/screenshots").apply { mkdirs() }
+        runCatching { javax.imageio.ImageIO.write(onAllNodes(isRoot())[0].captureToImage().toAwtImage(), "png", File(dir, "ap135-$name.png")) }
     }
 
     private fun SkikoComposeUiTest.show(content: @androidx.compose.runtime.Composable () -> Unit) {
@@ -136,6 +145,7 @@ class ContinueAndPrintTest {
         show { ContinueWorkList(c) }
         assertTrue(onAllNodesWithText("WEITERARBEITEN").fetchSemanticsNodes().isNotEmpty())
         assertTrue(onAllNodesWithText("Präsentation · Folie 2").fetchSemanticsNodes().isNotEmpty())
+        shot("weiterarbeiten")
         // A document that is gone is not offered.
         assertTrue(onAllNodesWithText("Gelöschtes Dokument").fetchSemanticsNodes().isEmpty())
         onNodeWithText("Vortrag").performClick()
@@ -165,6 +175,7 @@ class ContinueAndPrintTest {
         val excel = onNodeWithText("In der Tabelle (wie in Excel)").fetchSemanticsNode().boundsInRoot.top
         val app = onNodeWithText("Überall in der App").fetchSemanticsNode().boundsInRoot.top
         assertTrue(excel < app, "Werkzeug zuerst")
+        shot("tasten-tabelle")
         // Without an editor: only the app's keys and a hint.
         keys = false
         settle(2)
@@ -188,6 +199,7 @@ class ContinueAndPrintTest {
         while (onAllNodesWithText("1 Seite").fetchSemanticsNodes().isEmpty() && waited < 400) { settle(1); waited++ }
         assertTrue(onAllNodesWithText("1 Seite").fetchSemanticsNodes().isNotEmpty(), "Vorschau mit Seitenzahl")
         assertTrue(onAllNodesWithText("Druck-Lotse …").fetchSemanticsNodes().isNotEmpty())
+        shot("druckvorschau")
         // „Drucken …“ opens the system's dialog (here: a stand-in that says „Abbrechen“).
         var asked = 0
         io.github.thepytales.llmhub.docs.DocPrint.dialog = { _, pages -> asked = pages.numberOfPages; false }

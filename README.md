@@ -531,6 +531,20 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Bild gewählt | Tabelle mit Rechtsklick | Text ums Bild |
   | --- | --- | --- |
   | ![Bild mit Griffen und Leiste](docs/bilder/ap125-bild.png) | ![Tabelle als Gitter mit Rechtsklick-Menü](docs/bilder/ap125-tabelle.png) | ![Bild rechts, Text daneben](docs/bilder/ap125-textumbruch.png) |
+- **Schneller finden und arbeiten** (AP-135, Analyse Q-01 bis Q-03 und Q-12): **Strg+K findet die Befehle des offenen
+  Werkzeugs** – jeden Eintrag der Menüs und Leisten in Dokument, Tabelle, Präsentation, Gestalten, Video, PDF und Transkript,
+  auch unter Wörtern, die im Menü nicht stehen („Seitenränder“ findet *Datei › Seite einrichten …*, „Spalte einfügen“
+  *Zeilen & Spalten › Spalte links einfügen*, „drehen“ den Modus *Seiten* im PDF-Werkzeugkasten). Enter oder Klick führt
+  ihn aus wie das Menü; was dort ausgegraut ist, ist es auch in Strg+K. Die Menüs stehen dafür nicht doppelt im Code:
+  Solange Strg+K offen ist, lesen die markierten Menüs ihre Einträge unsichtbar mit (`ui/MenuCommands.kt`).
+  **Weiterarbeiten**: Startseite (neben *Zuletzt* und *Favoriten*) und *Erstellen* zeigen die zuletzt bearbeiteten Dateien
+  aller Werkzeuge und öffnen sie **dort, wo man aufgehört hat** – Cursor im Dokument (mit Seite bzw. Überschrift), Zelle
+  und Blatt der Tabelle, Folie, Seite in Gestalten und im PDF, Zeitmarke im Video und im Transkript (`data/RecentWork.kt`,
+  nur auf diesem Gerät). **Strg+/** zeigt zuerst die Tasten des offenen Werkzeugs (im Video die Video-Tasten, in Tabellen
+  die Excel-Tasten …), darunter die der App. **Strg+P überall**: Dokument, Tabelle, Präsentation (eine Folie je Seite),
+  Gestalten, PDF und Transkript drucken mit **Vorschau der Seiten**, dann *Drucken …* (Drucker, Kopien, doppelseitig) oder
+  der **Druck-Lotse** (Broschüre, mehrere Seiten pro Blatt, Prüfung vor dem Druck). Tests `ToolCommandsTest`,
+  `ContinueAndPrintTest`.
 - **Videoeditor: was im Alltag fehlt** (AP-129, nach einer Lückenliste gegen Clipchamp, CapCut und DaVinci,
   [`docs/video-luecken.md`](docs/video-luecken.md)): **Musik wird von selbst leiser, wenn jemand spricht**, und danach
   wieder lauter; **leise und laute Stimmen angleichen** (die Frage aus dem Saal); Ton, der **nur auf einer Seite**
@@ -1889,7 +1903,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   zu „Person A/B“) mit getrennter **Zuordnungsliste** als PDF, **Übersetzung** Abschnitt für Abschnitt mit erhaltenen
   Zeiten (für Untertitel), **Stimmprofile**, die bekannte Sprecher:innen in neuen Aufnahmen wiedererkennen, und
   *Protokoll erstellen* aus dem Transkript.
-- **Bedienung**: **Strg+K** Befehlspalette (Bereiche, Einstellungen, Chats), **Strg+/** Übersicht der Tastenkürzel,
+- **Bedienung**: **Strg+K** Befehlspalette (Bereiche, Einstellungen, Chats und die Befehle des offenen Werkzeugs),
+  **Strg+/** Übersicht der Tastenkürzel (die des offenen Werkzeugs zuerst), **Strg+P** Drucken mit Vorschau,
   **Strg+L** Kana, Strg+Umschalt+L Literatur, Strg+D/T Dokumente, Transkription. **Breiten ziehen**: Die Linie neben der
   Seitenleiste (links) und neben Kanas Bereich und dem Browser (rechts) hat einen kleinen Griff; Ziehen macht die Leiste
   breiter oder schmaler, Doppelklick stellt die Standardbreite wieder her. Die Breiten bleiben über Neustarts erhalten
@@ -2400,6 +2415,7 @@ Chats und Einstellungen erhalten bleiben).
 | `data/LoraCorrections.kt`, `ui/LoraCorrectionsSettings.kt`, `tools/befehle/rueckfrage.py` | Rückfrage mit zwei Knöpfen (AP-73: `CommandRecognizer.choices`, `LoraStep.Choose`) und Kana lernt aus Korrekturen (AP-72): Liste auf dem Gerät, Einstellungen, Export für das Training |
 | `ui/ErrorHelp.kt`, `ui/Notices.kt` | Fehlermeldungen in Klartext mit Lösungsknopf (AP-74) |
 | `data/LoraHistory.kt`, `ui/LoraRecent.kt` | Kana-Verlauf, Pfeil hoch, angeheftete Befehle in Strg+K (AP-75) |
+| `ui/MenuCommands.kt`, `ui/ToolKeys.kt`, `ui/PrintPreview.kt`, `data/RecentWork.kt`, `ui/ContinueWork.kt` | Schneller finden und arbeiten (AP-135): Menübefehle des offenen Werkzeugs in Strg+K (`DropdownMenu(commands = …)`, `ToolCommand`), Tasten je Werkzeug für Strg+/, Strg+P mit Vorschau und Druck-Lotse (`PrintableHere`), Weiterarbeiten an der Stelle |
 | `local/LocalSpeed.kt` | Messung und Empfehlung der lokalen Sprachmodelle, Mindesttempo im Mischmodus (AP-76) |
 | `agent/DryRun.kt`, `ui/DayUndo.kt` | Probelauf, Hinweise zu Unumkehrbarem, „Alles rückgängig seit heute Morgen“ (AP-77) |
 | `data/Vocabulary.kt`, `data/LoraPackages.kt`, `ui/VocabularyUi.kt`, `tools/wissen/` | Eigene Wörter, Wissenspakete, Inhalte zum Nachladen (AP-78), Kana-Pakete teilen (AP-83) |
