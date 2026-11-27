@@ -7995,3 +7995,62 @@ Tastenkürzel: {0}	Keyboard shortcuts: {0}
 In einem Werkzeug (Dokument, Tabelle, Folien, Gestalten, Video, PDF, Transkript) zeigt Strg+/ zuerst dessen Tasten.	In a tool (document, table, slides, design, video, PDF, transcript) Ctrl+/ shows its keys first.
 Befehlspalette: Befehle des Werkzeugs, Bereiche, Einstellungen, Chats	Command palette: commands of the tool, areas, settings, chats
 Drucken mit Vorschau (Dokument, Tabelle, Folien, Gestalten, PDF, Transkript)	Print with preview (document, table, slides, design, PDF, transcript)
+# Interviews auswerten (AP-136): Codieren an Textstellen, Pseudonymisieren, REFI-QDA-Projekte
+Zuordnungsliste – {0}	Key list – {0}
+Pseudonymisieren	Pseudonymise
+Namen, Orte, Einrichtungen und Kontaktdaten werden im ganzen Transkript durch dieselben Pseudonyme ersetzt – in einer Kopie. Das Original, die Codierungen und Zeiten bleiben; die Kopie hat keinen Ton (die Stimme würde die Person verraten).	Names, places, institutions and contact details are replaced by the same pseudonyms throughout the transcript – in a copy. The original, the codings and the times stay; the copy has no audio (the voice would give the person away).
+Kana sucht Namen, Orte und Einrichtungen …	Kana is looking for names, places and institutions …
+Gefunden – zum Prüfen (abwählen, was bleiben soll):	Found – to check (untick what should stay):
+Nichts gefunden. Fehlt etwas, unten eintragen.	Nothing found. If something is missing, enter it below.
+Auch ersetzen (Name, Ort …)	Also replace (name, place …)
+Schlüsselliste	Key list
+Kommt verschlüsselt in den Tresor („Zuordnungsliste – …“), nirgends sonst hin.	Goes encrypted into the vault (“Key list – …”), nowhere else.
+PIN des Tresors	Vault PIN
+PIN falsch oder Tresor gesperrt.	Wrong PIN or vault blocked.
+Kein Tresor eingerichtet: Es wird keine Schlüsselliste gespeichert – zurück zu den echten Namen geht es dann nicht. Den Tresor richtest du unter Werkzeuge › Tresor ein.	No vault set up: no key list is saved – there is then no way back to the real names. You set up the vault under Tools › Vault.
+Pseudonymisierte Kopie gespeichert: „{0}“	Pseudonymised copy saved: “{0}”
+Schlüsselliste im Tresor.	Key list in the vault.
+nichts ersetzt.	nothing replaced.
+ohne Schlüsselliste (Tresor nicht offen).	without key list (vault not open).
+Kopie pseudonymisieren	Pseudonymise a copy
+Alle Transkripte	All transcripts
+Interviews auswerten	Analyse interviews
+Transkripte werden gelesen …	Reading transcripts …
+{0}: {1} Transkripte, davon {2} codiert. Codieren im Transkript unter Mehr › Codieren …	{0}: {1} transcripts, {2} of them coded. Code in the transcript under More › Coding …
+Noch keine codierten Interviews mit diesem Kategoriensystem.	No coded interviews with this coding scheme yet.
+Für MAXQDA, ATLAS.ti, NVivo	For MAXQDA, ATLAS.ti, NVivo
+Pseudonymisiert exportieren (Schlüssellisten in den Tresor)	Export pseudonymised (key lists into the vault)
+Alle als REFI-QDA-Projekt (.qdpx)	All as REFI-QDA project (.qdpx)
+Codierungen als Tabelle (CSV)	Codings as table (CSV)
+Aus MAXQDA übernehmen (.qdpx, .qdc) …	Take over from MAXQDA (.qdpx, .qdc) …
+Ein Projekt mit allen Interviews, dem Kategoriensystem, den Codierungen je Codierer:in und den Memos. Zurück kommen Codes und Codierungen über REFI-QDA: Interviews mit gleichem Namen bekommen ihre Codierungen, das Kategoriensystem wird ergänzt.	One project with all interviews, the coding scheme, the codings per coder and the memos. Codes and codings come back via REFI-QDA: interviews with the same name get their codings, the coding scheme is extended.
+Code „{0}“ · {1} Stellen in {2} Interviews	Code “{0}” · {1} places in {2} interviews
+Memo: {0}	Memo: {0}
+„{0}“ ließ sich nicht lesen: {1}	“{0}” could not be read: {1}
+In „{0}“ ist kein Kategoriensystem.	There is no coding scheme in “{0}”.
+Kategoriensystem „{0}“ übernommen ({1} Codes).	Coding scheme “{0}” taken over ({1} codes).
+„{0}“: {1} Codierungen in {2} Interviews übernommen	“{0}”: {1} codings taken over in {2} interviews
+, {0} ohne passende Stelle.	, {0} without a matching place.
+Pseudonymisieren …	Pseudonymise …
+Markiert: „{0}“ – die Codes gelten nur für diese Wörter.	Marked: “{0}” – the codes apply only to these words.
+Ganzer Abschnitt	Whole passage
+Codierer:in: {0}. Wörter markieren, um nur sie zu codieren – sonst gilt der Code für den ganzen Abschnitt.	Coder: {0}. Mark words to code only them – otherwise the code applies to the whole passage.
+Kein Vorschlag: {0}	No suggestion: {0}
+Kana liest …	Kana is reading …
+Kana schlägt vor	Kana suggests
+Kein Code passt.	No code fits.
+Übernehmen: {0}	Take: {0}
+Nur Vorschläge – du entscheidest.	Only suggestions – you decide.
+Deine Codierungen hier	Your codings here
+Codierung entfernen	Remove coding
+Memo	Memo
+{0} ({1} Aufnahmen)	{0} ({1} recordings)
+Stimmprofil „{0}“ löschen	Delete voice profile “{0}”
+Stimmprofil „{0}“ gelöscht	Voice profile “{0}” deleted
+Alle Stimmprofile gelöscht	All voice profiles deleted
+Alle Stimmprofile löschen	Delete all voice profiles
+Pseudonymisiert exportieren	Export pseudonymised
+Namen, Orte, Einrichtungen, Kontaktdaten und die eigene Liste (Einstellungen › Datenschutz) werden durchgehend ersetzt, Sprecher mit echtem Namen heißen „Person A“ … Das Transkript selbst bleibt unverändert; die Schlüsselliste kommt in den Tresor. Zum Prüfen jeder Fundstelle: *Mehr › Pseudonymisieren …*	Names, places, institutions, contact details and your own list (Settings › Privacy) are replaced throughout, speakers with real names are called “Person A” … The transcript itself stays unchanged; the key list goes into the vault. To check every finding: *More › Pseudonymise …*
+Die Namen werden noch gesucht – gleich noch einmal.	The names are still being searched – try again in a moment.
+Schlüsselliste im Tresor gespeichert.	Key list saved in the vault.
+Ohne Schlüsselliste exportiert – der Tresor ist nicht offen.	Exported without key list – the vault is not open.

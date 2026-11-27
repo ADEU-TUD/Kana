@@ -531,6 +531,21 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Bild gewählt | Tabelle mit Rechtsklick | Text ums Bild |
   | --- | --- | --- |
   | ![Bild mit Griffen und Leiste](docs/bilder/ap125-bild.png) | ![Tabelle als Gitter mit Rechtsklick-Menü](docs/bilder/ap125-tabelle.png) | ![Bild rechts, Text daneben](docs/bilder/ap125-textumbruch.png) |
+- **Interviews auswerten: Codieren und Pseudonymisieren** (AP-136, Analyse TR-01 bis TR-03): Damit beginnt die
+  Auswertung in Kana statt erst in MAXQDA. **Codieren an Textstellen**: im Codiermodus einen Abschnitt antippen, Wörter
+  markieren und den Code wählen – oder gleich *Neuer Code* anlegen; jede Codierung kann ein **Memo** tragen; *Kana
+  schlägt vor* nennt passende Codes aus dem Kategoriensystem (nur mit einem Modell, das das Projekt erlaubt; übernommen
+  wird nur per Klick). **Interviews auswerten** (*Transkription* › Symbol *Auswerten*, für das gewählte Projekt): Code ×
+  Interview mit Summen, ein Klick auf einen Code zeigt alle Stellen in allen Interviews mit Memo und öffnet das Interview
+  dort; *Als Tabelle kopieren*. **Ein REFI-QDA-Projekt mit allen Interviews** (Kategoriensystem, Codierungen je
+  Codierer:in, Memos und Kommentare als Notizen) – auf Wunsch pseudonymisiert –, und **zurück aus MAXQDA**: *Aus MAXQDA
+  übernehmen* liest ein Projekt (`.qdpx`) oder Kategoriensystem (`.qdc`), ergänzt das Kategoriensystem gleichen Namens
+  und setzt die Codierungen auf dieselben Wörter der Interviews gleichen Namens. **Pseudonymisieren …** (*Mehr* im
+  Transkript): Kana Namensschutz und die Regeln finden Namen, Orte, Einrichtungen und Kontaktdaten; jede Fundstelle
+  steht mit Pseudonym und Anzahl zum Prüfen da (abwählen, Fehlendes ergänzen); die Kopie behält die Codierungen (die
+  markierten Wörter wandern mit) und hat keinen Ton; die **Schlüsselliste kommt nur in den Tresor** („Zuordnungsliste –
+  …“, auch beim pseudonymisierten Export – keine Datei daneben). **Stimmprofile** lassen sich jetzt einzeln oder alle
+  löschen. Tests `InterviewsTest`, `InterviewToolsUiTest`.
 - **Schneller finden und arbeiten** (AP-135, Analyse Q-01 bis Q-03 und Q-12): **Strg+K findet die Befehle des offenen
   Werkzeugs** – jeden Eintrag der Menüs und Leisten in Dokument, Tabelle, Präsentation, Gestalten, Video, PDF und Transkript,
   auch unter Wörtern, die im Menü nicht stehen („Seitenränder“ findet *Datei › Seite einrichten …*, „Spalte einfügen“
@@ -1887,9 +1902,12 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Chat, Chat duplizieren, Suche im Chat, temporäre Chats (werden nicht gespeichert), Archiv, Mehrfachauswahl in der
   Seitenleiste, Export und Import als JSON. Mehrere Werkzeugaufrufe werden zu einer Zeile zusammengefasst
   („5 Werkzeuge genutzt“), auf der Startseite schlägt Kana Beispiele und Vorlagen vor.
-- **Forschung**: Codieren von Transkripten mit eigenem Kategoriensystem (Codes, Farben, Ankerbeispiele) –
-  *ausschließlich von Hand*, die KI codiert nicht. Intercoder-Übereinstimmung (Cohen's κ, prozentuale Übereinstimmung,
-  Abweichungsliste) und Export nach **REFI-QDA** (`.qdpx`, für MAXQDA, ATLAS.ti, NVivo) sowie als CSV. Diagramme
+- **Forschung**: Codieren von Transkripten mit eigenem Kategoriensystem (Codes, Farben, Ankerbeispiele) – ganze
+  Abschnitte oder **markierte Wörter**, mit **Memos** (seit AP-136). Die KI codiert nicht von selbst: auf Wunsch schlägt
+  Kana Codes für einen Abschnitt vor, übernommen wird nur per Klick. Intercoder-Übereinstimmung (Cohen's κ, prozentuale
+  Übereinstimmung, Abweichungsliste), **Interviews auswerten** über ein ganzes Projekt und Export nach **REFI-QDA**
+  (`.qdpx`, für MAXQDA, ATLAS.ti, NVivo, auch alle Interviews eines Projekts in einem) sowie als CSV; zurück aus MAXQDA
+  über REFI-QDA. Diagramme
   (Balken, Linie, Kreis, Streuung, Boxplot) direkt im Chat und in Dokumenten, Excel-Tabellen (`.xlsx`) und CSV,
   Formeln (LaTeX) werden lesbar gesetzt. Neue Vorlagen: Literaturverzeichnis, Literaturrecherche, Fragebogen,
   Datenmanagementplan, Verarbeitungsverzeichnis, Datenschutzinformation, Ethikantrag. Fundstellen aus der
@@ -1899,8 +1917,8 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   Terminen), Vorlagen für Moodle-Kurse, Lernkarten, Semesterkalender und Vorlesungsfolien aus einem Skript.
 - **Serienbriefe**: Vorlage mit `{{Platzhaltern}}` plus Tabelle oder CSV – die App erzeugt je Zeile ein Dokument
   (z.B. Teilnahmebescheinigungen, Briefe) und packt alle in eine ZIP-Datei.
-- **Transkripte**: anonymisierte Kopie (Namen, Kontaktdaten und eigene Begriffe werden einheitlich ersetzt, Sprecher
-  zu „Person A/B“) mit getrennter **Zuordnungsliste** als PDF, **Übersetzung** Abschnitt für Abschnitt mit erhaltenen
+- **Transkripte**: pseudonymisierte Kopie (Namen, Orte, Einrichtungen, Kontaktdaten und eigene Begriffe werden
+  einheitlich ersetzt, Sprecher zu „Person A/B“, Fundstellen vorher prüfbar) mit der **Zuordnungsliste nur im Tresor**, **Übersetzung** Abschnitt für Abschnitt mit erhaltenen
   Zeiten (für Untertitel), **Stimmprofile**, die bekannte Sprecher:innen in neuen Aufnahmen wiedererkennen, und
   *Protokoll erstellen* aus dem Transkript.
 - **Bedienung**: **Strg+K** Befehlspalette (Bereiche, Einstellungen, Chats und die Befehle des offenen Werkzeugs),
@@ -2415,6 +2433,7 @@ Chats und Einstellungen erhalten bleiben).
 | `data/LoraCorrections.kt`, `ui/LoraCorrectionsSettings.kt`, `tools/befehle/rueckfrage.py` | Rückfrage mit zwei Knöpfen (AP-73: `CommandRecognizer.choices`, `LoraStep.Choose`) und Kana lernt aus Korrekturen (AP-72): Liste auf dem Gerät, Einstellungen, Export für das Training |
 | `ui/ErrorHelp.kt`, `ui/Notices.kt` | Fehlermeldungen in Klartext mit Lösungsknopf (AP-74) |
 | `data/LoraHistory.kt`, `ui/LoraRecent.kt` | Kana-Verlauf, Pfeil hoch, angeheftete Befehle in Strg+K (AP-75) |
+| `transcribe/Coding.kt` (`RefiQda`, `InterviewAnalysis`, `CodeSuggest`), `transcribe/TranscriptTools.kt` (`TranscriptAnon`), `ui/InterviewTools.kt`, `ui/CodingUi.kt` | Interviews auswerten (AP-136): Codieren an Textstellen mit Memos, Kana-Vorschläge, Auswertung über ein Projekt, REFI-QDA-Projekt und Import aus MAXQDA, Pseudonymisieren mit Prüfung, Schlüsselliste im Tresor (`KeyList`) |
 | `ui/MenuCommands.kt`, `ui/ToolKeys.kt`, `ui/PrintPreview.kt`, `data/RecentWork.kt`, `ui/ContinueWork.kt` | Schneller finden und arbeiten (AP-135): Menübefehle des offenen Werkzeugs in Strg+K (`DropdownMenu(commands = …)`, `ToolCommand`), Tasten je Werkzeug für Strg+/, Strg+P mit Vorschau und Druck-Lotse (`PrintableHere`), Weiterarbeiten an der Stelle |
 | `local/LocalSpeed.kt` | Messung und Empfehlung der lokalen Sprachmodelle, Mindesttempo im Mischmodus (AP-76) |
 | `agent/DryRun.kt`, `ui/DayUndo.kt` | Probelauf, Hinweise zu Unumkehrbarem, „Alles rückgängig seit heute Morgen“ (AP-77) |

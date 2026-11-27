@@ -287,6 +287,39 @@ vorher: Ein Dokument, eine Tabelle, eine Präsentation mit mindestens fünf Foli
     Android.
   ort: area.chat
 
+== AP-136 Interviews auswerten: Codieren und Pseudonymisieren
+geräte: windows, macos, linux
+vorher: Drei transkribierte Interviews in einem Projekt (mit Sprechern), ein Kategoriensystem; der Tresor eingerichtet;
+  MAXQDA (oder ATLAS.ti/NVivo) zum Öffnen des Projekts.
+- Wörter markieren und codieren
+  tun: Im Transkript *Mehr › Codieren …* den Codiermodus einschalten, einen Abschnitt antippen, darin einen Satz markieren
+    und einen Code wählen; *Neuer Code* anlegen; ein Memo schreiben; *Kana schlägt vor* einmal ausprobieren.
+  erwartet: Unter dem Abschnitt steht der Code mit den ersten Wörtern des Satzes und ✎ für das Memo; Kanas Vorschläge
+    stehen nur als Knöpfe da und werden erst per Klick übernommen.
+  ort: area.transcripts
+- Pseudonymisieren mit Prüfung
+  tun: *Mehr › Pseudonymisieren …* öffnen, die Liste durchsehen, einen Eintrag abwählen, einen fehlenden Ortsnamen ergänzen,
+    Tresor-PIN eingeben, *Kopie pseudonymisieren*.
+  erwartet: Eine neue Kopie „… (pseudonymisiert)“ in der Liste – ohne Ton, mit denselben Codierungen; im Tresor steht
+    „Zuordnungsliste – …“ mit der Tabelle; nirgends liegt eine Zuordnungsliste als Datei.
+  ort: area.transcripts
+- Drei Interviews in MAXQDA
+  tun: In *Transkription* das Projekt wählen, Symbol *Interviews auswerten*, Tabelle ansehen, einen Code anklicken; dann
+    *Alle als REFI-QDA-Projekt (.qdpx)* (pseudonymisiert) speichern und in MAXQDA öffnen.
+  erwartet: Die Tabelle zählt je Code und Interview richtig; der Klick zeigt alle Stellen und öffnet das Interview dort.
+    MAXQDA zeigt drei Dokumente ohne echte Namen, mit Kategoriensystem, Codierungen an den richtigen Wörtern und Memos.
+  ort: area.transcripts
+- Zurück aus MAXQDA
+  tun: In MAXQDA einen Code ergänzen und zwei Stellen neu codieren, als REFI-QDA exportieren und in Kana unter *Interviews
+    auswerten › Aus MAXQDA übernehmen* einlesen.
+  erwartet: Das Kategoriensystem hat den neuen Code, die neuen Codierungen sitzen auf denselben Wörtern; die Meldung nennt,
+    was übernommen wurde.
+  ort: area.transcripts
+- Stimmprofile löschen
+  tun: Im Transkript *Mehr › Sprecher …* ein Stimmprofil löschen (×), dann *Alle Stimmprofile löschen* und *Rückgängig*.
+  erwartet: Das Profil verschwindet; Rückgängig holt es wieder.
+  ort: area.transcripts
+
 == AP-131 Server-Terminal: Kana im Terminal, Dateien, Tabs
 geräte: windows, macos, linux
 vorher: Ein eigener Server mit SSH-Zugang (am besten ein Testserver) und das Werkzeug *Server-Terminal* eingeschaltet.
