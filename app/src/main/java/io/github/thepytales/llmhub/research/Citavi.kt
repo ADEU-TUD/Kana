@@ -159,7 +159,7 @@ object Citavi {
         if (s.isBlank()) return ""
         var t = s
         if (t.trimStart().startsWith("{\\rtf")) {
-            t = t.replace(Regex("\\\\par[d]?\\b"), "\n").replace(Regex("\\{\\\\\\*[^{}]*}"), "").replace(Regex("\\\\'([0-9a-fA-F]{2})")) { m ->
+            t = t.replace(Regex("\\\\par[d]?\\b"), "\n").replace(Regex("\\{\\\\\\*[^{}]*\\}"), "").replace(Regex("\\\\'([0-9a-fA-F]{2})")) { m ->
                 String(byteArrayOf(m.groupValues[1].toInt(16).toByte()), Charsets.ISO_8859_1)
             }.replace(Regex("\\\\u(-?\\d+)\\??")) { m -> m.groupValues[1].toInt().let { (if (it < 0) it + 65536 else it).toChar().toString() } }
                 .replace(Regex("\\\\[a-zA-Z]+-?\\d* ?"), "").replace(Regex("[{}]"), "")

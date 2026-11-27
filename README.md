@@ -1214,6 +1214,28 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   OpenAlex, die Deutsche Nationalbibliothek und Google Books. Jeder Eintrag zeigt, was ergänzt wurde und was noch fehlt;
   unsichere Treffer werden nur vorgeschlagen. Export als Word, PDF, Markdown, BibTeX, RIS und CSL-JSON. Im Chat unter
   einer Antwort: *⋯ › Literaturverzeichnis erstellen*. Der Zitierstil ist unter *Einstellungen › Literatur & Zotero* wählbar.
+- **Beliebige Zitierstile (CSL, AP-138)**: Neben den acht eingebauten lassen sich Stile im Format der Citation Style
+  Language laden – aus der offiziellen Sammlung (über 10 000 Stile, Suche unter *Einstellungen › Literatur & Zotero ›
+  Weitere Zitierstile* oder *Zitierstil › Weitere Stile (CSL) …*; Zeitschriften-Stile bringen ihren Hauptstil mit) oder
+  als `.csl`-Datei vom Verlag oder Lehrstuhl. Ein eigener Interpreter (`research/Csl.kt`) setzt Verzeichnis und Belege im
+  Text danach – im Verzeichnis, im Dokument (*Literatur einfügen*) und für Kana. Test `CslTest` (IEEE, APA, DGPs,
+  DIN 1505-2, Harvard, Springer, Nature, eLife).
+- **Zitate prüfen** (*Dokument › Extras › Zitate prüfen*): jede Quelle im Text hat einen Eintrag im Literaturverzeichnis
+  und umgekehrt; wörtliche Zitate ab vier Wörtern ohne Seitenangabe oder ohne Beleg sind markiert. Liest „(Müller, 2020,
+  S. 12)“, „Müller (2020)“, „(vgl. Müller et al., 2019a; Kunter u. a. 2011)“ und „[3]“ – ohne Modell, ohne Internet.
+- **Volltexte finden**: *Volltext suchen* je Eintrag oder *⋯ › Volltexte suchen (Open Access)* sucht freie Fassungen
+  (OpenAlex, Unpaywall, arXiv; Verlagsfassung vor angenommener Fassung und Preprint) und legt das PDF im Kana-Ordner unter
+  *Literatur/Volltexte* ab.
+- **Citavi übernehmen**: *Importieren › Datei wählen* liest ein Citavi-Projekt (`.ctv6`, `.ctv5`, `.ctv4`) direkt – mit
+  Notizen, Bewertung, Wissenselementen (Zitate mit Seite), Schlagwörtern und Kategorien (als Listen „Citavi: …“).
+  Dafür liest `files/SqliteReader.kt` SQLite-Dateien ohne native Bibliothek. Schlagwörter kommen auch aus RIS (KW) und
+  BibTeX (keywords).
+- **Literatur-Wächter** (*⋯ › Literatur-Wächter einrichten*): nur auf Wunsch – eine gespeicherte Suche läuft einmal pro
+  Woche als geplante Aufgabe ohne Chat-Modell und ohne Benachrichtigung; neue Werke landen in der Liste „Wächter: …“.
+- **ISBN oder DOI fotografieren** (*⋯ › ISBN oder DOI fotografieren*): Den Barcode einer Buchrückseite liest die App auf
+  dem Gerät (EAN-13, `research/Barcodes.kt`); eine DOI auf der ersten Seite eines Artikels über die Texterkennung des PCs
+  oder ein Bildmodell. Der Eintrag kommt aus Crossref oder der Deutschen Nationalbibliothek zum Prüfen. Test
+  `LiteratureExtrasTest`.
 - **Modi mit einheitlichem Rahmen**: Jeder Modus zeigt über dem Eingabefeld einen Chip mit ✕ zum Verlassen und eine Zeile
   „was passiert hier · Daten: …“; im leeren Chat steht ein Beispiel zum Antippen. Modi starten mit `/` (z. B. `/Planen`),
   über die Befehlspalette (Strg+K, Gruppe *Modi*), die Startseite und Kanas Ideen: *Literatursuche*, *Quellenmodus*,

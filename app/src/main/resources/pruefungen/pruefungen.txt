@@ -246,6 +246,53 @@ vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten 
   erwartet: Bild und Ton laufen gleichmäßig, ohne Hänger.
   ort: tool.video
 
+== AP-138 Literatur: Zitierstile, Volltexte, Prüfung
+geräte: alle
+vorher: Internet; in *Literatur › Sammlung* ein paar Werke mit DOI (z. B. aus der Literatursuche); für den Citavi-Import
+  ein Citavi-Projekt (.ctv6); ein Buch mit ISBN-Barcode auf der Rückseite.
+- Zitierstil aus der Sammlung laden
+  tun: *Einstellungen › Literatur & Zotero › Weitere Zitierstile (CSL) › In der Sammlung suchen*, „Zeitschrift für
+    Pädagogik“ (oder eine andere Zeitschrift) tippen und antippen; danach *Als Standard*. In *Literatur › Verzeichnis*
+    ein Verzeichnis aus der Sammlung erstellen.
+  erwartet: Der Stil steht mit Vorschau in der Liste und im Feld *Zitierstil* unter den acht eingebauten; das Verzeichnis
+    folgt dem Stil (Reihenfolge, Kursiv, Begriffe wie „Hrsg.“). Ein Zeitschriften-Stil lädt seinen Hauptstil mit.
+  ort: area.literature
+- Eigene CSL-Datei
+  tun: *Datei laden (.csl)* mit einer Stildatei vom Lehrstuhl oder Verlag; einmal mit einer beliebigen anderen Datei.
+  erwartet: Die Stildatei erscheint in der Liste; die falsche Datei gibt eine verständliche Meldung, nichts wird gespeichert.
+  ort: area.literature
+- Zitate im Dokument prüfen
+  geräte: windows, macos, linux
+  tun: Im Dokument zwei Werke über *Einfügen › Zitat aus der Literatur* zitieren, einen Beleg „(Muster, 2020)“ von Hand
+    tippen und ein wörtliches Zitat „…“ mit vier Wörtern ohne Seite schreiben; dann *Extras › Zitate prüfen*.
+  erwartet: Gemeldet werden „(Muster, 2020)“ als Beleg ohne Eintrag und das Zitat ohne Seitenangabe; die eingefügten
+    Werke passen. *Bericht kopieren* legt den Bericht in die Zwischenablage.
+  ort: area.files
+- Volltexte finden
+  tun: In der Sammlung bei einem Open-Access-Artikel *Volltext suchen*; danach über *⋯ › Volltexte suchen (Open Access)*
+    für alle.
+  erwartet: Das PDF liegt in *Dateien › Literatur › Volltexte* („Autor Jahr - Titel.pdf“), der Eintrag zeigt *Volltext
+    öffnen*. Werke ohne freie Fassung melden das; frei lesbare ohne PDF öffnen sich über *Volltext*.
+  ort: area.literature
+- Citavi übernehmen
+  tun: *Literatur › Sammlung › Importieren › Datei wählen* und das Citavi-Projekt (.ctv6) wählen.
+  erwartet: Die Meldung nennt Titel, Kategorien, Schlagwörter und Wissenselemente; Kategorien sind Listen („Citavi: …“),
+    Schlagwörter stehen als #… am Eintrag, Notizen und Zitate im Feld *Notiz*. Beiträge im Sammelband haben Buch und
+    Herausgeber:innen.
+  ort: area.literature
+- Literatur-Wächter
+  tun: *Literatur › Sammlung › ⋯ › Literatur-Wächter einrichten*, eine Suche eingeben und speichern.
+  erwartet: Unter *Geplante Aufgaben* steht der Wächter (einmal pro Woche); die erste Suche legt neue Werke in die Liste
+    „Wächter: …“, ohne Benachrichtigung. Ein zweiter Lauf zeigt dieselben Werke nicht noch einmal.
+  ort: area.literature
+- ISBN per Kamera
+  geräte: android
+  tun: *Literatur › Sammlung › ⋯ › ISBN oder DOI fotografieren › Foto aufnehmen* und den Barcode auf der Buchrückseite
+    fotografieren; einmal die erste Seite eines Artikels mit DOI.
+  erwartet: Das Buch erscheint mit Titel, Verlag und Jahr zum Prüfen und landet nach *Speichern* in der Sammlung; die DOI
+    wird erkannt, wenn ein Bildmodell eingerichtet ist (sonst sagt die App das).
+  ort: area.literature
+
 == AP-135 Schneller finden und arbeiten
 geräte: alle
 vorher: Ein Dokument, eine Tabelle, eine Präsentation mit mindestens fünf Folien, ein Videoprojekt und ein PDF aus einer

@@ -185,8 +185,8 @@ class SqliteReader(private val bytes: ByteArray) {
             val constraint = Regex("^(CONSTRAINT|PRIMARY|UNIQUE|CHECK|FOREIGN)\\b", RegexOption.IGNORE_CASE)
             var rowid: String? = null
             val names = parts.map { it.trim() }.filter { it.isNotEmpty() && !constraint.containsMatchIn(it) }.map { def ->
-                val name = Regex("^(\"[^\"]+\"|`[^`]+`|\\[[^]]+]|'[^']+'|\\S+)").find(def)!!.value.trim('"', '`', '[', ']', '\'')
-                if (Regex("^\\S+\\s+INTEGER\\s+PRIMARY\\s+KEY", RegexOption.IGNORE_CASE).containsMatchIn(def.replace(Regex("^(\"[^\"]+\"|`[^`]+`|\\[[^]]+])"), "x"))) rowid = name
+                val name = Regex("^(\"[^\"]+\"|`[^`]+`|\\[[^\\]]+\\]|'[^']+'|\\S+)").find(def)!!.value.trim('"', '`', '[', ']', '\'')
+                if (Regex("^\\S+\\s+INTEGER\\s+PRIMARY\\s+KEY", RegexOption.IGNORE_CASE).containsMatchIn(def.replace(Regex("^(\"[^\"]+\"|`[^`]+`|\\[[^\\]]+\\])"), "x"))) rowid = name
                 name
             }
             return names to rowid

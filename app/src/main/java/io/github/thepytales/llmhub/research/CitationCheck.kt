@@ -44,9 +44,10 @@ object CitationCheck {
     private val ITEM = Regex("(?:(?:vgl\\.|siehe|see|cf\\.|z\\.\\s?B\\.|e\\.\\s?g\\.,?)\\s+)?($AUTHORS)[,\\s]+($YEAR(?:\\s*,\\s*$YEAR)*)(?:\\s*[,:]\\s*($PAGE|\\d+[\\d–-]*f{0,2}\\.?))?")
     private val BRACKETS = Regex("\\(([^()]{4,300})\\)")
     private val NARRATIVE = Regex("($AUTHORS)\\s+\\(($YEAR)(?:\\s*[,:]\\s*($PAGE|\\d+[\\d–-]*))?\\)")
-    private val NUMBERS = Regex("\\[(\\d{1,3}(?:\\s*[-–,]\\s*\\d{1,3})*)(?:\\s*,\\s*($PAGE))?]")
+    private val NUMBERS = Regex("\\[(\\d{1,3}(?:\\s*[-–,]\\s*\\d{1,3})*)(?:\\s*,\\s*($PAGE))?\\]")
     private val QUOTES = Regex("„([^“”\"]{3,})[“\"]|“([^”]{3,})”|»([^«]{3,})«|(?<![\\p{L}\\d])\"([^\"\\n]{3,})\"")
-    private val SENTENCE_END = Regex("[.!?](?=\\s|$)")
+    /** End of a sentence: the next one starts with a capital (so "S. 71" or "vgl. Müller" do not end it). */
+    private val SENTENCE_END = Regex("(?<!\\b(?:S|p|pp|vgl|ebd|bzw|Aufl|Hrsg|Nr|Bd|H|ca|al|a))[.!?](?=\\s+[\\p{Lu}„\"]|\\s*\\n|\\s*$)")
     private val HEADING = Regex("^#{1,6}\\s*(Literatur(verzeichnis)?|Quellen(verzeichnis)?|Literatur und Quellen|References|Bibliography|Works Cited)\\s*$", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
 
     /** The body text (without the reference list and HTML comments) and the lines of the reference list. */
@@ -135,7 +136,8 @@ object CitationCheck {
             val inner = q.groupValues.drop(1).firstOrNull { it.isNotEmpty() }.orEmpty()
             if (inner.trim().split(Regex("\\s+")).size < 4) return@forEach
             quotes++
-            val sentenceStart = body.lastIndexOfAny(charArrayOf('.', '!', '?', '\n'), (q.range.first - 1).coerceAtLeast(0)).let { if (it < 0) 0 else it + 1 }
+            val sentenceStart = SENTENCE_END.findAll(body.substring(0, q.range.first)).lastOrNull()?.range?.last?.plus(1)
+                ?: 0
             val after = body.substring(q.range.last + 1)
             val endRel = SENTENCE_END.find(after)?.range?.first?.coerceAtMost(240) ?: after.length.coerceAtMost(240)
             val end = q.range.last + 1 + endRel

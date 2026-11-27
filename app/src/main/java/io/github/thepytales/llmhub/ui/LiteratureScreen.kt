@@ -301,6 +301,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
     }
     var fetching by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var watching by remember { mutableStateOf(false) }
+    var photo by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -323,7 +324,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                 IconButton(onClick = { importing = true }) { Icon(Icons.Outlined.FileUpload, contentDescription = tr("Importieren")) }
                 var more by remember { mutableStateOf(false) }
                 Box {
-                    IconButton(onClick = { more = true }, enabled = shown.isNotEmpty()) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
+                    IconButton(onClick = { more = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
                     DropdownMenu(expanded = more, onDismissRequest = { more = false }) {
                         DropdownMenuItem(text = { Text(tr("Literaturverzeichnis erstellen")) }, leadingIcon = { Icon(Icons.Outlined.LibraryBooks, null) }, onClick = { more = false; onMakeBibliography(chosen) })
                         if (chosen.any { it.excerpt.isNotBlank() }) {
@@ -357,6 +358,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                                 fetching = null
                             }
                         })
+                        DropdownMenuItem(text = { Text(tr("ISBN oder DOI fotografieren …")) }, leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) }, onClick = { more = false; photo = true })
                         DropdownMenuItem(text = { Text(tr("Literatur-Wächter einrichten …")) }, leadingIcon = { Icon(Icons.Outlined.Search, null) }, onClick = { more = false; watching = true })
                         DropdownMenuItem(text = { Text(tr("Zitate kopieren (APA-Kurzform)")) }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = {
                             more = false
@@ -417,6 +419,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
     }
 
     if (watching) LiteratureWatchDialog(c, list, onDismiss = { watching = false })
+    if (photo) IdentifierPhotoDialog(c, list, onDismiss = { photo = false })
     if (importing) ImportDialog(onDismiss = { importing = false }, onFile = { importing = false; importFile() }) { text ->
         val refs = ReferenceImport.read(text)
         c.literature.addAll(refs, list)

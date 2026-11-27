@@ -76,7 +76,7 @@ Fairlight).
 | ~~Kana im Alltag~~ ☑ | AP-74 Fehlermeldungen in Klartext · AP-75 Kana-Verlauf mit „Nochmal“ · AP-76 Sprachmodell-Empfehlung nach Messung · AP-77 Probelauf und „Alles rückgängig“ · AP-78 Eigene Wörter und Wissenspakete · AP-79 Hausstil- und Barrierefreiheits-Check · AP-80 Rollenauswahl · AP-81 Videoexport-Warteschlange · AP-82 Vorschau für Video und Ton · AP-83 Kana-Pakete teilen · AP-84 Kana in mehreren Fenstern · AP-85 Große Anhänge vollständig nutzen (erledigt 10.11.2026, siehe *Erledigt*) |
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Kana offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Kana selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Kana Postfach · AP-113 Kana Namensschutz Runde 3 · AP-114 Kana Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
-| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Kana im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · ~~AP-133 Geführte Prüfung am Gerät~~ ☑ · ~~AP-134 Nichts geht verloren~~ ☑ · **Danach:** ~~AP-135 Schneller finden und arbeiten~~ ☑ · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Kana kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
+| **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Kana im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · ~~AP-133 Geführte Prüfung am Gerät~~ ☑ · ~~AP-134 Nichts geht verloren~~ ☑ · **Danach:** ~~AP-135 Schneller finden und arbeiten~~ ☑ · AP-136 Interviews auswerten · AP-137 PDF im Stapel · ~~AP-138 Literatur~~ ☑ · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Kana kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
 | **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☑** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
@@ -115,7 +115,8 @@ im Hörsaal (gestrichen).
 
 **Vorrang ab 24.11.2026 (Hauptnutzer):** **AP-155** (Umbenennung Lora → Kana) ist fertig (1.0.78), weiter wie oben.
 **27.11.2026:** AP-129 ist fertig (Prüfung am Gerät offen); **AP-135** ist fertig (Prüfung am Gerät offen); als Nächstes
-kommt **AP-136** (aus *Danach*).
+kommt **AP-136** (aus *Danach*). **AP-138** (Literatur) hat der Hauptnutzer am 27.11.2026 vorgezogen; es ist fertig
+(Prüfung am Gerät offen), danach weiter mit **AP-136**.
 
 ### AP-155 ☑ Umbenennung: Lora heißt jetzt Kana · L (Wunsch Hauptnutzer 24.11.2026, in Stufen)
 **Entscheidung des Hauptnutzers (24.11.2026):** Die App und die Figur heißen künftig **Kana** statt Lora. Das Repository
@@ -1064,7 +1065,7 @@ offen (Prüfliste `pruefungen.txt`, Paket AP-135).
 - **(d) Lesezeichen bearbeiten** (P-06): anlegen, umbenennen, verschachteln, aus Überschriften erzeugen.
 **Fertig, wenn**: ein Ordner mit 50 Scans in einem Lauf durchsuchbar, verkleinert und als PDF/A gespeichert ist; Tests.
 
-### AP-138 ☐ Literatur: Zitierstile, Volltexte, Prüfung · M–L (Analyse L-01 bis L-06)
+### AP-138 ☑ Literatur: Zitierstile, Volltexte, Prüfung · M–L (Analyse L-01 bis L-06)
 - **(a) Beliebige Zitierstile** (L-01): CSL-Stile aus der offiziellen Sammlung oder als Datei (Verlag, Lehrstuhl) laden;
   die 8 eingebauten bleiben die Auswahl oben.
 - **(b) Zitierprüfung im Dokument** (L-06): jede Quelle im Text hat einen Eintrag und umgekehrt; wörtliche Zitate ohne
@@ -1074,6 +1075,29 @@ offen (Prüfliste `pruefungen.txt`, Paket AP-135).
 - **(e) Literatur-Wächter** (L-04): nur auf Wunsch, als geplante Aufgabe – neue Paper zu einer gespeicherten Suche einmal
   pro Woche als Liste (Kana unterbricht nicht).
 - **(f) ISBN/DOI per Kamera** (L-05, Android): Barcode oder DOI fotografieren → Eintrag.
+
+**Umgesetzt (27.11.2026, vorgezogen auf Wunsch des Hauptnutzers; Prüfung am Gerät offen, `pruefungen.txt` › AP-138):**
+- (a) `research/Csl.kt`: eigener CSL-1.0-Interpreter (Makros, Namen mit et al., Initialen, Sortierreihenfolge und Ersatz,
+  Daten, Zahlen, Labels, Gruppen, Bedingungen, Affixe, Kursiv/Fett, Anführungszeichen, Groß-/Kleinschreibung nur für
+  englische Werke, Sortierung, a/b). `research/CslLibrary.kt`: Stile aus der offiziellen Sammlung (Liste und Dateien über
+  zotero.org/styles, Liste eine Woche zwischengespeichert; abhängige Zeitschriften-Stile laden ihren Hauptstil) oder als
+  Datei; `CitationStyles` – Schlüssel `csl:<id>` in den Einstellungen und im Marker des Dokuments; die acht eingebauten
+  bleiben oben. Auswahl in Verzeichnis, Literatursuche, Einstellungen, *Literatur einfügen* und für Kana
+  (`create_bibliography` mit Stilname).
+- (b) `research/CitationCheck.kt` + *Extras › Zitate prüfen* (auch im Mehr-Menü): Belege ohne Eintrag, nie zitierte
+  Einträge, wörtliche Zitate ohne Seite oder ohne Beleg; Autor-Jahr und Nummern.
+- (c) `research/FullTexts.kt`: OpenAlex und Unpaywall (nur legale freie Fassungen), PDF nach *Literatur/Volltexte*;
+  `Reference.fullTextPath`.
+- (d) `files/SqliteReader.kt` (SQLite ohne native Bibliothek) und `research/Citavi.kt`: Citavi-Projekte mit Notizen,
+  Bewertung, Wissenselementen, Schlagwörtern (`Reference.keywords`) und Kategorien als Listen. Das Schema stammt aus
+  der Kenntnis der Citavi-Datenbank (Tabellen *Reference*, *Person*, *ReferenceAuthor* …) und ist mit einer
+  nachgebauten Datei getestet; die Prüfung mit einem echten Citavi-6-Projekt steht noch aus.
+- (e) `research/LiteratureWatch.kt`: geplante Aufgabe mit `litWatch` (einmal pro Woche, ohne Modell, ohne
+  Benachrichtigung), merkt sich gezeigte Werke.
+- (f) `research/Barcodes.kt`: EAN-13 auf dem Gerät; DOI über die Texterkennung des PCs oder ein Bildmodell (auf dem Handy
+  zuerst eines auf dem Gerät).
+- Tests `CslTest`, `LiteratureExtrasTest`; Teststile aus der offiziellen Sammlung (CC BY-SA 3.0) unter
+  `desktop/src/test/resources/csl`.
 
 ### AP-139 ☐ Mail im Alltag · M (Analyse M-01 bis M-04; Postfach weiter nur mit Modell auf dem Gerät)
 - **(a) Textbausteine** (M-01): häufige Antworten mit Platzhaltern (Name, Termin, Frist); das Modell auf dem Gerät schlägt

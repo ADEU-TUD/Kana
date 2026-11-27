@@ -131,8 +131,8 @@ tests: FileLibraryTest FileToolsTest QuickLookTest LoraFilesTest WindowsIntegrat
 tests: AndroidCatchUpTest ConnectionsTest FormatsAndResearchTest FormatConvertTest KnowledgeAndBackupTest CsvPilotTest
 
 [literatur] Literatur und Quellen
-quellen: research/** ui/Literature*.kt
-tests: BibliographyTest LiteratureSourcesTest TeachingAndResearchTest FormatsAndResearchTest EvidenceAndExcerptTest
+quellen: research/** ui/Literature*.kt ui/CslStylesUi.kt ui/CitationCheckUi.kt files/SqliteReader.kt
+tests: BibliographyTest LiteratureSourcesTest TeachingAndResearchTest FormatsAndResearchTest EvidenceAndExcerptTest CslTest LiteratureExtrasTest
 
 [chat] Chat, Modi, Modelle im Netz
 quellen: ui/Chat*.kt ui/Markdown.kt ui/ModeUi.kt ui/AskAiPopup.kt data/ChatRepository.kt data/ChatTitles.kt data/ChatTree.kt

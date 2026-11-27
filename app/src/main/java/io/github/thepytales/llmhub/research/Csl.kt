@@ -201,7 +201,9 @@ class CslStyle private constructor(
             else -> ""
         }
         if (raw.isEmpty()) return ""
-        val out = format(node, raw, ctx.terms, applyAffixes = true)
+        // Terms are words of the style's language: title case applies to them whatever the work's language.
+        val terms = if (node.name == "label" || node.attrs["term"] != null) ctx.terms.forTerms() else ctx.terms
+        val out = format(node, raw, terms, applyAffixes = true)
         return if (node.attrs["display"] == "left-margin") "$out " else out
     }
 
@@ -304,7 +306,7 @@ class CslStyle private constructor(
         val out = lists.joinToString(delimiter) { (v, people) ->
             val opts = ctx.nameOpts + nameNode?.attrs.orEmpty()
             val namesText = if (opts["form"] == "count") people.size.toString() else nameList(people, opts, nameNode, etAlNode, ctx)
-            val label = labelNode?.let { l -> format(l, label(l, ctx, v, people.size), ctx.terms, true) }.orEmpty()
+            val label = labelNode?.let { l -> format(l, label(l, ctx, v, people.size), ctx.terms.forTerms(), true) }.orEmpty()
             when {
                 label.isEmpty() -> namesText
                 labelFirst -> label + namesText
@@ -561,7 +563,7 @@ class CslStyle private constructor(
 
     private fun tidy(s: String): String = s
         .replace(Regex("[ \\t]+"), " ")
-        .replace(Regex("\\(\\s*\\)|\\[\\s*]"), "")
+        .replace(Regex("\\(\\s*\\)|\\[\\s*\\]"), "")
         .replace(Regex("\\s+([.,;:])"), "$1")
         .replace(Regex("([.,;:])\\1+"), "$1")
         .replace(Regex("\\.(\\*{1,2})\\."), ".$1")
@@ -620,6 +622,9 @@ class CslStyle private constructor(
             }
             return ""
         }
+
+        /** These terms for words of the style itself (labels, terms): always English rules in English styles. */
+        fun forTerms(): Terms = if (englishItem) this else Terms(lang, true, style, builtIn, dateForms)
 
         fun ordinal(n: Int): String {
             if (lang == "de") return "$n."

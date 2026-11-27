@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -129,7 +127,7 @@ suspend fun fetchFullTexts(c: AppContainer, refs: List<io.github.thepytales.llmh
 fun LiteratureWatchDialog(c: AppContainer, list: String?, onDismiss: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val settings = c.settings.current
-    var query by remember { androidx.compose.runtime.mutableStateOf(list?.removePrefix(tr("Wächter: ")).orEmpty()) }
+    var query by remember { androidx.compose.runtime.mutableStateOf(list?.substringAfter(": ").orEmpty()) }
     var weekday by remember { androidx.compose.runtime.mutableIntStateOf(1) }
     var hour by remember { androidx.compose.runtime.mutableIntStateOf(7) }
     val sources = remember {
@@ -167,6 +165,96 @@ fun LiteratureWatchDialog(c: AppContainer, list: String?, onDismiss: () -> Unit)
                 Notices.info(tr("Literatur-Wächter gespeichert ({0}); die erste Suche läuft jetzt.", t.scheduleLabel()))
                 onDismiss()
             }) { Text(tr("Speichern")) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
+    )
+}
+
+/**
+ * ISBN/DOI per Foto (AP-138 f): the barcode on the back of a book is read on the device; otherwise the text of the
+ * photo (title page, first page of an article) – with the text recognition of the PC or an image model this privacy
+ * level allows (on the phone first a model on the device) – is searched for a DOI or ISBN.
+ */
+suspend fun identifiersOnPhoto(c: AppContainer, photo: java.io.File): Pair<List<String>, List<String>> = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+    val raster = io.github.thepytales.llmhub.docs.ScanImages.read(photo, 2000)
+    io.github.thepytales.llmhub.research.Barcodes.isbn(raster)?.let { return@withContext emptyList<String>() to listOf(it) }
+    val png = io.github.thepytales.llmhub.docs.ScanImages.png(io.github.thepytales.llmhub.docs.ScanImages.read(photo, 1600))
+    val text = io.github.thepytales.llmhub.docs.PdfPlatform.localOcr?.let { ocr ->
+        val f = java.io.File.createTempFile("isbn-doi", ".png").apply { writeBytes(png) }
+        try { ocr.recognize(listOf(f)).firstOrNull()?.text } finally { f.delete() }
+    } ?: io.github.thepytales.llmhub.docs.PdfOcr.visionModel(c)?.let { model ->
+        val url = "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(png)
+        val prompt = "Lies alle DOIs (beginnen mit 10.) und ISBNs auf diesem Foto ab. Gib nur diese Kennungen aus, eine pro Zeile, ohne Erklärung."
+        runCatching {
+            c.llm.streamChat(model, listOf(io.github.thepytales.llmhub.data.ChatMessage(role = "user", content = prompt, images = listOf(url))), tools = null,
+                thinking = io.github.thepytales.llmhub.net.ThinkingLevel.OFF) {}.content
+        }.getOrNull()
+    } ?: throw IllegalStateException(tr("Kein Barcode erkannt, und für DOIs fehlt eine Texterkennung (ein Bildmodell unter Einstellungen › Modelle)."))
+    io.github.thepytales.llmhub.research.Barcodes.identifiers(text)
+}
+
+/** The details of the work behind a DOI or ISBN (Crossref, Deutsche Nationalbibliothek, then the completion). */
+suspend fun lookupIdentifier(c: AppContainer, doi: String?, isbn: String?): io.github.thepytales.llmhub.research.Reference? {
+    val s = c.researchTools.sources(null)
+    doi?.let { d -> runCatching { s.crossrefDoi(d) }.getOrNull()?.let { return it } }
+    isbn?.let { i ->
+        runCatching { s.dnbIsbn(i) }.getOrNull()?.let { return it.copy(isbn = it.isbn.ifBlank { i }) }
+        val probe = io.github.thepytales.llmhub.research.Reference(type = io.github.thepytales.llmhub.research.RefType.BOOK, isbn = i)
+        return runCatching { io.github.thepytales.llmhub.research.Bibliography.complete(s, listOf(probe)).first().ref }.getOrDefault(probe)
+    }
+    return doi?.let { io.github.thepytales.llmhub.research.Reference(doi = it) }
+}
+
+/** Literatur › Sammlung › „ISBN oder DOI fotografieren“: photo (or picture), recognition, details to check, save. */
+@Composable
+fun IdentifierPhotoDialog(c: AppContainer, list: String?, onDismiss: () -> Unit) {
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var busy by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var found by remember { androidx.compose.runtime.mutableStateOf<io.github.thepytales.llmhub.research.Reference?>(null) }
+    var typed by remember { androidx.compose.runtime.mutableStateOf("") }
+    fun resolve(dois: List<String>, isbns: List<String>) {
+        if (dois.isEmpty() && isbns.isEmpty()) { Notices.info(tr("Keine ISBN und keine DOI erkannt.")); busy = false; return }
+        scope.launch {
+            val ref = runCatching { lookupIdentifier(c, dois.firstOrNull(), isbns.firstOrNull()) }.getOrNull()
+            busy = false
+            if (ref == null) Notices.info(tr("Zu {0} nichts gefunden.", (dois + isbns).first())) else found = ref
+        }
+    }
+    val sources = rememberScanSources { files ->
+        val f = files.firstOrNull() ?: return@rememberScanSources
+        busy = true
+        scope.launch {
+            runCatching { identifiersOnPhoto(c, f) }
+                .onSuccess { (dois, isbns) -> resolve(dois, isbns) }
+                .onFailure { Notices.error(it.message ?: tr("Das Foto ließ sich nicht lesen.")); busy = false }
+        }
+    }
+    found?.let { r ->
+        ReferenceEditor(r, onDismiss = { found = null }) { edited ->
+            c.literature.addAll(listOf(edited), list)
+            Notices.info(tr("In die Sammlung übernommen: {0}", edited.short().take(80)))
+            found = null
+            onDismiss()
+        }
+        return
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(tr("ISBN oder DOI fotografieren")) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                HintText(tr("Den Barcode auf der Buchrückseite fotografieren (ISBN, wird auf dem Gerät gelesen) – oder die Titelseite bzw. die erste Seite eines Artikels mit der DOI."))
+                sources.forEach { s -> OutlinedButton(enabled = !busy, onClick = s.start, modifier = Modifier.fillMaxWidth()) { Text(s.label) } }
+                if (busy) androidx.compose.material3.CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                OutlinedTextField(typed, { typed = it }, label = { Text(tr("Oder ISBN/DOI eingeben")) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            }
+        },
+        confirmButton = {
+            TextButton(enabled = typed.isNotBlank() && !busy, onClick = {
+                busy = true
+                val (dois, isbns) = io.github.thepytales.llmhub.research.Barcodes.identifiers(typed)
+                resolve(dois, isbns.ifEmpty { typed.filter { it.isDigit() || it == 'X' }.takeIf { it.length == 10 || it.length == 13 }?.let { listOf(it) }.orEmpty() })
+            }) { Text(tr("Suchen")) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Abbrechen")) } },
     )

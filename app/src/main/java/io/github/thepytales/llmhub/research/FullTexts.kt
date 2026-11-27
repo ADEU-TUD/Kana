@@ -23,11 +23,11 @@ object FullTexts {
         data object NotFound : Outcome
     }
 
-    /** „Helmke 2009 – Unterrichtsqualität und Lehrerprofessionalität.pdf“ */
+    /** „Helmke 2009 - Unterrichtsqualität und Lehrerprofessionalität.pdf“ (plain hyphen: works with every file system encoding). */
     fun fileName(r: Reference): String {
         val who = r.creators.firstOrNull()?.family?.let { if (r.creators.size > 2) "$it et al." else if (r.creators.size == 2) it + " & " + r.creators[1].family else it }.orEmpty()
         val title = r.title.ifBlank { r.raw }.substringBefore(": ").take(80)
-        val base = listOf(listOf(who, r.year).filter { it.isNotBlank() }.joinToString(" "), title).filter { it.isNotBlank() }.joinToString(" – ")
+        val base = listOf(listOf(who, r.year).filter { it.isNotBlank() }.joinToString(" "), title).filter { it.isNotBlank() }.joinToString(" - ")
         return base.replace(Regex("[\\\\/:*?\"<>|\\u0000-\\u001f]"), "").replace(Regex("\\s+"), " ").trim().trimEnd('.').ifBlank { "Volltext" } + ".pdf"
     }
 
