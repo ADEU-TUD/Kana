@@ -44,9 +44,9 @@ object VideoLora {
     /** Opens a project in the editor (the video screen listens). */
     val openRequest = MutableStateFlow<String?>(null)
 
-    private fun current(): VideoProject? = host?.project?.invoke() ?: lastId?.let { VideoHub.store.get(it) }
+    internal fun current(): VideoProject? = host?.project?.invoke() ?: lastId?.let { VideoHub.store.get(it) }
 
-    private fun need(): VideoProject = current() ?: throw ActionFailed(tr("Bitte ein Videoprojekt öffnen – oder sag „Mach aus der Aufnahme ein Videoprojekt“."))
+    internal fun need(): VideoProject = current() ?: throw ActionFailed(tr("Bitte ein Videoprojekt öffnen – oder sag „Mach aus der Aufnahme ein Videoprojekt“."))
 
     /** Changes the project: through the editor when it is open, else stored directly. */
     private suspend fun edit(id: String, f: (VideoProject) -> VideoProject) {
@@ -57,7 +57,7 @@ object VideoLora {
     }
 
     /** A change with Rückgängig: the project before comes back. */
-    private suspend fun change(p: VideoProject, text: String, f: (VideoProject) -> VideoProject): ActionResult {
+    internal suspend fun change(p: VideoProject, text: String, f: (VideoProject) -> VideoProject): ActionResult {
         val before = p
         edit(p.id, f)
         return ActionResult(text, undo = { edit(before.id) { _ -> before.copy(updatedAt = System.currentTimeMillis()) }; tr("Projekt wie vorher.") })
@@ -94,7 +94,7 @@ object VideoLora {
         return Key(0.0, x, y, share)
     }
 
-    private suspend fun transcripts(c: AppContainer, p: VideoProject): Map<String, Transcript> = withContext(Dispatchers.IO) {
+    internal suspend fun transcripts(c: AppContainer, p: VideoProject): Map<String, Transcript> = withContext(Dispatchers.IO) {
         // Linked ones, else the transcript titled like the source file (as Kana's transcription names it).
         val list = c.transcription.transcripts.value
         p.clips.map { it.path }.distinct().mapNotNull { path ->
@@ -437,5 +437,5 @@ object VideoLora {
     )
 
     /** Called once at the start of the Windows app. */
-    fun register() = ToolActions.register(ACTIONS)
+    fun register() = ToolActions.register(ACTIONS + VideoEverydayLora.ACTIONS)
 }

@@ -306,7 +306,7 @@ object VideoEdit {
         if (c.muted) return null
         val start = p.starts()[i]
         val track = freeAudioTrack(p, start, start + c.length)
-        val a = AudioClip(path = c.path, startSec = start, inSec = c.inSec, outSec = c.outSec, volume = c.volume, fadeSec = 0.0, track = track, linkedTo = c.id, linkOffset = 0.0)
+        val a = AudioClip(path = c.path, startSec = start, inSec = c.inSec, outSec = c.outSec, volume = c.volume, fadeSec = 0.0, track = track, linkedTo = c.id, linkOffset = 0.0, channel = c.channel)
         val q = p.copy(clips = p.clips.map { if (it.id == c.id) it.copy(muted = true) else it }, audio = p.audio + a, audioTracks = maxOf(p.audioTracks, track))
         return q.linked() to a.id
     }

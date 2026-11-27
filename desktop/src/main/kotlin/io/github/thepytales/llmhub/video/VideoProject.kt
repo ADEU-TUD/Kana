@@ -33,12 +33,18 @@ data class Frame(
 
     companion object {
         /** Picture-in-picture corners (webcam over the screencast): a third of the width, a small margin. */
-        val CORNERS = listOf("unten-rechts" to trLater("Unten rechts"), "unten-links" to trLater("Unten links"), "oben-rechts" to trLater("Oben rechts"), "oben-links" to trLater("Oben links"), "voll" to trLater("Ganzes Bild"))
+        val CORNERS = listOf(
+            "unten-rechts" to trLater("Unten rechts"), "unten-links" to trLater("Unten links"), "oben-rechts" to trLater("Oben rechts"), "oben-links" to trLater("Oben links"),
+            "links-halb" to trLater("Linke Hälfte"), "rechts-halb" to trLater("Rechte Hälfte"), "voll" to trLater("Ganzes Bild"),
+        )
 
         fun corner(name: String, scale: Float = 0.3f): Frame {
             val mx = 0.03f + scale / 2
             val my = 0.04f + scale / 2
             return when (name) {
+                // Side by side (AP-129: camera and slides of a lecture): half the size, in the middle of its half.
+                "links-halb" -> Frame(x = 0.25f, y = 0.5f, scale = 0.5f)
+                "rechts-halb" -> Frame(x = 0.75f, y = 0.5f, scale = 0.5f)
                 "unten-links" -> Frame(x = mx, y = 1f - my, scale = scale)
                 "oben-rechts" -> Frame(x = 1f - mx, y = my, scale = scale)
                 "oben-links" -> Frame(x = mx, y = my, scale = scale)
@@ -51,7 +57,8 @@ data class Frame(
 
 /**
  * A piece of a source file on the video track V1: [inSec]..[outSec] of [path]. [transition] blends from the previous clip
- * into this one ("none", "fade" = cross-dissolve, "black" = through black), [transitionSec] long. [frame]: position,
+ * into this one ("none", "fade" = cross-dissolve, "black" = through black; since AP-129 also "wipe", "slide", "circle" –
+ * see [TRANSITIONS]), [transitionSec] long. [frame]: position,
  * size, crop and opacity (AP-52). [fx]: speed, reverse, freeze, colour, zoom, regions and voice (AP-54); with a speed
  * the clip lasts [sourceLength] / speed on the timeline, a frozen clip shows the frame at [inSec] for outSec − inSec.
  */
@@ -67,6 +74,8 @@ data class VideoClip(
     val transitionSec: Double = 0.6,
     val frame: Frame = Frame(),
     val fx: ClipFx = ClipFx(),
+    /** Sound on one side only (AP-129): "links" or "rechts" is put on both sides, "" leaves it as recorded. */
+    val channel: String = "",
 ) {
     /** Seconds of the source it covers (a frozen clip: its length). */
     val sourceLength: Double get() = (outSec - inSec).coerceAtLeast(0.0)
@@ -101,12 +110,22 @@ data class TextOverlay(
     val subtext: String = "",
     val startSec: Double,
     val durationSec: Double = 5.0,
+    /**
+     * Hervorhebungen (AP-129 e, [Callouts]): centre [x], [y] and size [w], [h] as shares of the frame (an arrow: its
+     * tip at x, y, its tail w to the left and h below), [color] "#RRGGBB" or empty for the style's colour. Titles in
+     * the TUD design do not use them.
+     */
+    val x: Float = 0.5f,
+    val y: Float = 0.5f,
+    val w: Float = 0.3f,
+    val h: Float = 0.22f,
+    val color: String = "",
 ) {
     val endSec: Double get() = startSec + durationSec
 
     companion object {
         val STYLES = listOf("titel" to "Titel", "bauchbinde" to "Bauchbinde", "einblendung" to "Einblendung", "abspann" to "Abspann")
-        fun label(style: String) = STYLES.firstOrNull { it.first == style }?.second ?: style
+        fun label(style: String) = STYLES.firstOrNull { it.first == style }?.second ?: Callouts.label(style) ?: style
     }
 }
 
@@ -154,15 +173,25 @@ data class AudioClip(
     val reverse: Boolean = false,
     /** Voice change in semitones (AP-54, anonymisation); linked sound also follows its clip's. */
     val voice: Float = 0f,
+    /**
+     * Ducking (AP-129): quieter while someone speaks – in the sound of the clips, of the pictures above or on a sound
+     * track that is not ducked itself (music under a lecture or an interview).
+     */
+    val duck: Boolean = false,
+    /** Sound on one side only (AP-129): "links" or "rechts" is put on both sides. */
+    val channel: String = "",
 ) {
     val length: Double get() = (outSec - inSec).coerceAtLeast(0.0) / speed.coerceIn(0.25, 4.0)
     val endSec: Double get() = startSec + length
     val name: String get() = File(path).name
 }
 
-/** One subtitle on the timeline. */
+/**
+ * One subtitle on the timeline; [words]: the start of each of its words on the timeline where the transcript measured
+ * them (for the style „Wort für Wort“, AP-129), else empty.
+ */
 @Serializable
-data class SubtitleCue(val startSec: Double, val endSec: Double, val text: String)
+data class SubtitleCue(val startSec: Double, val endSec: Double, val text: String, val words: List<Double> = emptyList())
 
 /** Sound of the whole video. */
 @Serializable
@@ -173,7 +202,35 @@ data class AudioSettings(
     val denoise: String = "aus",
     /** Even loudness (EBU R128, -16 LUFS – usual for lecture videos and YouTube). */
     val normalize: Boolean = true,
+    /**
+     * Quiet and loud voices evened out (AP-129): a question from the room, a speaker who walks away from the
+     * microphone – ffmpeg's dynaudnorm over a few seconds, before the loudness of the whole film.
+     */
+    val level: Boolean = false,
 )
+
+/**
+ * The transitions between two clips of V1: stored name, label, ffmpeg's xfade (AP-25; „Wischen“, „Schieben“ and
+ * „Kreis“ since AP-129 for short clips).
+ */
+val TRANSITIONS = listOf(
+    Triple("none", trLater("Schnitt"), ""),
+    Triple("fade", trLater("Überblenden"), "fade"),
+    Triple("black", trLater("Über Schwarz"), "fadeblack"),
+    Triple("wipe", trLater("Wischen"), "wipeleft"),
+    Triple("slide", trLater("Schieben"), "slideleft"),
+    Triple("circle", trLater("Kreis"), "circleopen"),
+)
+
+/** ffmpeg's xfade for transition [name] (cross-dissolve for an unknown one). */
+fun xfadeOf(name: String): String = TRANSITIONS.firstOrNull { it.first == name }?.third?.ifEmpty { null } ?: "fade"
+
+/** Sound on one side only (AP-129): the side put on both, as a filter for the graph (empty for "" or stereo). */
+fun channelFilter(channel: String): String = when (channel) {
+    "links" -> ",pan=stereo|c0=c0|c1=c0"
+    "rechts" -> ",pan=stereo|c0=c1|c1=c1"
+    else -> ""
+}
 
 /** Lock, mute and hide of one track ("V1", "V2" … for video, "A1" … for sound; AP-53). Mute on a video track mutes its sound. */
 @Serializable
@@ -208,6 +265,8 @@ data class VideoProject(
     val audio: List<AudioClip> = emptyList(),
     val subtitles: List<SubtitleCue> = emptyList(),
     val burnSubtitles: Boolean = false,
+    /** Look of burned-in subtitles (AP-129): "tud" (the standard), "gross" or "wort" ([CaptionStyles]). */
+    val subtitleStyle: String = "tud",
     val sound: AudioSettings = AudioSettings(),
     /** Fade in from black at the start and out to black at the end. */
     val fadeEnds: Boolean = true,

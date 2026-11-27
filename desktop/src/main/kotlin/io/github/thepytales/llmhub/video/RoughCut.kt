@@ -132,7 +132,10 @@ object RoughCut {
                 // Namen im Ton (AP-128): the protected names of this file read „[Name]“ in the subtitles.
                 val names = p.bleeps.filter { it.path == c.path }.map { it.name }
                 val text = cue.lines.joinToString("\n").let { if (names.isEmpty()) it else NameGuard.mask(it, names) }
-                if (b - a >= 0.3) out += SubtitleCue(starts[i] + (a - c.inSec) / c.speed, starts[i] + (b - c.inSec) / c.speed, text)
+                // Measured word times for „Wort für Wort“ (AP-129) – only when they match the words of the text.
+                val measured = t.segments.asSequence().flatMap { it.words }.filter { it.measured && it.start >= a - 0.05 && it.start < b }.toList()
+                val words = if (measured.isNotEmpty() && measured.size == text.split(Regex("\\s+")).count { it.isNotBlank() }) measured.map { starts[i] + (it.start - c.inSec).coerceAtLeast(0.0) / c.speed } else emptyList()
+                if (b - a >= 0.3) out += SubtitleCue(starts[i] + (a - c.inSec) / c.speed, starts[i] + (b - c.inSec) / c.speed, text, words)
             }
         }
         return out.sortedBy { it.startSec }.let { list ->

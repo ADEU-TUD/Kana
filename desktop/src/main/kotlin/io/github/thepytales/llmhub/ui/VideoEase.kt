@@ -148,7 +148,7 @@ internal val GUIDE_STEPS = listOf(
         trLater("Abspielkopf an die Stelle ziehen, „Teilen“, das Stück anklicken und Entf drücken. Für ein Stück aus der Mitte: Anfang (I) und Ende (O) markieren, dann „Herausschneiden“."),
     ) { p -> p.clips.size > 1 || p.clips.any { it.inSec > 0.05 } },
     GuideStep("text", trLater("Titel und Untertitel"), trLater("Ein Titel am Anfang, Namen als Bauchbinde, Untertitel aus der Transkription.")) { p ->
-        p.overlays.isNotEmpty() || p.subtitles.isNotEmpty()
+        p.overlays.any { !io.github.thepytales.llmhub.video.Callouts.isCallout(it.style) } || p.subtitles.isNotEmpty()
     },
     GuideStep("sound", trLater("Musik und Ton"), trLater("Musik unterlegen oder Rauschen mindern. Gleichmäßig laut macht der Export von selbst."), optional = true) { p ->
         p.audio.any { it.linkedTo == null && it.path !in p.clips.map { c -> c.path } } || p.sound.denoise != "aus"

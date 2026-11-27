@@ -1,6 +1,6 @@
 # Arbeitsplan Kana (bis 1.0.77 „Lora“, bis 1.0.43 „ADEU LLM“) – Runde 2
 
-Stand: 24.11.2026 (**AP-155 fertig**: Lora heißt jetzt Kana, 1.0.78) · 17.11.2026 (**AP-128 fertig**: Namen im Ton piepen, stumm oder verfremdet, Prüfliste vor dem Export) · 17.11.2026 (**AP-130 fertig**: beim Ziehen folgt die Vorschau der Maus sofort, dieselbe Stelle kommt aus dem Bildpuffer, Vorbereitung sichtbar) · 17.11.2026 (**AP-127 fertig**: Rechtsklick, Strg-Ziehen, gleiche Abstände mit Maß und Format übertragen auf der Leinwand, Folienleiste zum Ziehen, Layouts als Galerie) · 17.11.2026 (**AP-134 fertig**: PDF-Arbeit kommt nach einem Absturz wieder, Verlauf der Schritte in Dokument, Tabelle, Folien und Video) · 17.11.2026 (**AP-133 fertig**: *Einstellungen › Prüfungen am Gerät* führt Schritt für Schritt durch die offenen Prüfungen aus der Liste `pruefungen.txt`, Bericht über *Problem melden*) · 16.11.2026 (**AP-126 fertig** mit (d) Absatz und Seite, (e) Überprüfen, (f) Docs-Komfort und den Resten aus (c); für 1.0.75 · 1.0.74 veröffentlicht mit AP-125 (f) und AP-126 (a) bis (c)) · 15.11.2026 (**AP-126 (c)** Wissenschaft: Beschriftungen mit Nummer, Querverweise, Abbildungs- und Tabellenverzeichnis, nummerierte Überschriften, Lesezeichen, Endnoten) · 15.11.2026 (**AP-126 (a) und (b)**: Lückenliste Word/Docs [`office-luecken.md`](office-luecken.md), Grundausstattung – Drucken, Herunterladen als, Sprache, Details, Seitenzahlen einfügen, Kopf-/Fußzeile per Doppelklick) · 15.11.2026 (**AP-125 (f)** fertig: eigene Ersetzungen in der Autokorrektur, umflossene Bilder in Seitenansicht und PDF richtig eingeplant – damit AP-125 abgeschlossen) · 15.11.2026 (**AP-132** Entwicklung: Desktop-Tests 27 → 5½ min – dabei ein Tempo-Fehler beim Öffnen großer Excel-Dateien behoben –, PR-Check prüft nur die betroffenen Bereiche, Vorher/Nachher-Seite mit einem Befehl) · 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
+Stand: 27.11.2026 (**AP-129 fertig**: Ducking, Stimmen angleichen, Format wechseln mit Ausschnitt, der der Person folgt, Untertitel-Stile, Kurzclip aus Höhepunkten, Interview nach Sprecher, Hervorhebungen – Lückenliste [`video-luecken.md`](video-luecken.md)) · 24.11.2026 (**AP-155 fertig**: Lora heißt jetzt Kana, 1.0.78) · 17.11.2026 (**AP-128 fertig**: Namen im Ton piepen, stumm oder verfremdet, Prüfliste vor dem Export) · 17.11.2026 (**AP-130 fertig**: beim Ziehen folgt die Vorschau der Maus sofort, dieselbe Stelle kommt aus dem Bildpuffer, Vorbereitung sichtbar) · 17.11.2026 (**AP-127 fertig**: Rechtsklick, Strg-Ziehen, gleiche Abstände mit Maß und Format übertragen auf der Leinwand, Folienleiste zum Ziehen, Layouts als Galerie) · 17.11.2026 (**AP-134 fertig**: PDF-Arbeit kommt nach einem Absturz wieder, Verlauf der Schritte in Dokument, Tabelle, Folien und Video) · 17.11.2026 (**AP-133 fertig**: *Einstellungen › Prüfungen am Gerät* führt Schritt für Schritt durch die offenen Prüfungen aus der Liste `pruefungen.txt`, Bericht über *Problem melden*) · 16.11.2026 (**AP-126 fertig** mit (d) Absatz und Seite, (e) Überprüfen, (f) Docs-Komfort und den Resten aus (c); für 1.0.75 · 1.0.74 veröffentlicht mit AP-125 (f) und AP-126 (a) bis (c)) · 15.11.2026 (**AP-126 (c)** Wissenschaft: Beschriftungen mit Nummer, Querverweise, Abbildungs- und Tabellenverzeichnis, nummerierte Überschriften, Lesezeichen, Endnoten) · 15.11.2026 (**AP-126 (a) und (b)**: Lückenliste Word/Docs [`office-luecken.md`](office-luecken.md), Grundausstattung – Drucken, Herunterladen als, Sprache, Details, Seitenzahlen einfügen, Kopf-/Fußzeile per Doppelklick) · 15.11.2026 (**AP-125 (f)** fertig: eigene Ersetzungen in der Autokorrektur, umflossene Bilder in Seitenansicht und PDF richtig eingeplant – damit AP-125 abgeschlossen) · 15.11.2026 (**AP-132** Entwicklung: Desktop-Tests 27 → 5½ min – dabei ein Tempo-Fehler beim Öffnen großer Excel-Dateien behoben –, PR-Check prüft nur die betroffenen Bereiche, Vorher/Nachher-Seite mit einem Befehl) · 14.11.2026 (**AP-131** Server-Terminal in der App: Lora führt Befehle nach Zustimmung im Terminal aus und sagt, was herauskam – Wunsch des Kollegen –, dazu SSH-Schlüssel, Dateien per SFTP und Tabs; am eigenen Server zu prüfen) · 14.11.2026 (neu aus der **Werkzeug-Analyse**: AP-131 bis AP-154, dazu APD-18/APD-19; zuerst AP-131 Server-Terminal und AP-132 Entwicklung · 1.0.72 veröffentlicht mit AP-125 (c) bis (e)) · 14.11.2026 (neu: **Office und Video wie Google Docs und Word** – AP-125 bis AP-130, Oberfläche dazu als APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); kommen vor den übrigen Paketen) · 13.11.2026 (neu: **Design-Arbeitsplan** [`DESIGN-ARBEITSPLAN.md`](DESIGN-ARBEITSPLAN.md) mit Paketen APD-xx für Aussehen und Bedienbarkeit; AP-124 dorthin verschoben als APD-01) · 13.11.2026 (AP-123 Bedienelemente aus einem Guss freigegeben und in `main`, für 1.0.71; Prüfung am Gerät offen) · 13.11.2026 (AP-122 Lora neu gezeichnet und lebendiger: vom Hauptnutzer freigegeben, in der App, für 1.0.70 zusammen mit AP-121; Prüfung am Gerät offen) · 13.11.2026 (AP-121 Videoeditor für Einsteiger in der App, für 1.0.70; Prüfung am Gerät offen) · 11.11.2026 (Sitzung Dateiwerkzeuge: AP-90 Rest, AP-91, AP-93, AP-97 bis AP-100, AP-107 Rest, neu AP-119 und AP-120 in der App, Prüfung am Gerät offen) · 11.11.2026 (AP-112 und AP-116 in der App, Messung am Gerät offen; AP-117 erledigt; AP-118 Server-Terminal in der App, am eigenen Server zu prüfen) · 10.11.2026 (1.0.67 veröffentlicht: AP-86, AP-103, AP-111 und AP-115 erledigt; AP-90, AP-95, AP-105 bis AP-108 und AP-110 in der App, Messungen bzw. Tests am Gerät offen; AP-67 offen; neu: AP-116 lokale Modelle auf dem Handy zu langsam, nicht abbrechbar, Gerät heiß) · Lebendes Dokument: Status hier pflegen, erledigte Pakete abhaken und in der README beschreiben.
 Runde 1 (AP-01 bis AP-37) ist erledigt und steht ausführlich in [`ARBEITSPLAN-RUNDE-1.md`](ARBEITSPLAN-RUNDE-1.md).
 
 **Design steht im Design-Arbeitsplan** (seit 13.11.2026): Pakete zu Aussehen, Bedienbarkeit und Nutzerfreundlichkeit
@@ -77,7 +77,7 @@ Fairlight).
 | **Danach** | ~~AP-86 Lokale Modelle auf dem Mac laden~~ ☑ (10.11.2026, 1.0.67) |
 | **Runde 3 – Kana offline** | AP-105 Geräteprofil und Messung ◐ · AP-106 Modellkatalog in feinen Stufen, nach Zweck ◐ · AP-107 Suche nach Bedeutung auf dem Gerät ◐ (Rest in der App) · AP-108 Lange Texte lokal ◐ · AP-109 Kana selbst lokal · AP-110 Bilder verstehen lokal ◐ · AP-111 Sprachausgabe lokal ☑ · AP-112 Offline-Schiene in der Oberfläche ◐ · AP-104 Kana Postfach · AP-113 Kana Namensschutz Runde 3 · AP-114 Kana Befehle nachtrainieren · AP-115 Reste aus 1.0.66 ☑ · **AP-116 Lokale Modelle: Tempo, Abbruch, Hitze ◐** (Fehler aus 1.0.67, vor AP-109) · ~~AP-117 Eigene Modelle aktualisieren, auf GitHub~~ ☑ (11.11.2026) |
 | **Neu (14.11.2026, Werkzeug-Analyse)** | **Jetzt:** AP-131 Server-Terminal ausbauen ◐ (mit Kana im Terminal) · AP-132 Entwicklung: schnellere Tests, Vorher/Nachher auf Knopfdruck ◐ · ~~AP-133 Geführte Prüfung am Gerät~~ ☑ · ~~AP-134 Nichts geht verloren~~ ☑ · **Danach:** AP-135 Schneller finden und arbeiten · AP-136 Interviews auswerten · AP-137 PDF im Stapel · AP-138 Literatur · AP-139 Mail im Alltag · AP-140 Dokumente: Formulare, Sprache · AP-141 Präsentation wird Lehrvideo · AP-142 Kana kann alles · AP-143 Zwischen Werkzeugen · AP-144 Tabellen, Teil 2 · AP-145 Statistik-Assistent · AP-146 Folien für die Lehre · AP-147 Video für die Lehre · AP-148 Gestalten, Teil 2 · AP-149 PDF, Teil 2 · AP-150 Transkription im Alltag · AP-151 Dateien und Scanner · AP-152 Tresor · AP-153 Große Werke und LaTeX · AP-154 Kalender über den Server (wartet) · Design: APD-18, APD-19 |
-| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☐** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
+| **Neu (14.11.2026, Office und Video)** | **AP-125 Dokumente verhalten sich wie Word ☑** · **AP-126 Dokumente: Funktionsumfang wie Word und Google Docs ☑** · **AP-127 Folien, Gestalten, Whiteboard: anfassen wie PowerPoint und Canva ☑** · **AP-128 Video: Datenschutz in Unterrichtsvideos ☑** · **AP-129 Video: was im Alltag fehlt ☑** · **AP-130 Video: flüssige Vorschau ☑** (Oberfläche dazu: APD-15 bis APD-17 im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md); vor den übrigen Paketen) |
 | **Neu (13.11.2026, Bedienung)** | ~~AP-124 Die ganze App weiter verbessern~~ → **APD-01** im [Design-Arbeitsplan](DESIGN-ARBEITSPLAN.md) · **AP-123 Bedienelemente aus einem Guss ◐** (Knöpfe nach Stil, Dialoge mit Hauptknopf und Enter/Esc, rote Lösch-Knöpfe, Tooltips an Symbol-Knöpfen, Passwort-Auge, Hinweis-Banner, Bildlaufleisten am PC; freigegeben, Prüfung am Gerät offen) |
 | **Neu (13.11.2026)** | **AP-121 Videoeditor für Einsteiger ◐** (Startseite, „So entsteht dein Video“, einfach schneiden, Rechtsklick, klarere Leisten; Prüfung am Gerät offen) |
 | **Neu (12.11.2026)** | **AP-122 Kana: neues Aussehen und lebendigere Animationen ☑** (Wunsch Hauptnutzer; am 13.11.2026 freigegeben, in der App, für 1.0.70) |
@@ -109,11 +109,12 @@ werden“ ([`WERKZEUG-ANALYSE.md`](WERKZEUG-ANALYSE.md), 85 Vorschläge, 79 übe
 APD-18/APD-19 geworden. Server-Terminal und Entwicklung zuerst, danach die empfohlene Reihenfolge:
 **AP-131** (Terminal) ◐ → **AP-132** (Entwicklung) ◐ → **AP-125 (f)** (Reste Dokument) ☑ → **AP-133** (Prüfung am Gerät) ☑ →
 **AP-134** (nichts geht verloren) ☑ → wie bisher **AP-126** ☑ (vorgezogen, 15./16.11.2026) → **APD-16 + AP-127** (AP-127 ☑) → **APD-17b + AP-130** (AP-130 ☑) → **AP-128** ☑ →
-**AP-129** → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
+**AP-129** ☑ → dann *Danach* der Reihe nach ab **AP-135**. Nicht übernommen: Q-08 Tempo großer Dateien, D-06 Serienbrief im
 Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Dateien aufteilen, F-07 Abstimmen
 im Hörsaal (gestrichen).
 
 **Vorrang ab 24.11.2026 (Hauptnutzer):** **AP-155** (Umbenennung Lora → Kana) ist fertig (1.0.78), weiter wie oben.
+**27.11.2026:** AP-129 ist fertig (Prüfung am Gerät offen); als Nächstes kommt **AP-135** (aus *Danach*).
 
 ### AP-155 ☑ Umbenennung: Lora heißt jetzt Kana · L (Wunsch Hauptnutzer 24.11.2026, in Stufen)
 **Entscheidung des Hauptnutzers (24.11.2026):** Die App und die Figur heißen künftig **Kana** statt Lora. Das Repository
@@ -635,7 +636,7 @@ Tests mit Beispielton und -bild.
 - **Offen**: Namen, die die Regeln nicht kennen und nicht auf der Liste stehen, werden nicht gefunden (das
   Erkennungsmodell aus AP-67/AP-113 ist für Texte gebaut; im Ton später); Prüfung am Gerät.
 
-### AP-129 ☐ Video: was im Alltag fehlt · L (Wunsch Hauptnutzer 14.11.2026, D, in Stufen)
+### AP-129 ☑ Video: was im Alltag fehlt · L (Wunsch Hauptnutzer 14.11.2026, D, in Stufen)
 Für **Vorlesungsaufzeichnungen**, **Interviews/Gespräche**, **kurze Clips** und **Unterrichtsvideos**. Vieles gibt es
 schon (Übergänge, Bauchbinden, Kapitel, Rohschnitt nach Pausen und Füllwörtern, Ton synchronisieren, Lautheit).
 - **(a) Lückenliste** gegen Clipchamp, CapCut und DaVinci für diese vier Zwecke, mit Nutzen fürs Team.
@@ -643,6 +644,56 @@ schon (Übergänge, Bauchbinden, Kapitel, Rohschnitt nach Pausen und Füllwörte
   Hochformat/Quadrat mit Bildausschnitt, der der Person folgt; Untertitel-Stile für kurze Clips; Höhepunkte aus einer
   langen Aufnahme als Clip; Vorlagen für Titel und Abspann (TUD-Vorlagen unverändert).
 **Fertig, wenn**: die Lückenliste für die vier Zwecke nichts mit hohem Nutzen mehr als „fehlt“ führt.
+☑ *Stand 27.11.2026*: in der App (Windows, macOS, Linux); am Gerät zu prüfen (*Prüfungen am Gerät*, AP-129).
+- **(a) Lückenliste** [`video-luecken.md`](video-luecken.md): neun Lücken mit hohem Nutzen, alle geschlossen; Mittleres
+  steht bei AP-141, AP-147, APD-17b oder unter *später* (Titel groß über dem Bild, Teile je Kapitel exportieren, Wackeln
+  ausgleichen, Sprecherton im Editor aufnehmen). Die TUD-Titel und -Untertitel bleiben unverändert.
+- **(b) Ton** (`video/SoundFix.kt`, Graph in `video/VideoRender.kt`): **Musik leiser beim Sprechen** – `AudioClip.duck`;
+  alles nicht Geduckte ist die Sprache und steuert einen Kompressor auf der Musik (`sidechaincompress`, ab etwa −32 dBFS,
+  12:1, 40/500 ms): rund 10–15 dB leiser, eine halbe Sekunde nach dem Satz wieder da; neue Musik aus *Hinzufügen* ist von
+  selbst geduckt, Schalter *Leiser, wenn gesprochen wird* je Ton. **Stimmen angleichen** – *Projekt › Ton*, `dynaudnorm`
+  (250 ms, Fenster ≈ 4 s, bis +20 dB) vor der Lautheit: 20 dB Unterschied werden zu rund 5 dB. **Ton auf beide Seiten** –
+  `channel` an Clip und Ton (`pan`); die App erkennt Ton nur links/rechts (`astats` der ersten 60 s) und bietet *Auf beide
+  Seiten legen* an. Alles auch in der Vorschau (derselbe Graph).
+- **(c) Kurze Clips**: **Format wechseln** (`video/Reframe.kt`) – unter den Format-Chips (neu 4:5) zeigt *Bild füllen*,
+  wie viele Clips Balken haben, und schneidet sie aufs neue Format zu (`ClipFx.fill`); der Zuschnitt rechnet jetzt in der
+  Größe, die er im Film hat (vorher wurde ein Querformat-Clip im 9:16-Projekt erst verkleinert und dann dreifach
+  vergrößert – unscharf). **Der Person folgen** – Gesichter alle 0,5 s mit YuNet auf dem eigenen PC, Hauptgesicht (bei
+  zwei gleich großen das nächste zum letzten), Median, Glätten über 1,6 s, Totzone 6 %: ein ruhiger Kameraweg als
+  Keyframes ohne Ease. **Untertitel-Stile** (`video/CaptionStyles.kt`, *Projekt › Untertitel › Aussehen*): *Groß* (fett in
+  der unteren Bildmitte) und *Wort für Wort* (bis drei Wörter, das gesprochene gelb; Wortzeiten aus dem Transkript, sonst
+  nach Länge geschätzt – `SubtitleCue.words`); *TUD* bleibt Standard und unverändert. **Kurzclip aus Höhepunkten**
+  (`video/Highlights.kt`, *Rohschnitt › Kurzclip aus Höhepunkten …*): Kana wählt aus den nummerierten Abschnitten die
+  stärksten für 30/60/90 s, daraus ein **neues** Projekt mit Effekten, Ansteckmikrofon, Namen im Ton und Tonwerten des
+  Originals, Untertiteln Wort für Wort und auf Wunsch Hochformat, das der Person folgt. **Übergänge** *Wischen*,
+  *Schieben*, *Kreis* (`TRANSITIONS`).
+- **(d) Interviews** (`video/MultiCam.kt`, *Rohschnitt › Interview: nach Sprecher schneiden …*): Hauptkamera = Clip auf
+  V1, weitere Kameras aus dem Medienpool oder als Datei, eine auf Wunsch *Totale*. Die Kameras werden über den Ton
+  synchronisiert (`AudioSync`), je 0,25 s zählt, wie weit jede Kamera über ihrem eigenen leisen Pegel liegt (so stören
+  unterschiedliche Pegel nicht); geschnitten wird ruhig: neue Einstellung erst nach 1 s klarer Sprache (Pausen zwischen
+  Wörtern stören nicht, ein kurzes „mhm“ löst keinen Wechsel aus), mindestens 2 s je Einstellung, Schnitt dort, wo die
+  neue Person zu sprechen begann; Totale, wenn beide sprechen oder 3 s niemand. Das Ergebnis sind gewöhnliche Clips auf
+  V1 (stumm), der Ton der Hauptkamera und ihre Ansteckmikrofone sind mit **jedem** Stück verknüpft – späteres Schneiden
+  bleibt synchron.
+- **(e) Unterrichtsvideos** (`video/Callouts.kt`, *Titel › Hervorhebung: …*): *Rahmen*, *Kreis*, *Pfeil*, *Markierung*,
+  *Spot* (alles außer der Stelle abgedunkelt) in Rot, Gelb, Blau, Grün oder Weiß, mit kurzer Beschriftung; Lage und Größe
+  über ein 3 × 3-Raster und Regler, Zeit wie bei Titeln, weich ein- und ausgeblendet; Kamera und Folien nebeneinander über
+  *Position und Größe › Linke/Rechte Hälfte*.
+- **Kana** (`video/VideoEverydayLora.kt`): *Musik leiser beim Sprechen*, *Stimmen angleichen*, *Format wechseln* (folgt der
+  Person), *Untertitel-Stil*, *Kurzclip aus Höhepunkten*, *Interview nach Sprecher schneiden*, *Hervorhebung* – mit
+  Vorschau und Rückgängig.
+- **Tests** `VideoEverydayTest` (15): Musik im Export beim Sprechen ≥ 8 dB leiser und in der Pause wieder da (auch mit
+  zwei Stücken und einer zweiten Stimme), die Stimme unverändert; 20 dB Stimmunterschied danach < 7 dB; Ton nur links
+  erkannt und danach rechts zu hören; Kameraweg ruhig ohne Sprünge, bei zwei Personen ohne Hin und Her; ein
+  Querformat-Interview als 9:16 ohne Balken, die Mitte verfehlt das Gesicht, *Der Person folgen* behält es im Bild (auch
+  nachdem es geht); Untertitel-Stile (TUD gleich wie vorher, Wort für Wort mit gemessenen Zeiten, gelbes Wort,
+  ein Bild je Wort im Export); Kurzclip (Auswahl, Länge begrenzt, Verpixelung, Mikrofon, Namen im Ton bleiben, Original
+  unverändert); Mehrkamera aus Aktivitäten (ruhig, Totale, später gestartete Kamera) und ein echtes Interview mit zwei
+  Kameras (rot/blau wechselt mit dem Sprecher, Ton durchgehend von Kamera A); Hervorhebungen an der richtigen Stelle,
+  TUD-Titel unverändert, im Export zu sehen; die Kana-Aktionen. Bilder in `desktop/build/ap129`.
+- **Offen**: Prüfung am Gerät mit echten Aufnahmen (Ducking-Stärke nach Gehör, Mehrkamera mit Raummikrofonen, die beide
+  Stimmen hören); Hervorhebungen in der Vorschau ziehen; die Mehrkamera-Ansicht (alle Kameras nebeneinander) gehört zu
+  APD-17b.
 
 ### AP-130 ☑ Video: flüssige Vorschau · M (Wunsch Hauptnutzer 14.11.2026, D)
 **Befund**: Die Vorschau ruckelt (Hauptnutzer). **Vorgehen**: zuerst messen (Abspielen, Spulen, Abspielkopf ziehen,

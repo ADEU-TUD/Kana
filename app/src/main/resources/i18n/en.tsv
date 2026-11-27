@@ -7790,3 +7790,122 @@ Zeilen- und Seitenumbruch	Line and page breaks
 {0} Stellen unterscheiden sich.	{0} places differ.
 mitgeliefert	built in
 Strg+Alt+Leertaste	Ctrl+Alt+Space
+# Video: was im Alltag fehlt (AP-129)
+Auf beide Seiten legen	Put on both sides
+Ausschnitt folgt der Person (Gesichter auf diesem Computer suchen)	Crop follows the person (find faces on this computer)
+Beschriftung (optional)	Label (optional)
+Bild füllen	Fill the frame
+Bitte den Clip der Hauptkamera wählen.	Please choose the clip of the main camera.
+Das Video hat noch keine Untertitel – zuerst „Untertitel erzeugen“.	The video has no subtitles yet – first “Create subtitles”.
+Der Ausschnitt folgt der Person im Bild – die Gesichter werden auf diesem Computer gesucht	The crop follows the person in the picture – faces are found on this computer
+Der Ausschnitt folgt der Person in {0} Clip(s) – bitte in der Vorschau prüfen.	The crop follows the person in {0} clip(s) – please check in the preview.
+Der Ausschnitt folgt jetzt der Person in {0} Clip(s). Bitte in der Vorschau prüfen.	The crop now follows the person in {0} clip(s). Please check in the preview.
+Der Clip läuft schneller, langsamer, rückwärts oder steht – Mehrkamera geht nur mit normalem Tempo.	The clip runs faster, slower, backwards or is frozen – multi-camera only works at normal speed.
+Der Person folgen	Follow the person
+Der Ton ist nur links aufgenommen – im Kopfhörer klingt das einseitig.	The sound was recorded on the left only – in headphones it sounds one-sided.
+Der Ton ist nur rechts aufgenommen – im Kopfhörer klingt das einseitig.	The sound was recorded on the right only – in headphones it sounds one-sided.
+Die Clips füllen das Bild; was übersteht, wird abgeschnitten (Mitte)	The clips fill the frame; what sticks out is cut off (centre)
+Die Hauptkamera hat keinen Ton – ohne Ton lässt sich nicht erkennen, wer spricht.	The main camera has no sound – without sound it cannot tell who is speaking.
+Die Hauptkamera zeigt beide (Totale)	The main camera shows both (wide shot)
+Format wechseln	Change format
+Fragen aus dem Saal, wer weiter weg vom Mikrofon spricht: leise Stellen werden lauter, laute leiser.	Questions from the audience, someone further from the microphone: quiet parts get louder, loud parts quieter.
+Für Gespräche mit zwei oder drei Kameras: Wer spricht, ist im Bild. Die Kameras werden über den Ton synchronisiert; der Ton kommt durchgehend von der Hauptkamera (und ihrem Ansteckmikrofon). Danach ist jede Einstellung ein normaler Clip – zum Nachbessern.	For conversations with two or three cameras: whoever speaks is in the picture. The cameras are synchronised by their sound; the sound comes from the main camera (and its lapel microphone) throughout. Afterwards every shot is a normal clip – to fine-tune.
+Für Musik: wird automatisch leiser, sobald im Video jemand spricht, und danach wieder lauter. Für einen Sprecherton ausschalten.	For music: gets quieter automatically as soon as someone speaks in the video, and louder again afterwards. Switch off for a voice-over.
+Für die Clips gibt es kein Transkript – zuerst unter Untertitel › Aus der Transkription zuordnen.	There is no transcript for the clips – first assign one under Subtitles › From the transcription.
+Für die Clips gibt es kein Transkript – zuerst „Untertitel erzeugen“ oder transkribieren.	There is no transcript for the clips – first “Create subtitles” or transcribe.
+Gesichter werden gesucht …	Finding faces …
+Gleicht die Stimmen an …	Evening out the voices …
+Große, fette Schrift in der unteren Bildmitte – gut lesbar auf dem Handy, auch ohne Ton.	Large bold text in the lower middle of the picture – easy to read on a phone, even without sound.
+Hauptkamera	Main camera
+Hauptkamera, Ton	Main camera, sound
+Hervorhebung	Highlight
+Hinzufügen: Clip, Bild-in-Bild, Musik, Hervorhebung, Spuren	Add: clip, picture-in-picture, music, highlight, tracks
+Hervorhebung (Rahmen, Pfeil …)	Highlight (frame, arrow …)
+Hervorhebung „{0}“ bei {1} – Lage und Größe in den Eigenschaften.	Highlight “{0}” at {1} – position and size in the properties.
+Hervorhebung: {0}	Highlight: {0}
+Hoch 4:5	Portrait 4:5
+Hochformat 9:16	Portrait 9:16
+Im Projekt ist keine Musik – zuerst über Hinzufügen › Musik / Ton eine Datei unterlegen.	There is no music in the project – first add a file via Add › Music / sound.
+Im Video ist nichts gesprochen – oder es gibt kein Transkript.	Nothing is spoken in the video – or there is no transcript.
+Interview nach Sprecher schneiden	Cut interview by speaker
+Interview: nach Sprecher schneiden	Interview: cut by speaker
+Interview: nach Sprecher schneiden …	Interview: cut by speaker …
+Jetzt {0}.	Now {0}.
+Kamera hinzufügen …	Add camera …
+Kana hat keine Stellen ausgewählt.	Kana did not choose any passages.
+Kana liest das Transkript und wählt die stärksten Stellen. Daraus entsteht ein neues Projekt – „{0}“ bleibt, wie es ist. Der Text geht an das Standardmodell, Namen pseudonymisiert.	Kana reads the transcript and picks the strongest passages. A new project is made from them – “{0}” stays as it is. The text goes to the default model, names pseudonymised.
+Kana liest das Transkript …	Kana is reading the transcript …
+Keine Person gefunden – der Ausschnitt bleibt in der Mitte.	No person found – the crop stays in the centre.
+Kurzclip aus Höhepunkten	Short clip from highlights
+Kurzclip aus Höhepunkten …	Short clip from highlights …
+Kurzclip erstellen	Create short clip
+Kurzclip wieder entfernt.	Short clip removed again.
+Kurzclip wird angelegt …	Creating short clip …
+Kurzclip „{0}“ angelegt ({1}) – das Original bleibt unverändert.	Short clip “{0}” created ({1}) – the original stays unchanged.
+Kurzclip „{0}“ angelegt ({1}, {2} Stellen) – das Original bleibt unverändert.	Short clip “{0}” created ({1}, {2} passages) – the original stays unchanged.
+Lage und Größe	Position and size
+Leise und laute Stimmen angleichen	Even out quiet and loud voices
+Leise und laute Stimmen werden angeglichen.	Quiet and loud voices are evened out.
+Leiser, wenn gesprochen wird	Quieter while someone speaks
+Linke Hälfte	Left half
+Links auf beide Seiten	Left on both sides
+Länge nach links	Length to the left
+Länge nach unten	Length downwards
+Mindestens eine Kamera muss auf eine Person gerichtet sein.	At least one camera must be pointed at a person.
+Mitte senkrecht	Centre vertical
+Mitte waagerecht	Centre horizontal
+Musik bleibt gleich laut …	Music stays at the same level …
+Musik bleibt jetzt gleich laut.	Music now stays at the same level.
+Musik leiser beim Sprechen	Music quieter during speech
+Musik wird beim Sprechen leiser …	Music gets quieter during speech …
+Nach Sprecher geschnitten: {0}.	Cut by speaker: {0}.
+Nach Sprecher geschnitten: {0}. Mit Strg+Z rückgängig.	Cut by speaker: {0}. Ctrl+Z to undo.
+Noch keine weitere Aufnahme im Projekt – über „Kamera hinzufügen …“ wählen.	No other recording in the project yet – choose one with “Add camera …”.
+Ohne Videoeditor-Paket bleibt der Ausschnitt in der Mitte.	Without the video editor package the crop stays in the centre.
+Ohne zugeordnetes Transkript sucht Kana eins mit dem Namen der Aufnahme – sonst zuerst unter Untertitel › Aus der Transkription zuordnen.	Without an assigned transcript Kana looks for one with the name of the recording – otherwise first assign one under Subtitles › From the transcription.
+Quer 16:9	Landscape 16:9
+Rechte Hälfte	Right half
+Rechts auf beide Seiten	Right on both sides
+Rohschnitt: Pausen und Füllwörter, mit Kana kürzen, Kurzclip, Interview nach Sprecher	Rough cut: pauses and filler words, shorten with Kana, short clip, interview by speaker
+Schneidet nach Sprecher mit {0} Kameras …	Cutting by speaker with {0} cameras …
+Schnell an eine Stelle	Quickly to a place
+Setzt eine Hervorhebung ({0}) bei {1} …	Adding a highlight ({0}) at {1} …
+Spitze senkrecht	Tip vertical
+Spitze waagerecht	Tip horizontal
+Spot	Spotlight
+Stellt auf {0} um …	Switching to {0} …
+Stimmen angeglichen	Voices evened out
+Stimmen angleichen	Even out voices
+Stimmen bleiben wie aufgenommen.	Voices stay as recorded.
+Stimmen wie aufgenommen …	Voices as recorded …
+Sucht die Höhepunkte für einen Clip von {0} s …	Looking for the highlights for a clip of {0} s …
+Synchronisieren und schneiden	Synchronise and cut
+TUD (Standard)	TUD (standard)
+Totale	Wide shot
+Untertitel jetzt „{0}“ und ins Bild eingebrannt.	Subtitles now “{0}” and burned into the picture.
+Untertitel-Stil	Subtitle style
+Untertitel: {0} …	Subtitles: {0} …
+Weitere Kamera wählen	Choose another camera
+Weitere Kameras	Other cameras
+Weiß	White
+Weiß auf dunklem Kasten unten in der Mitte, im TUD-Design.	White on a dark box at the bottom centre, in the TUD design.
+Welche weiteren Kameras? Bitte die Aufnahmen auswählen oder nennen.	Which other cameras? Please select or name the recordings.
+Welches Format? Hochformat, Quadrat, 4:5 oder quer.	Which format? Portrait, square, 4:5 or landscape.
+Wenige Wörter auf einmal, das gesprochene Wort gelb – wie in kurzen Clips üblich.	A few words at a time, the spoken word in yellow – as usual in short clips.
+Wie aufgenommen	As recorded
+Wie das Projekt	Like the project
+Wieder mit Balken	Back with bars
+Wischen	Wipe
+Wort für Wort	Word by word
+Worum soll es gehen? (leer: Kana wählt)	What should it be about? (empty: Kana chooses)
+Zuerst die Aufnahme der Hauptkamera als Clip in die Zeitleiste legen.	First put the recording of the main camera on the timeline as a clip.
+füllt das Bild	fills the frame
+z. B. „Die Kernaussage zum Klimamodell“	e.g. “The key point about the climate model”
+z. B. „Hier klicken“	e.g. “Click here”
+{0} Clip(s) haben ein anderes Format und stehen mit schwarzen Balken im Bild.	{0} clip(s) have another format and stand in the picture with black bars.
+{0} Einstellungen	{0} shots
+{0} Ton/Töne werden leiser, wenn gesprochen wird.	{0} sound(s) get quieter while someone speaks.
+{0} s	{0} s
+{0} – Kurzclip	{0} – short clip
+„{0}“ hat keinen Ton – so lässt sich die Kamera nicht synchronisieren.	“{0}” has no sound – so the camera cannot be synchronised.
+„{0}“ passt nicht zur Hauptkamera – ist es dasselbe Gespräch?	“{0}” does not match the main camera – is it the same conversation?

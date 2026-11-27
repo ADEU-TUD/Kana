@@ -183,6 +183,9 @@ Umbau nach der gewählten Richtung **„A mit B“** (siehe APD-17a): eine über
 Projekt zeigt „Video hierher ziehen“ in der Zeitleiste), Zeitleiste wie selbstverständlich (siehe AP-130 für das Tempo):
 Clips ziehen und kürzen mit Einrasten und sichtbarer Zeit, Strg+Mausrad zoomt um den Mauszeiger, Lücken schließen per
 Rechtsklick, Spuren mit Klartext-Namen, gewählte Clips deutlich. Derselbe Kopf wie APD-15.
+Dazu die **Mehrkamera-Ansicht** aus APD-17a (alle Kameras nebeneinander, beim Abspielen umschalten); den Schnitt nach
+Sprecher dafür gibt es seit AP-129 (d) (`video/MultiCam.kt`, *Rohschnitt › Interview: nach Sprecher schneiden*). Die
+Hervorhebungen aus AP-129 (e) sollen sich dann in der Vorschau ziehen lassen.
 **Fertig, wenn**: jemand ohne Vorkenntnisse eine Vorlesung kürzt, einen Titel setzt und exportiert, ohne nach dem Weg zu
 fragen (wie AP-121); Vorher/Nachher-Bilder; `VideoLayoutTest`, `VideoEaseTest`, `VideoReviewTest` grün.
 

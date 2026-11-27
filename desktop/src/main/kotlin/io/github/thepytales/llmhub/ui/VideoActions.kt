@@ -41,6 +41,10 @@ internal class VideoActions(
     /** A transcript is chosen for: "subs" (subtitles) or "cut" (pauses and filler words), or null. */
     var pickTranscript by mutableStateOf<String?>(null)
     var loraCut by mutableStateOf(false)
+    /** „Kurzclip aus Höhepunkten“ is open (AP-129 c). */
+    var highlights by mutableStateOf(false)
+    /** „Interview: nach Sprecher schneiden“ is open (AP-129 d). */
+    var multicam by mutableStateOf(false)
     var export by mutableStateOf(false)
     /** Namen im Ton schützen is open (AP-128). */
     var names by mutableStateOf(false)
@@ -80,11 +84,14 @@ internal class VideoActions(
         addSound(f, at)
     }
 
-    /** A sound file at [at] on the first free sound track (music to the end of the video at most). */
+    /**
+     * A sound file at [at] on the first free sound track (music to the end of the video at most). It is taken as music:
+     * quiet (30 %) and ducked while someone speaks (AP-129) – a voice-over switches that off in its properties.
+     */
     suspend fun addSound(f: File, at: Double = pos()): Boolean {
         val info = withContext(Dispatchers.IO) { Media.probe(f) }
         if (info?.hasAudio != true) { Notices.error(tr("In der Datei ist kein Ton.")); return false }
-        val a = AudioClip(path = f.absolutePath, startSec = at, outSec = minOf(info.duration, maxOf(1.0, h.project.duration - at)))
+        val a = AudioClip(path = f.absolutePath, startSec = at, outSec = minOf(info.duration, maxOf(1.0, h.project.duration - at)), duck = true)
         h.edit { pp ->
             val tr0 = VideoEdit.freeAudioTrack(pp, a.startSec, a.endSec)
             VideoEdit.addToPool(pp.copy(audio = pp.audio + a.copy(track = tr0), audioTracks = maxOf(pp.audioTracks, tr0)), listOf(a.path))
@@ -100,6 +107,13 @@ internal class VideoActions(
             h.edit { it.copy(subtitles = cues) }
             Notices.info("${cues.size} " + tr("Untertitel übernommen."))
         }
+    }
+
+    /** A Hervorhebung (AP-129 e) at [at] in the middle of the picture, selected to be placed. */
+    fun addCallout(style: String, at: Double = pos()) {
+        val o = io.github.thepytales.llmhub.video.Callouts.create(style, at)
+        h.edit { it.copy(overlays = it.overlays + o) }
+        select(Sel.Title(o.id))
     }
 
     /** A title in the TUD design: the title at the start, the credits at the end, the others at [at]. */
@@ -215,4 +229,6 @@ internal fun VideoActionDialogs(a: VideoActions) {
         TranscriptPicker(a.c, a.h.project, onDismiss = { a.pickTranscript = null }) { map -> a.transcriptsChosen(purpose, map) }
     }
     if (a.loraCut) LoraCutDialog(a.c, a.h, onDismiss = { a.loraCut = false })
+    if (a.highlights) HighlightsDialog(a.c, a.h, onDismiss = { a.highlights = false })
+    if (a.multicam) MultiCamDialog(a.h, onDismiss = { a.multicam = false })
 }

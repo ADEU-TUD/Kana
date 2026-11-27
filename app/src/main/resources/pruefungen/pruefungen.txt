@@ -190,6 +190,46 @@ vorher: Ein kurzes Unterrichtsvideo, in dem Namen fallen (transkribiert), und da
     sonst *Trotzdem exportieren*; das Protokoll nennt einen Export trotz offener Punkte.
   ort: video.export
 
+== AP-129 Video: was im Alltag fehlt
+geräte: windows
+vorher: Ein Video mit Sprache (transkribiert), eine Musikdatei, für das Interview zwei Kamera-Aufnahmen desselben
+  Gesprächs (je eine Person im Bild); das Videoeditor-Paket mit Gesichtserkennung.
+- Musik leiser beim Sprechen
+  tun: Über *Hinzufügen › Musik / Ton* Musik unter das Video legen und abspielen, wo gesprochen wird und wo nicht.
+  erwartet: Die Musik wird leiser, sobald jemand spricht, und danach wieder lauter (Schalter *Leiser, wenn gesprochen
+    wird* in den Eigenschaften der Musik); im Export genauso.
+  ort: tool.video
+- Stimmen angleichen
+  tun: Eine Aufnahme mit einer leisen Frage aus dem Saal: *Projekt › Ton › Leise und laute Stimmen angleichen* an.
+  erwartet: Die Frage ist im Export gut zu verstehen, ohne dass die laute Stimme übersteuert.
+  ort: tool.video
+- Ton nur auf einer Seite
+  tun: Eine Kamera-Aufnahme, deren Mikrofon nur links aufnimmt, als Clip wählen und unter *Ton* schauen.
+  erwartet: Der Hinweis „nur links aufgenommen“ mit *Auf beide Seiten legen*; danach im Kopfhörer auf beiden Seiten.
+  ort: tool.video
+- Hochformat, das der Person folgt
+  tun: *Projekt › Format › 9:16 hoch*, dann *Der Person folgen*.
+  erwartet: Keine schwarzen Balken; der Ausschnitt bleibt ruhig bei der Person und folgt ihr, wenn sie geht.
+  ort: tool.video
+- Untertitel Wort für Wort
+  tun: Untertitel aus der Transkription holen, einbrennen und *Aussehen › Wort für Wort* wählen; abspielen.
+  erwartet: Wenige große Wörter, das gesprochene Wort gelb und zur Sprache passend; der TUD-Stil bleibt wählbar.
+  ort: tool.video
+- Kurzclip aus Höhepunkten
+  tun: Bei einer langen Aufnahme *Rohschnitt › Kurzclip aus Höhepunkten …*, 60 s, Hochformat.
+  erwartet: Ein neues Projekt „… – Kurzclip“ öffnet sich mit sinnvollen Stellen, Untertiteln und etwa 60 s; das
+    Original ist unverändert.
+  ort: tool.video
+- Interview nach Sprecher
+  tun: Die Aufnahme der ersten Kamera als Clip, dann *Rohschnitt › Interview: nach Sprecher schneiden …* mit der
+    zweiten Kamera.
+  erwartet: Im Bild ist jeweils, wer spricht, ohne hektische Wechsel; Ton und Lippen bleiben synchron.
+  ort: tool.video
+- Hervorhebung im Screencast
+  tun: *Titel › Hervorhebung: Rahmen* setzen, in den Eigenschaften verschieben, „Hier klicken“ eintragen.
+  erwartet: Rahmen und Beschriftung stehen in Vorschau und Export an derselben Stelle und blenden weich ein und aus.
+  ort: tool.video
+
 == AP-130 Video: flüssige Vorschau
 geräte: windows
 vorher: Eine echte Aufnahme (Kamera oder Handy, 1080p, gern auch 4K), am besten auf dem Office-PC.
