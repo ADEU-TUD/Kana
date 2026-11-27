@@ -10,7 +10,8 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import io.github.thepytales.llmhub.AppContainer
@@ -132,7 +133,7 @@ class PdfBatchUiTest {
         assertTrue(onAllNodesWithText("5 PDFs", substring = true).fetchSemanticsNodes().isNotEmpty())
         assertTrue(onAllNodesWithText(File(base, "Scans (bearbeitet)").absolutePath).fetchSemanticsNodes().isNotEmpty(), "Ziel neben dem Ordner")
         shot("stapel-auswahl")
-        onNodeWithTag("pdf.stapel.start").performScrollTo().performClick()
+        onNodeWithTag("pdf.stapel.start").performSemanticsAction(SemanticsActions.OnClick)
         settle(2)
         waitFor("Stapel läuft", rounds = 20)
         shot("stapel-laeuft")
@@ -177,8 +178,8 @@ class PdfBatchUiTest {
         // (b) Wasserzeichen „Vertraulich“ and „Seite x von y“ below.
         onNodeWithText("Wasserzeichen & Kopfzeile").performClick()
         settle(3)
-        onNodeWithText("Vertraulich").performScrollTo().performClick()
-        onNodeWithText("Seite x von y unten").performScrollTo().performClick()
+        onNodeWithText("Vertraulich").performSemanticsAction(SemanticsActions.OnClick)
+        onNodeWithText("Seite x von y unten").performSemanticsAction(SemanticsActions.OnClick)
         settle(3)
         shot("wasserzeichen")
         onNodeWithText("Auf die Seiten setzen").performClick()
