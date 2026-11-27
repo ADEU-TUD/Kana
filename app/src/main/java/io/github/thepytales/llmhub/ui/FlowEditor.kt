@@ -976,6 +976,8 @@ class FlowHost(
     val onSource: () -> Unit = {},
     val onRead: () -> Unit = {},
     val onSpell: () -> Unit = {},
+    /** Extras › Zitate prüfen (AP-138 b). */
+    val onCheckCitations: (() -> Unit)? = null,
     val onTrack: (() -> Unit)? = null,
     val onAskAi: () -> Unit = {},
     val onShowComments: () -> Unit = {},
@@ -1884,6 +1886,7 @@ private fun FlowMenus(
             item("Fassungen vergleichen …", onClick = { state.dialog = "vergleich" }, close = close)
             item("Autokorrektur …", onClick = { autoCorrect = true }, close = close)
             host.onSpellAi?.let { item("Rechtschreibung prüfen (KI)", onClick = it, close = close) }
+            host.onCheckCitations?.let { item("Zitate prüfen", onClick = it, close = close) }
             host.onTrack?.let { item("Änderungen nachverfolgen", onClick = it, close = close) }
             item("Wortzahl", onClick = {
                 val words = state.segs.filterIsInstance<FlowSeg.Text>().sumOf { t -> Regex("\\S+").findAll(t.rich.text).count() }

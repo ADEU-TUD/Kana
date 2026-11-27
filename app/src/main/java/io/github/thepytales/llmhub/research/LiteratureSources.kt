@@ -30,6 +30,8 @@ data class SearchFilter(
     val openAccessOnly: Boolean = false,
     /** relevance (default) or citations. */
     val sortByCitations: Boolean = false,
+    /** Published on or after this day (ISO, e.g. 2026-11-20; Literatur-Wächter, AP-138 e) – overrides [fromYear]. */
+    val fromDate: String? = null,
 )
 
 /** Databases the literature search and the completion of reference lists use. */
@@ -106,7 +108,7 @@ class LiteratureSources(
             .addQueryParameter(if (bibliographic) "query.bibliographic" else "query", query.take(400))
             .addQueryParameter("rows", rows.coerceIn(1, 40).toString())
         val filters = buildList {
-            filter.fromYear?.let { add("from-pub-date:$it") }
+            (filter.fromDate ?: filter.fromYear?.toString())?.let { add("from-pub-date:$it") }
             filter.toYear?.let { add("until-pub-date:$it-12-31") }
             filter.types.flatMap { crossrefTypes(it) }.forEach { add("type:$it") }
         }
@@ -220,7 +222,7 @@ class LiteratureSources(
     }
 
     private fun openAlexFilters(filter: SearchFilter) = buildList {
-        filter.fromYear?.let { add("from_publication_date:$it-01-01") }
+        (filter.fromDate ?: filter.fromYear?.let { "$it-01-01" })?.let { add("from_publication_date:$it") }
         filter.toYear?.let { add("to_publication_date:$it-12-31") }
         val types = filter.types.flatMap {
             when (it) {
@@ -247,6 +249,52 @@ class LiteratureSources(
             else -> "doi:" + Reference.cleanDoi(id)
         }
         return json(openAlex("works/$key").build())
+    }
+
+    // ── Open Access full texts (AP-138 c) ───────────────────────────────────────────────────────────────────
+
+    /** A freely readable copy of a work: the PDF if known, the page it is on, version and licence. */
+    data class OaLocation(val pdfUrl: String, val landingUrl: String, val version: String, val license: String, val host: String)
+
+    /**
+     * Free copies of [r] (Open Access): OpenAlex (by DOI, otherwise by a clearly matching title) and Unpaywall, the best
+     * first; arXiv preprints directly. Only legal copies that the publisher, a repository or the authors offer.
+     */
+    suspend fun openAccessLocations(r: Reference): List<OaLocation> {
+        val out = mutableListOf<OaLocation>()
+        if ("arxiv.org/abs/" in r.url) out += OaLocation(r.url.replace("/abs/", "/pdf/"), r.url, "submittedVersion", "", "arXiv")
+        val work = when {
+            r.doi.isNotBlank() -> runCatching { openAlexRaw(r.doi) }.getOrNull()
+            else -> (openAlexIds[r.dedupeKey] ?: runCatching { matchByTitle(r) }.getOrNull())?.let { id -> runCatching { openAlexRaw(id) }.getOrNull() }
+        }
+        work?.let { w ->
+            val locations = listOfNotNull(w["best_oa_location"] as? JsonObject) + (w["locations"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }
+            locations.filter { (it["is_oa"] as? JsonPrimitive)?.contentOrNull != "false" }.forEach { l ->
+                val src = l["source"] as? JsonObject
+                out += OaLocation(l.text("pdf_url"), l.text("landing_page_url"), l.text("version"), l.text("license"), src?.text("display_name").orEmpty().ifBlank { "OpenAlex" })
+            }
+            if (out.isEmpty()) (w["open_access"] as? JsonObject)?.text("oa_url")?.takeIf { it.isNotBlank() }?.let { out += OaLocation("", it, "", "", "OpenAlex") }
+        }
+        if (r.doi.isNotBlank()) {
+            val url = "https://api.unpaywall.org/v2/".toHttpUrl().newBuilder().addPathSegment(Reference.cleanDoi(r.doi)).addQueryParameter("email", MAILTO).build()
+            runCatching { json(url) }.getOrNull()?.let { u ->
+                (u["oa_locations"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }.forEach { l ->
+                    out += OaLocation(l.text("url_for_pdf"), l.text("url_for_landing_page").ifBlank { l.text("url") }, l.text("version"), l.text("license"), l.text("repository_institution").ifBlank { if (l.text("host_type") == "publisher") "Verlag" else "Unpaywall" })
+                }
+            }
+        }
+        // PDFs first, then the accepted and published versions before preprints.
+        val rank = mapOf("publishedVersion" to 0, "acceptedVersion" to 1, "submittedVersion" to 2)
+        return out.filter { it.pdfUrl.isNotBlank() || it.landingUrl.isNotBlank() }
+            .distinctBy { it.pdfUrl.ifBlank { it.landingUrl }.trimEnd('/') }
+            .sortedWith(compareBy({ it.pdfUrl.isBlank() }, { rank[it.version] ?: 3 }))
+    }
+
+    /** OpenAlex id of the work that clearly matches [r] by title, authors and year. */
+    private suspend fun matchByTitle(r: Reference): String? {
+        if (r.title.length < 8) return null
+        val best = openAlexSearch(r.title, 5).map { it to Bibliography.similarity(r, it).first }.maxByOrNull { it.second } ?: return null
+        return if (best.second >= 0.85) openAlexIds[best.first.dedupeKey] else null
     }
 
     /** Works cited by [id] (backward snowballing) or citing it (forward). */

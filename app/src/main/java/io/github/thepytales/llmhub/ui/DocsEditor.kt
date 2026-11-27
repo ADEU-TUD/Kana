@@ -116,7 +116,6 @@ import io.github.thepytales.llmhub.docs.DocMarkup
 import io.github.thepytales.llmhub.docs.DocStats
 import io.github.thepytales.llmhub.docs.SlideDeck
 import io.github.thepytales.llmhub.docs.SpellCheck
-import io.github.thepytales.llmhub.research.CitationStyle
 import io.github.thepytales.llmhub.docs.DocComment
 import io.github.thepytales.llmhub.docs.DocFormat
 import io.github.thepytales.llmhub.docs.DocKind
@@ -260,6 +259,8 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
     var stopTracking by remember { mutableStateOf(false) }
     var spellLocal by remember { mutableStateOf(false) }
     var citing by remember { mutableStateOf(false) }
+    /** Zitate prüfen (AP-138 b). */
+    var checkingCitations by remember { mutableStateOf(false) }
     var spellFor by remember { mutableStateOf<String?>(null) }
     var deckFromDoc by remember { mutableStateOf(false) }
     /** Datei › Details und Sprache (AP-126 b). */
@@ -404,12 +405,12 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
     }
 
     /** A citation at the cursor and the work in the generated literature list at the end. */
-    fun cite(ref: io.github.thepytales.llmhub.research.Reference, style: CitationStyle) {
+    fun cite(ref: io.github.thepytales.llmhub.research.Reference, style: io.github.thepytales.llmhub.research.CitationStyles.Choice) {
         val t = tab ?: return
         // Fließtext-Editor (AP-44): the citation at its cursor, the literature list at the end.
         flowHost.markdown?.let { current ->
             val refs0 = (DocCitations.cited(current()).ids.mapNotNull { c.literature.get(it) } + ref).distinctBy { it.id }
-            val citation = DocCitations.inText(ref, style, DocCitations.number(refs0, ref, style))
+            val citation = DocCitations.inText(ref, style, DocCitations.number(refs0, ref, style), refs0)
             flowHost.insertText?.invoke(" $citation")
             val md = DocCitations.withBibliography(current(), refs0, style)
             save(note = tr("Beleg eingefügt")) { d -> d.copy(tabs = d.tabs.map { if (it.id == t.id) it.copy(markdown = md) else it }) }
@@ -421,7 +422,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
         val md0 = DocBlocks.join(list.mapIndexed { k, b -> if (k == i) editing.value.text else b })
         val cited = DocCitations.cited(md0)
         val refs = (cited.ids.mapNotNull { c.literature.get(it) } + ref).distinctBy { it.id }
-        val citation = DocCitations.inText(ref, style, DocCitations.number(refs, ref, style))
+        val citation = DocCitations.inText(ref, style, DocCitations.number(refs, ref, style), refs)
         if (i != null && i in list.indices) {
             val v = editing.value
             val at = v.selection.max
@@ -567,6 +568,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
             onSource = { mode = TextMode.SOURCE },
             onRead = { mode = TextMode.READ },
             onSpell = { spellLocal = true },
+            onCheckCitations = { checkingCitations = true },
             onTrack = { if (liveDoc?.trackBase == null) save(note = tr("Änderungen nachverfolgen an")) { d -> d.copy(trackBase = d.tabs.associate { it.id to it.markdown }) } else stopTracking = true },
             onAskAi = { panel = DocPanel.AI },
             onShowComments = { panel = DocPanel.COMMENTS },
@@ -714,6 +716,7 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
                             if (kind == DocKind.DOC) {
                                 DropdownMenuItem(text = { Text(tr("Seite einrichten …")) }, onClick = { more = false; pageSetup = true })
                                 DropdownMenuItem(text = { Text(tr("Literatur einfügen …")) }, onClick = { more = false; citing = true })
+                                DropdownMenuItem(text = { Text(tr("Zitate prüfen")) }, onClick = { more = false; editing.index = null; checkingCitations = true })
                                 DropdownMenuItem(text = { Text(tr("Rechtschreibung prüfen")) }, onClick = { more = false; editing.index = null; spellLocal = true })
                                 DropdownMenuItem(text = { Text(tr("Rechtschreibung prüfen (KI)")) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null) }, onClick = {
                                     more = false
@@ -1018,8 +1021,9 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
         editing.index = null
         setMarkdown(DocMarkup.withPageSetup(tab.markdown, setup))
     }
+    if (checkingCitations && doc != null) CitationCheckDialog(c, flowHost.markdown?.invoke() ?: markdown, onDismiss = { checkingCitations = false })
     if (citing && doc != null) {
-        val style = DocCitations.cited(markdown).style ?: CitationStyle.parse(c.settings.current.citationStyle) ?: CitationStyle.APA7_DE
+        val style = DocCitations.cited(markdown).choice ?: io.github.thepytales.llmhub.research.CitationStyles.resolve(c.settings.current.citationStyle)
         CitationDialog(c, style, onDismiss = { citing = false }) { ref, st ->
             citing = false
             cite(ref, st)

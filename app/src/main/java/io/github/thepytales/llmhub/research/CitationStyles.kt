@@ -32,6 +32,7 @@ enum class CitationStyle(
 
     companion object {
         fun parse(name: String?): CitationStyle? {
+            if (name?.trim()?.startsWith(CslStyle.KEY_PREFIX) == true) return null
             val n = name?.trim()?.lowercase()?.replace(Regex("[^a-z0-9]"), "") ?: return null
             if (n.isEmpty()) return null
             return entries.firstOrNull { it.name.lowercase().replace("_", "") == n } ?: when {

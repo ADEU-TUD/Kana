@@ -137,6 +137,8 @@ object TaskRunner {
         try {
             // AP-69 d: a sort order reads the mails only with the model on this device – no chat model, no tools.
             if (task.mailSort != null) conv = conv.appendToThread(ChatMessage(role = "assistant", content = io.github.thepytales.llmhub.agent.MailSorter.runScheduled(c, task)))
+            // AP-138 e: the Literatur-Wächter searches the databases itself – the new works come as a list.
+            else if (task.litWatch != null) conv = conv.appendToThread(ChatMessage(role = "assistant", content = io.github.thepytales.llmhub.research.LiteratureWatch.run(c, task)))
             else c.agent.run(host, maxSteps = 15, tools = ToolSelection(task.github, task.documentTools, task.webTools))
             val last = conv.thread().lastOrNull { it.role == "assistant" }
             status = if (last == null || last.error) ScheduledTask.ERROR_PREFIX + (last?.content?.take(120) ?: tr("keine Antwort")) else ScheduledTask.SUCCESS

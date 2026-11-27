@@ -7995,3 +7995,90 @@ Tastenkürzel: {0}	Keyboard shortcuts: {0}
 In einem Werkzeug (Dokument, Tabelle, Folien, Gestalten, Video, PDF, Transkript) zeigt Strg+/ zuerst dessen Tasten.	In a tool (document, table, slides, design, video, PDF, transcript) Ctrl+/ shows its keys first.
 Befehlspalette: Befehle des Werkzeugs, Bereiche, Einstellungen, Chats	Command palette: commands of the tool, areas, settings, chats
 Drucken mit Vorschau (Dokument, Tabelle, Folien, Gestalten, PDF, Transkript)	Print with preview (document, table, slides, design, PDF, transcript)
+# Literatur: Zitierstile (CSL), Zitierprüfung, Volltexte, Citavi, Literatur-Wächter, ISBN/DOI per Foto (AP-138)
+Alle gewählten Werke haben schon einen Volltext.	All selected works already have a full text.
+Alles passt zusammen	Everything matches
+Autor	Author
+Autor-Jahr	Author-date
+Beleg ohne Eintrag im Literaturverzeichnis	Citation without an entry in the reference list
+Bericht kopieren	Copy report
+Bewertung: {0}	Rating: {0}
+BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) oder Literaturangaben als Text einfügen – oder eine Datei wählen, auch ein Citavi-Projekt (.ctv6) mit Notizen, Schlagwörtern und Kategorien.	Paste BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) or references as text – or choose a file, also a Citavi project (.ctv6) with notes, keywords and categories.
+Citavi: {0} Titel übernommen, {1} Kategorien als Listen, {2} Schlagwörter, {3} Wissenselemente in den Notizen.	Citavi: {0} titles imported, {1} categories as lists, {2} keywords, {3} knowledge items in the notes.
+Das Citavi-Projekt ließ sich nicht lesen.	The Citavi project could not be read.
+Das Foto ließ sich nicht lesen.	The photo could not be read.
+Datei laden (.csl)	Load file (.csl)
+Den Barcode auf der Buchrückseite fotografieren (ISBN, wird auf dem Gerät gelesen) – oder die Titelseite bzw. die erste Seite eines Artikels mit der DOI.	Photograph the barcode on the back of the book (ISBN, read on the device) – or the title page or the first page of an article with the DOI.
+Der Hauptstil „{0}“ ist selbst abhängig.	The parent style “{0}” is itself dependent.
+Der Zitierstil enthält weder Zitate noch ein Literaturverzeichnis.	The citation style contains neither citations nor a reference list.
+Der Zitierstil verweist auf keinen Hauptstil.	The citation style refers to no parent style.
+Der Zitierstil „{0}“ baut auf „{1}“ auf, der sich nicht laden ließ.	The citation style “{0}” is based on “{1}”, which could not be loaded.
+Di	Tu
+Die Datei ist kein CSL-Zitierstil.	The file is not a CSL citation style.
+Die Datei ist kein Citavi-Projekt (keine Tabelle „Reference“).	The file is not a Citavi project (no table “Reference”).
+Die Datei ist kein lesbares XML: {0}	The file is not readable XML: {0}
+Die Prüfung liest Belege wie „(Müller, 2020, S. 12)“, „Müller (2020)“ und „[3]“. Wörtliche Zitate ab vier Wörtern brauchen eine Seite.	The check reads citations like “(Müller, 2020, p. 12)”, “Müller (2020)” and “[3]”. Literal quotations of four words or more need a page.
+Die Stil-Sammlung ist nicht erreichbar.	The style collection cannot be reached.
+Die eingebauten Stile sortieren alphabetisch nach Erstautor:in; gleiche Autor:innen und Jahr bekommen a/b. Geladene CSL-Stile sortieren so, wie der Stil es vorgibt. Fehlende Angaben ergänzt die App aus Crossref, der Deutschen Nationalbibliothek, Google Books und OpenAlex.	The built-in styles sort alphabetically by first author; the same authors and year get a/b. Loaded CSL styles sort as the style says. The app fills in missing details from Crossref, the German National Library, Google Books and OpenAlex.
+Die offizielle Sammlung der Citation Style Language (über zotero.org/styles). Gesucht wird nur der Name des Stils.	The official collection of the Citation Style Language (via zotero.org/styles). Only the name of the style is searched.
+Diese Aufgabe hat keine gespeicherte Suche.	This task has no saved search.
+Do	Th
+Eintrag wird im Text nicht zitiert	Entry is not cited in the text
+Fr	Fr
+Frei lesbar, aber kein PDF zum Herunterladen – „Volltext“ öffnet die Seite.	Freely readable, but no PDF to download – “Full text” opens the page.
+Fußnoten	Footnotes
+Geladener Zitierstil (CSL)	Loaded citation style (CSL)
+Geladener Zitierstil (CSL) – Reihenfolge und Form wie im Stil	Loaded citation style (CSL) – order and form as in the style
+ISBN oder DOI fotografieren	Photograph ISBN or DOI
+ISBN oder DOI fotografieren …	Photograph ISBN or DOI …
+In die Sammlung übernommen: {0}	Added to the collection: {0}
+Kein Barcode erkannt, und für DOIs fehlt eine Texterkennung (ein Bildmodell unter Einstellungen › Modelle).	No barcode recognized, and DOIs need text recognition (an image model under Settings › Models).
+Kein Literaturverzeichnis gefunden – eine Überschrift „Literatur“ oder „Literaturverzeichnis“ mit den Einträgen darunter, oder Belege über „Literatur einfügen“.	No reference list found – a heading “Literatur” or “References” with the entries below it, or citations via “Insert reference”.
+Kein Stil gefunden.	No style found.
+Keine Datenbank erreichbar – der Wächter versucht es beim nächsten Mal wieder.	No database reachable – the watcher tries again next time.
+Keine ISBN und keine DOI erkannt.	No ISBN and no DOI recognized.
+Keine freie Fassung gefunden – über die SLUB ist das Werk oft mit dem TU-Login zugänglich.	No free copy found – the work is often available via the SLUB with the TU login.
+Keine neuen Werke zu „{0}“ seit der letzten Suche.	No new works on “{0}” since the last search.
+Literatur-Wächter	Literature watcher
+Literatur-Wächter einrichten …	Set up literature watcher …
+Literatur-Wächter gespeichert ({0}); die erste Suche läuft jetzt.	Literature watcher saved ({0}); the first search is running now.
+Literatur-Wächter: {0}	Literature watcher: {0}
+Mi	We
+Mo	Mo
+Neben den eingebauten Stilen lassen sich beliebige Zitierstile im CSL-Format laden – aus der offiziellen Sammlung (über 10 000 Stile von Verlagen, Zeitschriften und Hochschulen) oder als Datei vom Verlag oder Lehrstuhl.	Besides the built-in styles, any citation style in CSL format can be loaded – from the official collection (over 10,000 styles of publishers, journals and universities) or as a file from the publisher or chair.
+Neue Literatur zu „{0}“ suchen (einmal pro Woche).	Search new literature on “{0}” (once a week).
+Noch keine eigenen Stile geladen.	No own styles loaded yet.
+Oder ISBN/DOI eingeben	Or enter ISBN/DOI
+Preprint	Preprint
+Sa	Sa
+So	Su
+Stil „{0}“ nicht gefunden	Style “{0}” not found
+Suche Volltexte: {0} von {1} …	Searching full texts: {0} of {1} …
+Suche nicht möglich	Search not possible
+Sucht einmal pro Woche nach neuen Werken zu einer gespeicherten Suche und legt sie als Liste in die Sammlung. Kana meldet sich dabei nicht – das Ergebnis wartet in der Liste und unter Geplante Aufgaben.	Searches once a week for new works of a saved search and puts them as a list into the collection. Kana does not interrupt – the result waits in the list and under Scheduled tasks.
+Verlagsfassung	Publisher's version
+Volltext gespeichert: Dateien › {0} ({1})	Full text saved: Files › {0} ({1})
+Volltext im Kana-Ordner	Full text in the Kana folder
+Volltext suchen	Find full text
+Volltext öffnen	Open full text
+Volltexte suchen (Open Access)	Find full texts (open access)
+Weitere Stile (CSL) …	More styles (CSL) …
+Weitere Zitierstile (CSL)	More citation styles (CSL)
+Wochentag	Weekday
+Wächter: {0}	Watcher: {0}
+Wörtliches Zitat ohne Beleg	Literal quotation without citation
+Wörtliches Zitat ohne Seitenangabe	Literal quotation without page
+Zeitschrift, Verlag, Fach oder Hochschule	Journal, publisher, field or university
+Zitate prüfen	Check citations
+Zitierstil aus der Sammlung	Citation style from the collection
+Zitierstil lässt sich nicht laden	Citation style cannot be loaded
+Zitierstil „{0}“ entfernt	Citation style “{0}” removed
+Zitierstil „{0}“ geladen	Citation style “{0}” loaded
+Zu {0} nichts gefunden.	Nothing found for {0}.
+angenommene Fassung	accepted version
+nummeriert	numbered
+z.B. Klassenführung Berufseinstieg	e.g. classroom management first year
+{0} Belege im Text, {1} Einträge im Literaturverzeichnis, {2} wörtliche Zitate.	{0} citations in the text, {1} entries in the reference list, {2} literal quotations.
+{0} neue Werke zu „{1}“ – gespeichert in der Liste „{2}“ (Literatur › Sammlung):	{0} new works on “{1}” – saved in the list “{2}” (Literature › Collection):
+{0} von {1} Volltexten gespeichert, {2} nur als Seite frei lesbar.	{0} of {1} full texts saved, {2} only readable as a page.
+… und {0} weitere in der Liste.	… and {0} more in the list.

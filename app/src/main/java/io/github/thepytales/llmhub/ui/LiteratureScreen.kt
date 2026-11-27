@@ -192,7 +192,7 @@ private fun SearchStart(c: AppContainer, onOpenChat: () -> Unit, onSettings: () 
                 }
                 Text(tr("Umfang"), style = MaterialTheme.typography.labelLarge)
                 Segmented(listOf(0 to tr("Überblick (~10)"), 1 to tr("Standard (~20)"), 2 to tr("Gründlich (~40)")), depth, { depth = it })
-                ChoiceField(tr("Zitierstil für das Verzeichnis"), CitationStyle.entries.map { it.name to it.label }, style, { style = it })
+                CitationStyleField(c, tr("Zitierstil für das Verzeichnis"), style, { style = it })
                 Button(
                     enabled = topic.isNotBlank() && sources.isNotEmpty(),
                     onClick = {
@@ -205,7 +205,7 @@ private fun SearchStart(c: AppContainer, onOpenChat: () -> Unit, onSettings: () 
                             if (types.isNotEmpty()) append("Publikationsarten: ").append(types.joinToString(", ") { it.label }).append("\n")
                             append("Datenbanken: ").append(sources.joinToString(", ") { it.label }).append("\n")
                             append("Umfang: ").append(listOf(tr("Überblick, etwa 10 Werke"), tr("Standard, etwa 20 Werke"), tr("gründlich, etwa 40 Werke"))[depth]).append("\n")
-                            append("Zitierstil: ").append(CitationStyle.parse(style)?.label ?: style)
+                            append("Zitierstil: ").append(io.github.thepytales.llmhub.research.CitationStyles.resolve(style).label)
                         }
                         ChatHandoff.pending.value = ChatHandoff.Content(text, emptyList(), mode = Conversation.MODE_LITERATURE, send = true)
                         onOpenChat()
@@ -267,7 +267,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
     val lists = remember(all) { c.literature.lists() }
     val shown = remember(all, list, query) {
         all.filter { r -> list == null || r.lists.any { it.equals(list, true) } }
-            .filter { r -> query.isBlank() || listOf(r.title, r.container, r.year, r.authors.joinToString { it.family }, r.note).any { it.contains(query, true) } }
+            .filter { r -> query.isBlank() || (listOf(r.title, r.container, r.year, r.authors.joinToString { it.family }, r.note) + r.keywords).any { it.contains(query, true) } }
             .sortedBy { Bibliography.sortKey(it).lowercase() }
     }
     val chosen = shown.filter { it.id in selected }.ifEmpty { shown }
@@ -285,11 +285,23 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
         )
     }
     val importFile = rememberFileImport(arrayOf("*/*")) { input ->
-        val text = input.readBytes().toString(Charsets.UTF_8)
+        val bytes = input.readBytes()
+        // Citavi-Projekt (AP-138 d): an SQLite database with notes, keywords and categories.
+        if (io.github.thepytales.llmhub.research.Citavi.isProject(bytes)) {
+            runCatching { io.github.thepytales.llmhub.research.Citavi.read(bytes) }.onSuccess { res ->
+                c.literature.addAll(res.refs, list)
+                Notices.info(tr("Citavi: {0} Titel übernommen, {1} Kategorien als Listen, {2} Schlagwörter, {3} Wissenselemente in den Notizen.", res.refs.size, res.categories, res.keywords, res.knowledge))
+            }.onFailure { Notices.error(it.message ?: tr("Das Citavi-Projekt ließ sich nicht lesen.")) }
+            return@rememberFileImport
+        }
+        val text = bytes.toString(Charsets.UTF_8)
         val refs = ReferenceImport.read(text)
         c.literature.addAll(refs, list)
         Notices.info(tr("{0} Einträge übernommen", refs.size))
     }
+    var fetching by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    var watching by remember { mutableStateOf(false) }
+    var photo by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -297,6 +309,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                 query, { query = it }, leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                 placeholder = { Text(tr("In der Sammlung suchen")) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
+            fetching?.let { (done, total) -> HintText(tr("Suche Volltexte: {0} von {1} …", done + 1, total)) }
             Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FlowRow(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     FilterChip(list == null, { list = null; selected.clear() }, label = { Text(tr("Alle ({0})", all.size)) })
@@ -311,7 +324,7 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                 IconButton(onClick = { importing = true }) { Icon(Icons.Outlined.FileUpload, contentDescription = tr("Importieren")) }
                 var more by remember { mutableStateOf(false) }
                 Box {
-                    IconButton(onClick = { more = true }, enabled = shown.isNotEmpty()) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
+                    IconButton(onClick = { more = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = tr("Mehr")) }
                     DropdownMenu(expanded = more, onDismissRequest = { more = false }) {
                         DropdownMenuItem(text = { Text(tr("Literaturverzeichnis erstellen")) }, leadingIcon = { Icon(Icons.Outlined.LibraryBooks, null) }, onClick = { more = false; onMakeBibliography(chosen) })
                         if (chosen.any { it.excerpt.isNotBlank() }) {
@@ -335,6 +348,18 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                                 }
                             })
                         }
+                        DropdownMenuItem(text = { Text(tr("Volltexte suchen (Open Access)")) }, leadingIcon = { Icon(Icons.Outlined.Download, null) }, enabled = fetching == null, onClick = {
+                            more = false
+                            val todo = chosen.filter { it.fullTextPath.isBlank() }
+                            if (todo.isEmpty()) Notices.info(tr("Alle gewählten Werke haben schon einen Volltext."))
+                            else scope.launch {
+                                fetching = 0 to todo.size
+                                runCatching { fetchFullTexts(c, todo) { i -> fetching = i to todo.size } }
+                                fetching = null
+                            }
+                        })
+                        DropdownMenuItem(text = { Text(tr("ISBN oder DOI fotografieren …")) }, leadingIcon = { Icon(Icons.Outlined.PlaylistAdd, null) }, onClick = { more = false; photo = true })
+                        DropdownMenuItem(text = { Text(tr("Literatur-Wächter einrichten …")) }, leadingIcon = { Icon(Icons.Outlined.Search, null) }, onClick = { more = false; watching = true })
                         DropdownMenuItem(text = { Text(tr("Zitate kopieren (APA-Kurzform)")) }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = {
                             more = false
                             clipboard.setText(AnnotatedString(chosen.joinToString("\n") { it.short() }))
@@ -380,9 +405,11 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
                                 r.citations?.let { StatusPill(tr("{0} Zitationen", it), PillTone.NEUTRAL) }
                                 if (r.openAccessUrl.isNotBlank()) StatusPill(tr("Open Access"), PillTone.SUCCESS)
                                 r.lists.take(2).forEach { StatusPill(it, PillTone.ACCENT) }
+                                r.keywords.take(3).forEach { StatusPill("#$it", PillTone.NEUTRAL) }
                             }
                             if (r.note.isNotBlank()) Text(r.note, style = MaterialTheme.typography.bodySmall)
                             ReferenceLinks(r)
+                            FullTextRow(c, r)
                             ExcerptRow(c, r, onOpenChat)
                         }
                     }
@@ -391,6 +418,8 @@ private fun Collection(c: AppContainer, initialList: String?, onOpenChat: () -> 
         }
     }
 
+    if (watching) LiteratureWatchDialog(c, list, onDismiss = { watching = false })
+    if (photo) IdentifierPhotoDialog(c, list, onDismiss = { photo = false })
     if (importing) ImportDialog(onDismiss = { importing = false }, onFile = { importing = false; importFile() }) { text ->
         val refs = ReferenceImport.read(text)
         c.literature.addAll(refs, list)
@@ -459,7 +488,7 @@ private fun ImportDialog(onDismiss: () -> Unit, onFile: () -> Unit, onText: (Str
         title = { Text(tr("Literatur importieren")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                HintText(tr("BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) oder Literaturangaben als Text einfügen – oder eine Datei wählen."))
+                HintText(tr("BibTeX, RIS (Citavi, EndNote), CSL-JSON (Zotero) oder Literaturangaben als Text einfügen – oder eine Datei wählen, auch ein Citavi-Projekt (.ctv6) mit Notizen, Schlagwörtern und Kategorien."))
                 OutlinedTextField(text, { text = it }, minLines = 6, maxLines = 12, modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp))
             }
         },
@@ -545,7 +574,8 @@ fun ReferenceEditor(initial: Reference, onDismiss: () -> Unit, onDelete: (() -> 
 private fun BibliographyMaker(c: AppContainer, input: String, onInput: (String) -> Unit, fromCollection: List<Reference>, setFromCollection: (List<Reference>) -> Unit) {
     val scope = rememberCoroutineScope()
     val clipboard = LocalClipboardManager.current
-    var style by rememberSaveable { mutableStateOf(CitationStyle.parse(c.settings.current.citationStyle) ?: CitationStyle.APA7_DE) }
+    var styleKey by rememberSaveable { mutableStateOf(c.settings.current.citationStyle) }
+    val style = io.github.thepytales.llmhub.research.CitationStyles.resolve(styleKey)
     var complete by rememberSaveable { mutableStateOf(true) }
     var busy by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(0 to 0) }
@@ -592,8 +622,11 @@ private fun BibliographyMaker(c: AppContainer, input: String, onInput: (String) 
                         input, onInput, label = { Text(if (fromCollection.isEmpty()) tr("Literaturangaben") else tr("Weitere Literaturangaben (optional)")) },
                         placeholder = { Text(tr("Je Angabe eine Zeile – oder BibTeX/RIS einfügen")) }, minLines = 5, maxLines = 14, modifier = Modifier.fillMaxWidth(),
                     )
-                    ChoiceField(tr("Zitierstil"), CitationStyle.entries.map { it to it.label }, style, { style = it; result = result?.let { r -> Bibliography.build(r.entries, it) } })
-                    HintText(style.description)
+                    CitationStyleField(c, tr("Zitierstil"), styleKey, { k ->
+                        styleKey = k
+                        result = result?.let { r -> Bibliography.build(r.entries, io.github.thepytales.llmhub.research.CitationStyles.resolve(k)) }
+                    })
+                    HintText(if (style.csl == null) style.style.description else tr("Geladener Zitierstil (CSL) – Reihenfolge und Form wie im Stil"))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(tr("Fehlende Angaben online ergänzen"), modifier = Modifier.weight(1f))
                         Switch(complete, { complete = it })
@@ -631,7 +664,7 @@ private fun BibliographyMaker(c: AppContainer, input: String, onInput: (String) 
                                 DropdownMenuItem(text = { Text(tr("Als Markdown kopieren")) }, onClick = { more = false; clipboard.setText(AnnotatedString(res.markdown(null))) })
                                 DropdownMenuItem(text = { Text(tr("Im Dokument-Editor öffnen")) }, onClick = {
                                     more = false
-                                    DocsHandoff.open(c, tr("Literaturverzeichnis ({0})", res.style.label), res.markdown())
+                                    DocsHandoff.open(c, tr("Literaturverzeichnis ({0})", res.label), res.markdown())
                                 })
                                 DropdownMenuItem(text = { Text(tr("BibTeX speichern")) }, onClick = { more = false; fileKind = "bib"; saveFile("Literatur.bib") })
                                 DropdownMenuItem(text = { Text(tr("RIS speichern")) }, onClick = { more = false; fileKind = "ris"; saveFile("Literatur.ris") })
@@ -673,7 +706,7 @@ private fun BibliographyMaker(c: AppContainer, input: String, onInput: (String) 
     editing?.let { e ->
         ReferenceEditor(e.ref, onDismiss = { editing = null }) { updated ->
             val res = result ?: return@ReferenceEditor
-            result = Bibliography.build(res.entries.map { if (it.ref.id == e.ref.id) it.copy(ref = updated) else it }, res.style)
+            result = Bibliography.build(res.entries.map { if (it.ref.id == e.ref.id) it.copy(ref = updated) else it }, res.style, res.csl)
             editing = null
         }
     }

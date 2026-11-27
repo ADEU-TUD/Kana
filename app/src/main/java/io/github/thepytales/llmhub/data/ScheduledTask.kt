@@ -51,6 +51,8 @@ data class ScheduledTask(
     val createdAt: Long = System.currentTimeMillis(),
     /** AP-69 d: a sort order of Kana („jeden Montag die letzte Woche einordnen“), run by the model on this device instead of a chat. */
     val mailSort: io.github.thepytales.llmhub.agent.MailSortSpec? = null,
+    /** AP-138 e: Literatur-Wächter – a stored search run in the background without the chat model. */
+    val litWatch: io.github.thepytales.llmhub.research.LitWatchSpec? = null,
 ) {
     val linkedRepos: List<String> get() = repos.ifEmpty { listOfNotNull(repo) }
 
