@@ -258,10 +258,17 @@ object PdfWork {
     }
 }
 
-private enum class PdfMode(val label: String) {
-    VIEW(trLater("Ansehen")), PAGES(trLater("Seiten")), MARK(trLater("Markieren")), SIGN(trLater("Unterschreiben")), FORM(trLater("Formular")), CONVERT(trLater("Umwandeln")), AI("KI"),
+/** The modes of the werkzeugkasten; [words] are what each one contains, for Strg+K (AP-135 a). */
+private enum class PdfMode(val label: String, val words: String) {
+    VIEW(trLater("Ansehen"), "lesen suchen im pdf suchen gliederung nachtmodus zoom kommentare kommentarliste view read search"),
+    PAGES(trLater("Seiten"), "seiten drehen löschen verschieben sortieren zusammenfügen zusammenführen teilen aufteilen extrahieren seitenzahlen einfügen pages rotate merge split extract"),
+    MARK(trLater("Markieren"), "hervorheben unterstreichen durchstreichen notiz stempel freihand zeichnen kommentar highlight annotate"),
+    SIGN(trLater("Unterschreiben"), "unterschrift signatur signieren zertifikat sign signature"),
+    FORM(trLater("Formular"), "formular ausfüllbar felder erkennen form fields"),
+    CONVERT(trLater("Umwandeln"), "umwandeln word excel powerpoint bilder jpg png text ocr texterkennung durchsuchbar convert"),
+    AI("KI", "ki kana zusammenfassen fragen übersetzen ai summary"),
     // AP-26: Schwärzen, ändern, verkleinern, PDF/A, Passwort, Metadaten, PDF/UA, vergleichen.
-    EDIT(trLater("Schwärzen & mehr")),
+    EDIT(trLater("Schwärzen & mehr"), "schwärzen text ändern verkleinern komprimieren pdf a archiv passwort verschlüsseln metadaten barrierefrei pdf ua vergleichen redact compress password"),
 }
 
 /** Runs a change of the PDF: the result becomes a new version, the old one stays for „Rückgängig“. */
@@ -296,11 +303,19 @@ private fun PdfTab.undo(context: android.content.Context, scope: kotlinx.corouti
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PdfToolScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit = {}) {
+fun PdfToolScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit = {}) =
+    // Strg+K finds the entries of its menus (AP-135 a).
+    ToolCommandsArea(tr("PDF"), ToolKeys.PDF) { PdfToolScreenBody(c, onBack, onOpenChat) }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PdfToolScreenBody(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
     val tab = PdfWork.tabs.getOrNull(PdfWork.selected)
+    // Strg+P überall (AP-135 d): the open PDF as it is now (with its changes).
+    tab?.let { t -> PrintableHere(t.name) { t.file } }
     val pick = rememberMediaImport(anyFile = true) { name, _, input ->
         // AP-15: Word, Excel, PowerPoint, pictures, HTML and text open as a PDF.
         val kind = io.github.thepytales.llmhub.docs.ToPdfKind.of(name)
@@ -396,6 +411,8 @@ fun PdfToolScreen(c: AppContainer, onBack: () -> Unit, onOpenChat: () -> Unit = 
                 Spot("pdf.modes") {
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         PdfMode.entries.filter { it != PdfMode.FORM || !IS_ANDROID }.forEach { m ->
+                            // Strg+K finds the modes by what they contain (AP-135 a): „Seiten drehen“ opens *Seiten*.
+                            ToolCommand(tr(m.label), tr("PDF-Werkzeugkasten"), { mode = m }, keywords = m.words)
                             FilterChip(selected = mode == m, onClick = { mode = m }, label = { Text(tr(m.label)) })
                         }
                     }

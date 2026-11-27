@@ -68,7 +68,6 @@ import androidx.compose.material.icons.outlined.FormatUnderlined
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -1673,7 +1672,7 @@ private fun FlowMenus(
             } else {
                 TextButton(onClick = { open = name }, contentPadding = PaddingValues(horizontal = 8.dp)) { Text(tr(name), style = MaterialTheme.typography.bodyMedium) }
             }
-            DropdownMenu(open == name, { open = null }) { items { open = null } }
+            DropdownMenu(open == name, { open = null }, commands = tr(name)) { items { open = null } }
         }
     }
     @Composable
@@ -2869,6 +2868,8 @@ internal val MENU_ROW: Modifier = if (DESKTOP) Modifier.height(36.dp) else Modif
  */
 @Composable
 internal fun MenuRow(label: String, keys: String, enabled: Boolean, onClick: () -> Unit) {
+    // Strg+K (AP-135 a): inside a recorded menu the row is reported as a command, not drawn.
+    if (LocalMenuRecording.current != null && recordEntry(label, keys, enabled, onClick)) return
     val color = MaterialTheme.colorScheme.onSurface.let { if (enabled) it else it.copy(alpha = 0.38f) }
     Row(
         Modifier.fillMaxWidth().widthIn(min = 180.dp).heightIn(min = if (DESKTOP) 36.dp else 48.dp)

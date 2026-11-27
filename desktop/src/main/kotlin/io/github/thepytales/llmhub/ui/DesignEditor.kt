@@ -61,7 +61,6 @@ import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material.icons.outlined.ZoomIn
 import androidx.compose.material.icons.outlined.ZoomOut
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -148,13 +147,22 @@ private val EditorAccent = Color(0xFF2F57B2)
 
 /** The design editor of „Erstellen“ (AP-24) for design [id]. Changes are saved after a short pause and when leaving. */
 @Composable
-fun DesignEditor(c: AppContainer, id: String, onClose: () -> Unit) {
+fun DesignEditor(c: AppContainer, id: String, onClose: () -> Unit) =
+    // Strg+K finds the entries of its menus (AP-135 a).
+    ToolCommandsArea(tr("Gestalten"), ToolKeys.DESIGN) { DesignEditorBody(c, id, onClose) }
+
+@Composable
+private fun DesignEditorBody(c: AppContainer, id: String, onClose: () -> Unit) {
     val initial = remember(id) { c.designs.get(id) }
     if (initial == null) {
         LaunchedEffect(id) { onClose() }
         return
     }
     val state = remember(id) { DesignEditorState(initial) }
+    // Strg+P überall (AP-135 d): the design as *Exportieren › PDF (Druck)* makes it.
+    PrintableHere(state.design.title) { ctx ->
+        File(File(ctx.cacheDir, "print").apply { mkdirs() }, io.github.thepytales.llmhub.docs.DocumentWriter.safeName(state.design.title) + ".pdf").also { DesignExport.writePdf(state.design, it) }
+    }
     var savedVersion by remember { mutableStateOf(0) }
     var savedAt by remember { mutableStateOf(initial.updatedAt) }
     LaunchedEffect(state.version) {
@@ -250,7 +258,7 @@ private fun EditorTopBar(c: AppContainer, state: DesignEditorState, onClose: () 
                 Spacer(Modifier.size(6.dp))
                 Text(busy ?: tr("Exportieren"))
             }
-            DropdownMenu(expanded = exportMenu, onDismissRequest = { exportMenu = false }) {
+            DropdownMenu(expanded = exportMenu, onDismissRequest = { exportMenu = false }, commands = tr("Exportieren")) {
                 val many = d.pages.size > 1
                 DropdownMenuItem(
                     text = { Text(if (d.screen) tr("PNG ({0})", DesignFormat.byId(d.format)?.sizeLabel) else tr("PNG (150 dpi)")) },
@@ -291,7 +299,7 @@ private fun ToolRail(c: AppContainer, state: DesignEditorState) {
     ) {
         Box {
             RailButton(Icons.Outlined.TextFields, tr("Text")) { texts = true }
-            DropdownMenu(expanded = texts, onDismissRequest = { texts = false }) {
+            DropdownMenu(expanded = texts, onDismissRequest = { texts = false }, commands = tr("Text")) {
                 listOf(
                     Triple(tr("Überschrift"), 0.055f, true),
                     Triple(tr("Zwischenüberschrift"), 0.035f, true),
@@ -312,7 +320,7 @@ private fun ToolRail(c: AppContainer, state: DesignEditorState) {
         }
         Box {
             RailButton(Icons.Outlined.Category, tr("Formen")) { shapes = true }
-            DropdownMenu(expanded = shapes, onDismissRequest = { shapes = false }) {
+            DropdownMenu(expanded = shapes, onDismissRequest = { shapes = false }, commands = tr("Formen")) {
                 val s = unit * 0.25f
                 listOf(
                     tr("TUD-Shape") to DesignElement(kind = ElementKind.TUD_SHAPE, w = s * 1.6f, h = s * 1.6f, fill = TudBrand.BLUE),
@@ -338,7 +346,7 @@ private fun ToolRail(c: AppContainer, state: DesignEditorState) {
         }
         Box {
             RailButton(Icons.Outlined.School, tr("Logo")) { logos = true }
-            DropdownMenu(expanded = logos, onDismissRequest = { logos = false }) {
+            DropdownMenu(expanded = logos, onDismissRequest = { logos = false }, commands = tr("Logo")) {
                 val w = unit * 0.3f
                 fun logo(src: String, ratio: Float) = DesignElement(kind = ElementKind.IMAGE, src = src, w = w, h = w / ratio, fitMode = "contain", alt = "Logo")
                 // The logos of the CD package: horizontal, vertical, short and the mark, in blue, white (for coloured areas) and black.
@@ -391,6 +399,7 @@ internal fun addPicture(c: AppContainer, state: DesignEditorState, bytes: ByteAr
 
 @Composable
 private fun RailButton(icon: ImageVector, label: String, onClick: () -> Unit) {
+    ToolCommand(label, tr("Leiste"), onClick)
     Column(
         Modifier.width(76.dp).clip(RoundedCornerShape(10.dp)).clickable(onClick = onClick).padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -884,7 +893,7 @@ private fun PageProperties(state: DesignEditorState) {
     Text(tr("Format"), style = MaterialTheme.typography.labelLarge)
     Box {
         OutlinedButton(onClick = { formats = true }) { Text(DesignFormat.byId(d.format)?.let { "${it.label} (${it.sizeLabel})" } ?: d.format) }
-        DropdownMenu(expanded = formats, onDismissRequest = { formats = false }) {
+        DropdownMenu(expanded = formats, onDismissRequest = { formats = false }, commands = tr("Format")) {
             DesignFormat.ALL.forEach { f ->
                 DropdownMenuItem(text = { Text("${f.label} · ${f.sizeLabel}") }, onClick = { formats = false; state.changeFormat(f.id, f.width, f.height) })
             }

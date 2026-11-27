@@ -114,7 +114,7 @@ Editor, D-07 Zusammenführen über die Cloud, T-04 Notenliste, E-03 große Datei
 im Hörsaal (gestrichen).
 
 **Vorrang ab 24.11.2026 (Hauptnutzer):** **AP-155** (Umbenennung Lora → Kana) ist fertig (1.0.78), weiter wie oben.
-**27.11.2026:** AP-129 ist fertig (Prüfung am Gerät offen); als Nächstes kommt **AP-135** (aus *Danach*).
+**27.11.2026:** AP-129 ist fertig (Prüfung am Gerät offen); als Nächstes kommt **AP-135** (aus *Danach*) – begonnen ◐.
 
 ### AP-155 ☑ Umbenennung: Lora heißt jetzt Kana · L (Wunsch Hauptnutzer 24.11.2026, in Stufen)
 **Entscheidung des Hauptnutzers (24.11.2026):** Die App und die Figur heißen künftig **Kana** statt Lora. Das Repository
@@ -999,7 +999,7 @@ AP-67 und AP-71 (Modellziele) werden nachtrainiert und stehen weiter unter *Jetz
 **Aus der Werkzeug-Analyse (14.11.2026, Reihenfolge empfohlen und vom Hauptnutzer übernommen)**: AP-135 bis AP-154 der
 Reihe nach, sobald *Jetzt* abgearbeitet ist. Die Nummern in Klammern (Q-01 …) sind die der Analyse.
 
-### AP-135 ☐ Schneller finden und arbeiten · M (Analyse Q-01, Q-02, Q-03, Q-12)
+### AP-135 ◐ Schneller finden und arbeiten · M (Analyse Q-01, Q-02, Q-03, Q-12)
 - **(a) Befehle des Werkzeugs in Strg+K** (Q-01): Wie „Menüs durchsuchen“ in Google Docs – jede Menüfunktion des offenen
   Editors (Dokument, Tabelle, Folien, Gestalten, Video, PDF, Transkript) ist per Name und Synonym findbar und ausführbar;
   Strg+K bleibt die eine Befehlssuche (kein zweites Kürzel).

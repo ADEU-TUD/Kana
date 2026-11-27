@@ -574,6 +574,8 @@ fun AiPromptBar(kind: DocKind, working: Boolean, onOpen: () -> Unit) {
 /** Small round tool button for the formatting bars. */
 @Composable
 fun ToolIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, active: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
+    // Strg+K finds the buttons of the bars too (AP-135 a).
+    ToolCommand(label.substringBefore(" (").let { if (active) "✓ $it" else it }, tr("Leiste"), onClick, enabled, keys = label.substringAfter(" (", "").removeSuffix(")"))
     IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(LocalToolIconSize.current).then(if (active) Modifier.background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)) else Modifier)) {
         Icon(icon, contentDescription = label, modifier = Modifier.size(20.dp))
     }
@@ -585,6 +587,8 @@ val LocalToolIconSize = androidx.compose.runtime.staticCompositionLocalOf { 40.d
 /** Clickable text label in toolbars (e.g. "Absatz ▾"). */
 @Composable
 fun ToolLabel(text: String, onClick: () -> Unit) {
+    // A label with „▾“ opens a menu whose entries Strg+K lists itself.
+    if (!text.endsWith("▾")) ToolCommand(text, tr("Leiste"), onClick)
     Text(
         text, style = MaterialTheme.typography.labelLarge,
         modifier = Modifier.clickable(onClick = onClick).padding(horizontal = 10.dp, vertical = 10.dp),

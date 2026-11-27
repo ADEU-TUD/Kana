@@ -65,7 +65,6 @@ import androidx.compose.material.icons.outlined.SpeakerNotes
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.animation.togetherWith
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -290,7 +289,7 @@ fun SlidesBody(
             var aiMenu by remember { mutableStateOf(false) }
             Box {
                 ToolIcon(Icons.Outlined.AutoAwesome, tr("KI für diese Folie")) { aiMenu = true }
-                DropdownMenu(expanded = aiMenu, onDismissRequest = { aiMenu = false }) {
+                DropdownMenu(expanded = aiMenu, onDismissRequest = { aiMenu = false }, commands = tr("KI für diese Folie")) {
                     SLIDE_AI.forEach { (label, instruction) ->
                         DropdownMenuItem(text = { Text(label) }, leadingIcon = { Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(16.dp)) }, onClick = {
                             aiMenu = false
@@ -1242,7 +1241,7 @@ private fun FreeDesignBar(
             AssistChip(onClick = pickImage, label = { Text(tr("Bild …")) })
             Box {
                 AssistChip(onClick = { shapes = true }, label = { Text(tr("Form ▾")) })
-                DropdownMenu(shapes, { shapes = false }) {
+                DropdownMenu(shapes, { shapes = false }, commands = tr("Form")) {
                     listOf("rechteck" to tr("Rechteck"), "abgerundet" to tr("Abgerundetes Rechteck"), "ellipse" to tr("Ellipse"), "pfeil" to tr("Pfeil"), "linie" to tr("Linie")).forEach { (k, label) ->
                         DropdownMenuItem(text = { Text(label) }, onClick = {
                             shapes = false
@@ -1265,7 +1264,7 @@ private fun FreeDesignBar(
             var animMenu by remember { mutableStateOf(false) }
             Box {
                 AssistChip(onClick = { animMenu = true }, label = { Text(tr("Animation: {0}", listOfNotNull(when (s.transition) { "fade" -> tr("Überblenden"); "push" -> tr("Schieben"); else -> null }, if (s.build) tr("Punkte nacheinander") else null).joinToString(", ").ifBlank { tr("keine") })) })
-                DropdownMenu(expanded = animMenu, onDismissRequest = { animMenu = false }) {
+                DropdownMenu(expanded = animMenu, onDismissRequest = { animMenu = false }, commands = tr("Animation")) {
                     listOf("" to tr("Kein Übergang"), "fade" to tr("Überblenden"), "push" to tr("Schieben")).forEach { (k, label) ->
                         DropdownMenuItem(text = { Text((if (s.transition == k) "✓ " else "") + label) }, onClick = { animMenu = false; onChange(s.copy(transition = k)) })
                     }

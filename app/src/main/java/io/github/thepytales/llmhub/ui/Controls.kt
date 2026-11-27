@@ -428,7 +428,10 @@ fun Switch(
 internal fun appFloatingBorder(): BorderStroke =
     LocalChatLook.current.cardBorder ?: BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
 
-/** Material's menu with the corners, card colour and frame of the style and a soft shadow. */
+/**
+ * Material's menu with the corners, card colour and frame of the style and a soft shadow. [commands] names a menu of an
+ * editor for Strg+K (AP-135 a, „Einfügen“, „Zeilen & Spalten“): while Strg+K is open its entries are found there too.
+ */
 @Composable
 fun DropdownMenu(
     expanded: Boolean,
@@ -442,14 +445,18 @@ fun DropdownMenu(
     tonalElevation: Dp = 0.dp,
     shadowElevation: Dp = 6.dp,
     border: BorderStroke? = appFloatingBorder(),
+    commands: String? = null,
     content: @Composable ColumnScope.() -> Unit,
-) = androidx.compose.material3.DropdownMenu(
-    expanded = expanded, onDismissRequest = onDismissRequest, modifier = modifier, offset = offset, scrollState = scrollState,
-    properties = properties, shape = shape, containerColor = containerColor, tonalElevation = tonalElevation,
-    shadowElevation = shadowElevation, border = border,
 ) {
-    // Entries of a menu opened from a dialog's button are no main buttons, and their icons are no tooltips.
-    CompositionLocalProvider(LocalDialogSlot provides DialogSlot.NONE, LocalIconLabel provides null) { content() }
+    if (commands != null && !expanded) RecordMenu(commands, content)
+    androidx.compose.material3.DropdownMenu(
+        expanded = expanded, onDismissRequest = onDismissRequest, modifier = modifier, offset = offset, scrollState = scrollState,
+        properties = properties, shape = shape, containerColor = containerColor, tonalElevation = tonalElevation,
+        shadowElevation = shadowElevation, border = border,
+    ) {
+        // Entries of a menu opened from a dialog's button are no main buttons, and their icons are no tooltips.
+        CompositionLocalProvider(LocalDialogSlot provides DialogSlot.NONE, LocalIconLabel provides null) { content() }
+    }
 }
 
 /** Fields sit on the card colour, so they read as fields on the grey page too. */
