@@ -121,8 +121,9 @@ class InterviewToolsUiTest {
         var made: Transcript? = null
         show { PseudonymizeDialog(c, t, onDone = { made = it }, onDismiss = {}) }
         var waited = 0
-        while (onAllNodesWithText("Gefunden", substring = true).fetchSemanticsNodes().isEmpty() && waited < 100) { settle(1); waited++ }
-        assertTrue(onAllNodesWithText("Anna Müller").fetchSemanticsNodes().isNotEmpty())
+        // Finding the names takes a moment (longer while other tests run beside it).
+        while (onAllNodesWithText("Gefunden", substring = true).fetchSemanticsNodes().isEmpty() && waited < 500) { settle(1); waited++ }
+        assertTrue(onAllNodesWithText("Anna Müller").fetchSemanticsNodes().isNotEmpty(), "Fundstellen nach ${waited} Runden")
         assertTrue(onAllNodesWithText("Schmidt").fetchSemanticsNodes().isNotEmpty())
         shot("pseudonymisieren")
         // „Schmidt“ stays: left out by hand.

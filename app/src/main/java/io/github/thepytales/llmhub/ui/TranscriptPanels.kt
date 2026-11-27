@@ -167,7 +167,7 @@ fun SpeakersSheet(t: Transcript, onEdit: (Int) -> Unit, onSave: (Transcript) -> 
             if (profiles.isNotEmpty()) {
                 androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     profiles.forEach { p ->
-                        androidx.compose.material3.InputChip(
+                        InputChip(
                             selected = false, onClick = {},
                             label = { Text(tr("{0} ({1} Aufnahmen)", p.name, p.recordings)) },
                             trailingIcon = {
