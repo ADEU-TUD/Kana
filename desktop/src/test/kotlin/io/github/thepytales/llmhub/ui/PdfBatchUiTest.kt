@@ -148,7 +148,8 @@ class PdfBatchUiTest {
         assertTrue(File(out, "Bericht.txt").isFile)
         // The results open in the toolbox.
         onNodeWithText("Im Werkzeugkasten öffnen").performClick()
-        waitFor("scan1.pdf", rounds = 50)
+        var n = 0
+        while (PdfWork.tabs.size < 5 && n++ < 100) settle(1)
         assertEquals(5, PdfWork.tabs.size)
         assertTrue(!PdfWork.batchShown)
     }
