@@ -53,16 +53,29 @@ data class ClipFx(
     val vertical: Boolean = false,
     val regions: List<Region> = emptyList(),
     val voice: Float = 0f,
+    /**
+     * Fills the frame of the project (AP-129 c): the source is cut to the project's aspect ratio instead of standing in
+     * it with black bars – a landscape recording in a 9:16 or 1:1 project. The cut follows the [zoom] keys (from
+     * [Reframe.follow]: the person in the picture).
+     */
+    val fill: Boolean = false,
 ) {
     val isNone: Boolean get() = this == ClipFx()
     val corrected: Boolean get() = abs(brightness) > 1e-3 || abs(contrast - 1f) > 1e-3 || abs(saturation - 1f) > 1e-3
     val balanced: Boolean get() = abs(gainR - 1f) > 1e-3 || abs(gainG - 1f) > 1e-3 || abs(gainB - 1f) > 1e-3
 
     /** Whether the picture needs the effect chain of the graph (anything but the sound). */
-    val picture: Boolean get() = abs(speed - 1.0) > 1e-6 || reverse || freeze || corrected || balanced || zoom.isNotEmpty() || vertical || regions.isNotEmpty()
+    val picture: Boolean get() = abs(speed - 1.0) > 1e-6 || reverse || freeze || corrected || balanced || zoom.isNotEmpty() || vertical || fill || regions.isNotEmpty()
+
+    /** Aspect ratio (width / height) the picture is cut to: 9:16 for [vertical], the frame's ([frame]) for [fill], else null. */
+    fun cutAspect(frame: Double): Double? = when {
+        vertical -> 9.0 / 16
+        fill -> frame
+        else -> null
+    }
 
     /** The picture effects that a frozen frame inserted from this clip keeps (anonymisation must not get lost). */
-    fun forFreeze(): ClipFx = ClipFx(freeze = true, brightness = brightness, contrast = contrast, saturation = saturation, gainR = gainR, gainG = gainG, gainB = gainB, zoom = zoom, ease = ease, vertical = vertical, regions = regions)
+    fun forFreeze(): ClipFx = ClipFx(freeze = true, brightness = brightness, contrast = contrast, saturation = saturation, gainR = gainR, gainG = gainG, gainB = gainB, zoom = zoom, ease = ease, vertical = vertical, regions = regions, fill = fill)
 }
 
 /**
@@ -172,6 +185,27 @@ object VideoFx {
     }
 
     /**
+     * Size of the working picture of a clip that is cut to [aspect] (AP-129 c, also 9:16): so large that the cut has
+     * the size it gets in the [w]×[h] frame, but never larger than the source – a landscape clip in a 9:16 project used
+     * to be shrunk to the width of the frame first and its cut blown up three times (blurred).
+     */
+    fun cutWorkSize(info: MediaInfo?, w: Int, h: Int, aspect: Double): Pair<Int, Int> {
+        val sw = info?.width ?: 0
+        val sh = info?.height ?: 0
+        if (sw <= 0 || sh <= 0) return workSize(info, w, h)
+        val a = sw.toDouble() / sh
+        // Size of the cut in the frame: the cut fitted into w×h.
+        val (cw, ch) = if (aspect >= w.toDouble() / h) w.toDouble() to w / aspect else h * aspect to h.toDouble()
+        // The source so that a full-height (or full-width) cut is that large, at most the source itself.
+        val scale = (if (aspect < a) ch / sh else cw / sw).coerceAtMost(1.0)
+        val bw = even((sw * scale).roundToInt()).coerceAtLeast(2)
+        val bh = even((sh * scale).roundToInt()).coerceAtLeast(2)
+        // Never smaller than the source fitted into the frame (as before).
+        val (fw, fh) = workSize(info, w, h)
+        return if (bw * bh < fw * fh) fw to fh else bw to bh
+    }
+
+    /**
      * Where a piece of a clip comes from: its first frame shows source time [src0], each second of the timeline moves
      * [rate] seconds through the source (negative when reversed, 0 when frozen). Converts source times of keyframes
      * into the piece's own time `t` (0 at its first frame).
@@ -208,7 +242,7 @@ object VideoFx {
      * source coordinates), zoom/reframe, then colour. Times in expressions are the piece's own (`t`, or `in/fps` in
      * perspective, which has no `t`).
      */
-    fun pictureLines(input: String, out: String, fx: ClipFx, span: Span, bw: Int, bh: Int, fps: Int, still: Boolean): List<String> {
+    fun pictureLines(input: String, out: String, fx: ClipFx, span: Span, bw: Int, bh: Int, fps: Int, still: Boolean, frameAspect: Double = bw.toDouble() / bh): List<String> {
         val lines = mutableListOf<String>()
         val pre = StringBuilder(input)
         if (fx.freeze) pre.append("trim=end_frame=1,setpts=PTS-STARTPTS,fps=$fps,tpad=stop_mode=clone:stop_duration=${f(span.length + 0.2)},")
@@ -248,13 +282,16 @@ object VideoFx {
         }
         // Zoom and pan (and the vertical reframe): the rectangle of the keys stretched over the picture.
         val chain = mutableListOf<String>()
-        if (fx.zoom.isNotEmpty() || fx.vertical) {
+        val cut = fx.cutAspect(frameAspect)
+        if (fx.zoom.isNotEmpty() || cut != null) {
             val keys = fx.zoom.ifEmpty { listOf(Key(0.0)) }
-            val vw = even((bh * 9.0 / 16).roundToInt()).coerceAtMost(bw)
+            // Size of the whole cut (9:16, or the frame's aspect for „Bild füllen“): full height, or full width when the
+            // cut is wider than the source (a portrait recording in a landscape frame).
+            val (vw, vh) = if (cut == null) bw to bh else if (bh * cut <= bw) even((bh * cut).roundToInt()).coerceAtMost(bw) to bh else bw to even((bw / cut).roundToInt()).coerceAtMost(bh)
             fun rect(k: Key): DoubleArray {
                 val z = k.w.coerceIn(0.05f, 1f).toDouble()
                 var rh = z * bh
-                var rw = if (fx.vertical) rh * 9 / 16 else z * bw
+                var rw = if (cut != null) rh * cut else z * bw
                 if (rw > bw) { rh *= bw / rw; rw = bw.toDouble() }
                 val cx = (k.x * bw.toDouble()).coerceIn(rw / 2, bw - rw / 2)
                 val cy = (k.y * bh.toDouble()).coerceIn(rh / 2, bh - rh / 2)
@@ -270,7 +307,7 @@ object VideoFx {
                 val e = pts.map { expr(it, "(in/$fps)", fx.ease) }
                 chain += "perspective=x0='${e[0]}':y0='${e[1]}':x1='${e[2]}':y1='${e[1]}':x2='${e[0]}':y2='${e[3]}':x3='${e[2]}':y3='${e[3]}':eval=frame"
             }
-            chain += if (fx.vertical) "scale=$vw:$bh,setsar=1" else "scale=$bw:$bh,setsar=1"
+            chain += "scale=$vw:$vh,setsar=1"
         }
         if (fx.corrected) chain += "eq=brightness=${f(fx.brightness.coerceIn(-0.6f, 0.6f).toDouble())}:contrast=${f(fx.contrast.coerceIn(0.3f, 2.5f).toDouble())}:saturation=${f(fx.saturation.coerceIn(0f, 2.5f).toDouble())}"
         if (fx.balanced) chain += "colorchannelmixer=rr=${f(fx.gainR.coerceIn(0.5f, 2f).toDouble())}:gg=${f(fx.gainG.coerceIn(0.5f, 2f).toDouble())}:bb=${f(fx.gainB.coerceIn(0.5f, 2f).toDouble())}"
@@ -397,8 +434,9 @@ object VideoFx {
         fx.speed.takeIf { abs(it - 1.0) > 1e-6 }?.let { String.format(Locale.GERMANY, "%s×", if (it % 1.0 == 0.0) it.toInt().toString() else String.format(Locale.GERMANY, "%.2f", it).trimEnd('0')) },
         tr("rückwärts").takeIf { fx.reverse },
         tr("Standbild").takeIf { fx.freeze },
-        tr("Zoom").takeIf { fx.zoom.isNotEmpty() && !fx.vertical },
+        tr("Zoom").takeIf { fx.zoom.isNotEmpty() && !fx.vertical && !fx.fill },
         tr("Hochformat").takeIf { fx.vertical },
+        tr("füllt das Bild").takeIf { fx.fill && !fx.vertical },
         tr("{0} Bereich(e)", fx.regions.size).takeIf { fx.regions.isNotEmpty() },
         tr("Bild korrigiert").takeIf { fx.corrected || fx.balanced },
         tr("Stimme verfremdet").takeIf { abs(fx.voice) > 0.01f },

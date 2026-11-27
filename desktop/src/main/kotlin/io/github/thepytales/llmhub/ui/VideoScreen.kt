@@ -96,6 +96,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.HighlightAlt
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -140,6 +141,7 @@ import io.github.thepytales.llmhub.desktop.DesktopActions
 import io.github.thepytales.llmhub.desktop.Extensions
 import io.github.thepytales.llmhub.transcribe.Transcript
 import io.github.thepytales.llmhub.video.AudioClip
+import io.github.thepytales.llmhub.video.CaptionStyles
 import io.github.thepytales.llmhub.video.Media
 import io.github.thepytales.llmhub.video.RoughCut
 import io.github.thepytales.llmhub.video.TextOverlay
@@ -1019,15 +1021,20 @@ private fun Preview(p: VideoProject, player: VideoPlayer, pos: Double, modifier:
                 val alpha = if (fade <= 0) 1f else minOf(1.0, (pos - o.startSec) / fade, (o.endSec - pos) / fade).toFloat().coerceIn(0f, 1f)
                 img?.let { Image(it, null, modifier = Modifier.fillMaxSize().alpha(alpha)) }
             }
+            // Subtitles in their style (AP-129: „Wort für Wort“ changes with every word).
+            val style = p.subtitleStyle
             p.subtitles.firstOrNull { pos >= it.startSec && pos < it.endSec }?.let { cue ->
-                val img = rememberSubtitle(cue.text, p, px, p.subtitleRaised(cue))
-                img?.let { Image(it, null, modifier = Modifier.fillMaxSize()) }
+                CaptionStyles.partAt(style, cue, pos)?.let { part ->
+                    val img = rememberSubtitle(style, part, cue, p, px, p.subtitleRaised(cue))
+                    img?.let { Image(it, null, modifier = Modifier.fillMaxSize()) }
+                }
             }
-            // The next subtitle is drawn ahead, so it is there the moment it starts (AP-70).
-            p.subtitles.filter { it.startSec > pos }.minByOrNull { it.startSec }?.let { next ->
-                val key = subtitleKey(next.text, p, px, p.subtitleRaised(next))
-                LaunchedEffect(key) { drawTitle(key) { VideoTitles.render(VideoTitles.subtitleDesign(next.text, p.width, p.height, p.subtitleRaised(next)), px) } }
-            }
+            // The next subtitle (or word) is drawn ahead, so it is there the moment it starts (AP-70).
+            p.subtitles.filter { it.endSec > pos }.sortedBy { it.startSec }.take(2).flatMap { c -> CaptionStyles.parts(style, c).map { it to c } }
+                .firstOrNull { it.first.start > pos }?.let { (next, cue) ->
+                    val key = CaptionStyles.key(style, next, p, px, p.subtitleRaised(cue))
+                    LaunchedEffect(key) { drawTitle(key) { VideoTitles.render(CaptionStyles.design(style, next, p.width, p.height, p.subtitleRaised(cue)), px) } }
+                }
             // Standing: a quiet play symbol in the middle, so it is clear a click plays (AP-121).
             if (onToggle != null && !playing && p.clips.isNotEmpty() && w >= 200f) {
                 Box(Modifier.align(Alignment.Center).size(56.dp).background(Color(0x66000000), androidx.compose.foundation.shape.CircleShape), contentAlignment = Alignment.Center) {
@@ -1066,14 +1073,12 @@ private suspend fun drawTitle(key: String, draw: () -> ImageBitmap): ImageBitmap
 
 @Composable
 private fun rememberTitle(o: TextOverlay, p: VideoProject, px: Int): ImageBitmap? =
-    rememberTitleImage(o.id, "${o.style}|${o.text}|${o.subtext}|${p.width}x${p.height}|$px") { VideoTitles.render(VideoTitles.design(o, p.width, p.height), px) }
-
-private fun subtitleKey(text: String, p: VideoProject, px: Int, raised: Boolean) = "sub|$text|${p.width}x${p.height}|$px|$raised"
+    rememberTitleImage(o.id, "${o.style}|${o.text}|${o.subtext}|${o.x}|${o.y}|${o.w}|${o.h}|${o.color}|${p.width}x${p.height}|$px") { VideoTitles.render(io.github.thepytales.llmhub.video.Callouts.designOf(o, p.width, p.height), px) }
 
 /** A subtitle: its last picture stays only for the same text (a new cue never shows the old words). */
 @Composable
-private fun rememberSubtitle(text: String, p: VideoProject, px: Int, raised: Boolean): ImageBitmap? =
-    rememberTitleImage("sub|$text", subtitleKey(text, p, px, raised)) { VideoTitles.render(VideoTitles.subtitleDesign(text, p.width, p.height, raised), px) }
+private fun rememberSubtitle(style: String, part: CaptionStyles.Part, cue: io.github.thepytales.llmhub.video.SubtitleCue, p: VideoProject, px: Int, raised: Boolean): ImageBitmap? =
+    rememberTitleImage("sub|$style|${part.text}|${part.highlight}", CaptionStyles.key(style, part, p, px, raised)) { VideoTitles.render(CaptionStyles.design(style, part, p.width, p.height, raised), px) }
 
 // ── Toolbar above the timeline ─────────────────────────────────────────────────────────────────────
 
@@ -1122,11 +1127,13 @@ private fun TimelineBar(
         ToolGroup {
             Spot("video.pip") {
                 Box {
-                    BarButton(Icons.Outlined.Add, tr("Hinzufügen"), tr("Hinzufügen: Clip, Bild-in-Bild, Musik, Spuren"), { add = true }, words)
+                    BarButton(Icons.Outlined.Add, tr("Hinzufügen"), tr("Hinzufügen: Clip, Bild-in-Bild, Musik, Hervorhebung, Spuren"), { add = true }, words)
                     DropdownMenu(expanded = add, onDismissRequest = { add = false; onFocus() }) {
                         DropdownMenuItem(text = { Text(tr("Clip hinzufügen …")) }, leadingIcon = { Icon(Icons.Outlined.Movie, null) }, onClick = { add = false; a.addClips() })
                         DropdownMenuItem(text = { Text(tr("Bild-in-Bild …")) }, leadingIcon = { Icon(Icons.Outlined.PictureInPicture, null) }, onClick = { add = false; a.addPicture() })
                         DropdownMenuItem(text = { Text(tr("Musik / Ton …")) }, leadingIcon = { Icon(Icons.Outlined.MusicNote, null) }, onClick = { add = false; a.addAudio() })
+                        // Hervorhebungen für Unterrichtsvideos (AP-129 e): the kind (Rahmen, Pfeil …) is chosen in the properties.
+                        DropdownMenuItem(text = { Text(tr("Hervorhebung (Rahmen, Pfeil …)")) }, leadingIcon = { Icon(Icons.Outlined.HighlightAlt, null) }, onClick = { add = false; a.addCallout(io.github.thepytales.llmhub.video.Callouts.FRAME) })
                         HorizontalDivider()
                         DropdownMenuItem(text = { Text(tr("+ Videospur")) }, onClick = { add = false; h.edit { VideoEdit.addTrack(it, video = true) } })
                         DropdownMenuItem(text = { Text(tr("+ Tonspur")) }, onClick = { add = false; h.edit { VideoEdit.addTrack(it, video = false) } })
@@ -1150,10 +1157,12 @@ private fun TimelineBar(
                 }
             }
             Box {
-                Spot("video.roughcut") { BarButton(Icons.Outlined.AutoAwesome, tr("Rohschnitt"), tr("Rohschnitt: Pausen und Füllwörter, mit Kana kürzen"), { cut = true }, words) }
+                Spot("video.roughcut") { BarButton(Icons.Outlined.AutoAwesome, tr("Rohschnitt"), tr("Rohschnitt: Pausen und Füllwörter, mit Kana kürzen, Kurzclip, Interview nach Sprecher"), { cut = true }, words) }
                 DropdownMenu(expanded = cut, onDismissRequest = { cut = false; onFocus() }) {
                     DropdownMenuItem(text = { Text(tr("Pausen und Füllwörter herausschneiden …")) }, onClick = { cut = false; a.pickTranscript = "cut" })
                     DropdownMenuItem(text = { Text(tr("Mit Kana kürzen …")) }, onClick = { cut = false; a.loraCut = true })
+                    DropdownMenuItem(text = { Text(tr("Kurzclip aus Höhepunkten …")) }, onClick = { cut = false; a.highlights = true })
+                    DropdownMenuItem(text = { Text(tr("Interview: nach Sprecher schneiden …")) }, onClick = { cut = false; a.multicam = true })
                 }
             }
         }
@@ -1337,6 +1346,8 @@ private fun Properties(c: AppContainer, h: History, sel: Sel, pos: Double, a: Vi
                         Text(tr("Ton aus"), modifier = Modifier.weight(1f))
                         Switch(clip.muted, { m -> h.edit { pp -> pp.copy(clips = pp.clips.map { if (it.id == clip.id) it.copy(muted = m) else it }) } })
                     }
+                    // Sound on one side only (AP-129 b).
+                    ClipSoundSides(clip, h)
                     // Picture and sound (AP-53): the clip's sound onto an audio track, linked.
                     val linked = p.audio.filter { it.linkedTo == clip.id }
                     if (linked.isNotEmpty()) {
@@ -1345,9 +1356,9 @@ private fun Properties(c: AppContainer, h: History, sel: Sel, pos: Double, a: Vi
                     }
                     if (!clip.muted) OutlinedButton(onClick = { VideoEdit.detachSound(p, clip.id)?.let { (q, aid) -> h.edit { q }; onSelect(Sel.Sound(aid)) } }) { Text(tr("Ton auf eine Tonspur legen"), maxLines = 1) }
                 }
-                if (i > 0) PropSection("clip.transition", tr("Übergang vom vorigen Clip"), summary = when (clip.transition) { "fade" -> tr("Überblenden"); "black" -> tr("Über Schwarz"); else -> tr("Schnitt") }) {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        listOf("none" to tr("Schnitt"), "fade" to tr("Überblenden"), "black" to tr("Über Schwarz")).forEach { (k, l) ->
+                if (i > 0) PropSection("clip.transition", tr("Übergang vom vorigen Clip"), summary = tr(io.github.thepytales.llmhub.video.TRANSITIONS.firstOrNull { it.first == clip.transition }?.second ?: io.github.thepytales.llmhub.video.TRANSITIONS.first().second)) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        io.github.thepytales.llmhub.video.TRANSITIONS.map { it.first to tr(it.second) }.forEach { (k, l) ->
                             FilterChip(selected = clip.transition == k, onClick = { h.edit { pp -> pp.copy(clips = pp.clips.map { if (it.id == clip.id) it.copy(transition = k) else it }) } }, label = { Text(l) })
                         }
                     }
@@ -1363,6 +1374,7 @@ private fun Properties(c: AppContainer, h: History, sel: Sel, pos: Double, a: Vi
             }
             is Sel.Title -> {
                 val o = p.overlays.firstOrNull { it.id == sel.id } ?: run { onSelect(Sel.None); return@Column }
+                if (io.github.thepytales.llmhub.video.Callouts.isCallout(o.style)) { CalloutProperties(h, o, pos, onDelete); return@Column }
                 PropTitle(tr(TextOverlay.label(o.style))) {
                     TipIconButton(Icons.Outlined.Delete, tr("Löschen") + " (Entf)", onDelete, size = 32.dp)
                 }
@@ -1430,6 +1442,9 @@ private fun Properties(c: AppContainer, h: History, sel: Sel, pos: Double, a: Vi
                     Text(tr("Lautstärke") + " ${(a.volume * 100).toInt()} %", style = MaterialTheme.typography.labelMedium)
                     Slider(value = a.volume, onValueChange = { v -> h.edit("avol-${a.id}") { pp -> pp.copy(audio = pp.audio.map { if (it.id == a.id) it.copy(volume = v) else it }) } }, valueRange = 0f..1.5f)
                     SecondsField(tr("Ein- und Ausblenden (s)"), a.fadeSec, "af-${a.id}") { v -> h.edit("af-${a.id}") { pp -> pp.copy(audio = pp.audio.map { if (it.id == a.id) it.copy(fadeSec = v.coerceIn(0.0, 10.0)) else it }) } }
+                    // Ducking and sound on one side only (AP-129 b); linked sound is the clip's own and never ducked.
+                    if (a.linkedTo == null) DuckSwitch(a, h)
+                    AudioSoundSides(a, h)
                 }
                 PropSection("sound.time", tr("Zeit"), summary = clock(a.length, true)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -1455,10 +1470,12 @@ private fun ProjectSettings(h: History) {
     PropTitle(tr("Projekt"))
     PropSection("project.format", tr("Format"), summary = "${p.width} × ${p.height} · ${p.fps}") {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            listOf(Triple(1920, 1080, "16:9 Full HD"), Triple(1280, 720, "16:9 HD"), Triple(1080, 1920, "9:16 hoch"), Triple(1080, 1080, "1:1")).forEach { (w, hh, l) ->
+            listOf(Triple(1920, 1080, "16:9 Full HD"), Triple(1280, 720, "16:9 HD"), Triple(1080, 1920, "9:16 hoch"), Triple(1080, 1080, "1:1"), Triple(1080, 1350, "4:5")).forEach { (w, hh, l) ->
                 FilterChip(selected = p.width == w && p.height == hh, onClick = { h.edit { it.copy(width = w, height = hh) } }, label = { Text(l) })
             }
         }
+        // Clips with bars fill the new frame, on request following the person (AP-129 c).
+        FormatFill(h)
         Text(tr("Bilder pro Sekunde"), style = MaterialTheme.typography.labelLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             listOf(25, 30, 50).forEach { f -> FilterChip(selected = p.fps == f, onClick = { h.edit { it.copy(fps = f) } }, label = { Text("$f") }) }
@@ -1484,7 +1501,7 @@ private fun ProjectSettings(h: History) {
         ChapterList(h)
     }
     PropSection("project.sound", tr("Ton"), summary = listOfNotNull(
-        if (p.sound.denoise != "aus") tr("Rauschminderung") else null, if (p.sound.normalize) "−16 LUFS" else null,
+        if (p.sound.denoise != "aus") tr("Rauschminderung") else null, if (p.sound.level) tr("Stimmen angeglichen") else null, if (p.sound.normalize) "−16 LUFS" else null,
     ).joinToString(" · ").ifBlank { null }) {
         Text(tr("Rauschminderung"), style = MaterialTheme.typography.labelLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -1501,6 +1518,7 @@ private fun ProjectSettings(h: History) {
             }
             Switch(p.sound.normalize, { v -> h.edit { it.copy(sound = it.sound.copy(normalize = v)) } })
         }
+        LevelVoicesSwitch(h)
         Text(tr("Pegel") + tr(" {0} dB", "%+.0f".format(p.sound.gainDb)), style = MaterialTheme.typography.labelMedium)
         Slider(value = p.sound.gainDb, onValueChange = { v -> h.edit("gain") { it.copy(sound = it.sound.copy(gainDb = Math.round(v).toFloat())) } }, valueRange = -12f..12f)
     }
@@ -1513,6 +1531,8 @@ private fun ProjectSettings(h: History) {
             }
             Switch(p.burnSubtitles, { v -> h.edit { it.copy(burnSubtitles = v) } })
         }
+        // Styles for short clips (AP-129 c); the TUD subtitles stay the standard.
+        if (p.subtitles.isNotEmpty() && p.burnSubtitles) SubtitleStyleChips(h)
     }
 }
 

@@ -29,6 +29,16 @@ object VideoRender {
 
     fun preset(id: String?) = PRESETS.firstOrNull { it.id == id } ?: PRESETS.first()
 
+    /** Ducking (AP-129): the compressor on music starts at about −32 dBFS of speech; 12:1 takes 10–15 dB off. */
+    const val DUCK_THRESHOLD = 0.025
+    const val DUCK_RATIO = 12
+
+    /**
+     * „Stimmen angleichen“ (AP-129): frames of 250 ms, a window of 15 of them (about 4 s), peaks to 90 %, gain up to 10×
+     * (20 dB) – a speaker 20 dB quieter ends up about 5 dB below the loud one. Only options every ffmpeg since 3.x knows.
+     */
+    const val LEVEL_FILTER = "dynaudnorm=f=250:g=15:p=0.9:m=10"
+
     private fun f(v: Double) = String.format(Locale.ROOT, "%.3f", v)
 
     /** A path inside a filter graph: forward slashes, ':' and quotes escaped (Windows drive letters). */
@@ -126,8 +136,9 @@ object VideoRender {
             val k = input++
             var vin = "[$k:v]"
             if (fx != null && fx.picture && mi?.hasVideo != false && !hidden("V1")) {
-                val (bw, bh) = VideoFx.workSize(mi, w, h)
-                graph += VideoFx.pictureLines(vin, "e$i", fx, VideoFx.span(c, s.head, s.length, still), bw, bh, fps, still)
+                // A clip cut to 9:16 or to the frame (AP-129 c) is worked on in the size its cut gets in the film.
+                val (bw, bh) = fx.cutAspect(w.toDouble() / h)?.let { VideoFx.cutWorkSize(mi, w, h, it) } ?: VideoFx.workSize(mi, w, h)
+                graph += VideoFx.pictureLines(vin, "e$i", fx, VideoFx.span(c, s.head, s.length, still), bw, bh, fps, still, w.toDouble() / h)
                 vin = "[e$i]"
             }
             // tpad + trim: the picture is exactly as long as the clip, like its sound (apad + atrim below) – a clip
@@ -149,7 +160,8 @@ object VideoRender {
             graph += if (mi?.hasAudio == true && !c.muted && !muted("V1") && !c.fx.freeze) {
                 val extra = if (tempo.isEmpty()) "" else tempo.joinToString(",", postfix = ",asetpts=PTS-STARTPTS,")
                 // Namen im Ton (AP-128): beeped, muted or disguised by source time, before speed and direction.
-                val (lines, head) = NameGuard.soundChain(p.bleeps, c.path, ss, dur, "[$k:a]", audioFormat, "c$i")
+                // Sound on one side only (AP-129) goes on both sides first.
+                val (lines, head) = NameGuard.soundChain(p.bleeps, c.path, ss, dur, "[$k:a]", audioFormat + channelFilter(c.channel), "c$i")
                 graph += lines
                 "${head}volume=${f(c.volume.toDouble())},asetpts=PTS-STARTPTS,${extra}apad,atrim=0:${f(s.length)}[a$i]"
             } else "anullsrc=channel_layout=stereo:sample_rate=48000,atrim=0:${f(s.length)}[a$i]"
@@ -161,7 +173,7 @@ object VideoRender {
         for (i in 1 until segs.size) {
             val t = segs[i].trans
             if (t > 0) {
-                val kind = if (segs[i].clip.transition == "black") "fadeblack" else "fade"
+                val kind = xfadeOf(segs[i].clip.transition)
                 graph += "[$v][v$i]xfade=transition=$kind:duration=${f(t)}:offset=${f(len - t)}[vx$i]"
                 graph += "[$a][a$i]acrossfade=d=${f(t)}[ax$i]"
                 len += segs[i].length - t
@@ -186,6 +198,7 @@ object VideoRender {
             v = "vw"; a = "aw"
         }
         val mix = mutableListOf<String>()
+        val ducked = mutableListOf<String>()
         // Pictures on V2 …: from the lowest track up, each from its start (setpts) over what is below.
         p.layers.filter { !hidden("V${it.track}") && it.endSec > from + 1e-6 && it.startSec < to - 1e-6 && it.length > 0.04 }
             .sortedWith(compareBy({ it.track }, { it.startSec })).forEachIndexed { j, l ->
@@ -224,7 +237,7 @@ object VideoRender {
             // Titles and lower thirds: transparent pictures, faded in and out.
             p.overlays.filter { it.endSec - from > 0.2 && it.startSec - from < len && it.durationSec > 0.2 }.forEachIndexed { k, o ->
                 val png = File(work, "titel-$k.png")
-                png.writeBytes(VideoTitles.png(VideoTitles.design(o, w, h), w))
+                png.writeBytes(VideoTitles.png(Callouts.designOf(o, w, h), w))
                 val s = o.startSec - from
                 val e = minOf(o.endSec - from, len)
                 args += listOf("-loop", "1", "-framerate", fps.toString(), "-t", f(e + 0.1), "-i", png.absolutePath)
@@ -248,13 +261,16 @@ object VideoRender {
                 }
                 var t = 0.0
                 cues.forEachIndexed { k, cue ->
-                    val start = maxOf(cue.startSec - from, t)
-                    val end = minOf(cue.endSec - from, len)
-                    if (end <= start) return@forEachIndexed
-                    if (start - t > 0.02) entry(blank, start - t)
-                    val png = File(work, "untertitel-$k.png").apply { writeBytes(VideoTitles.png(VideoTitles.subtitleDesign(cue.text, w, h, p.subtitleRaised(cue)), w)) }
-                    entry(png, end - start)
-                    t = end
+                    // One picture per cue – „Wort für Wort“ (AP-129) one per word; the TUD subtitles as they were.
+                    CaptionStyles.parts(p.subtitleStyle, cue).forEachIndexed { j, part ->
+                        val start = maxOf(part.start - from, t)
+                        val end = minOf(part.end - from, len)
+                        if (end <= start) return@forEachIndexed
+                        if (start - t > 0.02) entry(blank, start - t)
+                        val png = File(work, "untertitel-$k-$j.png").apply { writeBytes(VideoTitles.png(CaptionStyles.design(p.subtitleStyle, part, w, h, p.subtitleRaised(cue)), w)) }
+                        entry(png, end - start)
+                        t = end
+                    }
                 }
                 entry(blank, maxOf(len - t, 0.1))
                 list.append(quoted(blank))
@@ -282,7 +298,8 @@ object VideoRender {
             args += listOf("-ss", f(ss), "-t", f(d * sp), "-i", File(m.path).let { if (Media.isStill(it)) it else source(it) }.absolutePath)
             val idx = input++
             // Namen im Ton (AP-128) also in sound taken off its clip or a second microphone of the same file.
-            val (nameLines, nameHead) = if (m.reverse) emptyList<String>() to "[$idx:a]$audioFormat," else NameGuard.soundChain(p.bleeps, m.path, ss, d * sp, "[$idx:a]", audioFormat, "m$k")
+            val format = audioFormat + channelFilter(m.channel)
+            val (nameLines, nameHead) = if (m.reverse) emptyList<String>() to "[$idx:a]$format," else NameGuard.soundChain(p.bleeps, m.path, ss, d * sp, "[$idx:a]", format, "m$k")
             graph += nameLines
             val fade = m.fadeSec.coerceIn(0.0, m.length / 3)
             val fades = buildString {
@@ -293,9 +310,26 @@ object VideoRender {
             val delay = Math.round(start * 1000)
             graph += if (tempo.isEmpty()) "${nameHead}volume=${f(m.volume.toDouble())},${fades}asetpts=PTS-STARTPTS,adelay=$delay|$delay[m$k]"
             else "${nameHead}volume=${f(m.volume.toDouble())},asetpts=PTS-STARTPTS,${tempo.joinToString(",")},asetpts=PTS-STARTPTS,${fades}adelay=$delay|$delay[m$k]"
-            mix += "m$k"
+            if (m.duck) ducked += "m$k" else mix += "m$k"
         }
-        if (mix.isNotEmpty()) {
+        if (ducked.isNotEmpty()) {
+            // Ducking (AP-129): everything that is not ducked is the speech; it steers a compressor on the ducked sound
+            // (music), which gets about 10–15 dB quieter while someone speaks and comes back in half a second after.
+            val speech = if (mix.isEmpty()) a else {
+                graph += "[$a]" + mix.joinToString("") { "[$it]" } + "amix=inputs=${mix.size + 1}:duration=first:dropout_transition=0:normalize=0[asp]"
+                "asp"
+            }
+            graph += "[$speech]asplit=2[aspm][asps]"
+            val music = if (ducked.size == 1) ducked[0] else {
+                graph += ducked.joinToString("") { "[$it]" } + "amix=inputs=${ducked.size}:duration=longest:dropout_transition=0:normalize=0[amu]"
+                "amu"
+            }
+            // Padded to the length of the film: the compressor stops with the shorter of its two inputs.
+            graph += "[$music]apad=whole_dur=${f(len)}[amp]"
+            graph += "[amp][asps]sidechaincompress=threshold=${f(DUCK_THRESHOLD)}:ratio=$DUCK_RATIO:attack=40:release=500:knee=2[amd]"
+            graph += "[aspm][amd]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[amx]"
+            a = "amx"
+        } else if (mix.isNotEmpty()) {
             graph += "[$a]" + mix.joinToString("") { "[$it]" } + "amix=inputs=${mix.size + 1}:duration=first:dropout_transition=0:normalize=0[amx]"
             a = "amx"
         }
@@ -306,6 +340,8 @@ object VideoRender {
             "leicht" -> chain += if (rnnoise != null) "arnndn=m='${filterPath(rnnoise)}':mix=0.7" else "afftdn=nr=12:nf=-40"
             "stark" -> chain += if (rnnoise != null) "arnndn=m='${filterPath(rnnoise)}'" else "afftdn=nr=24:nf=-30"
         }
+        // Quiet and loud voices evened out (AP-129): a window of about 4 s, at most 18 dB louder (pauses stay quiet).
+        if (p.sound.level) chain += LEVEL_FILTER
         if (p.sound.gainDb != 0f) chain += "volume=${f(p.sound.gainDb.toDouble())}dB"
         if (p.sound.normalize && (window == null || window.loudness)) chain += listOf("loudnorm=I=-16:TP=-1.5:LRA=11", "aresample=48000")
         graph += "[$a]" + (chain.ifEmpty { listOf("anull") }).joinToString(",") + "[aout]"

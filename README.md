@@ -531,6 +531,17 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Bild gewählt | Tabelle mit Rechtsklick | Text ums Bild |
   | --- | --- | --- |
   | ![Bild mit Griffen und Leiste](docs/bilder/ap125-bild.png) | ![Tabelle als Gitter mit Rechtsklick-Menü](docs/bilder/ap125-tabelle.png) | ![Bild rechts, Text daneben](docs/bilder/ap125-textumbruch.png) |
+- **Videoeditor: was im Alltag fehlt** (AP-129, nach einer Lückenliste gegen Clipchamp, CapCut und DaVinci,
+  [`docs/video-luecken.md`](docs/video-luecken.md)): **Musik wird von selbst leiser, wenn jemand spricht**, und danach
+  wieder lauter; **leise und laute Stimmen angleichen** (die Frage aus dem Saal); Ton, der **nur auf einer Seite**
+  aufgenommen ist, wird erkannt und auf beide gelegt. Für **kurze Clips**: *Format › 9:16* (oder 1:1, 4:5) und *Bild
+  füllen* – auf Wunsch **folgt der Ausschnitt der Person** (Gesichter auf dem eigenen PC); **Untertitel groß** oder **Wort
+  für Wort** mit dem gesprochenen Wort in Gelb (der TUD-Stil bleibt Standard); **Kurzclip aus Höhepunkten** – Kana wählt
+  aus einer langen Aufnahme die stärksten 30–90 s als neues Projekt; Übergänge *Wischen*, *Schieben*, *Kreis*. Für
+  **Interviews**: mit zwei oder drei Kameras **nach Sprecher schneiden** – synchronisiert über den Ton, wer spricht, ist
+  im Bild, der Ton bleibt durchgehend. Für **Unterrichtsvideos**: **Hervorhebungen** – Rahmen, Kreis, Pfeil, Markierung
+  oder Spot mit kurzer Beschriftung; Kamera und Folien nebeneinander. Alles auch über Kana. Details unter *Videoeditor:
+  was im Alltag fehlt* weiter unten.
 - **Videoeditor für Einsteiger** (seit 1.0.70, AP-121): Der Editor erklärt sich jetzt selbst – für alle, die noch nie ein
   Video geschnitten haben, ohne eigene „Einfach-Ansicht“. **Startseite** mit zwei großen Karten (*Video schneiden*,
   *Bildschirm aufnehmen*), die vier Schritte darunter, Projekte mit *Öffnen*, *Umbenennen*, *Kopie anlegen*, *Löschen*;
@@ -1701,6 +1712,45 @@ vorhandene Daten bleiben so, wo sie sind. Ein Umzug auf neue technische Namen w�
   | Vorher | Nachher | Startseite | Rechtsklick |
   | --- | --- | --- | --- |
   | ![Videoeditor vorher](docs/bilder/ap121-vorher.png) | ![Videoeditor nachher](docs/bilder/ap121-editor.png) | ![Startseite](docs/bilder/ap121-start.png) | ![Rechtsklick](docs/bilder/ap121-rechtsklick.png) |
+- **Videoeditor: was im Alltag fehlt** (AP-129): Was dem Team für Vorlesungsaufzeichnungen, Interviews, kurze Clips und
+  Unterrichtsvideos noch fehlte, steht in der Lückenliste [`docs/video-luecken.md`](docs/video-luecken.md) – alles mit
+  hohem Nutzen ist jetzt da.
+  - **Ton** (`video/SoundFix.kt`): **Musik leiser beim Sprechen** (Ducking) – neue Musik aus *Hinzufügen* wird von selbst
+    rund 10–15 dB leiser, sobald im Video jemand spricht, und eine halbe Sekunde nach dem Satz wieder lauter (Schalter
+    *Leiser, wenn gesprochen wird* in den Eigenschaften des Tons; für einen Sprecherton aus). **Leise und laute Stimmen
+    angleichen** unter *Projekt › Ton* (aus 20 dB Unterschied werden rund 5). Ist eine Aufnahme **nur links oder nur
+    rechts** (Ansteckmikrofon in einem Eingang der Kamera), sagt der Clip das unter *Ton* und legt sie mit *Auf beide
+    Seiten legen* auf beide. Vorschau und Export klingen gleich.
+  - **Format wechseln, Ausschnitt folgt der Person** (`video/Reframe.kt`): Unter *Projekt › Format* (9:16, 1:1, 4:5, 16:9)
+    steht, wie viele Clips schwarze Balken haben; *Bild füllen* schneidet sie aufs neue Format zu, *Der Person folgen*
+    sucht die Gesichter auf dem eigenen PC (Videoeditor-Paket) und legt einen ruhigen Kameraweg an – kleine Bewegungen
+    bleiben unbewegt, geht die Person, gleitet der Ausschnitt mit. *Wieder mit Balken* macht es rückgängig. Der Zuschnitt
+    ist schärfer als vorher (er wird in der Größe gerechnet, die er im Film hat).
+  - **Untertitel-Stile** (`video/CaptionStyles.kt`): *Projekt › Untertitel › Aussehen* – *TUD (Standard)* wie bisher,
+    *Groß* (fett in der unteren Bildmitte, wo Instagram & Co. Platz lassen) und *Wort für Wort* (bis drei Wörter, das
+    gesprochene gelb; mit den gemessenen Wortzeiten der Transkription).
+  - **Kurzclip aus Höhepunkten** (`video/Highlights.kt`, *Rohschnitt › Kurzclip aus Höhepunkten …*): Wunsch (optional),
+    Länge 30/60/90 s, Format; Kana wählt aus dem Transkript die stärksten Stellen, daraus entsteht ein **neues** Projekt
+    „… – Kurzclip“ mit Untertiteln Wort für Wort und Hochformat, das der Person folgt. Verpixelte Gesichter, verfremdete
+    Stimmen, Namen im Ton und das Ansteckmikrofon gehen mit, das Original bleibt unverändert.
+  - **Interview nach Sprecher schneiden** (`video/MultiCam.kt`, *Rohschnitt › Interview: nach Sprecher schneiden …*): Die
+    Aufnahme der Hauptkamera liegt auf V1, die anderen Kameras (je eine Person, auf Wunsch eine Totale) kommen aus dem
+    Medienpool oder als Datei. Die App synchronisiert sie über den Ton, erkennt je Viertelsekunde, wer spricht, und
+    schneidet ruhig: ein Wechsel erst nach einer Sekunde Sprechen, keine Einstellung unter zwei Sekunden, die Totale, wenn
+    beide sprechen oder niemand. Der Ton kommt durchgehend von der Hauptkamera (und ihrem Ansteckmikrofon), verknüpft mit
+    jedem Stück; jede Einstellung ist danach ein normaler Clip zum Nachbessern.
+  - **Hervorhebungen** (`video/Callouts.kt`, *Titel › Hervorhebung: …*): *Rahmen*, *Kreis*, *Pfeil*, *Markierung* und
+    *Spot* (alles andere abgedunkelt) in fünf Farben mit kurzer Beschriftung („Hier klicken“), Lage über ein 3 × 3-Raster
+    und Regler, Zeit wie bei Titeln. Die Titel im TUD-Design bleiben, wie sie sind. Kamera und Folien nebeneinander:
+    *Position und Größe › Linke Hälfte / Rechte Hälfte*. Neue Übergänge: *Wischen*, *Schieben*, *Kreis*.
+  - **Kana**: „Mach die Musik leiser, wenn ich spreche“, „Gleiche die Stimmen an“, „Mach ein Hochformat daraus“, „Untertitel
+    Wort für Wort“, „Mach einen 60-Sekunden-Clip aus den Höhepunkten“, „Schneide das Interview nach Sprecher“, „Rahmen oben
+    rechts mit ‚Hier klicken‘“ – jeweils mit Vorschau und Rückgängig.
+  Test `VideoEverydayTest` (15, mit echtem ffmpeg-Export; Bilder in `desktop/build/ap129`).
+
+  | Hochformat: Mitte / folgt der Person | Untertitel: TUD, Groß, Wort für Wort | Hervorhebungen: Rahmen, Pfeil, Spot |
+  | --- | --- | --- |
+  | ![Hochformat, Ausschnitt folgt der Person](docs/bilder/ap129-hochformat.png) | ![Untertitel-Stile](docs/bilder/ap129-untertitel.png) | ![Hervorhebungen](docs/bilder/ap129-hervorhebungen.png) |
 - **Bildschirmaufnahme** (AP-56, *Videoeditor › Bildschirm aufnehmen*): ganzer Bildschirm, ein Fenster oder ein
   gezogener Bereich, dazu **Webcam**, **Mikrofon** und **Systemton** (über ein Aufnahmegerät wie „Stereomix“), Countdown,
   Mauszeiger und **Klicks als Ringe**. Ein ffmpeg-Prozess nimmt alles mit derselben Uhr auf, jede Quelle in eine eigene
@@ -2436,6 +2486,7 @@ automatisch für beide Versionen. Kleine Stellvertreter für Android-Klassen (`a
 | `video/VideoEdit.kt`, `video/AudioSync.kt`, `ui/VideoTimeline.kt`, `ui/VideoPanels.kt` | Videoeditor (AP-52, AP-53): Spuren, Bild-in-Bild, Schnitt (Klinge, Ripple, Roll, Slip, Einfügen/Überschreiben, Magnet), verknüpfter Ton, Synchronisieren über die Wellenform, Medienpool, Quellmonitor, Marker, Tastenkürzel |
 | `video/TextCut.kt`, `ui/VideoTranscriptPanel.kt` | Textbasierter Schnitt (AP-55): Wörter auf der Zeitleiste, Löschen = Schneiden, Absätze verschieben, Füllwörter/Pausen, Kana-Vorschläge |
 | `video/ScreenRecorder.kt`, `ui/ScreenRecordUi.kt`, `desktop/GlobalHotkeys.kt` | Bildschirmaufnahme (AP-56): ein ffmpeg-Prozess für Bildschirm, Webcam und Ton, Teile bei Pause, Klicks, Aufnahmeleiste, Tasten in ganz Windows |
+| `video/SoundFix.kt`, `video/Reframe.kt`, `video/CaptionStyles.kt`, `video/Highlights.kt`, `video/MultiCam.kt`, `video/Callouts.kt`, `video/VideoEverydayLora.kt`, `ui/VideoEverydayUi.kt` | Videoeditor, was im Alltag fehlt (AP-129): Ducking, Stimmen angleichen, Ton auf beide Seiten, Format wechseln mit Ausschnitt, der der Person folgt, Untertitel-Stile, Kurzclip aus Höhepunkten, Mehrkamera nach Sprecher, Hervorhebungen; Kana-Aktionen und Oberfläche dazu |
 | `video/Encoders.kt`, `video/ExportQueue.kt`, `ui/VideoExportUi.kt` | Export (AP-57): Hardware-Encoder mit Rückfall, Warteschlange im Hintergrund, mehrere Ziele, Kapitel, Nextcloud |
 | `desktop/WindowsShell.kt`, `ui/ShellRequests.kt`, `ui/ExternalOffice.kt` (gemeinsam) | Windows-Integration (AP-59): Kontextmenü je Benutzer, Start mit Datei, Dateien nach außen ziehen/kopieren, Windows-Papierkorb, Office mit Rückweg |
 | `docs/PdfSigning.kt` (beide), `docs/PdfAutoTag.kt`, `PdfSnap` in `docs/PdfToolModel.kt` | PDF-Reste (AP-60): digitale Signatur mit Prüfung (Bouncy Castle), Tags für PDF/UA, Markieren und Schwärzen am Text |
