@@ -311,6 +311,11 @@ class PdfBatchTest {
         val found = PdfTools.textRuns(context, f).let { (runs, sizes) -> PdfBookmarks.fromHeadings(runs, sizes) }
         assertEquals(listOf("1 Einleitung" to 0, "1.1 Hintergrund" to 1, "2 Methode" to 0), found.map { it.title to it.level }, found.toString())
         assertEquals(listOf(1, 1, 2), found.map { it.page })
+        // A watermark across the pages does not join the headings it crosses.
+        val stamped = File(dir, "arbeit-entwurf.pdf")
+        PdfPageTools.stamp(context, f, listOf(PdfStamp.VERTRAULICH, PdfStamp.PAGE_OF), stamped)
+        val again = PdfTools.textRuns(context, stamped).let { (runs, sizes) -> PdfBookmarks.fromHeadings(runs, sizes) }
+        assertEquals(found.map { it.title }, again.map { it.title }, again.toString())
         val out = File(dir, "arbeit-lz.pdf")
         PdfPageTools.setOutline(context, f, found, out)
         assertEquals(found, PdfTools.outline(context, out))

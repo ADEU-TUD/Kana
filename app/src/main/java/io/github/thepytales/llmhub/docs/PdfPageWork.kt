@@ -152,7 +152,12 @@ object PdfBookmarks {
      */
     fun fromHeadings(runs: List<PdfTextRun>, sizes: List<Pair<Float, Float>>): List<PdfOutlineEntry> {
         data class Line(val page: Int, val y: Float, val h: Float, val text: String)
-        val lines = runs.filter { it.text.isNotBlank() }.groupBy { it.page }.toSortedMap().flatMap { (page, list) ->
+        // Pieces that stand the same on most pages – a watermark across the page, a running head – are no part of a
+        // heading; left in, „VERTRAULICH“ would join the heading line it crosses.
+        val runPages = runs.map { it.page }.distinct().size
+        val stamped = if (runPages < 2) emptySet() else runs.filter { it.text.trim().length >= 2 }.groupBy { it.text.trim() }
+            .filter { (_, rs) -> rs.map { it.page }.distinct().size >= maxOf(2.0, runPages * 0.6) }.keys
+        val lines = runs.filter { it.text.isNotBlank() && it.text.trim() !in stamped }.groupBy { it.page }.toSortedMap().flatMap { (page, list) ->
             val sorted = list.sortedWith(compareBy({ it.y }, { it.x }))
             val out = mutableListOf<MutableList<PdfTextRun>>()
             sorted.forEach { r ->
