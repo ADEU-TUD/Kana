@@ -199,6 +199,18 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         }
     }
 
+    // Weiterarbeiten (AP-135 b): a file from the start page or Erstellen opens where one stopped.
+    val workRequest by io.github.thepytales.llmhub.data.RecentWork.openRequest.collectAsStateWithLifecycle()
+    LaunchedEffect(workRequest) {
+        workRequest?.let { e ->
+            io.github.thepytales.llmhub.data.RecentWork.openRequest.value = null
+            openWork(c, e, navigate = { r -> nav.navigate(r) }, openVideo = { id ->
+                io.github.thepytales.llmhub.video.VideoLora.openRequest.value = id
+                if (nav.current.base != "video") nav.navigate("video")
+            })
+        }
+    }
+
     // "In Chat senden" from the document editor, the browser beside the chat (AP-14) …: open that chat (or a new one).
     val chatRequest by ChatHandoff.open.collectAsStateWithLifecycle()
     LaunchedEffect(chatRequest) {

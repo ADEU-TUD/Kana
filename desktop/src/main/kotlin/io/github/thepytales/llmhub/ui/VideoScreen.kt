@@ -483,7 +483,14 @@ private fun VideoEditor(c: AppContainer, id: String, onClose: () -> Unit) {
     val srcPos by source.position.collectAsStateWithLifecycle()
     val srcPlaying by source.playing.collectAsStateWithLifecycle()
     LaunchedEffect(sourceProject) { sourceProject?.let { source.seek(it, sourceItem?.inSec ?: 0.0) } }
-    LaunchedEffect(id) { player.seek(p, 0.0) }
+    // Weiterarbeiten (AP-135 b): back at the time where one stopped (from the start page); the playhead is noted.
+    LaunchedEffect(id) { player.seek(p, io.github.thepytales.llmhub.data.RecentWork.seconds(io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.VIDEO, id))?.coerceIn(0.0, p.duration.coerceAtLeast(0.0)) ?: 0.0) }
+    LaunchedEffect(id, (pos * 2).toInt(), h.project.title) {
+        delay(1500)
+        val t = player.position.value
+        io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(io.github.thepytales.llmhub.data.RecentWork.VIDEO, id, h.project.title, "time:" + String.format(Locale.ROOT, "%.1f", t), clock(t)))
+    }
+    DisposableEffect(id) { onDispose { io.github.thepytales.llmhub.data.RecentWork.flush(c) } }
     // Kana's actions (AP-38 Stufe d) change this project through its history, so Strg+Z takes them back as well.
     DisposableEffect(id) {
         val host = io.github.thepytales.llmhub.video.VideoLora.Host(id, { h.project }, { f -> h.edit(record = true, f = f) }, { player.position.value })

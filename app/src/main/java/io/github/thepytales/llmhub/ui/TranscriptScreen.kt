@@ -218,6 +218,22 @@ private fun TranscriptScreenBody(c: AppContainer, id: String, onBack: () -> Unit
     val playerError by (player?.error ?: remember { MutableStateFlow<String?>(null) }).collectAsStateWithLifecycle()
     val control = remember(player) { PlaybackControl(player, { player?.position?.value ?: 0.0 }, { t.settings.value }) }
     LaunchedEffect(player, vs.speed) { player?.setSpeed(vs.speed) }
+    // Weiterarbeiten (AP-135 b): back at the time where one stopped listening (from the start page); the time is noted.
+    LaunchedEffect(player) {
+        val p = player ?: return@LaunchedEffect
+        io.github.thepytales.llmhub.data.RecentWork.seconds(io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.TRANSCRIPT, current.id))?.let { p.seek(it) }
+    }
+    LaunchedEffect(current.id, (position / 2).toInt(), current.title) {
+        kotlinx.coroutines.delay(1500)
+        val sec = player?.position?.value ?: 0.0
+        val m = (sec / 60).toInt()
+        io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(
+            io.github.thepytales.llmhub.data.RecentWork.TRANSCRIPT, current.id, current.title,
+            if (player != null) "time:" + String.format(java.util.Locale.ROOT, "%.1f", sec) else "",
+            if (player != null && sec > 0.5) String.format(java.util.Locale.ROOT, "%d:%02d", m, (sec - m * 60).toInt()) else "",
+        ))
+    }
+    DisposableEffect(current.id) { onDispose { io.github.thepytales.llmhub.data.RecentWork.flush(c) } }
 
     var menu by rememberSaveable(id) { mutableStateOf(false) }
     var rename by rememberSaveable(id) { mutableStateOf(false) }

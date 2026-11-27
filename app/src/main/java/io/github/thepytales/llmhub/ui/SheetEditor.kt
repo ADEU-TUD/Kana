@@ -99,6 +99,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.docs.CellCheck
 import io.github.thepytales.llmhub.docs.CellRich
 import io.github.thepytales.llmhub.docs.CellStyle
@@ -205,6 +206,18 @@ fun SheetBody(
     var condDialog by remember { mutableStateOf(false) }
     var shiftDown by remember { mutableStateOf(false) }
     val hScroll = rememberScrollState()
+    val gridList = androidx.compose.foundation.lazy.rememberLazyListState()
+    // Weiterarbeiten (AP-135 b): back at the cell where one stopped (from the start page), and the cell is noted.
+    LaunchedEffect(doc.id, tabId) {
+        RecentWork.cell(RecentWork.take(RecentWork.SHEET, doc.id))?.let { (r, col) ->
+            sel = r.coerceIn(0, rows.lastIndex) to col.coerceIn(0, cols - 1)
+            runCatching { gridList.scrollToItem((r - meta.topRows).coerceAtLeast(0)) }
+        }
+    }
+    LaunchedEffect(doc.id, tabId, sr, sc) {
+        kotlinx.coroutines.delay(700)
+        RecentWork.touch(c, RecentWork.Entry(RecentWork.SHEET, doc.id, doc.title, "cell:$sr:$sc:${tabId.orEmpty()}", tr("Zelle {0}", SheetEngine.ref(sr, sc))))
+    }
 
     fun write(next: List<List<String>>, nextMeta: SheetMeta = meta) {
         rows = next
@@ -1106,7 +1119,7 @@ fun SheetBody(
             },
         ) {
             val frozen = meta.topRows.coerceIn(0, rows.size)
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxSize(), state = gridList) {
                 // Column letters and the frozen rows stay at the top while scrolling (like „Fenster fixieren“ in Excel).
                 stickyHeader(key = "head") {
                     Column {

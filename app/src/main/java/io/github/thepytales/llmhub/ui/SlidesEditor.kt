@@ -108,6 +108,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.docs.DocBlocks
 import io.github.thepytales.llmhub.docs.DocMarkup
 import io.github.thepytales.llmhub.docs.LiveDoc
@@ -185,6 +186,12 @@ fun SlidesBody(
     )
     var selected by remember(doc.id) { mutableIntStateOf(0) }
     val sel = selected.coerceIn(0, slides.lastIndex)
+    // Weiterarbeiten (AP-135 b): back at the slide where one stopped (from the start page), and the slide is noted.
+    LaunchedEffect(doc.id) { RecentWork.number(RecentWork.take(RecentWork.SLIDES, doc.id), "slide")?.let { selected = it.coerceIn(0, slides.lastIndex) } }
+    LaunchedEffect(doc.id, sel) {
+        kotlinx.coroutines.delay(700)
+        RecentWork.touch(c, RecentWork.Entry(RecentWork.SLIDES, doc.id, doc.title, "slide:$sel", tr("Folie {0}", sel + 1)))
+    }
     var presenting by remember { mutableStateOf<Int?>(null) }
     var sorter by remember { mutableStateOf(false) }
     var handout by remember { mutableStateOf(false) }

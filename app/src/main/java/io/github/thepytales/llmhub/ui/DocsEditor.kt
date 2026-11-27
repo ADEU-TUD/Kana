@@ -107,6 +107,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
 import io.github.thepytales.llmhub.data.FileAttachment
 import io.github.thepytales.llmhub.docs.AiReview
 import io.github.thepytales.llmhub.docs.DocBlocks
@@ -234,7 +235,10 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var tabId by rememberSaveable(doc?.id) { mutableStateOf(doc?.tabs?.firstOrNull()?.id) }
+    // Weiterarbeiten (AP-135 b): a table opens on the sheet where one stopped.
+    var tabId by rememberSaveable(doc?.id) {
+        mutableStateOf(RecentWork.peek(RecentWork.SHEET, doc?.id)?.split(':')?.getOrNull(3)?.takeIf { t -> doc?.tabs?.any { it.id == t } == true } ?: doc?.tabs?.firstOrNull()?.id)
+    }
     var mode by rememberSaveable(doc?.id) { mutableStateOf(TextMode.EDIT) }
     var panel by rememberSaveable { mutableStateOf(DocPanel.NONE) }
     var loraShown by rememberSaveable { mutableStateOf(false) }
@@ -298,6 +302,13 @@ private fun DocPaneBody(c: AppContainer, id: String, onClose: () -> Unit, onOpen
     }
 
     val kind = doc?.docKind ?: DocKind.DOC
+    // Weiterarbeiten (AP-135 b): every document is noted when opened; its editor adds the place.
+    LaunchedEffect(doc?.id, doc?.title) {
+        val d = doc ?: return@LaunchedEffect
+        val k = when (kind) { DocKind.SHEET -> RecentWork.SHEET; DocKind.SLIDES -> RecentWork.SLIDES; else -> RecentWork.DOC }
+        RecentWork.touch(c, RecentWork.Entry(k, d.id, d.title))
+    }
+    androidx.compose.runtime.DisposableEffect(doc?.id) { onDispose { RecentWork.flush(c) } }
     val commandsHere = LocalToolCommands.current
     val areaName = tr(kind.label)
     androidx.compose.runtime.SideEffect {

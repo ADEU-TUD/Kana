@@ -99,6 +99,10 @@ class AppShortcutsTest {
         // Strg+K stays the Befehlssuche, also in the document.
         field.performKeyInput { withKeyDown(Key.CtrlLeft) { pressKey(Key.K) } }
         assertEquals("palette", route)
+        // Strg+P überall (AP-135 d): in the document too it is the app's print with preview, not a key of the text.
+        route = null
+        field.performKeyInput { withKeyDown(Key.CtrlLeft) { pressKey(Key.P) } }
+        assertEquals("print", route)
         // Strg+, stays the Einstellungen.
         route = null
         field.performKeyInput { withKeyDown(Key.CtrlLeft) { pressKey(Key.Comma) } }

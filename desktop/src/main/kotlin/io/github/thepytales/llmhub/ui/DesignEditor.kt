@@ -159,6 +159,14 @@ private fun DesignEditorBody(c: AppContainer, id: String, onClose: () -> Unit) {
         return
     }
     val state = remember(id) { DesignEditorState(initial) }
+    // Weiterarbeiten (AP-135 b): back on the page where one stopped (from the start page); the page is noted.
+    LaunchedEffect(id) { io.github.thepytales.llmhub.data.RecentWork.number(io.github.thepytales.llmhub.data.RecentWork.take(io.github.thepytales.llmhub.data.RecentWork.DESIGN, id), "page")?.let { state.page = it.coerceIn(0, state.design.pages.lastIndex) } }
+    LaunchedEffect(id, state.page, state.design.title) {
+        delay(700)
+        val many = state.design.pages.size > 1
+        io.github.thepytales.llmhub.data.RecentWork.touch(c, io.github.thepytales.llmhub.data.RecentWork.Entry(io.github.thepytales.llmhub.data.RecentWork.DESIGN, id, state.design.title, "page:${state.page}", if (many) tr("Seite {0}", state.page + 1) else ""))
+    }
+    DisposableEffect(id) { onDispose { io.github.thepytales.llmhub.data.RecentWork.flush(c) } }
     // Strg+P überall (AP-135 d): the design as *Exportieren › PDF (Druck)* makes it.
     PrintableHere(state.design.title) { ctx ->
         File(File(ctx.cacheDir, "print").apply { mkdirs() }, io.github.thepytales.llmhub.docs.DocumentWriter.safeName(state.design.title) + ".pdf").also { DesignExport.writePdf(state.design, it) }

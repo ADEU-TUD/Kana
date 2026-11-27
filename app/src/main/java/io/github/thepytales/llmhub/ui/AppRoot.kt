@@ -141,6 +141,15 @@ fun AppRoot(c: AppContainer, openChat: MutableStateFlow<String?>, openRoute: Mut
         }
     }
 
+    // Weiterarbeiten (AP-135 b): a file from the start page or Erstellen opens where one stopped.
+    val workRequest by io.github.thepytales.llmhub.data.RecentWork.openRequest.collectAsStateWithLifecycle()
+    LaunchedEffect(workRequest) {
+        workRequest?.let { e ->
+            io.github.thepytales.llmhub.data.RecentWork.openRequest.value = null
+            openWork(c, e, navigate = { r -> runCatching { nav.navigate(r) { launchSingleTop = true } } })
+        }
+    }
+
     // Documents opened from a card, the literature screen or a chat answer (the chat shows them beside it when wide).
     val docRequest by DocsHandoff.request.collectAsStateWithLifecycle()
     LaunchedEffect(docRequest) {

@@ -85,6 +85,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.thepytales.llmhub.AppContainer
+import io.github.thepytales.llmhub.data.RecentWork
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import io.github.thepytales.llmhub.docs.PdfBox
 import io.github.thepytales.llmhub.docs.PdfComment
 import io.github.thepytales.llmhub.docs.PdfFieldSpec
@@ -503,6 +506,15 @@ private fun PdfViewer(c: AppContainer, tab: PdfTab) {
     val outline by produceState<List<PdfOutlineEntry>>(emptyList(), tab.file) { value = withContext(Dispatchers.IO) { runCatching { PdfTools.outline(context, tab.file) }.getOrDefault(emptyList()) } }
     val list = rememberLazyListState()
     LaunchedEffect(tab.goTo) { tab.goTo?.let { list.scrollToItem(it.coerceIn(0, info.pages - 1)); tab.goTo = null } }
+    // Weiterarbeiten (AP-135 b): the page in view is noted – for PDFs from a file (an imported copy has no file to go
+    // back to).
+    LaunchedEffect(tab.id) {
+        val original = tab.original ?: return@LaunchedEffect
+        androidx.compose.runtime.snapshotFlow { list.firstVisibleItemIndex }.distinctUntilChanged().collectLatest { i ->
+            kotlinx.coroutines.delay(900)
+            RecentWork.touch(c, RecentWork.Entry(RecentWork.PDF, original.absolutePath, tab.name, "page:$i", tr("Seite {0}", i + 1)))
+        }
+    }
     val scope = rememberCoroutineScope()
     Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         OutlinedTextField(
