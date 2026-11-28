@@ -180,8 +180,9 @@ object LoraFileDialog {
     private val prefsLazy by lazy { LlmHubApp.context.getSharedPreferences("file_dialog", 0) }
     private val prefs get() = if (appLoaded) prefsLazy else error("not loaded")
 
+    /** The place last used for [purpose], if it is still there; may wait for a network drive, so not on the event thread. */
     internal fun lastPlace(purpose: String): File? = runCatching { prefs.getString("place.$purpose", null) }.getOrNull()
-        ?.let(::File)?.takeIf { it.isDirectory }
+        ?.let(::File)?.takeIf { DirProbe.isDirectory(it) }
 
     internal fun rememberPlace(purpose: String, dir: File) {
         runCatching { prefs.edit().putString("place.$purpose", dir.absolutePath).apply() }
@@ -198,6 +199,33 @@ object LoraFileDialog {
     internal fun notePicks(files: List<File>) {
         val list = (files.map { it.absolutePath } + recentPicks().map { it.absolutePath }).distinct().take(30)
         runCatching { prefs.edit().putString("recent", list.joinToString("\n")).apply() }
+    }
+}
+
+/**
+ * Whether folders are there, without waiting long: on Windows a network drive that cannot be reached right now (H:, a
+ * group drive at home without VPN) answers `isDirectory` only after many seconds. Asked on the event thread, the app
+ * froze („Keine Rückmeldung“) and Windows closed it when clicked – „Ordner freigeben“ and „Ordner an den Chat
+ * anhängen“ seemed to crash. Unreachable places are left out; the waiting threads end on their own.
+ */
+internal object DirProbe {
+    private val pool = java.util.concurrent.Executors.newCachedThreadPool { r -> Thread(r, "Ordner-Prüfung").apply { isDaemon = true } }
+
+    /** Replaced in tests: how a folder is checked. */
+    @Volatile
+    internal var check: (File) -> Boolean = { it.isDirectory }
+
+    fun isDirectory(f: File, millis: Long = 1500): Boolean = existing(listOf(f), millis).isNotEmpty()
+
+    /** Those of [files] that are folders, all asked at once and waited for at most [millis] together. */
+    fun existing(files: List<File>, millis: Long = 1500): Set<File> {
+        if (files.isEmpty()) return emptySet()
+        val test = check
+        val asked = files.distinct().map { f -> f to pool.submit<Boolean> { runCatching { test(f) }.getOrDefault(false) } }
+        val until = System.nanoTime() + millis * 1_000_000
+        return asked.filter { (_, answer) ->
+            runCatching { answer.get((until - System.nanoTime()).coerceAtLeast(0), java.util.concurrent.TimeUnit.NANOSECONDS) }.getOrDefault(false)
+        }.map { it.first }.toSet()
     }
 }
 
@@ -260,7 +288,10 @@ internal fun fileIcon(e: DialogEntry): ImageVector = when {
     else -> Icons.Outlined.InsertDriveFile
 }
 
-/** The places of the side column: Kana's own first, then this PC. */
+/**
+ * The places of the side column: Kana's own first, then this PC. Looks at the disks (network drives too), so it runs in
+ * the background ([DirProbe]).
+ */
 internal fun dialogPlaces(c: AppContainer?, mode: LoraFileDialog.Mode): List<Pair<String, List<DialogPlace>>> {
     val home = File(System.getProperty("user.home"))
     val lora = buildList {
@@ -281,24 +312,31 @@ internal fun dialogPlaces(c: AppContainer?, mode: LoraFileDialog.Mode): List<Pai
                 .forEach { (name, d) -> add(DialogPlace.Folder(name, Icons.Outlined.Work, d)) }
         }
     }
-    val pc = buildList {
-        fun folder(label: String, icon: ImageVector, f: File?) { if (f != null && f.isDirectory) add(DialogPlace.Folder(label, icon, f)) }
+    // First every candidate, then one check of all at once: a drive that does not answer is left out, not waited for.
+    val candidates = buildList {
+        fun folder(label: String, icon: ImageVector, f: File?) { if (f != null) add(DialogPlace.Folder(label, icon, f)) }
         folder(trLater("Persönlicher Ordner"), Icons.Outlined.Home, home)
-        folder(trLater("Desktop"), Icons.Outlined.Computer, File(home, "Desktop").takeIf { it.isDirectory } ?: File(home, "Schreibtisch"))
-        folder(trLater("Dokumente"), Icons.Outlined.Description, io.github.thepytales.llmhub.desktop.Paths.documents)
+        folder(trLater("Desktop"), Icons.Outlined.Computer, File(home, "Desktop"))
+        folder(trLater("Desktop"), Icons.Outlined.Computer, File(home, "Schreibtisch"))
+        folder(trLater("Dokumente"), Icons.Outlined.Description, runCatching { io.github.thepytales.llmhub.desktop.Paths.documents }.getOrNull())
         folder(trLater("Downloads"), Icons.Outlined.Download, File(home, "Downloads"))
-        folder(trLater("Bilder"), Icons.Outlined.Image, File(home, "Pictures").takeIf { it.isDirectory } ?: File(home, "Bilder"))
+        folder(trLater("Bilder"), Icons.Outlined.Image, File(home, "Pictures"))
+        folder(trLater("Bilder"), Icons.Outlined.Image, File(home, "Bilder"))
         // OneDrive (also „OneDrive - TU Dresden“), Google Drive, Nextcloud-Client, Dropbox: cloud folders of the PC.
-        val clouds = (listOfNotNull(System.getenv("OneDrive"), System.getenv("OneDriveCommercial")).map(::File) +
-            (home.listFiles()?.filter { it.isDirectory && Regex("^(OneDrive|Nextcloud|Dropbox|Google Drive|iCloud Drive|Sync)").containsMatchIn(it.name) }.orEmpty()))
+        val cloudName = Regex("^(OneDrive|Nextcloud|Dropbox|Google Drive|iCloud Drive|Sync)")
+        (listOfNotNull(System.getenv("OneDrive"), System.getenv("OneDriveCommercial")).filter { it.isNotBlank() }.map(::File) +
+            home.listFiles().orEmpty().filter { cloudName.containsMatchIn(it.name) })
             .distinctBy { it.absolutePath }
-        clouds.forEach { folder(it.name, Icons.Outlined.Cloud, it) }
+            .forEach { folder(it.name, Icons.Outlined.Cloud, it) }
         // Drives (C:, D:, network drives) or / on macOS and Linux, plus mounted volumes.
         File.listRoots().orEmpty().forEach { r -> folder(if (Os.windows) r.path.removeSuffix("\\") else tr("Computer"), Icons.Outlined.Storage, r) }
-        if (Os.mac) File("/Volumes").listFiles()?.filter { it.isDirectory }?.forEach { folder(it.name, Icons.Outlined.Storage, it) }
+        if (Os.mac) File("/Volumes").listFiles().orEmpty().forEach { folder(it.name, Icons.Outlined.Storage, it) }
         if (Os.linux) (File("/media/${System.getProperty("user.name")}").listFiles().orEmpty().toList() + File("/mnt").listFiles().orEmpty().toList())
-            .filter { it.isDirectory }.forEach { folder(it.name, Icons.Outlined.Storage, it) }
+            .forEach { folder(it.name, Icons.Outlined.Storage, it) }
     }
+    val there = DirProbe.existing(candidates.map { it.dir })
+    // Desktop/Schreibtisch and Pictures/Bilder: only the first one that is there.
+    val pc = candidates.filter { it.dir in there }.distinctBy { if (it.label == "Desktop" || it.label == "Bilder") it.label else "path:" + it.dir.absolutePath }
     return listOf(trLater("Kana") to lora, trLater("Dieser PC") to pc).filter { it.second.isNotEmpty() }
 }
 
@@ -341,14 +379,24 @@ private fun sizeText(bytes: Long): String = NextcloudService.size(bytes)
 @Composable
 internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone: (List<File>?) -> Unit) {
     val scope = rememberCoroutineScope()
-    val groups = remember { dialogPlaces(c, r.mode) }
-    val firstFolder = groups.flatMap { it.second }.filterIsInstance<DialogPlace.Folder>().firstOrNull()
-    val startDir = r.start?.let { if (it.isDirectory) it else it.parentFile }?.takeIf { it.isDirectory }
-        ?: LoraFileDialog.lastPlace(r.purpose)
-        ?: firstFolder?.dir
-        ?: File(System.getProperty("user.home"))
-    var place by remember { mutableStateOf<DialogPlace?>(if (r.start == null && r.mode == LoraFileDialog.Mode.OPEN && LoraFileDialog.lastPlace(r.purpose) == null) DialogPlace.Recent else null) }
-    var dir by remember { mutableStateOf(startDir) }
+    // Side column and start folder look at the disks: in the background, so a network drive that does not answer
+    // cannot freeze the app (see DirProbe). Until then the dialog shows its frame with the progress bar.
+    var groups by remember { mutableStateOf(emptyList<Pair<String, List<DialogPlace>>>()) }
+    var ready by remember { mutableStateOf(false) }
+    var place by remember { mutableStateOf<DialogPlace?>(null) }
+    var dir by remember { mutableStateOf(r.start ?: File(System.getProperty("user.home"))) }
+    LaunchedEffect(Unit) {
+        val start = withContext(Dispatchers.IO) {
+            val g = runCatching { dialogPlaces(c, r.mode) }.onFailure { AppLog.e("Dateidialog: Orte", it) }.getOrDefault(emptyList())
+            val last = LoraFileDialog.lastPlace(r.purpose)
+            val given = r.start?.let { if (DirProbe.isDirectory(it)) it else it.parentFile?.takeIf { p -> DirProbe.isDirectory(p) } }
+            Triple(g, last, given ?: last ?: g.flatMap { it.second }.filterIsInstance<DialogPlace.Folder>().firstOrNull()?.dir ?: File(System.getProperty("user.home")))
+        }
+        groups = start.first
+        dir = start.third
+        if (r.start == null && r.mode == LoraFileDialog.Mode.OPEN && start.second == null) place = DialogPlace.Recent
+        ready = true
+    }
     var davPath by remember { mutableStateOf(c?.let { runCatching { it.nextcloud.resultFolder }.getOrNull() } ?: "/") }
     var query by remember { mutableStateOf("") }
     var typeFilter by remember { mutableStateOf(if (r.extensions.isNotEmpty()) -1 else -2) } // -1: the caller's types, -2: all, else TYPE_FILTERS
@@ -367,11 +415,15 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
     var typed by remember { mutableStateOf("" to 0L) }
     val listFocus = remember { FocusRequester() }
 
-    val entries by produceState(emptyList<DialogEntry>(), place, dir, davPath, reload) {
+    // Whether a new folder may be made in [dir]; asked with the listing, also not on the event thread.
+    var writable by remember { mutableStateOf(false) }
+    val entries by produceState(emptyList<DialogEntry>(), place, dir, davPath, reload, ready) {
         loading = true
         error = null
+        if (!ready) return@produceState
         value = withContext(Dispatchers.IO) {
             runCatching {
+                writable = place == null && dir.canWrite()
                 when (val p = place) {
                     DialogPlace.Recent -> {
                         val lora = c?.let { runCatching { it.drive.allFiles(3000) }.getOrDefault(emptyList()) }.orEmpty()
@@ -436,6 +488,7 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
     }
 
     fun confirm() {
+        if (!ready) return
         scope.launch {
             when (r.mode) {
                 LoraFileDialog.Mode.OPEN -> {
@@ -585,7 +638,7 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
                             label = { Text(tr("Pfad")) },
                         )
                     } else {
-                        Breadcrumb(place, dir, davPath, onDir = ::goTo, onDav = { davPath = it }, onEdit = { pathEdit = dir.absolutePath })
+                        if (ready) Breadcrumb(place, dir, davPath, onDir = ::goTo, onDav = { davPath = it }, onEdit = { pathEdit = dir.absolutePath })
                     }
                 }
                 OutlinedTextField(
@@ -613,7 +666,7 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
                 IconButton(onClick = { grid = !grid; LoraFileDialog.grid = grid }) {
                     Icon(if (grid) Icons.Outlined.ViewList else Icons.Outlined.GridView, contentDescription = if (grid) tr("Als Liste") else tr("Als Raster"))
                 }
-                if (place == null && r.mode != LoraFileDialog.Mode.OPEN || place == null && dir.canWrite()) {
+                if (ready && place == null && (r.mode != LoraFileDialog.Mode.OPEN || writable)) {
                     IconButton(onClick = { newFolder = true }) { Icon(Icons.Outlined.CreateNewFolder, contentDescription = tr("Neuer Ordner")) }
                 }
                 val focusedLocal = (selected.values.singleOrNull() ?: shown.getOrNull(cursor))?.takeIf { it.file != null && place != DialogPlace.Cloud }
@@ -716,7 +769,7 @@ internal fun LoraFileBrowser(c: AppContainer?, r: LoraFileDialog.Request, onDone
                 Spacer(Modifier.width(8.dp))
                 Button(
                     onClick = ::confirm,
-                    enabled = when (r.mode) {
+                    enabled = ready && when (r.mode) {
                         LoraFileDialog.Mode.OPEN -> selected.values.any { !it.dir } || shown.getOrNull(cursor) != null
                         LoraFileDialog.Mode.SAVE -> (place == null || place == DialogPlace.Cloud) && saveName.isNotBlank()
                         LoraFileDialog.Mode.FOLDER -> place == null
